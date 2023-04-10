@@ -1,0 +1,14 @@
+---- __PWM_LED_CTL__ Matches (13 in 6 files) ----
+app_anc.c (apps\anc\src) line 37 : #if (defined(__PWM_LED_CTL__)||defined(__EVRCORD_USER_DEFINE__))
+app_user_event_handle_process in app_user.cpp (apps\userapps) : #if defined(__PWM_LED_CTL__)
+app_user_event_open_module in app_user.cpp (apps\userapps) : #if defined(__PWM_LED_CTL__)
+app_user_event_open_module_for_charge in app_user.cpp (apps\userapps) : #if defined(__PWM_LED_CTL__)
+app_user_event_close_module in app_user.cpp (apps\userapps) : #if defined(__PWM_LED_CTL__)
+app_user.cpp (apps\userapps) line 521 : #if defined(__PWM_LED_CTL__)
+app_user.cpp (apps\userapps) line 804 : 		#if defined(__PWM_LED_CTL__)
+app_nvrecord_TalkMicLed_set in app_user.cpp (apps\userapps) : #if defined(__PWM_LED_CTL__)
+app_user.h (apps\userapps) line 4 : #if defined(__PWM_LED_CTL__)
+app_user.h (apps\userapps) line 88 : #if defined(__PWM_LED_CTL__)
+target.mk (config\H7508_best2300p_ep_anc) line 430 :     -D__PWM_LED_CTL__ \
+tgt_hardware.c (config\H7508_best2300p_ep_anc) line 61 : #if defined(__PWM_LED_CTL__)
+tgt_hardware.h (config\H7508_best2300p_ep_anc) line 65 : #if defined(__PWM_LED_CTL__)
