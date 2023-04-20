@@ -77,7 +77,7 @@ typedef uint32_t                            GPIO_MAP_T;
 #define CFG_SW_KEY_INIT_DOWN_THRESH_MS      200
 #endif
 #ifndef CFG_SW_KEY_INIT_LPRESS_THRESH_MS
-#define CFG_SW_KEY_INIT_LPRESS_THRESH_MS    1000
+#define CFG_SW_KEY_INIT_LPRESS_THRESH_MS    2000//1000 //m by cai
 #endif
 #ifndef CFG_SW_KEY_INIT_LLPRESS_THRESH_MS
 #define CFG_SW_KEY_INIT_LLPRESS_THRESH_MS   5000
