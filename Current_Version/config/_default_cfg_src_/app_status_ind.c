@@ -175,7 +175,7 @@ int app_status_indication_set(APP_STATUS_INDICATION_T status)
     app_status = status;
 #endif
     memset(&cfg0, 0, sizeof(struct APP_PWL_CFG_T));//white led
-    memset(&cfg1, 0, sizeof(struct APP_PWL_CFG_T));//red led
+    memset(&cfg1, 0, sizeof(struct APP_PWL_CFG_T));//blue led
     app_pwl_stop(APP_PWL_ID_0);
     app_pwl_stop(APP_PWL_ID_1);
     switch (status) {
@@ -266,15 +266,23 @@ int app_status_indication_set(APP_STATUS_INDICATION_T status)
 			app_pwl_start(APP_PWL_ID_1);
 			break;
 */			
-        case APP_STATUS_INDICATION_CHARGING:		
-/*          cfg1.part[0].level = 0;
+        case APP_STATUS_INDICATION_CHARGING:
+			cfg0.part[0].level = 1;
+            cfg0.part[0].time = (300);
+            cfg0.parttotal = 1;
+            cfg0.startlevel = 1;
+            cfg0.periodic = false;
+
+            cfg1.part[0].level = 0;
             cfg1.part[0].time = (5000);
             cfg1.parttotal = 1;
             cfg1.startlevel = 0;
-            cfg1.periodic = true;
+            cfg1.periodic = false;
 
+			app_pwl_setup(APP_PWL_ID_0, &cfg0);
+			app_pwl_start(APP_PWL_ID_0);
             app_pwl_setup(APP_PWL_ID_1, &cfg1);
-            app_pwl_start(APP_PWL_ID_1);*/
+            app_pwl_start(APP_PWL_ID_1);
             break;
 			
         case APP_STATUS_INDICATION_FULLCHARGE:
