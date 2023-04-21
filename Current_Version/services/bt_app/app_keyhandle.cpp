@@ -889,7 +889,7 @@ void bt_key_handle_func_click(void)
             hfp_handle_key(HFP_KEY_THREEWAY_HANGUP_AND_ANSWER);
         break;                  
         case HFCALL_MACHINE_CURRENT_3WAY_HOLD_CALLING:
-            hfp_handle_key(HFP_KEY_THREEWAY_HOLD_AND_ANSWER);
+            //hfp_handle_key(HFP_KEY_THREEWAY_HOLD_AND_ANSWER);
         break;   
 #ifdef __BT_ONE_BRING_TWO__              
         case HFCALL_MACHINE_CURRENT_IDLE_ANOTHER_IDLE:
@@ -919,7 +919,7 @@ void bt_key_handle_func_click(void)
 			#endif
         break;           
         case HFCALL_MACHINE_CURRENT_3WAY_INCOMMING_ANOTHER_IDLE:
-			#if 0
+			#if 1//c by cai
             hfp_handle_key(HFP_KEY_THREEWAY_HANGUP_AND_ANSWER);
 			#else //m by pang
 			//app_voice_report(APP_STATUS_INDICATION_BEEP_21, 0);//add by pang
@@ -961,6 +961,7 @@ void bt_key_handle_func_click(void)
 #endif
     return;
 }
+
 void bt_key_handle_func_doubleclick(void)
 {
     TRACE(0,"%s enter",__func__);
@@ -1317,6 +1318,53 @@ void bt_key_handle_cover_key(enum APP_KEY_EVENT_T event)
     }
 }
 /** end add **/
+
+//add by cai
+void bt_key_handle_ANC_key(enum APP_KEY_EVENT_T event)
+{
+	HFCALL_MACHINE_ENUM hfcall_machine = app_get_hfcall_machine();
+
+	switch(event)
+    {
+		case APP_KEY_EVENT_CLICK:
+			switch(hfcall_machine)
+    		{
+				case HFCALL_MACHINE_CURRENT_IDLE:
+					app_anc_Key_Pro();
+	       	    break;                                            
+	        	case HFCALL_MACHINE_CURRENT_CALLING:
+		            if(app_bt_device.hf_mute_flag == 0){
+		                hfp_handle_key(HFP_KEY_MUTE);
+		                app_bt_device.hf_mute_flag = 1;
+		            }else{
+		                hfp_handle_key(HFP_KEY_CLEAR_MUTE);
+		                app_bt_device.hf_mute_flag = 0;
+		            }
+		        break;                             
+#ifdef __BT_ONE_BRING_TWO__      
+		        case HFCALL_MACHINE_CURRENT_IDLE_ANOTHER_IDLE:
+					app_anc_Key_Pro();
+		        break;                               
+	       	    case HFCALL_MACHINE_CURRENT_CALLING_ANOTHER_IDLE:
+		            if(app_bt_device.hf_mute_flag == 0){
+		                hfp_handle_key(HFP_KEY_MUTE);
+						app_voice_report(APP_STATUS_INDICATION_MUTE, 0);
+		            }else{
+		                hfp_handle_key(HFP_KEY_CLEAR_MUTE);
+		            }
+	       	    break;
+#endif
+				default:
+				break;		
+			}
+			break;
+	
+		default:
+			TRACE(1,"unregister down key event=%x",event);
+			break;
+	}
+}
+//end add
 
 void bt_key_handle_func_key(enum APP_KEY_EVENT_T event)
 {
@@ -1896,6 +1944,11 @@ void bt_key_handle(void)
 				app_factory_reset();
 				break;
 /** end add **/
+//add by cai
+			case BTAPP_ANC_KEY:
+				bt_key_handle_ANC_key((enum APP_KEY_EVENT_T)bt_key.event);
+				break;
+//end add			
             default:
                 TRACE(0,"bt_key_handle  undefined key");
                 break;

@@ -55,7 +55,7 @@ void app_monitor_moment(bool on);
 void app_anc_power_off(void);
 void poweron_set_anc(void);
 uint8_t api_get_anc_mode(void);
-void app_anc_Key_Pro(APP_KEY_STATUS *status, void *param);
+void app_anc_Key_Pro(void);
 /** end add **/
 
 void app_anc_set_coef(uint8_t index);
