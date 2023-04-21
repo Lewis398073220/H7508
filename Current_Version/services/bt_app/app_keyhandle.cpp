@@ -880,10 +880,10 @@ void bt_key_handle_func_click(void)
            hfp_handle_key(HFP_KEY_ANSWER_CALL);
         break;                    
         case HFCALL_MACHINE_CURRENT_OUTGOING:
-            hfp_handle_key(HFP_KEY_HANGUP_CALL);
+            //hfp_handle_key(HFP_KEY_HANGUP_CALL);
         break;                  
         case HFCALL_MACHINE_CURRENT_CALLING:
-            hfp_handle_key(HFP_KEY_HANGUP_CALL);
+            //hfp_handle_key(HFP_KEY_HANGUP_CALL);
         break;                  
         case HFCALL_MACHINE_CURRENT_3WAY_INCOMMING:
             hfp_handle_key(HFP_KEY_THREEWAY_HANGUP_AND_ANSWER);
@@ -1144,11 +1144,13 @@ void bt_key_handle_func_longpress(void)
         break;
         case HFCALL_MACHINE_CURRENT_INCOMMING:
             hfp_handle_key(HFP_KEY_HANGUP_CALL);
-        break;                    
+        break; 	
         case HFCALL_MACHINE_CURRENT_OUTGOING:
+			hfp_handle_key(HFP_KEY_HANGUP_CALL);//add by cai
         break;                      
         case HFCALL_MACHINE_CURRENT_CALLING:
         {
+        	/*
             if(app_bt_is_hfp_audio_on()){
                 //call is active, switch from earphone to phone
                 hfp_handle_key(HFP_KEY_CHANGE_TO_PHONE);
@@ -1156,6 +1158,8 @@ void bt_key_handle_func_longpress(void)
                 //call is active, switch from phone to earphone
                 hfp_handle_key(HFP_KEY_ADD_TO_EARPHONE);
             }
+            */
+            hfp_handle_key(HFP_KEY_HANGUP_CALL);//add by cai
         }
         break;
         case HFCALL_MACHINE_CURRENT_3WAY_INCOMMING:
