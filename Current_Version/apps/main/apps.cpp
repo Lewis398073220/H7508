@@ -1379,7 +1379,7 @@ const APP_KEY_HANDLE  app_key_handle_cfg[] = {
 #if defined(__APP_KEY_FN_STYLE_A__)
 //--
 const APP_KEY_HANDLE  app_key_handle_cfg[] = {
-    {{APP_KEY_CODE_PWR,APP_KEY_EVENT_LONGLONGLONGPRESS},"bt function key",app_bt_key_shutdown, NULL},
+    {{APP_KEY_CODE_PWR,APP_KEY_EVENT_LONGLONGLONGLONGPRESS},"bt function key",app_bt_key_shutdown, NULL},
     {{APP_KEY_CODE_PWR,APP_KEY_EVENT_LONGLONGPRESS},"bt function key",app_bt_key, NULL},
 #if defined(BT_USB_AUDIO_DUAL_MODE_TEST) && defined(BT_USB_AUDIO_DUAL_MODE)
     //{{APP_KEY_CODE_PWR,APP_KEY_EVENT_CLICK},"bt function key",app_bt_key, NULL},

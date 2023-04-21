@@ -58,6 +58,9 @@ typedef uint32_t                            GPIO_MAP_T;
 #define CFG_HW_ADCKEY_NUMBER                0
 #endif
 
+#ifndef CFG_SW_KEY_LLLLPRESS_THRESH_MS
+#define CFG_SW_KEY_LLLLPRESS_THRESH_MS      4000//add by cai
+#endif
 #ifndef CFG_SW_KEY_LLLPRESS_THRESH_MS
 #define CFG_SW_KEY_LLLPRESS_THRESH_MS       3000//8000
 #endif
@@ -90,6 +93,7 @@ typedef uint32_t                            GPIO_MAP_T;
 #endif
 
 //common key define
+#define KEY_LONGLONGLONGLONGPRESS_THRESHOLD MS_TO_TICKS(CFG_SW_KEY_LLLLPRESS_THRESH_MS)//add by cai
 #define KEY_LONGLONGLONGPRESS_THRESHOLD     MS_TO_TICKS(CFG_SW_KEY_LLLPRESS_THRESH_MS)//add by pang
 #define KEY_LONGLONGPRESS_THRESHOLD         MS_TO_TICKS(CFG_SW_KEY_LLPRESS_THRESH_MS)
 #define KEY_LONGPRESS_THRESHOLD             MS_TO_TICKS(CFG_SW_KEY_LPRESS_THRESH_MS)
@@ -950,7 +954,7 @@ static void hal_key_debounce_handler(void *param)
             map &= ~(1 << index);
             send_key_event((1 << index), HAL_KEY_EVENT_UP);
             //if (key_status.event == HAL_KEY_EVENT_LONGPRESS || key_status.event == HAL_KEY_EVENT_LONGLONGPRESS) {
-			if (key_status.event == HAL_KEY_EVENT_LONGPRESS || key_status.event == HAL_KEY_EVENT_LONGLONGPRESS || key_status.event == HAL_KEY_EVENT_LONGLONGLONGPRESS) {//m by pang
+			if (key_status.event == HAL_KEY_EVENT_LONGPRESS || key_status.event == HAL_KEY_EVENT_LONGLONGPRESS || key_status.event == HAL_KEY_EVENT_LONGLONGLONGPRESS || key_status.event == HAL_KEY_EVENT_LONGLONGLONGLONGPRESS) {//m by cai
                 send_key_event((1 << index), HAL_KEY_EVENT_UP_AFTER_LONGPRESS);
             }
             key_status.time_updown = time;
@@ -960,7 +964,7 @@ static void hal_key_debounce_handler(void *param)
 
     if (up_new) {
         //if (key_status.event == HAL_KEY_EVENT_LONGPRESS || key_status.event == HAL_KEY_EVENT_LONGLONGPRESS) {
-		if (key_status.event == HAL_KEY_EVENT_LONGPRESS || key_status.event == HAL_KEY_EVENT_LONGLONGPRESS || key_status.event == HAL_KEY_EVENT_LONGLONGLONGPRESS) {//m by pang
+		if (key_status.event == HAL_KEY_EVENT_LONGPRESS || key_status.event == HAL_KEY_EVENT_LONGLONGPRESS || key_status.event == HAL_KEY_EVENT_LONGLONGLONGPRESS || key_status.event ==HAL_KEY_EVENT_LONGLONGLONGLONGPRESS) {//m by cai
             // LongPress is finished when all of the LongPress keys are released
             if ((code_down & key_status.code_ready) == 0) {
                 key_status.event = HAL_KEY_EVENT_NONE;
@@ -1033,7 +1037,7 @@ static void hal_key_debounce_handler(void *param)
                 send_key_event(key_status.code_ready, key_status.event);
             }
         //} else if (key_status.event == HAL_KEY_EVENT_LONGPRESS || key_status.event == HAL_KEY_EVENT_LONGLONGPRESS) {
-        } else if (key_status.event == HAL_KEY_EVENT_LONGPRESS || key_status.event == HAL_KEY_EVENT_LONGLONGPRESS || key_status.event == HAL_KEY_EVENT_LONGLONGLONGPRESS) {//m by pang
+        } else if (key_status.event == HAL_KEY_EVENT_LONGPRESS || key_status.event == HAL_KEY_EVENT_LONGLONGPRESS || key_status.event == HAL_KEY_EVENT_LONGLONGLONGPRESS || key_status.event ==HAL_KEY_EVENT_LONGLONGLONGLONGPRESS) {//m by cai
             key_status.cnt_repeat++;
             //if (key_status.cnt_repeat == KEY_LONGPRESS_REPEAT_THRESHOLD / KEY_CHECKER_INTERVAL) { //m by pang
 			if (key_status.cnt_repeat == KEY_LONGPRESS_REPEAT_THRESHOLD / KEY_CHECKER_INTERVAL_PANG) {
@@ -1049,6 +1053,12 @@ static void hal_key_debounce_handler(void *param)
 			if (key_status.event == HAL_KEY_EVENT_LONGLONGPRESS) {//add by pang
                 if (time - key_status.time_updown >= KEY_LONGLONGLONGPRESS_THRESHOLD) {
                     key_status.event = HAL_KEY_EVENT_LONGLONGLONGPRESS;
+                    send_key_event(key_status.code_ready, key_status.event);
+                }
+            }
+			if (key_status.event == HAL_KEY_EVENT_LONGLONGLONGPRESS) {//add by cai
+                if (time - key_status.time_updown >= KEY_LONGLONGLONGLONGPRESS_THRESHOLD) {
+                    key_status.event = HAL_KEY_EVENT_LONGLONGLONGLONGPRESS;
                     send_key_event(key_status.code_ready, key_status.event);
                 }
             }
