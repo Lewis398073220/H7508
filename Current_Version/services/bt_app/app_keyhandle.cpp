@@ -907,13 +907,13 @@ void bt_key_handle_func_click(void)
             hfp_handle_key(HFP_KEY_ANSWER_CALL);
         break;           
         case HFCALL_MACHINE_CURRENT_OUTGOING_ANOTHER_IDLE:
-			#if 1//c by pang
+			#if 0//c by cai
 			app_voice_report(APP_STATUS_INDICATION_BEEP_22, 0);//add by pang
             hfp_handle_key(HFP_KEY_HANGUP_CALL);
 			#endif
         break;            
         case HFCALL_MACHINE_CURRENT_CALLING_ANOTHER_IDLE:
-			#if 1//c by pang
+			#if 0//c by cai
 			app_voice_report(APP_STATUS_INDICATION_BEEP_22, 0);//add by pang
             hfp_handle_key(HFP_KEY_HANGUP_CALL);
 			#endif
