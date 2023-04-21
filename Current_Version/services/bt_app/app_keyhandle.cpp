@@ -1181,8 +1181,10 @@ void bt_key_handle_func_longpress(void)
 			#endif
         break;           
         case HFCALL_MACHINE_CURRENT_OUTGOING_ANOTHER_IDLE:
+			hfp_handle_key(HFP_KEY_HANGUP_CALL);//add by cai
         break;            
         case HFCALL_MACHINE_CURRENT_CALLING_ANOTHER_IDLE:
+		/*
         {
             if(app_bt_device.phone_earphone_mark == 0){
                 //call is active, switch from earphone to phone
@@ -1192,6 +1194,8 @@ void bt_key_handle_func_longpress(void)
                 hfp_handle_key(HFP_KEY_ADD_TO_EARPHONE);
             }
         }
+        */
+        hfp_handle_key(HFP_KEY_HANGUP_CALL);//add by cai
         break;           
         case HFCALL_MACHINE_CURRENT_3WAY_INCOMMING_ANOTHER_IDLE:
 			#if 1//c by pang
