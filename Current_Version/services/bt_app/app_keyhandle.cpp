@@ -229,11 +229,13 @@ void bt_key_handle_siri_key(enum APP_KEY_EVENT_T event)
 	
 			if(open_siri_flag == 1){
 				TRACE(0,"close siri");
-				app_hfp_siri_voice(true);
+				app_hfp_siri_voice(false);//m by cai
+				open_siri_flag = 0;//m by cai
 			} 
 			else{
 				TRACE(0,"open siri");
-				app_hfp_siri_voice(false);
+				app_hfp_siri_voice(true);//m by cai
+				open_siri_flag = 1;//m by cai
 			}
 		}
 #endif
@@ -1309,7 +1311,7 @@ void bt_key_handle_cover_key(enum APP_KEY_EVENT_T event)
 			//bt_key_handle_game_key();
 			break;
 		case  APP_KEY_EVENT_TRIPLECLICK:
-            bt_key_handle_siri_key(APP_KEY_EVENT_DOUBLECLICK); 	
+            //bt_key_handle_siri_key(APP_KEY_EVENT_DOUBLECLICK);//m by cai
 			break;
 
 		case APP_KEY_EVENT_ULTRACLICK:
@@ -1361,7 +1363,24 @@ void bt_key_handle_ANC_key(enum APP_KEY_EVENT_T event)
 				break;		
 			}
 			break;
-	
+			
+		case APP_KEY_EVENT_LONGLONGPRESS:
+			switch(hfcall_machine)
+    		{
+				case HFCALL_MACHINE_CURRENT_IDLE:
+					bt_key_handle_siri_key(APP_KEY_EVENT_LONGLONGPRESS);
+				break;
+#ifdef __BT_ONE_BRING_TWO__      
+				case HFCALL_MACHINE_CURRENT_IDLE_ANOTHER_IDLE:
+					bt_key_handle_siri_key(APP_KEY_EVENT_LONGLONGPRESS);
+				break;
+#endif		
+				default:
+				break;		
+			}
+			 
+			break;
+			
 		default:
 			TRACE(1,"unregister down key event=%x",event);
 			break;
