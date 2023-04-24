@@ -1197,6 +1197,7 @@ void bt_key_handle_func_longpress(void)
             }
         }
         */
+        app_voice_report(APP_STATUS_INDICATION_BEEP_22, 0);//add by cai
         hfp_handle_key(HFP_KEY_HANGUP_CALL);//add by cai
         break;           
         case HFCALL_MACHINE_CURRENT_3WAY_INCOMMING_ANOTHER_IDLE:
