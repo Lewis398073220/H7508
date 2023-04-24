@@ -84,6 +84,12 @@ typedef enum {
 	AUD_ID_BLUETOOTH_TWO_DISCONNECTED,
 	AUD_ID_VOLMINMAX,
 /** end add **/
+	
+//add by cai
+	AUD_ID_CALLING_MUTE,
+	AUD_ID_CALLING_UNMUTE,
+//end add
+
     MAX_RECORD_NUM,
     AUD_ID_ENUM_BOTTOM = 0x1001,
 } AUD_ID_ENUM;

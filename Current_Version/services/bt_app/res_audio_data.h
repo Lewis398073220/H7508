@@ -120,7 +120,7 @@ const uint8_t EN_BT_INCOMING_CALL [] = {
 
 const uint8_t EN_CHARGE_PLEASE[] = {
 //#include "res/en/SOUND_CHARGE_PLEASE.txt"
-#include "res/en/battery_low_16000.txt"
+#include "res/en/EN_Battery_low_16000.txt"
 };
 
 const uint8_t EN_CHARGE_FINISH[] = {
@@ -164,11 +164,11 @@ const uint8_t EN_BT_FINDME[] = {
 
 /** add by pang **/
 const uint8_t EN_BT_BEEP_21[] = {
-#include "res/en/beep_21_16Km_16000.txt"
+#include "res/en/EN_beep21_16000.txt"
 };
 
 const uint8_t EN_BT_BEEP_22[] = {
-#include "res/en/beep_22_16Km_16000.txt"
+#include "res/en/EN_beep22_16000.txt"
 };
 
 const uint8_t EN_BT_BEEP_24[] = {
@@ -188,17 +188,17 @@ const uint8_t EN_BT_BUTTON_50[] = {
 };
 
 const uint8_t EN_BT_ANC_OFF[] = {
-#include "res/en/ANC_OFF_16000.txt"
+#include "res/en/EN_ANC_OFF_16000.txt"
 //#include "res/en/OFF_16000.txt"
 };
 
 const uint8_t EN_BT_ANC_ON[] = {
-#include "res/en/ANC_ON_16000.txt"
+#include "res/en/EN_ANC_ON_16000.txt"
 //#include "res/en/ANC_16000.txt"
 };
 
 const uint8_t EN_BT_AWARENESS_ON[] = {
-#include "res/en/AWARENESS_ON_16000.txt"
+#include "res/en/EN_Awareness_16000.txt"
 //#include "res/en/AWARENESS_16000.txt"
 };
 
@@ -241,8 +241,19 @@ const uint8_t BLUETOOTH_TWO_DISCONNECTED[] = {
 };
 
 const uint8_t BLUETOOTH_VOLMINMAX[] = {
-#include "res/en/HP_volminmax_16000.txt"
+#include "res/en/EN_Min_max3_16000.txt"
 };
 
 /** end add **/
+
+//add by cai
+const uint8_t EN_CALLING_MUTE[] = {
+#include "res/en/EN_Mute_16000.txt"
+};
+
+const uint8_t EN_CALLING_UNMUTE[] = {
+#include "res/en/EN_Unmute_16000.txt"
+};
+//end add
+
 #endif

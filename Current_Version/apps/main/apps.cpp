@@ -703,6 +703,16 @@ int app_voice_report_handler(APP_STATUS_INDICATION_T status, uint8_t device_id, 
                 id = AUD_ID_VOLMINMAX;
                 break;
 /** end add **/
+
+//add by cai
+			case APP_STATUS_INDICATION_CALLING_MUTE:
+				id = AUD_ID_CALLING_MUTE;
+                break;
+			
+			case APP_STATUS_INDICATION_CALLING_UNMUTE:
+				id = AUD_ID_CALLING_UNMUTE;
+				break;		
+//end add
             default:
                 break;
         }

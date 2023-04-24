@@ -387,6 +387,12 @@ const char *aud_id_str[] =
 	"[BLUETOOTH_TWO_DISCONNECTED]",
 	"[VOL_MINMAX]",
 /** end add **/
+
+//add by cai
+	"[A2DP]",
+	"[CALLING_MUTE]",
+	"[CALLING_UNMUTE]",
+//end add
 };
 
 const char *aud_id2str(UINT16 aud_id)

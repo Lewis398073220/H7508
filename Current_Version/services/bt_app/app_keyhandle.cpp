@@ -1182,6 +1182,7 @@ void bt_key_handle_func_longpress(void)
 			#endif
         break;           
         case HFCALL_MACHINE_CURRENT_OUTGOING_ANOTHER_IDLE:
+			app_voice_report(APP_STATUS_INDICATION_BEEP_22, 0);//add by cai
 			hfp_handle_key(HFP_KEY_HANGUP_CALL);//add by cai
         break;            
         case HFCALL_MACHINE_CURRENT_CALLING_ANOTHER_IDLE:
@@ -1348,9 +1349,10 @@ void bt_key_handle_ANC_key(enum APP_KEY_EVENT_T event)
 	       	    case HFCALL_MACHINE_CURRENT_CALLING_ANOTHER_IDLE:
 		            if(app_bt_device.hf_mute_flag == 0){
 		                hfp_handle_key(HFP_KEY_MUTE);
-						app_voice_report(APP_STATUS_INDICATION_MUTE, 0);
+						app_voice_report(APP_STATUS_INDICATION_CALLING_MUTE, 0);
 		            }else{
 		                hfp_handle_key(HFP_KEY_CLEAR_MUTE);
+						app_voice_report(APP_STATUS_INDICATION_CALLING_UNMUTE, 0);
 		            }
 	       	    break;
 #endif

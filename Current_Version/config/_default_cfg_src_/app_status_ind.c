@@ -84,6 +84,12 @@ const char *app_status_indication_str[] =
 	"[BLUE_BLINK_1X]",
 	"[VOL_MINMAX]",
 /** end add **/
+
+//add by cai
+	"[A2DP]",
+	"[CALLING_MUTE]",
+	"[CALLING_UNMUTE]",
+//end add
 };
 
 /** add by pang **/
