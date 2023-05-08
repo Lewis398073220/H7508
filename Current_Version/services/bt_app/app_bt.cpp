@@ -187,7 +187,7 @@ openning reconnect time      = (RECONNECT_RETRY_INTERVAL_MS+PAGETO)*OPENNING_REC
                              = 16s
 ======================================================================================================*/
 #define APP_BT_PROFILE_RECONNECT_RETRY_INTERVAL_MS (3000)
-#define APP_BT_PROFILE_OPENNING_RECONNECT_RETRY_LIMIT_CNT   (15)
+#define APP_BT_PROFILE_OPENNING_RECONNECT_RETRY_LIMIT_CNT   (8)//(15) //m by cai
 #define APP_BT_PROFILE_RECONNECT_RETRY_LIMIT_CNT (50)//15
 #define APP_BT_PROFILE_CONNECT_RETRY_MS (10000)
 
@@ -903,7 +903,8 @@ void app_bt_accessible_manager_process(const btif_event_t *Event)
             app_bt_accessmode_set_req(BTIF_BAM_CONNECTABLE_ONLY);
 			#else //m by pang
 			if(factory_reset_flag&&(btif_me_get_activeCons() == 0)){
-				app_bt_accessmode_set_req(BTIF_BT_DEFAULT_ACCESS_MODE_PAIR);
+				//app_bt_accessmode_set_req(BTIF_BT_DEFAULT_ACCESS_MODE_PAIR);
+				app_bt_accessmode_set_req(BTIF_BAM_CONNECTABLE_ONLY);//add by cai
 			}
 			else
 				app_bt_accessmode_set_req(BTIF_BAM_CONNECTABLE_ONLY);
@@ -2740,7 +2741,7 @@ static void app_bt_update_connectable_mode_after_connection_management(void)
 {
     uint8_t deviceId;
     bool isEnterConnetableOnlyState = true;
-	TRACE(1,"%s",__func__);
+	TRACE(3,"%s %d %d",__func__, bt_profile_manager[0].has_connected, bt_profile_manager[1].has_connected);//m by cai for Debug
     for (deviceId = 0; deviceId < BT_DEVICE_NUM; deviceId++)
     {
         // assure none of the device is in reconnecting mode
@@ -3444,8 +3445,9 @@ void app_bt_profile_connect_manager_hf(enum BT_DEVICE_ID_T id, hf_chan_handle_t 
 		factory_reset_flag=0;
 		app_stop_10_second_timer(APP_POWEROFF_TIMER_ID);
 		app_stop_10_second_timer(APP_BTOFF_POWEROFF_TIMER_ID);
-		//app_status_indication_set(APP_STATUS_INDICATION_CONNECTED);
-		app_status_indication_set_next(APP_STATUS_INDICATION_CONNECTING,APP_STATUS_INDICATION_CONNECTED);
+		app_status_indication_recover_set(APP_STATUS_INDICATION_CONNECTING);//add by cai
+		app_status_indication_set(APP_STATUS_INDICATION_CONNECTED);
+		//app_status_indication_set_next(APP_STATUS_INDICATION_CONNECTING,APP_STATUS_INDICATION_CONNECTED);
 
 		//if ((bt_profile_manager[0].reconnect_mode == bt_profile_reconnect_null)&&(bt_profile_manager[1].reconnect_mode == bt_profile_reconnect_null))
 		{
@@ -3931,9 +3933,9 @@ void app_bt_profile_connect_manager_a2dp(enum BT_DEVICE_ID_T id, a2dp_stream_t *
 		factory_reset_flag=0;
 		app_stop_10_second_timer(APP_POWEROFF_TIMER_ID);
 		app_stop_10_second_timer(APP_BTOFF_POWEROFF_TIMER_ID);
-		//app_status_indication_recover_set(APP_STATUS_INDICATION_CONNECTING);
-		//app_status_indication_set(APP_STATUS_INDICATION_CONNECTED);
-		app_status_indication_set_next(APP_STATUS_INDICATION_CONNECTING,APP_STATUS_INDICATION_CONNECTED);
+		app_status_indication_recover_set(APP_STATUS_INDICATION_CONNECTING);//add by cai
+		app_status_indication_set(APP_STATUS_INDICATION_CONNECTED);
+		//app_status_indication_set_next(APP_STATUS_INDICATION_CONNECTING,APP_STATUS_INDICATION_CONNECTED);
 
 		//if ((bt_profile_manager[0].reconnect_mode == bt_profile_reconnect_null)&&(bt_profile_manager[1].reconnect_mode == bt_profile_reconnect_null))
 		{
@@ -5522,7 +5524,7 @@ static void reconnect_timeout_handler(void const *param);
 osTimerDef(RECONNECT_TIMEOUT_TIMER, reconnect_timeout_handler);// define timers
 uint8_t reconnect_type=0;
 uint8_t reconnect_detect_num=0;
-#define OPENRECONNECT_TIMEOUT_IN_MS	(32000)
+#define OPENRECONNECT_TIMEOUT_IN_MS	(60000)//(32000) //m by cai
 #define RECONNECT_TIMEOUT_IN_MS	(12000)//10000
 
 static void reconnect_timeout_set(uint8_t rect)

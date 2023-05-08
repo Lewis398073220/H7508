@@ -98,6 +98,8 @@ static bool app_status_recover_on=0;
 
 void app_status_indication_recover(void)
 {
+	TRACE(1,"********%s",__func__);
+
 	if(app_status_ind_recover!=APP_STATUS_INDICATION_NUM){
 		app_status_recover_on=0;
 		app_status_indication_set(app_status);
@@ -107,6 +109,8 @@ void app_status_indication_recover(void)
 
 void app_status_indication_recover_set(APP_STATUS_INDICATION_T status)
 {
+	TRACE(2,"********%s %d",__func__, status);
+
     app_status_recover_on=0;
     app_status_ind_recover = status;
 	app_status_indication_set(status);
@@ -115,6 +119,8 @@ void app_status_indication_recover_set(APP_STATUS_INDICATION_T status)
 
 void app_status_indication_set_next(APP_STATUS_INDICATION_T curr_status,APP_STATUS_INDICATION_T next_status)
 {
+	TRACE(3,"********%s %d %d",__func__, curr_status, next_status);
+
     app_status_recover_on=0;
     app_status_ind_recover = curr_status;
 	app_status_indication_set(curr_status);
@@ -171,6 +177,8 @@ int app_status_indication_set(APP_STATUS_INDICATION_T status)
 
     if(app_status_ind_recover==APP_STATUS_INDICATION_NUM)
        app_status = status;
+	
+	TRACE(2,"********enter->%s %d",__func__, status);//add by cai for look at LED
 #else
     if (app_status == status)
         return 0;
@@ -193,27 +201,19 @@ int app_status_indication_set(APP_STATUS_INDICATION_T status)
             cfg0.parttotal = 2;
             cfg0.startlevel = 1;
             cfg0.periodic = false;
-
-			cfg1.part[0].level = 0;
-            cfg1.part[0].time = (5000);
-            cfg1.parttotal = 1;
-            cfg1.startlevel = 0;
-            cfg1.periodic = false;
 			
             app_pwl_setup(APP_PWL_ID_0, &cfg0);
             app_pwl_start(APP_PWL_ID_0);
-			app_pwl_setup(APP_PWL_ID_1, &cfg1);
-            app_pwl_start(APP_PWL_ID_1);
             break;
         case APP_STATUS_INDICATION_INITIAL:
             break;
         case APP_STATUS_INDICATION_PAGESCAN:
-            cfg0.part[0].level = 1;
-            cfg0.part[0].time = (300);
-            cfg0.part[1].level = 0;
-            cfg0.part[1].time = (2500);
+            cfg0.part[0].level = 0;
+            cfg0.part[0].time = (7000);
+            cfg0.part[1].level = 1;
+            cfg0.part[1].time = (300);
             cfg0.parttotal = 2;
-            cfg0.startlevel = 1;
+            cfg0.startlevel = 0;
             cfg0.periodic = true;
 			
             app_pwl_setup(APP_PWL_ID_0, &cfg0);
@@ -242,32 +242,27 @@ int app_status_indication_set(APP_STATUS_INDICATION_T status)
             app_pwl_start(APP_PWL_ID_1);
             break;
         case APP_STATUS_INDICATION_CONNECTING:
-            cfg0.part[0].level = 1;
-            cfg0.part[0].time = (1000);         
-            cfg0.parttotal = 1;
-            cfg0.startlevel = 1;
-            cfg0.periodic = false;
-
-            app_pwl_setup(APP_PWL_ID_0, &cfg0);
-            app_pwl_start(APP_PWL_ID_0);
-            break;
-        case APP_STATUS_INDICATION_CONNECTED:
-            cfg0.part[0].level = 0;
-            cfg0.part[0].time = (2000); 
-            cfg0.parttotal = 1;
-            cfg0.startlevel = 0;
-            cfg0.periodic = false;
-
 			cfg1.part[0].level = 1;
             cfg1.part[0].time = (2000);
 			cfg1.part[1].level = 0;
-            cfg1.part[1].time = (2000);
+            cfg1.part[1].time = (500);
             cfg1.parttotal = 2;
             cfg1.startlevel = 1;
             cfg1.periodic = false;
+
+			app_pwl_setup(APP_PWL_ID_1, &cfg1);
+            app_pwl_start(APP_PWL_ID_1);
+            break;
 			
-            app_pwl_setup(APP_PWL_ID_0, &cfg0);
-            app_pwl_start(APP_PWL_ID_0);
+        case APP_STATUS_INDICATION_CONNECTED:
+			cfg1.part[0].level = 0;
+            cfg1.part[0].time = (5000);
+			cfg1.part[1].level = 1;
+            cfg1.part[1].time = (300);
+            cfg1.parttotal = 2;
+            cfg1.startlevel = 0;
+            cfg1.periodic = true;
+
 			app_pwl_setup(APP_PWL_ID_1, &cfg1);
             app_pwl_start(APP_PWL_ID_1);
             break;
