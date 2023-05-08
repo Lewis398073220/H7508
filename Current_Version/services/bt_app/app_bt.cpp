@@ -120,7 +120,7 @@ bool power_on_open_reconnect_flag=0;
 extern uint8_t app_poweroff_flag;
 extern bool factory_reset_flag;
 
-uint8_t remote_dev_name[10]={0};
+//uint8_t remote_dev_name[30]={0};//m by cai for reconnect fail
 
 
 static void reconnect_timeout_set(uint8_t rect);
@@ -1887,8 +1887,8 @@ void app_bt_global_handle(const btif_event_t *Event)
             TRACE(1,"[BTEVENT] NAME_RESULT name len %d", nameLen);
             if (nameLen > 0)
             {
-                TRACE(1,"remote dev name: %s", ptrName);
-				memcpy(remote_dev_name, ptrName, nameLen);//add by pang
+                TRACE(2,"remote dev name: %s, namelen: %d", ptrName, nameLen);
+				//memcpy(remote_dev_name, ptrName, nameLen);//add by pang //m by cai for reconnect fail
             }
             //return;
         }
@@ -2429,7 +2429,7 @@ void app_bt_profile_connect_manager_opening_reconnect(void)
     btdevice_profile *btdevice_plf_p;
 
 /** add by pang **/
-	bool last_active_device=0;
+	//bool last_active_device=0;
 	uint8_t MAX_BT_DEVICE_COUNT=0;
 /** end add **/	
 	
@@ -2487,7 +2487,7 @@ void app_bt_profile_connect_manager_opening_reconnect(void)
 				TRACE(0,"record2 device_plf 0x%x,p_last_active 0x%x",(uint32_t)btdevice_plf_p2,btdevice_plf_p2->p_last_active);
 				if( btdevice_plf_p2->p_last_active > btdevice_plf_p->p_last_active){
 					last_active_recored = record2;
-					last_active_device=1;//add by pang
+					//last_active_device=1;//add by pang
 					TRACE(0,"set last_active_recored to record2");
 				}
             }
@@ -2498,10 +2498,10 @@ void app_bt_profile_connect_manager_opening_reconnect(void)
 
 	/** add by pang **/
 	
-	if(last_active_device){
-		record2=record1;
-		record1=last_active_recored;
-	}
+	//if(last_active_device){
+		//record2=record1;
+		//record1=last_active_recored;
+	//}
 	
 	/** end add **/
 		
