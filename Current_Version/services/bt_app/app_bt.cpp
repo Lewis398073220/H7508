@@ -188,7 +188,7 @@ openning reconnect time      = (RECONNECT_RETRY_INTERVAL_MS+PAGETO)*OPENNING_REC
 ======================================================================================================*/
 #define APP_BT_PROFILE_RECONNECT_RETRY_INTERVAL_MS (3000)
 #define APP_BT_PROFILE_OPENNING_RECONNECT_RETRY_LIMIT_CNT   (8)//(15) //m by cai
-#define APP_BT_PROFILE_RECONNECT_RETRY_LIMIT_CNT (50)//15
+#define APP_BT_PROFILE_RECONNECT_RETRY_LIMIT_CNT (38)//(50) //m by cai
 #define APP_BT_PROFILE_CONNECT_RETRY_MS (10000)
 
 static struct app_bt_profile_manager bt_profile_manager[BT_DEVICE_NUM];
@@ -3258,8 +3258,9 @@ void app_bt_profile_connect_manager_hf(enum BT_DEVICE_ID_T id, hf_chan_handle_t 
 					if(false==app_bt_is_connected()){
 						app_status_indication_set(APP_STATUS_INDICATION_PAGESCAN);	
 					}
-				   	reconnect_timeout_stop();
-				   	reconnect_timeout_set(1);
+				   	//reconnect_timeout_stop(); //m by cai
+				   	//reconnect_timeout_set(1); //m by cai
+				   	app_start_10_second_timer(APP_POWEROFF_TIMER_ID);//add by cai
 					/** end add **/
                 }
 #endif
@@ -3503,16 +3504,17 @@ void app_bt_profile_connect_manager_hf(enum BT_DEVICE_ID_T id, hf_chan_handle_t 
 		#endif
 #endif
 /** add by pang **/
+		TRACE(1,"********multipoint_flag: %d", app_get_multipoint_flag());
         if(0==app_get_multipoint_flag()){
 			if((false==bt_profile_manager[0].has_connected)&&(false==lacal_bt_off)&&(false==factory_reset_flag)&&(app_poweroff_flag==0)){
 				app_status_indication_set(APP_STATUS_INDICATION_PAGESCAN);
-				app_start_10_second_timer(APP_POWEROFF_TIMER_ID);
+				//app_start_10_second_timer(APP_POWEROFF_TIMER_ID);//m by cai
         	}
         }
 		else{	
 			if((false==bt_profile_manager[0].has_connected)&&(false==bt_profile_manager[1].has_connected)&&(false==lacal_bt_off)&&(false==factory_reset_flag)&&(app_poweroff_flag==0)){
 				app_status_indication_set(APP_STATUS_INDICATION_PAGESCAN);
-				app_start_10_second_timer(APP_POWEROFF_TIMER_ID);
+				//app_start_10_second_timer(APP_POWEROFF_TIMER_ID);//m by cai
 			}
 		}
 
@@ -3758,8 +3760,9 @@ void app_bt_profile_connect_manager_a2dp(enum BT_DEVICE_ID_T id, a2dp_stream_t *
 					if(false==app_bt_is_connected()){
 						app_status_indication_set(APP_STATUS_INDICATION_PAGESCAN);	
 					}
-				   	reconnect_timeout_stop();
-				   	reconnect_timeout_set(1);
+				   	//reconnect_timeout_stop(); //m by cai
+				   	//reconnect_timeout_set(1); //m by cai
+				   	app_start_10_second_timer(APP_POWEROFF_TIMER_ID);//add by cai
 					/** end add **/
                 }	   
 #endif
@@ -3990,16 +3993,17 @@ void app_bt_profile_connect_manager_a2dp(enum BT_DEVICE_ID_T id, a2dp_stream_t *
 		#endif
 #endif
 /** add by pang **/
+		TRACE(1,"********multipoint_flag: %d", app_get_multipoint_flag());
 		if(0==app_get_multipoint_flag()){		
 			if((false==bt_profile_manager[0].has_connected)&&(false==lacal_bt_off)&&(false==factory_reset_flag)&&(app_poweroff_flag==0)){
 				app_status_indication_set(APP_STATUS_INDICATION_PAGESCAN);
-				app_start_10_second_timer(APP_POWEROFF_TIMER_ID);
+				//app_start_10_second_timer(APP_POWEROFF_TIMER_ID);//m by cai
 			}
 		}
 		else{
 			if((false==bt_profile_manager[0].has_connected)&&(false==bt_profile_manager[1].has_connected)&&(false==lacal_bt_off)&&(false==factory_reset_flag)&&(app_poweroff_flag==0)){
 				app_status_indication_set(APP_STATUS_INDICATION_PAGESCAN);
-				app_start_10_second_timer(APP_POWEROFF_TIMER_ID);
+				//app_start_10_second_timer(APP_POWEROFF_TIMER_ID);//m by cai
         	}
 		}
 
