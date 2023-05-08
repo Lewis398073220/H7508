@@ -276,7 +276,7 @@ typedef struct
 APP_10_SECOND_TIMER_STRUCT app_10_second_array[] =
 {
     INIT_APP_TIMER(APP_PAIR_TIMER_ID, 0, 0, 6, PairingTransferToConnectable),
-    INIT_APP_TIMER(APP_POWEROFF_TIMER_ID, 0, 0, 90, CloseEarphone),
+    INIT_APP_TIMER(APP_POWEROFF_TIMER_ID, 0, 0, 30, CloseEarphone),//m by cai
     INIT_APP_TIMER(APP_BTOFF_POWEROFF_TIMER_ID, 0, 0, 450, CloseEarphone_bt_off), //add by pang 450
 #ifdef GFPS_ENABLED
     INIT_APP_TIMER(APP_FASTPAIR_LASTING_TIMER_ID, 0, 0, APP_FAST_PAIRING_TIMEOUT_IN_SECOND/10,
