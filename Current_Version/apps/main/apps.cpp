@@ -855,6 +855,10 @@ void app_factory_reset(void)
 	app_ble_force_switch_adv(BLE_SWITCH_USER_BT_CONNECT, false);
 #endif
 	app_bt_accessmode_set_req(BTIF_BT_DEFAULT_ACCESS_MODE_PAIR);
+
+	//add by cai for reset to high ANC On mode after facreset.
+	app_set_anc_on_mode(1);
+	set_anc_mode(anc_on); 
 }
 /**  end add **/
 

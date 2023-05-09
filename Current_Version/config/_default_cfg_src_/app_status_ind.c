@@ -435,16 +435,16 @@ int app_status_indication_set(APP_STATUS_INDICATION_T status)
 			break;
 
 		case APP_STATUS_INDICATION_FACTORYRESET:			
-			cfg0.part[0].level = 0;
-            cfg0.part[0].time = (2000);
-            cfg0.part[1].level = 1;
-            cfg0.part[1].time = (100);
-            cfg0.parttotal = 2;
-            cfg0.startlevel = 0;
-            cfg0.periodic = false;
-			
-			app_pwl_setup(APP_PWL_ID_0, &cfg0);
-			app_pwl_start(APP_PWL_ID_0);
+			cfg1.part[0].level = 1;
+            cfg1.part[0].time = (2000);
+			cfg1.part[1].level = 0;
+            cfg1.part[1].time = (500);
+            cfg1.parttotal = 2;
+            cfg1.startlevel = 1;
+            cfg1.periodic = false;
+
+			app_pwl_setup(APP_PWL_ID_1, &cfg1);
+            app_pwl_start(APP_PWL_ID_1);
 			break;
 
 		case APP_STATUS_INDICATION_A2DP:
