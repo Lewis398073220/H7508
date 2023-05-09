@@ -330,9 +330,6 @@ int app_battery_handle_process_normal(uint32_t status,  union APP_BATTERY_MSG_PR
 /** add by pang **/
 	int8_t i = 0;
 	static uint8_t lowbat_warning_time=0;
-	static bool lowbat_warning_flag=0;
-	static bool lowbat_power_on=1;
-	static uint8_t old_level=0xFF;
 	static int8_t level_count=0;
 /** end add **/
     switch (status)
@@ -340,18 +337,16 @@ int app_battery_handle_process_normal(uint32_t status,  union APP_BATTERY_MSG_PR
         case APP_BATTERY_STATUS_UNDERVOLT:
             TRACE(1,"UNDERVOLT:%d", prams.volt);
 			app_status_indication_set(APP_STATUS_INDICATION_CHARGENEED);
+			app_status_indication_recover(); //强制显示低电提示灯
 #if 1 //m by pang
-			if((prams.volt<3500)&&(lowbat_power_on)){
-				lowbat_warning_time=33;
-			}
-
-			lowbat_warning_time++;//5min
-			if(lowbat_warning_time>75){
-
+			//5分钟提示一次低电 add by cai
+			TRACE(2,"********batterylow: %d", lowbat_warning_time);
+			if((lowbat_warning_time == 0) || (lowbat_warning_time == 76)){
 				app_voice_report(APP_STATUS_INDICATION_CHARGENEED, 0);
-			    lowbat_warning_flag=1;
-			    lowbat_warning_time=0;
+				lowbat_warning_time = 0;
 			}
+			lowbat_warning_time++;
+			//end add
 #else			
             app_status_indication_set(APP_STATUS_INDICATION_CHARGENEED);
 #ifdef MEDIA_PLAYER_SUPPORT
@@ -368,16 +363,6 @@ int app_battery_handle_process_normal(uint32_t status,  union APP_BATTERY_MSG_PR
 		#if 0
             level = (prams.volt-APP_BATTERY_PD_MV)/APP_BATTERY_MV_BASE;
 		#else //m by pang
-		    lowbat_power_on=0;
-			if((status<APP_BATTERY_STATUS_UNDERVOLT)&&(lowbat_warning_time>0)){
-				lowbat_warning_time=0;
-			}
-			
-			if((status<APP_BATTERY_STATUS_UNDERVOLT)&&(lowbat_warning_flag)){
-            	app_status_indication_recover();
-				lowbat_warning_flag=0;
-			}
-
 		    for(i=0;i<9;i++){
 			if(app_battery_measure.currvolt>=batterylevel[i])
 				break;
@@ -404,25 +389,25 @@ int app_battery_handle_process_normal(uint32_t status,  union APP_BATTERY_MSG_PR
             }
 #else
 			TRACE(1,"app_battery_handle_process_normal:volt=%d,level=%d",prams.volt,level);
-            //app_battery_measure.currlevel = level;
+			TRACE(1,"********currlevel:%d", app_battery_measure.currlevel);//add by cai
+			//app_battery_measure.currlevel = level;
 #endif
 			#if 0
             app_status_battery_report(level);
 			#else //m by pang
-			if(old_level==level)
+			if(app_battery_measure.currlevel-1 > level)
 				level_count++;
 			else
 				level_count=0;
 
-			if(level_count>2){
-				level_count=2;
+			if(level_count>3){
+				level_count=0;
 				app_battery_measure.currlevel = level+1;
-				app_status_battery_report(level);//level m by pang
-				//#if defined(__HAYLOU_APP__)
-				Notification_Battery_Level_Change();
-				//#endif
 			}
-			old_level=level;
+			app_status_battery_report(app_battery_measure.currlevel-1);//m by cai
+			//#if defined(__HAYLOU_APP__)
+			Notification_Battery_Level_Change();
+			//#endif
 			#endif
 			app_10_second_timer_check();
             break;
