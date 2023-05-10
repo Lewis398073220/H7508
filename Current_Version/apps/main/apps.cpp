@@ -818,16 +818,15 @@ void app_factory_reset(void)
 	app_status_indication_recover_set(APP_STATUS_INDICATION_FACTORYRESET);
 
 	app_audio_sendrequest(APP_BT_STREAM_INVALID, (uint8_t)APP_BT_SETTING_CLOSEALL, 0);
-	osDelay(500);		  
+	osDelay(500);
+#ifdef MEDIA_PLAYER_SUPPORT
+	app_voice_report(APP_STATUS_INDICATION_BEEP_22, 0);
+#endif
 	factory_reset_flag=1;
 	demo_mode_on=0;
 	uint8_t flag=app_get_fota_flag();
 	LinkDisconnectDirectly(false);
 	osDelay(800);
-	
-#ifdef MEDIA_PLAYER_SUPPORT
-	app_voice_report(APP_STATUS_INDICATION_BEEP_22, 0);
-#endif
 
 #if 0
 	struct nvrecord_env_t *nvrecord_env;
@@ -1415,15 +1414,15 @@ const APP_KEY_HANDLE  app_key_handle_cfg[] = {
     //{{APP_KEY_CODE_PWR,APP_KEY_EVENT_RAMPAGECLICK},"bt i2c key",app_factorymode_i2c_switch, NULL},
 #endif
     {{APP_KEY_CODE_FN1,APP_KEY_EVENT_CLICK},"bt volume up key",app_bt_key, NULL},
-    {{APP_KEY_CODE_FN1,APP_KEY_EVENT_DOUBLECLICK},"bt volume up key",app_bt_key, NULL},
-    {{APP_KEY_CODE_FN1,APP_KEY_EVENT_TRIPLECLICK},"bt volume up key",app_bt_key, NULL},
-    {{APP_KEY_CODE_FN1,APP_KEY_EVENT_ULTRACLICK},"bt volume up key",app_bt_key, NULL},
-    {{APP_KEY_CODE_FN1,APP_KEY_EVENT_RAMPAGECLICK},"bt volume up key",app_bt_key, NULL},
+    //{{APP_KEY_CODE_FN1,APP_KEY_EVENT_DOUBLECLICK},"bt volume up key",app_bt_key, NULL},
+    //{{APP_KEY_CODE_FN1,APP_KEY_EVENT_TRIPLECLICK},"bt volume up key",app_bt_key, NULL},
+    //{{APP_KEY_CODE_FN1,APP_KEY_EVENT_ULTRACLICK},"bt volume up key",app_bt_key, NULL},
+    //{{APP_KEY_CODE_FN1,APP_KEY_EVENT_RAMPAGECLICK},"bt volume up key",app_bt_key, NULL},
     //{{APP_KEY_CODE_FN1,APP_KEY_EVENT_LONGPRESS},"bt play backward key",app_bt_key, NULL},
 #if defined(APP_LINEIN_A2DP_SOURCE)||defined(APP_I2S_A2DP_SOURCE)
     //{{APP_KEY_CODE_FN1,APP_KEY_EVENT_DOUBLECLICK},"bt mode src snk key",app_bt_key, NULL},
 #endif
-    {{APP_KEY_CODE_FN1,APP_KEY_EVENT_LONGLONGPRESS},"bt volume down key",app_bt_key, NULL},
+    //{{APP_KEY_CODE_FN1,APP_KEY_EVENT_LONGLONGPRESS},"bt volume down key",app_bt_key, NULL},
     {{APP_KEY_CODE_FN1,APP_KEY_EVENT_REPEAT},"bt volume down key",app_bt_key, NULL},
     //{{APP_KEY_CODE_FN2,APP_KEY_EVENT_LONGPRESS},"bt play forward key",app_bt_key, NULL},
     //{{APP_KEY_CODE_FN15,APP_KEY_EVENT_UP},"bt volume down key",app_bt_key, NULL},
@@ -1437,7 +1436,7 @@ const APP_KEY_HANDLE  app_key_handle_cfg[] = {
 	//{{HAL_KEY_CODE_FN6,APP_KEY_EVENT_ULTRACLICK},"siri",app_bt_key, NULL},
 
 	{{HAL_KEY_CODE_FN5|APP_KEY_CODE_PWR,APP_KEY_EVENT_LONGLONGLONGLONGPRESS},"factory reset",app_bt_key, NULL},
-
+	{{APP_KEY_CODE_FN1|APP_KEY_CODE_PWR,APP_KEY_EVENT_LONGLONGLONGLONGPRESS},"demo mode",app_bt_key, NULL},//add by cai
 #ifdef SUPPORT_SIRI
     //{{APP_KEY_CODE_NONE ,APP_KEY_EVENT_NONE},"none function key",app_bt_key, NULL},
 #endif
@@ -1520,8 +1519,11 @@ void app_key_init(void)
 void app_charging_poweron_key_handler(APP_KEY_STATUS *status, void *param)
 {
 	TRACE(0,"%s ",__func__);
-    hal_sw_bootmode_set(HAL_SW_BOOTMODE_CHARGING_POWERON);
-    hal_cmu_sys_reboot();
+	if(demo_mode_on)//m by cai
+	{
+		hal_sw_bootmode_set(HAL_SW_BOOTMODE_CHARGING_POWERON);
+		hal_cmu_sys_reboot();
+	}
 }
 #endif
 /** end add **/
@@ -1536,7 +1538,7 @@ void app_key_init_on_charging(void)
         //{{APP_KEY_CODE_PWR,APP_KEY_EVENT_LONGPRESS},"usb cdc key",app_usb_cdc_comm_key_handler, NULL},
 #endif
 #if defined(__DEFINE_DEMO_MODE__)
-	{{APP_KEY_CODE_PWR,APP_KEY_EVENT_LONGPRESS},"power on key",app_charging_poweron_key_handler, NULL},// add by pang
+	{{APP_KEY_CODE_PWR,APP_KEY_EVENT_LONGLONGLONGPRESS},"power on key",app_charging_poweron_key_handler, NULL},//m by cai
 #endif
     };
 
@@ -1602,6 +1604,7 @@ int app_deinit(int deinit_case)
 		/** add by pang **/	
 		app_user_event_close_module();
 		app_anc_power_off();
+		osDelay(800);//add by cai for disconnect prompt no complete
 		/** end add **/
 #if defined(APP_LINEIN_A2DP_SOURCE)
         app_audio_sendrequest(APP_A2DP_SOURCE_LINEIN_AUDIO, (uint8_t)APP_BT_SETTING_CLOSE,0);
@@ -1639,7 +1642,7 @@ int app_deinit(int deinit_case)
         nv_record_flash_flush();
         norflash_flush_all_pending_op();
 #endif
-        osDelay(1800);
+        osDelay(3000);//m by cai
 
 /** add by pang **/
 		//hal_codec_dac_mute(1);
@@ -2285,7 +2288,7 @@ extern int rpc_service_setup(void);
 		/** add by pang **/
 	#if defined(__DEFINE_DEMO_MODE__)
 		if(demo_mode_power_on){
-			app_status_indication_set(APP_STATUS_INDICATION_POWERON);
+			app_status_indication_recover_set(APP_STATUS_INDICATION_POWERON);//m by cai
 			#ifdef MEDIA_PLAYER_SUPPORT
 			app_voice_report(APP_STATUS_INDICATION_POWERON, 0);
 			#endif

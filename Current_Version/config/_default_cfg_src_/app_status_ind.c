@@ -339,17 +339,9 @@ int app_status_indication_set(APP_STATUS_INDICATION_T status)
             cfg0.parttotal = 2;
             cfg0.startlevel = 1;
             cfg0.periodic = false;
-
-			cfg1.part[0].level = 0;
-            cfg1.part[0].time = (300);
-            cfg1.parttotal = 1;
-            cfg1.startlevel = 0;
-            cfg1.periodic = false;
 			
             app_pwl_setup(APP_PWL_ID_0, &cfg0);
             app_pwl_start(APP_PWL_ID_0);
-			app_pwl_setup(APP_PWL_ID_1, &cfg1);
-            app_pwl_start(APP_PWL_ID_1);
             break;
         case APP_STATUS_INDICATION_CHARGENEED:			
             cfg0.part[0].level = 0;

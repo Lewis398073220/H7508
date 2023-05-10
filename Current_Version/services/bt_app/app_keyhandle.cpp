@@ -1801,7 +1801,7 @@ void bt_key_handle_up_key(enum APP_KEY_EVENT_T event)
 		case  APP_KEY_EVENT_RAMPAGECLICK:
             app_bt_volumeup();
             break;
-        case  APP_KEY_EVENT_LONGPRESS:
+        case  APP_KEY_EVENT_LONGLONGPRESS:
 		case  APP_KEY_EVENT_REPEAT://add by pang
             //a2dp_handleKey(AVRCP_KEY_FORWARD);
             app_bt_volumedown();//c by pang
@@ -2007,6 +2007,10 @@ void bt_key_handle(void)
 //add by cai
 			case BTAPP_ANC_KEY:
 				bt_key_handle_ANC_key((enum APP_KEY_EVENT_T)bt_key.event);
+				break;
+
+			case APP_KEY_CODE_FN1|APP_KEY_CODE_PWR:
+				app_demo_mode_trigle();
 				break;
 //end add			
             default:
