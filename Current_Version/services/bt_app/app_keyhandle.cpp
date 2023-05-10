@@ -1359,6 +1359,7 @@ void bt_key_handle_ANC_key(enum APP_KEY_EVENT_T event)
 	       	    break;                                            
 	        	case HFCALL_MACHINE_CURRENT_CALLING:
 		            if(app_bt_device.hf_mute_flag == 0){
+						app_keyhandle_swtimer_start();
 		                hfp_handle_key(HFP_KEY_MUTE);
 		                app_bt_device.hf_mute_flag = 1;
 		            }else{
@@ -1374,6 +1375,7 @@ void bt_key_handle_ANC_key(enum APP_KEY_EVENT_T event)
 		            if(app_bt_device.hf_mute_flag == 0){
 						app_voice_report(APP_STATUS_INDICATION_CALLING_MUTE, 0);
 		                hfp_handle_key(HFP_KEY_MUTE);
+						app_keyhandle_swtimer_start();
 		            }else{
 						app_voice_report(APP_STATUS_INDICATION_CALLING_UNMUTE, 0);
 		                hfp_handle_key(HFP_KEY_CLEAR_MUTE);
