@@ -301,7 +301,7 @@ int app_status_indication_set(APP_STATUS_INDICATION_T status)
             cfg0.periodic = false;
 
             cfg1.part[0].level = 0;
-            cfg1.part[0].time = (5000);
+            cfg1.part[0].time = (300);
             cfg1.parttotal = 1;
             cfg1.startlevel = 0;
             cfg1.periodic = false;
@@ -320,7 +320,7 @@ int app_status_indication_set(APP_STATUS_INDICATION_T status)
             cfg0.periodic = false;
 
             cfg1.part[0].level = 0;
-            cfg1.part[0].time = (5000);
+            cfg1.part[0].time = (300);
             cfg1.parttotal = 1;
             cfg1.startlevel = 0;
             cfg1.periodic = false;
@@ -341,7 +341,7 @@ int app_status_indication_set(APP_STATUS_INDICATION_T status)
             cfg0.periodic = false;
 
 			cfg1.part[0].level = 0;
-            cfg1.part[0].time = (5000);
+            cfg1.part[0].time = (300);
             cfg1.parttotal = 1;
             cfg1.startlevel = 0;
             cfg1.periodic = false;
