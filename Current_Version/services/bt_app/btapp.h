@@ -459,7 +459,8 @@ bool a2dp_id_from_bdaddr(bt_bdaddr_t *bd_addr, uint8_t *id);
 
 void bt_key_handle_func_click();
 void bt_key_handle_func_doubleclick();
-void bt_key_handle_func_longpress();
+void bt_key_handle_func_longlongpress();//m by cai
+void bt_key_handle_func_longlonglongpress(void);//add by cai
 
 
 void bt_sbc_player_set_codec_type(uint8_t type);

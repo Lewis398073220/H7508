@@ -236,7 +236,7 @@ static uint8_t app_status_indication_init(void)
 
 void CloseEarphone_bt_off(void)
 {
- 	if(app_lacal_host_bt_off())	{
+ 	if(!app_lacal_host_bt_off())	{//m by cai for auto shutdown when open reconnect
 		TRACE(0,"!!!CloseEarphone---bt off\n");
 		app_shutdown();
  	}
@@ -277,7 +277,7 @@ APP_10_SECOND_TIMER_STRUCT app_10_second_array[] =
 {
     INIT_APP_TIMER(APP_PAIR_TIMER_ID, 0, 0, 6, PairingTransferToConnectable),
     INIT_APP_TIMER(APP_POWEROFF_TIMER_ID, 0, 0, 30, CloseEarphone),//m by cai
-    INIT_APP_TIMER(APP_BTOFF_POWEROFF_TIMER_ID, 0, 0, 450, CloseEarphone_bt_off), //add by pang 450
+    INIT_APP_TIMER(APP_BTOFF_POWEROFF_TIMER_ID, 0, 0, 30, CloseEarphone_bt_off), //m by cai 30
 #ifdef GFPS_ENABLED
     INIT_APP_TIMER(APP_FASTPAIR_LASTING_TIMER_ID, 0, 0, APP_FAST_PAIRING_TIMEOUT_IN_SECOND/10,
         app_fast_pairing_timeout_timehandler),
@@ -1393,8 +1393,9 @@ const APP_KEY_HANDLE  app_key_handle_cfg[] = {
 #if defined(__APP_KEY_FN_STYLE_A__)
 //--
 const APP_KEY_HANDLE  app_key_handle_cfg[] = {
-    {{APP_KEY_CODE_PWR,APP_KEY_EVENT_LONGLONGLONGLONGPRESS},"bt function key",app_bt_key_shutdown, NULL},
+    {{APP_KEY_CODE_PWR,APP_KEY_EVENT_LONGLONGLONGLONGLONGPRESS},"bt function key",app_bt_key_shutdown, NULL},
     {{APP_KEY_CODE_PWR,APP_KEY_EVENT_LONGLONGPRESS},"bt function key",app_bt_key, NULL},
+	{{APP_KEY_CODE_PWR,APP_KEY_EVENT_LONGLONGLONGPRESS},"bt function key",app_bt_key, NULL},
 #if defined(BT_USB_AUDIO_DUAL_MODE_TEST) && defined(BT_USB_AUDIO_DUAL_MODE)
     //{{APP_KEY_CODE_PWR,APP_KEY_EVENT_CLICK},"bt function key",app_bt_key, NULL},
 #ifdef RB_CODEC
@@ -1435,7 +1436,7 @@ const APP_KEY_HANDLE  app_key_handle_cfg[] = {
 	{{HAL_KEY_CODE_FN5,APP_KEY_EVENT_LONGLONGPRESS},"siri",app_bt_key, NULL},//m by cai
 	//{{HAL_KEY_CODE_FN6,APP_KEY_EVENT_ULTRACLICK},"siri",app_bt_key, NULL},
 
-	{{HAL_KEY_CODE_FN5|APP_KEY_CODE_PWR,APP_KEY_EVENT_LONGLONGLONGPRESS},"factory reset",app_bt_key, NULL},
+	{{HAL_KEY_CODE_FN5|APP_KEY_CODE_PWR,APP_KEY_EVENT_LONGLONGLONGLONGPRESS},"factory reset",app_bt_key, NULL},
 
 #ifdef SUPPORT_SIRI
     //{{APP_KEY_CODE_NONE ,APP_KEY_EVENT_NONE},"none function key",app_bt_key, NULL},

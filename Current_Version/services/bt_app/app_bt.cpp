@@ -5504,18 +5504,26 @@ void app_bt_reconnect_idle_mode(void)
 void app_bt_off(void)
 {	
 	if(app_bt_is_connected()){
-		lacal_bt_off=1;	
+		lacal_bt_off=1;
 		app_audio_sendrequest(APP_BT_STREAM_INVALID, (uint8_t)APP_BT_SETTING_CLOSEALL, 0);
 		osDelay(500);
+#ifdef MEDIA_PLAYER_SUPPORT
+		app_voice_report(APP_STATUS_INDICATION_BEEP_21, 0);//add by cai
+#endif
 		app_disconnect_all_bt_connections();
 		app_bt_accessmode_set(BTIF_BAM_CONNECTABLE_ONLY);
-		app_status_indication_set(APP_STATUS_INDICATION_BTOFF);
-		app_start_10_second_timer(APP_BTOFF_POWEROFF_TIMER_ID);
+		//app_status_indication_set(APP_STATUS_INDICATION_BTOFF);
+		app_status_indication_set(APP_STATUS_INDICATION_PAGESCAN);//add by cai
+		app_stop_10_second_timer(APP_POWEROFF_TIMER_ID);//add by cai
+		app_stop_10_second_timer(APP_BTOFF_POWEROFF_TIMER_ID);
 	}
 	else{
 		lacal_bt_off=0;	
+#ifdef MEDIA_PLAYER_SUPPORT
+		app_voice_report(APP_STATUS_INDICATION_BEEP_22, 0);//add by cai
+#endif
 		app_bt_profile_connect_manager_opening_reconnect();
-	    app_stop_10_second_timer(APP_BTOFF_POWEROFF_TIMER_ID);
+		app_start_10_second_timer(APP_BTOFF_POWEROFF_TIMER_ID);    
 	}
 }
 

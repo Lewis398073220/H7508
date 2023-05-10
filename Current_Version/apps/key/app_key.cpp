@@ -55,6 +55,7 @@ static const char *_evt2str(uint8_t event)
         CASES(LONGLONGPRESS);
 		CASES(LONGLONGLONGPRESS);//add by cai
 		CASES(LONGLONGLONGLONGPRESS);//add by cai
+		CASES(LONGLONGLONGLONGLONGPRESS);//add by cai
         CASES(CLICK);
         CASES(DOUBLECLICK);
         CASES(TRIPLECLICK);

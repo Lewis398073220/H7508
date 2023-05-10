@@ -1007,7 +1007,7 @@ void bt_key_handle_func_doubleclick(void)
             app_bt_hid_send_capture(app_bt_device.hid_channel[BT_DEVICE_ID_1]);
 #else
             //hfp_handle_key(HFP_KEY_REDIAL_LAST_CALL);
-			a2dp_handleKey(AVRCP_KEY_FORWARD);//add by pang
+			if(app_bt_device.a2dp_play_pause_flag == 1) a2dp_handleKey(AVRCP_KEY_FORWARD);//m by cai
 #endif
         break;           
         case HFCALL_MACHINE_CURRENT_INCOMMING_ANOTHER_IDLE:
@@ -1092,7 +1092,7 @@ void bt_key_handle_func_tripleclick(void)//add by pang
 #ifdef __BT_ONE_BRING_TWO__      
         case HFCALL_MACHINE_CURRENT_IDLE_ANOTHER_IDLE:
             //hfp_handle_key(HFP_KEY_REDIAL_LAST_CALL);
-            a2dp_handleKey(AVRCP_KEY_BACKWARD);
+            if(app_bt_device.a2dp_play_pause_flag == 1) a2dp_handleKey(AVRCP_KEY_BACKWARD);//m by cai
         break;           
         case HFCALL_MACHINE_CURRENT_INCOMMING_ANOTHER_IDLE:
         break;           
@@ -1120,7 +1120,7 @@ void bt_key_handle_func_tripleclick(void)//add by pang
     }
 }
 
-void bt_key_handle_func_longpress(void)
+void bt_key_handle_func_longlongpress(void)//m by cai
 {
     TRACE(0,"%s enter",__func__);
     HFCALL_MACHINE_ENUM hfcall_machine = app_get_hfcall_machine();
@@ -1246,6 +1246,27 @@ void bt_key_handle_func_longpress(void)
 #endif
 }
 
+//add by cai
+void bt_key_handle_func_longlonglongpress(void)
+{
+    TRACE(0,"%s enter",__func__);
+    HFCALL_MACHINE_ENUM hfcall_machine = app_get_hfcall_machine();
+
+    switch(hfcall_machine)
+	{
+		case HFCALL_MACHINE_CURRENT_IDLE:
+			app_bt_off();
+		break;
+#ifdef __BT_ONE_BRING_TWO__
+		case HFCALL_MACHINE_CURRENT_IDLE_ANOTHER_IDLE:
+			app_bt_off();
+		break;
+#endif
+		default:
+        break;
+   	}
+}
+//end add
 /** add by pang **/
 /*
 static void key_click_bt_off(void)
@@ -1404,7 +1425,10 @@ void bt_key_handle_func_key(enum APP_KEY_EVENT_T event)
 			break;
         //case  APP_KEY_EVENT_LONGPRESS:
 		case  APP_KEY_EVENT_LONGLONGPRESS:
-            bt_key_handle_func_longpress();
+            bt_key_handle_func_longlongpress();
+            break;
+		case  APP_KEY_EVENT_LONGLONGLONGPRESS:
+            bt_key_handle_func_longlonglongpress();
             break;
         default:
             TRACE(0,"unregister func key event=%x", event);
