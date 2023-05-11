@@ -182,7 +182,7 @@ const SpeechConfig WEAK speech_cfg_default = {
         .nlp_enabled    = true,
         .clip_enabled   = false,
         .stsupp_enabled = false,
-        .ns_enabled     = true,
+        .ns_enabled     = false,//m by cai
         .cng_enabled    = false,
         .blocks         = 1,
         .delay          = 70,
@@ -496,7 +496,7 @@ const SpeechConfig WEAK speech_cfg_default = {
 ****************************************************************************************************/
     .tx_ns3 = {
         .bypass = 0,
-        .mode   = NS3_SUPPRESSION_LOW,//NS3_SUPPRESSION_HIGH,
+        .mode   = NS3_SUPPRESSION_HIGH,//NS3_SUPPRESSION_HIGH,//m by cai
     },
 #endif
 
@@ -575,7 +575,7 @@ const SpeechConfig WEAK speech_cfg_default = {
         .expand_ratio       = 0.5556f,
         .attack_time        = 0.001f,
         .release_time       = 0.6f,
-        .makeup_gain        = 6,
+        .makeup_gain        = 0,//6 by cai
         .delay              = 128,
     },
 #endif
