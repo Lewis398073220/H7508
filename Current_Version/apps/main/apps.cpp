@@ -1604,7 +1604,7 @@ int app_deinit(int deinit_case)
 		/** add by pang **/	
 		app_user_event_close_module();
 		app_anc_power_off();
-		osDelay(800);//add by cai for disconnect prompt no complete
+		//osDelay(800);//add by cai for disconnect prompt no complete
 		/** end add **/
 #if defined(APP_LINEIN_A2DP_SOURCE)
         app_audio_sendrequest(APP_A2DP_SOURCE_LINEIN_AUDIO, (uint8_t)APP_BT_SETTING_CLOSE,0);
@@ -1627,10 +1627,11 @@ int app_deinit(int deinit_case)
 #ifdef MEDIA_PLAYER_SUPPORT
         if(app_battery_is_pdvolt()){
 			app_voice_report(APP_STATUS_INDICATION_POWEROFF_LOWBATTERY, 0);//add by pang
-			osDelay(2000);
+			osDelay(3000);//m by cai
 		}
 		else{
         	app_voice_report(APP_STATUS_INDICATION_POWEROFF, 0);
+			osDelay(3000);//m by cai
 		}
 #endif
 		}
@@ -1642,7 +1643,7 @@ int app_deinit(int deinit_case)
         nv_record_flash_flush();
         norflash_flush_all_pending_op();
 #endif
-        osDelay(3000);//m by cai
+        //osDelay(3000);//m by cai
 
 /** add by pang **/
 		//hal_codec_dac_mute(1);
