@@ -137,6 +137,7 @@ void app_demo_mode_trigle(void)
 {
     if(demo_mode_on==0){
 		app_nvrecord_demo_mode_set(DEMO_MODE);
+		app_status_indication_recover_set(APP_STATUS_INDICATION_DEMO_MODE);//add by cai
 		demo_mode_on=1;
 #ifdef MEDIA_PLAYER_SUPPORT
 		app_voice_report(APP_STATUS_INDICATION_DEMO_MODE, 0);

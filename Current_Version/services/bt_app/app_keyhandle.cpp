@@ -1007,7 +1007,7 @@ void bt_key_handle_func_doubleclick(void)
             app_bt_hid_send_capture(app_bt_device.hid_channel[BT_DEVICE_ID_1]);
 #else
             //hfp_handle_key(HFP_KEY_REDIAL_LAST_CALL);
-			if(app_bt_device.a2dp_play_pause_flag == 1) a2dp_handleKey(AVRCP_KEY_FORWARD);//m by cai
+			a2dp_handleKey(AVRCP_KEY_FORWARD);
 #endif
         break;           
         case HFCALL_MACHINE_CURRENT_INCOMMING_ANOTHER_IDLE:
@@ -1092,7 +1092,7 @@ void bt_key_handle_func_tripleclick(void)//add by pang
 #ifdef __BT_ONE_BRING_TWO__      
         case HFCALL_MACHINE_CURRENT_IDLE_ANOTHER_IDLE:
             //hfp_handle_key(HFP_KEY_REDIAL_LAST_CALL);
-            if(app_bt_device.a2dp_play_pause_flag == 1) a2dp_handleKey(AVRCP_KEY_BACKWARD);//m by cai
+            a2dp_handleKey(AVRCP_KEY_BACKWARD);//m by cai
         break;           
         case HFCALL_MACHINE_CURRENT_INCOMMING_ANOTHER_IDLE:
         break;           
@@ -1209,7 +1209,7 @@ void bt_key_handle_func_longlongpress(void)//m by cai
 			#endif
         break;      
         case HFCALL_MACHINE_CURRENT_3WAY_HOLD_CALLING_ANOTHER_IDLE:
-			#if 0//c by pang
+			#if 1//c by cai
             hfp_handle_key(HFP_KEY_THREEWAY_HANGUP_AND_ANSWER);
 			#endif
         break;
@@ -1358,6 +1358,7 @@ void bt_key_handle_ANC_key(enum APP_KEY_EVENT_T event)
 					app_anc_Key_Pro();
 	       	    break;                                            
 	        	case HFCALL_MACHINE_CURRENT_CALLING:
+				case HFCALL_MACHINE_CURRENT_3WAY_HOLD_CALLING:
 		            if(app_bt_device.hf_mute_flag == 0){
 						app_keyhandle_swtimer_start();
 		                hfp_handle_key(HFP_KEY_MUTE);
@@ -1372,6 +1373,7 @@ void bt_key_handle_ANC_key(enum APP_KEY_EVENT_T event)
 					app_anc_Key_Pro();
 		        break;                               
 	       	    case HFCALL_MACHINE_CURRENT_CALLING_ANOTHER_IDLE:
+				case HFCALL_MACHINE_CURRENT_3WAY_HOLD_CALLING_ANOTHER_IDLE:
 		            if(app_bt_device.hf_mute_flag == 0){
 						app_voice_report(APP_STATUS_INDICATION_CALLING_MUTE, 0);
 		                hfp_handle_key(HFP_KEY_MUTE);
@@ -1973,24 +1975,10 @@ void bt_key_handle(void)
 				}
                 break;
             case BTAPP_VOLUME_UP_KEY:
-            	{
-					HFCALL_MACHINE_ENUM hfcall_machine = app_get_hfcall_machine();
-					if(app_bt_device.a2dp_play_pause_flag == 1) {
-						bt_key_handle_up_key((enum APP_KEY_EVENT_T)bt_key.event);
-					}else if(hfcall_machine != HFCALL_MACHINE_CURRENT_IDLE && hfcall_machine != HFCALL_MACHINE_CURRENT_IDLE_ANOTHER_IDLE){
-						bt_key_handle_up_key((enum APP_KEY_EVENT_T)bt_key.event);
-					}
-            	}
+            	bt_key_handle_up_key((enum APP_KEY_EVENT_T)bt_key.event);
                 break;
             case BTAPP_VOLUME_DOWN_KEY:
-				{
-					HFCALL_MACHINE_ENUM hfcall_machine = app_get_hfcall_machine();
-					if(app_bt_device.a2dp_play_pause_flag == 1) {
-						bt_key_handle_down_key((enum APP_KEY_EVENT_T)bt_key.event);
-					}else if(hfcall_machine != HFCALL_MACHINE_CURRENT_IDLE && hfcall_machine != HFCALL_MACHINE_CURRENT_IDLE_ANOTHER_IDLE){
-						bt_key_handle_down_key((enum APP_KEY_EVENT_T)bt_key.event);
-					}
-            	}
+				bt_key_handle_down_key((enum APP_KEY_EVENT_T)bt_key.event);
                 break;
 #ifdef SUPPORT_SIRI
             case BTAPP_RELEASE_KEY:

@@ -152,7 +152,7 @@ const struct CODEC_DAC_VOL_T codec_dac_vol[TGT_VOLUME_LEVEL_QTY] = {
 */
 //const struct CODEC_DAC_VOL_T codec_dac_vol[TGT_VOLUME_LEVEL_QTY] = {
 const struct CODEC_DAC_VOL_T codec_dac_vol[] = {
-    {TX_PA_GAIN,0x03,-13},
+    {TX_PA_GAIN,0x03,-24},//m by cai
 /* hfp volume */
     {TX_PA_GAIN,0x03,-99},
     {TX_PA_GAIN,0x03,-51},
@@ -4837,8 +4837,8 @@ const IIR_CFG_T audio_eq_sw_iir_cfg_anc_off_linein = {
 
 #else//EQ CMT1
 const IIR_CFG_T audio_eq_sw_iir_cfg_anc_on = {
-    .gain0 = -5,
-    .gain1 = -5,
+    .gain0 = 0,
+    .gain1 = 0,
     .num = 9,
     .param = {
     	{IIR_TYPE_HIGH_PASS, 0,   20,  0.6},

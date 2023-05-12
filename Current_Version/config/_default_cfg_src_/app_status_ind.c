@@ -209,7 +209,7 @@ int app_status_indication_set(APP_STATUS_INDICATION_T status)
             break;
         case APP_STATUS_INDICATION_PAGESCAN:
             cfg0.part[0].level = 0;
-            cfg0.part[0].time = (7000);
+            cfg0.part[0].time = (8000);
             cfg0.part[1].level = 1;
             cfg0.part[1].time = (300);
             cfg0.parttotal = 2;
@@ -399,7 +399,22 @@ int app_status_indication_set(APP_STATUS_INDICATION_T status)
             app_pwl_start(APP_PWL_ID_0);
             app_pwl_setup(APP_PWL_ID_1, &cfg1);
             app_pwl_start(APP_PWL_ID_1);
+
             break;
+	//add by cai
+		case APP_STATUS_INDICATION_DEMO_MODE:
+			cfg1.part[0].level = 1;
+            cfg1.part[0].time = (2000);
+			cfg1.part[1].level = 0;
+            cfg1.part[1].time = (500);
+            cfg1.parttotal = 2;
+            cfg1.startlevel = 1;
+            cfg1.periodic = false;
+
+			app_pwl_setup(APP_PWL_ID_1, &cfg1);
+            app_pwl_start(APP_PWL_ID_1);
+			break;	
+	//end add
 	/** add by pang **/
 		 case APP_STATUS_INDICATION_INCOMINGCALL:
             cfg1.part[0].level = 1;

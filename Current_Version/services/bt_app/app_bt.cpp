@@ -903,8 +903,8 @@ void app_bt_accessible_manager_process(const btif_event_t *Event)
             app_bt_accessmode_set_req(BTIF_BAM_CONNECTABLE_ONLY);
 			#else //m by pang
 			if(factory_reset_flag&&(btif_me_get_activeCons() == 0)){
-				//app_bt_accessmode_set_req(BTIF_BT_DEFAULT_ACCESS_MODE_PAIR);
-				app_bt_accessmode_set_req(BTIF_BAM_CONNECTABLE_ONLY);//add by cai
+				app_bt_accessmode_set_req(BTIF_BT_DEFAULT_ACCESS_MODE_PAIR);
+				//app_bt_accessmode_set_req(BTIF_BAM_CONNECTABLE_ONLY);//add by cai
 			}
 			else
 				app_bt_accessmode_set_req(BTIF_BAM_CONNECTABLE_ONLY);
@@ -5505,10 +5505,10 @@ void app_bt_off(void)
 {	
 	if(app_bt_is_connected()){
 		lacal_bt_off=1;
-		app_audio_sendrequest(APP_BT_STREAM_INVALID, (uint8_t)APP_BT_SETTING_CLOSEALL, 0);
-		osDelay(500);
+		//app_audio_sendrequest(APP_BT_STREAM_INVALID, (uint8_t)APP_BT_SETTING_CLOSEALL, 0);//m by cai
+		//osDelay(500);
 #ifdef MEDIA_PLAYER_SUPPORT
-		app_voice_report(APP_STATUS_INDICATION_BEEP_21, 0);//add by cai
+		//app_voice_report(APP_STATUS_INDICATION_BEEP_21, 0);//add by cai
 #endif
 		app_disconnect_all_bt_connections();
 		app_bt_accessmode_set(BTIF_BAM_CONNECTABLE_ONLY);
@@ -5520,7 +5520,7 @@ void app_bt_off(void)
 	else{
 		lacal_bt_off=0;	
 #ifdef MEDIA_PLAYER_SUPPORT
-		app_voice_report(APP_STATUS_INDICATION_BEEP_22, 0);//add by cai
+		//app_voice_report(APP_STATUS_INDICATION_BEEP_22, 0);//add by cai
 #endif
 		app_bt_profile_connect_manager_opening_reconnect();
 		app_start_10_second_timer(APP_BTOFF_POWEROFF_TIMER_ID);    

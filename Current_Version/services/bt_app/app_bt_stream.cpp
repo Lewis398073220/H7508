@@ -7153,8 +7153,9 @@ void app_bt_stream_volumedown(void)
 #ifdef MEDIA_PLAYER_SUPPORT
                 //media_PlayAudio(AUD_ID_BT_WARNING,0); 
 				//app_ring_merge_set(APP_STATUS_INDICATION_WARNING);
-				app_ring_merge_set(APP_STATUS_INDICATION_VOLMINMAX);
-				media_PlayAudio(AUD_ID_VOLMINMAX,0);//m by pang
+				app_voice_report(APP_STATUS_INDICATION_VOLMINMAX, 0);//m by cai
+				//app_ring_merge_set(APP_STATUS_INDICATION_VOLMINMAX);
+				//media_PlayAudio(AUD_ID_VOLMINMAX,0);//m by pang
 #if defined(__USE_AMP_MUTE_CTR__)
 				 if(!hal_gpio_pin_get_val((enum HAL_GPIO_PIN_T)cfg_hw_pio_AMP_mute_control.pin))
 			   		hal_gpio_pin_set((enum HAL_GPIO_PIN_T)cfg_hw_pio_AMP_mute_control.pin);
@@ -7182,8 +7183,9 @@ void app_bt_stream_volumedown(void)
 #ifdef MEDIA_PLAYER_SUPPORT
                 //media_PlayAudio(AUD_ID_BT_WARNING,0);
 				//app_ring_merge_set(APP_STATUS_INDICATION_WARNING);
-				app_ring_merge_set(APP_STATUS_INDICATION_VOLMINMAX);
-				media_PlayAudio(AUD_ID_VOLMINMAX,0);//m by pang
+				app_voice_report(APP_STATUS_INDICATION_VOLMINMAX, 0);//m by cai
+				//app_ring_merge_set(APP_STATUS_INDICATION_VOLMINMAX);
+				//media_PlayAudio(AUD_ID_VOLMINMAX,0);//m by pang
 #if defined(__USE_AMP_MUTE_CTR__)
 				 if(!hal_gpio_pin_get_val((enum HAL_GPIO_PIN_T)cfg_hw_pio_AMP_mute_control.pin))
 			   		hal_gpio_pin_set((enum HAL_GPIO_PIN_T)cfg_hw_pio_AMP_mute_control.pin);
