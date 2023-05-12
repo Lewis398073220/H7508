@@ -19,13 +19,13 @@
 const uint8_t EN_POWER_ON [] = {
 //#include "res/en/SOUND_POWER_ON.txt"
 //#include "res/en/power_on_16000.txt"
-#include "res/en/HP_power_on_16000.txt"
+#include "res/en/EN_PowerOn_16000.txt"
 };
 
 const uint8_t EN_POWER_OFF [] = {
 //#include "res/en/SOUND_POWER_OFF.txt"
 //#include "res/en/power_off_16000.txt"
-#include "res/en/HP_power_off_16000.txt"
+#include "res/en/EN_PowerOFF_16000.txt"
 };
 
 const uint8_t EN_SOUND_ZERO[] = {
@@ -71,7 +71,7 @@ const uint8_t EN_SOUND_NINE [] = {
 const uint8_t EN_BT_PAIR_ENABLE[] = {
 //#include "res/en/SOUND_PAIR_ENABLE.txt"
 //#include "res/en/Bluetooth_pairing_16000.txt"
-#include "res/en/HP_pairing_1x_16000.txt"
+#include "res/en/EN_Pairing_16000.txt"
 };
 
 const uint8_t EN_BT_PAIRING[] = {
@@ -105,13 +105,13 @@ const uint8_t EN_BT_HUNG_UP[] = {
 const uint8_t EN_BT_CONNECTED [] = {
 //#include "res/en/SOUND_CONNECTED.txt"
 //#include "res/en/Bluetooth_connected_16000.txt"
-#include "res/en/HP_BT_connected_16000.txt"
+#include "res/en/EN_Connected_16000.txt"
 };
 
 const uint8_t EN_BT_DIS_CONNECT [] = {
 //#include "res/en/SOUND_DIS_CONNECT.txt"
 //#include "res/en/Bluetooth_disconnected_16000.txt"
-#include "res/en/HP_BT_disconnected_16000.txt"
+#include "res/en/EN_Disconnected_16000.txt"
 };
 
 const uint8_t EN_BT_INCOMING_CALL [] = {
@@ -203,17 +203,17 @@ const uint8_t EN_BT_AWARENESS_ON[] = {
 };
 
 const uint8_t EN_POWEROFF_LOWBATTERY[] = {
-#include "res/en/Battery_low_Power_off_16000.txt"
+#include "res/en/EN_PowerOFF_16000.txt"
 };
 
 const uint8_t EN_DEMO_MODE[] = {
 #if defined(__DEFINE_DEMO_MODE__)
-#include "res/en/DEMO_MODE_ENABLED_16000.txt"
+#include "res/en/EN_DEMO_MODE_ENABLED_16000.txt"
 #endif
 };
 
 const uint8_t EN_RING_DIGITAL[] = {
-#include "res/en/Ring_Digital_02_16000.txt"
+#include "res/en/EN_Ring_Digital_16000.txt"
 };
 
 const uint8_t EN_TOUCHPAD_DISABLED[] = {
