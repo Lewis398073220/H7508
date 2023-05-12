@@ -906,6 +906,9 @@ void app_bt_accessible_manager_process(const btif_event_t *Event)
 				app_bt_accessmode_set_req(BTIF_BT_DEFAULT_ACCESS_MODE_PAIR);
 				//app_bt_accessmode_set_req(BTIF_BAM_CONNECTABLE_ONLY);//add by cai
 			}
+			else if(app_bt_get_current_access_mode() == BTIF_BT_DEFAULT_ACCESS_MODE_PAIR){//add by cai
+				;//do nothing
+			}
 			else
 				app_bt_accessmode_set_req(BTIF_BAM_CONNECTABLE_ONLY);
 			#endif			
@@ -2795,6 +2798,10 @@ static void app_bt_update_connectable_mode_after_connection_management(void)
 				app_bt_accessmode_set(BTIF_BAM_CONNECTABLE_ONLY);
 				app_status_indication_set(APP_STATUS_INDICATION_CONNECTED);
         	}
+			else if(app_bt_get_current_access_mode() == BTIF_BT_DEFAULT_ACCESS_MODE_PAIR)//add by cai
+			{
+				;
+			}
 			else{		 	
 				app_bt_accessmode_set(BTIF_BAM_CONNECTABLE_ONLY);
 				app_status_indication_set(APP_STATUS_INDICATION_PAGESCAN);
@@ -2805,6 +2812,10 @@ static void app_bt_update_connectable_mode_after_connection_management(void)
 				app_bt_accessmode_set(BTIF_BAM_NOT_ACCESSIBLE);
 				app_status_indication_set(APP_STATUS_INDICATION_CONNECTED);
 	   	 	}
+			else if(app_bt_get_current_access_mode() == BTIF_BT_DEFAULT_ACCESS_MODE_PAIR)//add by cai
+			{
+				;
+			}
 			else{		 	
 				app_bt_accessmode_set(BTIF_BAM_CONNECTABLE_ONLY);
 				app_status_indication_set(APP_STATUS_INDICATION_PAGESCAN);
