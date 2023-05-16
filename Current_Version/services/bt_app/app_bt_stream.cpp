@@ -1637,7 +1637,7 @@ uint32_t bt_audio_set_eq(AUDIO_EQ_TYPE_T audio_eq_type, uint8_t index)
     const FIR_CFG_T *fir_cfg=NULL;
     const IIR_CFG_T *iir_cfg=NULL;
 
-    TRACE(3,"[%s]audio_eq_type=%d,index=%d", __func__, audio_eq_type,index);
+    TRACE(3,"[%s]audio_eq_type=%d,Set_index=%d,EQ_index=%d", __func__, audio_eq_type,index,app_eq_index_get());
 
 #if defined(__SW_IIR_EQ_PROCESS__) || defined(__HW_FIR_EQ_PROCESS__)|| defined(__HW_DAC_IIR_EQ_PROCESS__)|| defined(__HW_IIR_EQ_PROCESS__)
     switch (audio_eq_type)
