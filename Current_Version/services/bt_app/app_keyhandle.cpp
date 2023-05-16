@@ -230,12 +230,12 @@ void bt_key_handle_siri_key(enum APP_KEY_EVENT_T event)
 			if(open_siri_flag == 1){
 				TRACE(0,"close siri");
 				app_hfp_siri_voice(false);//m by cai
-				open_siri_flag = 0;//m by cai
+				//open_siri_flag = 0;//m by cai
 			} 
 			else{
 				TRACE(0,"open siri");
 				app_hfp_siri_voice(true);//m by cai
-				open_siri_flag = 1;//m by cai
+				//open_siri_flag = 1;//m by cai
 			}
 		}
 #endif
@@ -1348,6 +1348,13 @@ void bt_key_handle_cover_key(enum APP_KEY_EVENT_T event)
 void bt_key_handle_ANC_key(enum APP_KEY_EVENT_T event)
 {
 	HFCALL_MACHINE_ENUM hfcall_machine = app_get_hfcall_machine();
+		
+#ifdef SUPPORT_SIRI
+	if(app_get_hfcall_machine() == HFCALL_MACHINE_NUM) open_siri_flag=1;//add by cai
+	else open_siri_flag=0;
+#endif
+
+	
 
 	switch(event)
     {
@@ -1384,6 +1391,10 @@ void bt_key_handle_ANC_key(enum APP_KEY_EVENT_T event)
 		            }
 	       	    break;
 #endif
+				case HFCALL_MACHINE_NUM://add by cai, click to cancel VA
+					bt_key_handle_siri_key(APP_KEY_EVENT_CLICK);
+				break;
+
 				default:
 				break;		
 			}
@@ -1400,6 +1411,10 @@ void bt_key_handle_ANC_key(enum APP_KEY_EVENT_T event)
 					bt_key_handle_siri_key(APP_KEY_EVENT_LONGLONGPRESS);
 				break;
 #endif		
+				//case HFCALL_MACHINE_NUM://add by cai, when siri is active, HF status is not found
+					//bt_key_handle_siri_key(APP_KEY_EVENT_LONGLONGPRESS);
+				//break;
+
 				default:
 				break;		
 			}
