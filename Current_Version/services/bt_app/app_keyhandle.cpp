@@ -1345,17 +1345,31 @@ void bt_key_handle_cover_key(enum APP_KEY_EVENT_T event)
 /** end add **/
 
 //add by cai
+bool is_siri_active(void)
+{
+	 if(btif_hf_is_voice_rec_active(app_bt_device.hf_channel[BT_DEVICE_ID_1]) == true){
+		TRACE(1,"%s: 1 ->true",__func__);
+		return true;
+	}
+#ifdef __BT_ONE_BRING_TWO__
+	else if(btif_hf_is_voice_rec_active(app_bt_device.hf_channel[BT_DEVICE_ID_2]) == true){
+		TRACE(1,"%s: 2 ->true",__func__);
+		return true;
+	}
+#endif
+	TRACE(1,"%s: false",__func__);
+	return false;
+}
+
 void bt_key_handle_ANC_key(enum APP_KEY_EVENT_T event)
 {
 	HFCALL_MACHINE_ENUM hfcall_machine = app_get_hfcall_machine();
 		
 #ifdef SUPPORT_SIRI
-	if(app_get_hfcall_machine() == HFCALL_MACHINE_NUM) open_siri_flag=1;//add by cai
+	if(is_siri_active() == true) open_siri_flag=1;//add by cai
 	else open_siri_flag=0;
 #endif
-
 	
-
 	switch(event)
     {
 		case APP_KEY_EVENT_CLICK:
@@ -1363,7 +1377,8 @@ void bt_key_handle_ANC_key(enum APP_KEY_EVENT_T event)
     		{
 				case HFCALL_MACHINE_CURRENT_IDLE:
 					app_anc_Key_Pro();
-	       	    break;                                            
+	       	    break;  
+				
 	        	case HFCALL_MACHINE_CURRENT_CALLING:
 				case HFCALL_MACHINE_CURRENT_3WAY_HOLD_CALLING:
 		            if(app_bt_device.hf_mute_flag == 0){
@@ -1374,11 +1389,13 @@ void bt_key_handle_ANC_key(enum APP_KEY_EVENT_T event)
 		                hfp_handle_key(HFP_KEY_CLEAR_MUTE);
 		                app_bt_device.hf_mute_flag = 0;
 		            }
-		        break;                             
+		        break;    
+					
 #ifdef __BT_ONE_BRING_TWO__      
 		        case HFCALL_MACHINE_CURRENT_IDLE_ANOTHER_IDLE:
 					app_anc_Key_Pro();
-		        break;                               
+		        break; 
+				
 	       	    case HFCALL_MACHINE_CURRENT_CALLING_ANOTHER_IDLE:
 				case HFCALL_MACHINE_CURRENT_3WAY_HOLD_CALLING_ANOTHER_IDLE:
 		            if(app_bt_device.hf_mute_flag == 0){
@@ -1391,35 +1408,18 @@ void bt_key_handle_ANC_key(enum APP_KEY_EVENT_T event)
 		            }
 	       	    break;
 #endif
-				case HFCALL_MACHINE_NUM://add by cai, click to cancel VA
-					bt_key_handle_siri_key(APP_KEY_EVENT_CLICK);
-				break;
 
+				case HFCALL_MACHINE_NUM:
+					if(open_siri_flag == 1) app_anc_Key_Pro();//when siri is active, status is HFCALL_MACHINE_NUM.
+				break;
+				
 				default:
 				break;		
 			}
 			break;
 			
 		case APP_KEY_EVENT_LONGLONGPRESS:
-			switch(hfcall_machine)
-    		{
-				case HFCALL_MACHINE_CURRENT_IDLE:
-					bt_key_handle_siri_key(APP_KEY_EVENT_LONGLONGPRESS);
-				break;
-#ifdef __BT_ONE_BRING_TWO__      
-				case HFCALL_MACHINE_CURRENT_IDLE_ANOTHER_IDLE:
-					bt_key_handle_siri_key(APP_KEY_EVENT_LONGLONGPRESS);
-				break;
-#endif		
-				//case HFCALL_MACHINE_NUM://add by cai, when siri is active, HF status is not found
-					//bt_key_handle_siri_key(APP_KEY_EVENT_LONGLONGPRESS);
-				//break;
-
-				default:
-				break;		
-			}
-			 
-			break;
+			bt_key_handle_siri_key(APP_KEY_EVENT_LONGLONGPRESS);
 			
 		default:
 			TRACE(1,"unregister down key event=%x",event);

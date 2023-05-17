@@ -48,7 +48,7 @@ static float audio_prompt_sbc_eq_band_gain[8] = {1, 1, 1, 1, 1, 1, 1, 1};
 
 #define DEFAULT_COEFF_FOR_MIX_PROMPT_FOR_MUSIC      0.4//1.0 //m by pang
 #define DEFAULT_COEFF_FOR_MIX_MUSIC_FOR_MUSIC       0.4//0.4
-#define DEFAULT_COEFF_FOR_MIX_PROMPT_FOR_CALL       0.4//1.0 //m by pang
+#define DEFAULT_COEFF_FOR_MIX_PROMPT_FOR_CALL       0.05//1.0 //m by cai
 #define DEFAULT_COEFF_FOR_MIX_CALL_FOR_CALL         0.4//0.4
 
 #define DEFAULT_OVERLAP_LENGTH 128
