@@ -36,12 +36,16 @@
 #include "attm.h"
 #include "prf_utils.h"
 
+#define custom_datapath //add by pang
 
 #define BLE_MAXIMUM_CHARACTERISTIC_DESCRIPTION	32
 
+#ifndef custom_datapath
 static const char custom_tx_desc[] = "Data Path TX Data";
 static const char custom_rx_desc[] = "Data Path RX Data";
-
+#else//by pang
+static const char custom_tx_desc[] = "Data Path";
+#endif
 
 
 /*
@@ -84,7 +88,8 @@ enum
 ///Attributes State Machine
 enum
 {
-    DATAPATHPS_IDX_SVC,
+#if 0
+	DATAPATHPS_IDX_SVC,
 
     DATAPATHPS_IDX_TX_CHAR,
     DATAPATHPS_IDX_TX_VAL,
@@ -97,6 +102,16 @@ enum
     DATAPATHPS_IDX_RX_DESC,
 
     DATAPATHPS_IDX_NB,
+#else //by pang
+	DATAPATHPS_IDX_SVC,
+
+    DATAPATHPS_IDX_CHAR,
+    DATAPATHPS_IDX_VAL,
+    DATAPATHPS_IDX_NTF_CFG,
+    DATAPATHPS_IDX_DESC,
+    
+	DATAPATHPS_IDX_NB,
+#endif
 };
 
 
