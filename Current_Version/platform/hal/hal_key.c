@@ -956,11 +956,15 @@ static void hal_key_debounce_handler(void *param)
     while (map) {
         if (map & (1 << index)) {
             map &= ~(1 << index);
-            send_key_event((1 << index), HAL_KEY_EVENT_UP);
+            //send_key_event((1 << index), HAL_KEY_EVENT_UP);//m by cai
+			
             //if (key_status.event == HAL_KEY_EVENT_LONGPRESS || key_status.event == HAL_KEY_EVENT_LONGLONGPRESS) {
 			if (key_status.event == HAL_KEY_EVENT_LONGPRESS || key_status.event == HAL_KEY_EVENT_LONGLONGPRESS || key_status.event == HAL_KEY_EVENT_LONGLONGLONGPRESS || key_status.event == HAL_KEY_EVENT_LONGLONGLONGLONGPRESS || key_status.event == HAL_KEY_EVENT_LONGLONGLONGLONGLONGPRESS) {//m by cai
                 send_key_event((1 << index), HAL_KEY_EVENT_UP_AFTER_LONGPRESS);
-            }
+            }else if(key_status.event == HAL_KEY_EVENT_DOWN){//add by cai0
+				TRACE(0,"********release after click\n");
+				send_key_event((1 << index), HAL_KEY_EVENT_UP);//add by cai
+			}
             key_status.time_updown = time;
         }
         index++;

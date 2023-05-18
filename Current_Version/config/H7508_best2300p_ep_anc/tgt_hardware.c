@@ -3508,35 +3508,30 @@ const IIR_CFG_T audio_eq_sw_iir_cfg_anc_off_linein = {
 
 #else//EQ CMT1
 const IIR_CFG_T audio_eq_sw_iir_cfg_anc_on = {
-    .gain0 = -3,
-    .gain1 = -3,
-    .num = 9,
+    .gain0 = 0,
+    .gain1 = 0,
+    .num = 8,
     .param = {
-    	{IIR_TYPE_PEAK,      -4,   18, 0.8},
-		{IIR_TYPE_PEAK,    -1.5,   80, 1.0},
-		{IIR_TYPE_PEAK,    -9.5,  200, 0.7},
-		{IIR_TYPE_PEAK,   -16.5,  700, 1.0},
-		{IIR_TYPE_PEAK,      -7, 1400, 1.7},
-		{IIR_TYPE_PEAK,    -1.5,  800, 3.0},
-		{IIR_TYPE_PEAK,     2.5, 1000, 1.5},
-		{IIR_TYPE_PEAK,      0,  5300, 3.0},
-		{IIR_TYPE_PEAK,      0,  3100, 0.6},
+    	{IIR_TYPE_PEAK,      -9,   18, 0.8},
+		{IIR_TYPE_PEAK,      -3,   80, 1.3},
+		{IIR_TYPE_PEAK,     -14,  200, 0.6},
+		{IIR_TYPE_PEAK,     -14,  700, 1.3},
+		{IIR_TYPE_PEAK,      -5, 7100, 3.0},
+		{IIR_TYPE_PEAK,      -5, 1400, 2.0},
+		{IIR_TYPE_PEAK,    -3.5,  450, 1.0},
+		{IIR_TYPE_PEAK,      -3, 2200, 1.0},
     }
 };
 const IIR_CFG_T audio_eq_sw_iir_cfg_anc_off = {
     .gain0 = 0,
     .gain1 = 0,
-    .num = 9,
+    .num = 5,
     .param = {
-    	{IIR_TYPE_PEAK,    -12,    18, 0.8},
-		{IIR_TYPE_PEAK,     -5,    80, 0.8},
-		{IIR_TYPE_PEAK,    -13,   200, 0.8},
-		{IIR_TYPE_PEAK,    -17,   700, 0.8},
-		{IIR_TYPE_PEAK,      0,  6700, 2.0},
-		{IIR_TYPE_PEAK,      0,  9000, 1.0},
-		{IIR_TYPE_PEAK,      0, 12500, 1.0},
-		{IIR_TYPE_PEAK,      0,  5300, 2.5},
-		{IIR_TYPE_PEAK,      0,  1000, 1.2},
+    	{IIR_TYPE_PEAK,    -12,    16, 0.8},
+		{IIR_TYPE_PEAK,     -4,    80, 0.8},
+		{IIR_TYPE_PEAK,    -12,   200, 0.8},
+		{IIR_TYPE_PEAK,    -14,   650, 0.8},
+		{IIR_TYPE_PEAK,     -3,  7100, 3.0},
     }
 };
 

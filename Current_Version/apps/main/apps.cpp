@@ -1413,7 +1413,8 @@ const APP_KEY_HANDLE  app_key_handle_cfg[] = {
 #ifdef POWERKEY_I2C_SWITCH
     //{{APP_KEY_CODE_PWR,APP_KEY_EVENT_RAMPAGECLICK},"bt i2c key",app_factorymode_i2c_switch, NULL},
 #endif
-    {{APP_KEY_CODE_FN1,APP_KEY_EVENT_CLICK},"bt volume up key",app_bt_key, NULL},
+    //{{APP_KEY_CODE_FN1,APP_KEY_EVENT_CLICK},"bt volume up key",app_bt_key, NULL},
+    {{APP_KEY_CODE_FN1,APP_KEY_EVENT_UP},"bt volume up key",app_bt_key, NULL},
     //{{APP_KEY_CODE_FN1,APP_KEY_EVENT_DOUBLECLICK},"bt volume up key",app_bt_key, NULL},
     //{{APP_KEY_CODE_FN1,APP_KEY_EVENT_TRIPLECLICK},"bt volume up key",app_bt_key, NULL},
     //{{APP_KEY_CODE_FN1,APP_KEY_EVENT_ULTRACLICK},"bt volume up key",app_bt_key, NULL},
