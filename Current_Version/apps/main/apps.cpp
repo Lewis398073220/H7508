@@ -1428,7 +1428,8 @@ const APP_KEY_HANDLE  app_key_handle_cfg[] = {
     //{{APP_KEY_CODE_FN2,APP_KEY_EVENT_LONGPRESS},"bt play forward key",app_bt_key, NULL},
     //{{APP_KEY_CODE_FN15,APP_KEY_EVENT_UP},"bt volume down key",app_bt_key, NULL},
     
-	{{HAL_KEY_CODE_FN5,APP_KEY_EVENT_CLICK},"bt anc key",app_bt_key, NULL},//m by cai
+	//{{HAL_KEY_CODE_FN5,APP_KEY_EVENT_CLICK},"bt anc key",app_bt_key, NULL},//m by cai
+	{{HAL_KEY_CODE_FN5,APP_KEY_EVENT_UP},"bt anc key",app_bt_key, NULL},//add by cai
 	
 	{{HAL_KEY_CODE_FN6,APP_KEY_EVENT_LONGPRESS},"bt quick monitor",app_bt_key, NULL},
 	{{HAL_KEY_CODE_FN6,APP_KEY_EVENT_UP_AFTER_LONGPRESS},"bt quick monitor",app_bt_key, NULL},

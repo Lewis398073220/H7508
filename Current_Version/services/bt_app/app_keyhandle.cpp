@@ -937,16 +937,16 @@ void bt_key_handle_func_click(void)
         case HFCALL_MACHINE_CURRENT_OUTGOING_ANOTHER_INCOMMING:
         break;
         case HFCALL_MACHINE_CURRENT_CALLING_ANOTHER_INCOMMING:
-			app_voice_report(APP_STATUS_INDICATION_BEEP_21, 0);//add by pang
-            hfp_handle_key(HFP_KEY_DUAL_HF_HANGUP_CURR_ANSWER_ANOTHER);
+			//app_voice_report(APP_STATUS_INDICATION_BEEP_21, 0);//add by pang
+            //hfp_handle_key(HFP_KEY_DUAL_HF_HANGUP_CURR_ANSWER_ANOTHER);
         break;      
         case HFCALL_MACHINE_CURRENT_CALLING_ANOTHER_CHANGETOPHONE:
-			app_voice_report(APP_STATUS_INDICATION_BEEP_21, 0);//add by pang
-            hfp_handle_key(HFP_KEY_DUAL_HF_HANGUP_ANOTHER_ADDTOEARPHONE);
+			//app_voice_report(APP_STATUS_INDICATION_BEEP_21, 0);//add by pang
+            //hfp_handle_key(HFP_KEY_DUAL_HF_HANGUP_ANOTHER_ADDTOEARPHONE);
         break;
         case HFCALL_MACHINE_CURRENT_CALLING_ANOTHER_HOLD:
-			app_voice_report(APP_STATUS_INDICATION_BEEP_21, 0);//add by pang
-            hfp_handle_key(HFP_KEY_DUAL_HF_HANGUP_CURR_ANSWER_ANOTHER);
+			//app_voice_report(APP_STATUS_INDICATION_BEEP_21, 0);//add by pang
+            //hfp_handle_key(HFP_KEY_DUAL_HF_HANGUP_CURR_ANSWER_ANOTHER);
         break;
 #endif
         default:
@@ -1051,8 +1051,8 @@ void bt_key_handle_func_doubleclick(void)
         case HFCALL_MACHINE_CURRENT_OUTGOING_ANOTHER_INCOMMING:
         break;
         case HFCALL_MACHINE_CURRENT_CALLING_ANOTHER_INCOMMING:
-			app_voice_report(APP_STATUS_INDICATION_BEEP_22, 0);//add by pang
-            hfp_handle_key(HFP_KEY_DUAL_HF_HANGUP_ANOTHER);
+			//app_voice_report(APP_STATUS_INDICATION_BEEP_22, 0);//add by pang
+            //hfp_handle_key(HFP_KEY_DUAL_HF_HANGUP_ANOTHER);
         break;      
         case HFCALL_MACHINE_CURRENT_CALLING_ANOTHER_CHANGETOPHONE:
         break;
@@ -1210,6 +1210,7 @@ void bt_key_handle_func_longlongpress(void)//m by cai
         break;      
         case HFCALL_MACHINE_CURRENT_3WAY_HOLD_CALLING_ANOTHER_IDLE:
 			#if 1//c by cai
+			app_voice_report(APP_STATUS_INDICATION_BEEP_22, 0);//add by cai
             hfp_handle_key(HFP_KEY_THREEWAY_HANGUP_AND_ANSWER);
 			#endif
         break;
@@ -1218,14 +1219,16 @@ void bt_key_handle_func_longlongpress(void)//m by cai
         case HFCALL_MACHINE_CURRENT_OUTGOING_ANOTHER_INCOMMING:
         break;
         case HFCALL_MACHINE_CURRENT_CALLING_ANOTHER_INCOMMING:
-            hfp_handle_key(HFP_KEY_DUAL_HF_CHANGETOPHONE_ANSWER_ANOTHER); 
+			app_voice_report(APP_STATUS_INDICATION_BEEP_22, 0);//add by cai
+			hfp_handle_key(HFP_KEY_DUAL_HF_HANGUP_ANOTHER);//add by cai
+            //hfp_handle_key(HFP_KEY_DUAL_HF_CHANGETOPHONE_ANSWER_ANOTHER); 
             //hfp_handle_key(HFP_KEY_DUAL_HF_HOLD_CURR_ANSWER_ANOTHER); 
         break;      
         case HFCALL_MACHINE_CURRENT_CALLING_ANOTHER_CHANGETOPHONE:
-            hfp_handle_key(HFP_KEY_DUAL_HF_CHANGETOPHONE_ANOTHER_ADDTOEARPHONE); 
+            //hfp_handle_key(HFP_KEY_DUAL_HF_CHANGETOPHONE_ANOTHER_ADDTOEARPHONE); 
         break;
         case HFCALL_MACHINE_CURRENT_CALLING_ANOTHER_HOLD:
-            hfp_handle_key(HFP_KEY_DUAL_HF_HANGUP_CURR_ANSWER_ANOTHER);
+            //hfp_handle_key(HFP_KEY_DUAL_HF_HANGUP_CURR_ANSWER_ANOTHER);
         break;
 #endif
         default:
@@ -1372,7 +1375,8 @@ void bt_key_handle_ANC_key(enum APP_KEY_EVENT_T event)
 	
 	switch(event)
     {
-		case APP_KEY_EVENT_CLICK:
+    	//case APP_KEY_EVENT_CLICK:
+		case APP_KEY_EVENT_UP:
 			switch(hfcall_machine)
     		{
 				case HFCALL_MACHINE_CURRENT_IDLE:
