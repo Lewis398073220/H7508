@@ -1852,20 +1852,10 @@ void app_anc_Key_Pro(void)
 	//TRACE(2," %s anc_current_mode: %d", __func__, anc_current_mode);
 	if(anc_current_mode == monitor)
 	{	
-		anc_current_mode = anc_off;
-#ifdef ANC_LED_PIN
-		app_anc_switch_turnled(false);
-#endif		
-#ifdef MEDIA_PLAYER_SUPPORT
-		app_voice_report(APP_STATUS_INDICATION_ANC_OFF, 0);
-#endif
-	}
-	else if(anc_current_mode == anc_off)
-	{
 		anc_current_mode = anc_on; 
 		anc_coef_idx = anc_on_mode;
 		
-	    anc_open_flag=1;
+		anc_open_flag=1;
 
 		if(power_anc_init){
 			//power_anc_init=0;
@@ -1880,7 +1870,7 @@ void app_anc_Key_Pro(void)
 #endif
 		}
 	}
-	else
+	else if(anc_current_mode == anc_off)
 	{
 		anc_current_mode = monitor;
 		anc_coef_idx = monitor_mode;
@@ -1891,6 +1881,16 @@ void app_anc_Key_Pro(void)
 #endif
 #ifdef MEDIA_PLAYER_SUPPORT
 		app_voice_report(APP_STATUS_INDICATION_AWARENESS_ON, 0);
+#endif
+	}
+	else
+	{
+		anc_current_mode = anc_off;
+#ifdef ANC_LED_PIN
+		app_anc_switch_turnled(false);
+#endif		
+#ifdef MEDIA_PLAYER_SUPPORT
+		app_voice_report(APP_STATUS_INDICATION_ANC_OFF, 0);
 #endif
 	}
 

@@ -1376,7 +1376,12 @@ void bt_key_handle_ANC_key(enum APP_KEY_EVENT_T event)
 	switch(event)
     {
     	case APP_KEY_EVENT_CLICK:
-		//case APP_KEY_EVENT_UP:
+			if(open_siri_flag==1)
+			{
+				bt_key_handle_siri_key(APP_KEY_EVENT_CLICK);
+				break;
+			}
+		
 			switch(hfcall_machine)
     		{
 				case HFCALL_MACHINE_CURRENT_IDLE:
@@ -1412,10 +1417,6 @@ void bt_key_handle_ANC_key(enum APP_KEY_EVENT_T event)
 		            }
 	       	    break;
 #endif
-
-				case HFCALL_MACHINE_NUM:
-					if(open_siri_flag == 1) app_anc_Key_Pro();//when siri is active, status is HFCALL_MACHINE_NUM.
-				break;
 				
 				default:
 				break;		
@@ -1438,6 +1439,10 @@ void bt_key_handle_ANC_key(enum APP_KEY_EVENT_T event)
 			break;
 			
 		case APP_KEY_EVENT_LONGLONGPRESS:
+#ifdef SUPPORT_SIRI
+			open_siri_flag=0;//add by cai for longpress to trigger VA only
+#endif
+
 			bt_key_handle_siri_key(APP_KEY_EVENT_LONGLONGPRESS);
 			break;
 		

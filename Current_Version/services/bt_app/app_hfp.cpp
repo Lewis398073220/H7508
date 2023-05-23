@@ -429,6 +429,7 @@ int app_hfp_siri_report()
 extern int open_siri_flag ;
 int app_hfp_siri_voice(bool en)
 {
+#if 0 //m by cai
     static enum BT_DEVICE_ID_T hf_id = BT_DEVICE_NUM;
     bt_status_t res = BT_STS_LAST_CODE;
 
@@ -477,7 +478,53 @@ int app_hfp_siri_voice(bool en)
     }
 
     TRACE(3,"[%s] Line =%d, res = %d", __func__, __LINE__, res);
+#else
+	static enum BT_DEVICE_ID_T hf_id = BT_DEVICE_NUM;
+	bt_status_t res = BT_STS_LAST_CODE;
 
+	hf_chan_handle_t POSSIBLY_UNUSED hf_siri_chnl = NULL;
+	if(open_siri_flag == 1){
+		if(btif_hf_is_voice_rec_active(app_bt_device.hf_channel[hf_id]) == false){
+			open_siri_flag = 0;
+			TRACE(0,"end auto");
+			return 1;
+		}else{
+			TRACE(0,"need close");
+			en = false;
+		}
+	}
+	if(open_siri_flag == 0){
+		if(btif_hf_is_voice_rec_active(app_bt_device.hf_channel[BT_DEVICE_ID_1]) == true){
+			TRACE(0,"1 ->is open, do nothing");
+			return 2;
+		}
+#ifdef __BT_ONE_BRING_TWO__
+		else if(btif_hf_is_voice_rec_active(app_bt_device.hf_channel[BT_DEVICE_ID_2]) == true){
+			TRACE(0,"2->is open, do nothing");
+			return 3;
+		}
+#endif
+		else{
+			open_siri_flag =1;
+			en = true;
+#ifdef __BT_ONE_BRING_TWO__
+		hf_id = (enum BT_DEVICE_ID_T)app_hfp_get_chnl_via_remDev(&hf_siri_chnl);
+#else
+		hf_id = BT_DEVICE_ID_1;
+#endif
+			TRACE(1,"a2dp id = %d",hf_id);
+		}
+	}
+	TRACE(4,"[%s]id =%d/%d/%d",__func__,hf_id,open_siri_flag,en);
+	if(hf_id == BT_DEVICE_NUM)
+		hf_id = BT_DEVICE_ID_1;
+
+	if((btif_get_hf_chan_state(app_bt_device.hf_channel[hf_id]) == BTIF_HF_STATE_OPEN)) {
+		res = btif_hf_enable_voice_recognition(app_bt_device.hf_channel[hf_id], en);
+	}
+
+	TRACE(3,"[%s] Line =%d, res = %d", __func__, __LINE__, res);
+#endif
     return 0;
 }
 #endif
