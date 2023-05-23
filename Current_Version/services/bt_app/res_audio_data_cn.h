@@ -160,11 +160,21 @@ const uint8_t CN_BT_AWARENESS_ON[] = {
 
 const uint8_t CN_DEMO_MODE[] = {
 #if defined(__DEFINE_DEMO_MODE__)
-//#include "res/cn/64_CN_demo_16000.txt"
+#include "res/cn/CN_DEMO_MODE_ENABLED_16000.txt"
 #endif
 };
 
 /** end add **/
+
+//add by cai
+const uint8_t CN_MUTE[] = {
+#include "res/cn/CN_Mute_16000.txt"
+};
+
+const uint8_t CN_UNMUTE[] = {
+#include "res/cn/CN_Unmute_16000.txt"
+};
+//end add
 
 #ifdef __INTERACTION__
 const uint8_t CN_BT_FINDME[] = {

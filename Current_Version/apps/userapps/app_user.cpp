@@ -20,6 +20,12 @@
 #include "app_bt_media_manager.h"
 //#endif
 
+//add by cai
+#ifdef MEDIA_PLAYER_SUPPORT
+#include "app_media_player.h"
+#endif
+//end add
+
 #if defined(__AC107_ADC__)
 #include "ac107.h"
 #endif
@@ -1455,6 +1461,32 @@ void app_nvrecord_set_bt_name(void)
 #endif
 }
 */
+
+//add by cai
+void app_nvrecord_language_set(uint8_t lang)
+{
+	struct nvrecord_env_t *nvrecord_env;
+	
+	nv_record_env_get(&nvrecord_env);
+	nvrecord_env->media_language.language = lang;
+	app_play_audio_set_lang(lang);
+	nv_record_env_set(nvrecord_env);
+	
+#if FPGA==0
+    nv_record_flash_flush();
+#endif
+}
+
+uint8_t app_nvrecord_language_get(void)
+{
+	struct nvrecord_env_t *nvrecord_env;
+	
+	nv_record_env_get(&nvrecord_env);
+
+	return(nvrecord_env->media_language.language);
+}
+//end add
+
 void app_nvrecord_para_get(void)
 {
 	struct nvrecord_env_t *nvrecord_env;
@@ -1540,7 +1572,7 @@ void app_nvrecord_para_get(void)
 	app_get_custom_bin_config();//for debug
 #endif
 
-	//TRACE(5,"sleep=%d,eq=%d,monitor=%d,focus=%d,multipoint=%d",sleep_time,eq_set_index,monitor_level,focus_on,multipoint);
+	TRACE(5,"sleep=%d,eq=%d,monitor=%d,focus=%d,multipoint=%d",sleep_time,eq_set_index,monitor_level,focus_on,multipoint);
 }
 
 

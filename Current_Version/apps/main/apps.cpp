@@ -853,6 +853,9 @@ void app_factory_reset(void)
 #ifdef  __IAG_BLE_INCLUDE__
 	app_ble_force_switch_adv(BLE_SWITCH_USER_BT_CONNECT, false);
 #endif
+	//add by cai for recover default language
+	app_nvrecord_language_set(MEDIA_DEFAULT_LANGUAGE);
+
 	app_bt_accessmode_set_req(BTIF_BT_DEFAULT_ACCESS_MODE_PAIR);
 
 	//add by cai for reset to high ANC On mode after facreset.
@@ -1212,7 +1215,8 @@ extern "C" void app_bt_key(APP_KEY_STATUS *status, void *param)
             break;
     }
 #ifdef __FACTORY_MODE_SUPPORT__
-    if (app_status_indication_get() == APP_STATUS_INDICATION_BOTHSCAN && (status->event == APP_KEY_EVENT_DOUBLECLICK)){
+	if(0){//m by cai
+    //if (app_status_indication_get() == APP_STATUS_INDICATION_BOTHSCAN && (status->event == APP_KEY_EVENT_DOUBLECLICK)){
         //app_factorymode_languageswitch_proc();//c by pang
     }else
 #endif
@@ -1428,8 +1432,9 @@ const APP_KEY_HANDLE  app_key_handle_cfg[] = {
     //{{APP_KEY_CODE_FN2,APP_KEY_EVENT_LONGPRESS},"bt play forward key",app_bt_key, NULL},
     //{{APP_KEY_CODE_FN15,APP_KEY_EVENT_UP},"bt volume down key",app_bt_key, NULL},
     
-	//{{HAL_KEY_CODE_FN5,APP_KEY_EVENT_CLICK},"bt anc key",app_bt_key, NULL},//m by cai
-	{{HAL_KEY_CODE_FN5,APP_KEY_EVENT_UP},"bt anc key",app_bt_key, NULL},//add by cai
+	{{HAL_KEY_CODE_FN5,APP_KEY_EVENT_CLICK},"bt anc key",app_bt_key, NULL},//m by cai
+	//{{HAL_KEY_CODE_FN5,APP_KEY_EVENT_UP},"bt anc key",app_bt_key, NULL},//add by cai
+	{{HAL_KEY_CODE_FN5,APP_KEY_EVENT_DOUBLECLICK},"bt anc key",app_bt_key, NULL},//add by cai
 	
 	{{HAL_KEY_CODE_FN6,APP_KEY_EVENT_LONGPRESS},"bt quick monitor",app_bt_key, NULL},
 	{{HAL_KEY_CODE_FN6,APP_KEY_EVENT_UP_AFTER_LONGPRESS},"bt quick monitor",app_bt_key, NULL},

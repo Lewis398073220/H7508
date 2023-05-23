@@ -1375,8 +1375,8 @@ void bt_key_handle_ANC_key(enum APP_KEY_EVENT_T event)
 	
 	switch(event)
     {
-    	//case APP_KEY_EVENT_CLICK:
-		case APP_KEY_EVENT_UP:
+    	case APP_KEY_EVENT_CLICK:
+		//case APP_KEY_EVENT_UP:
 			switch(hfcall_machine)
     		{
 				case HFCALL_MACHINE_CURRENT_IDLE:
@@ -1421,10 +1421,26 @@ void bt_key_handle_ANC_key(enum APP_KEY_EVENT_T event)
 				break;		
 			}
 			break;
+
+		case APP_KEY_EVENT_DOUBLECLICK:
+#ifdef MEDIA_PLAYER_SUPPORT
+			if(!app_bt_is_connected())
+			{
+				if(app_play_audio_get_lang() == MEDIA_DEFAULT_LANGUAGE){
+					app_voice_report(APP_STATUS_INDICATION_BEEP_22, 0);
+					app_nvrecord_language_set(1);
+				} else{
+					app_voice_report(APP_STATUS_INDICATION_BEEP_22, 0);
+					app_nvrecord_language_set(MEDIA_DEFAULT_LANGUAGE);
+				}
+			}	
+#endif
+			break;
 			
 		case APP_KEY_EVENT_LONGLONGPRESS:
 			bt_key_handle_siri_key(APP_KEY_EVENT_LONGLONGPRESS);
-			
+			break;
+		
 		default:
 			TRACE(1,"unregister down key event=%x",event);
 			break;

@@ -148,6 +148,10 @@ void app_nvrecord_fotaflag_set(uint8_t on);
 uint8_t app_get_new_multipoint_flag(void);
 uint8_t app_get_multipoint_flag(void);
 void app_nvrecord_multipoint_set(uint8_t on);
+//add by cai
+void app_nvrecord_language_set(uint8_t lang);
+uint8_t app_nvrecord_language_get(void);
+//end add
 void app_nvrecord_para_get(void);
 uint8_t app_get_TalkMicLed_flag(void);
 void app_nvrecord_TalkMicLed_set(uint8_t on);
