@@ -185,6 +185,43 @@ void app_keyhandle_swtimer_stop(void)
 
 /** end add **/
 
+//add by cai
+osTimerId quick_awareness_sw_timer = NULL;
+static void quick_awareness_swtimer_handler(void const *param);
+osTimerDef(QUICK_AWARENESS_TIMER, quick_awareness_swtimer_handler);// define timers
+#define QUICK_AWARENESS_SWTIMER_IN_MS	(17000)
+
+
+static void quick_awareness_swtimer_handler(void const *param)
+{
+    HFCALL_MACHINE_ENUM hfcall_machine = app_get_hfcall_machine();
+	if(hfcall_machine == HFCALL_MACHINE_CURRENT_IDLE_ANOTHER_IDLE){	
+		//app_keyhandle_timer_stop();
+		//hal_codec_dac_mute(0);
+		app_bt_stream_volumeset(app_bt_stream_a2dpvolume_get_user()+17);//for volume independent
+		app_monitor_moment(false);			
+	}
+}
+
+void app_quick_awareness_swtimer_start(void)
+{
+	if(quick_awareness_sw_timer == NULL)
+		quick_awareness_sw_timer = osTimerCreate(osTimer(QUICK_AWARENESS_TIMER), osTimerOnce, NULL);
+	
+	osTimerStart(quick_awareness_sw_timer,QUICK_AWARENESS_SWTIMER_IN_MS);
+}
+
+void app_quick_awareness_swtimer_stop(void)
+{
+	if(quick_awareness_sw_timer == NULL)
+		return;
+	
+	osTimerStop(quick_awareness_sw_timer);
+}
+
+
+//end add
+
 #ifdef SUPPORT_SIRI
 extern int app_hfp_siri_report();
 extern int app_hfp_siri_voice(bool en);
@@ -1318,7 +1355,8 @@ void bt_key_handle_cover_key(enum APP_KEY_EVENT_T event)
 
 				//hal_codec_dac_mute(1);
 				app_bt_stream_volumeset(3+17);//m 5 by pang for volume independent
-				app_monitor_moment(true);	
+				app_monitor_moment(true);
+				app_quick_awareness_swtimer_start();//add by cai for exit quick Awareness after 15s
 			}
             break;
         case  APP_KEY_EVENT_UP:
@@ -1327,6 +1365,7 @@ void bt_key_handle_cover_key(enum APP_KEY_EVENT_T event)
 			if(hfcall_machine == HFCALL_MACHINE_CURRENT_IDLE_ANOTHER_IDLE){	
 				//app_keyhandle_timer_stop();
 				//hal_codec_dac_mute(0);
+				app_quick_awareness_swtimer_stop();//add by cai for exit quick Awareness after 15s
 				app_bt_stream_volumeset(app_bt_stream_a2dpvolume_get_user()+17);//for volume independent
 				app_monitor_moment(false);			
 			}
