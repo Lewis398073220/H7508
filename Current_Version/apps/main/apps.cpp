@@ -767,6 +767,11 @@ static void app_poweron_normal(APP_KEY_STATUS *status, void *param)
 
 #if 1 //by pang
 	app_status_indication_recover_set(APP_STATUS_INDICATION_POWERON);
+
+#ifdef ANC_APP
+	poweron_set_anc();//add by cai for Pairing tone distortion
+#endif
+
 #ifdef MEDIA_PLAYER_SUPPORT
 	app_voice_report(APP_STATUS_INDICATION_POWERON, 0);
 #endif
@@ -2180,7 +2185,9 @@ extern int rpc_service_setup(void);
 /** end add **/
 
     if (pwron_case == APP_POWERON_CASE_REBOOT){
-
+#ifdef ANC_APP
+		poweron_set_anc();//add by cai for Pairing tone distortion
+#endif
         app_status_indication_set(APP_STATUS_INDICATION_POWERON);
 #ifdef MEDIA_PLAYER_SUPPORT
         app_voice_report(APP_STATUS_INDICATION_POWERON, 0);
@@ -2247,7 +2254,7 @@ extern int rpc_service_setup(void);
 		app_user_event_open_module();
 #ifdef ANC_APP
 		//app_anc_Key_Pro(NULL, NULL);
-		poweron_set_anc();
+		//poweron_set_anc();//m by cai for Pairing tone distortion
 		//app_anc_switch_turnled(true);
 		//app_monitor_switch_turnled(false);
 #endif
@@ -2297,6 +2304,10 @@ extern int rpc_service_setup(void);
 	#if defined(__DEFINE_DEMO_MODE__)
 		if(demo_mode_power_on){
 			app_status_indication_recover_set(APP_STATUS_INDICATION_POWERON);//m by cai
+#ifdef ANC_APP
+			poweron_set_anc();//add by cai for Pairing tone distortion
+#endif
+
 			#ifdef MEDIA_PLAYER_SUPPORT
 			app_voice_report(APP_STATUS_INDICATION_POWERON, 0);
 			#endif
@@ -2444,7 +2455,7 @@ extern int rpc_service_setup(void);
 		app_user_event_open_module();
 #ifdef ANC_APP
 		//app_anc_Key_Pro(NULL, NULL);
-		poweron_set_anc();
+		//poweron_set_anc();//m by cai
 		//app_anc_switch_turnled(true);
 		//app_monitor_switch_turnled(false);
 #endif

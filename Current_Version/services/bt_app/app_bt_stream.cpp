@@ -7153,7 +7153,7 @@ void app_bt_stream_volumedown(void)
 #ifdef MEDIA_PLAYER_SUPPORT
                 //media_PlayAudio(AUD_ID_BT_WARNING,0); 
 				//app_ring_merge_set(APP_STATUS_INDICATION_WARNING);
-				//app_voice_report(APP_STATUS_INDICATION_VOLMINMAX, 0);//m by cai
+				app_voice_report(APP_STATUS_INDICATION_VOLMINMAX, 0);//m by cai
 				//app_ring_merge_set(APP_STATUS_INDICATION_VOLMINMAX);
 				//media_PlayAudio(AUD_ID_VOLMINMAX,0);//m by pang
 #if defined(__USE_AMP_MUTE_CTR__)
