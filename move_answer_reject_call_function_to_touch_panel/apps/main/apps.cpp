@@ -1402,7 +1402,7 @@ const APP_KEY_HANDLE  app_key_handle_cfg[] = {
 //--
 const APP_KEY_HANDLE  app_key_handle_cfg[] = {
     {{APP_KEY_CODE_PWR,APP_KEY_EVENT_LONGLONGLONGLONGLONGPRESS},"bt function key",app_bt_key_shutdown, NULL},
-    {{APP_KEY_CODE_PWR,APP_KEY_EVENT_LONGLONGPRESS},"bt function key",app_bt_key, NULL},
+    //{{APP_KEY_CODE_PWR,APP_KEY_EVENT_LONGLONGPRESS},"bt function key",app_bt_key, NULL},
 	{{APP_KEY_CODE_PWR,APP_KEY_EVENT_LONGLONGLONGPRESS},"bt function key",app_bt_key, NULL},
 #if defined(BT_USB_AUDIO_DUAL_MODE_TEST) && defined(BT_USB_AUDIO_DUAL_MODE)
     //{{APP_KEY_CODE_PWR,APP_KEY_EVENT_CLICK},"bt function key",app_bt_key, NULL},
@@ -1444,6 +1444,8 @@ const APP_KEY_HANDLE  app_key_handle_cfg[] = {
 	{{HAL_KEY_CODE_FN6,APP_KEY_EVENT_LONGPRESS},"bt quick monitor",app_bt_key, NULL},
 	{{HAL_KEY_CODE_FN6,APP_KEY_EVENT_UP_AFTER_LONGPRESS},"bt quick monitor",app_bt_key, NULL},
 	{{HAL_KEY_CODE_FN6,APP_KEY_EVENT_DOUBLECLICK},"game mode",app_bt_key, NULL},
+	{{HAL_KEY_CODE_FN6,APP_KEY_EVENT_CLICK},"game mode",app_bt_key, NULL},//add by cai
+	{{HAL_KEY_CODE_FN6,APP_KEY_EVENT_LONGLONGPRESS},"game mode",app_bt_key, NULL},//add by cai
 	{{HAL_KEY_CODE_FN5,APP_KEY_EVENT_LONGLONGPRESS},"siri",app_bt_key, NULL},//m by cai
 	//{{HAL_KEY_CODE_FN6,APP_KEY_EVENT_ULTRACLICK},"siri",app_bt_key, NULL},
 
