@@ -1,0 +1,13 @@
+---- USER_REBOOT_PLAY_MUSIC_AUTO Matches (12 in 5 files) ----
+apps.cpp (apps\main) line 1816 : #ifdef USER_REBOOT_PLAY_MUSIC_AUTO
+app_init in apps.cpp (apps\main) : #ifdef USER_REBOOT_PLAY_MUSIC_AUTO
+app_init in apps.cpp (apps\main) : #ifdef USER_REBOOT_PLAY_MUSIC_AUTO
+app_a2dp.cpp (services\bt_app) line 807 : #ifdef USER_REBOOT_PLAY_MUSIC_AUTO
+avrcp_callback_CT in app_a2dp.cpp (services\bt_app) : #ifdef USER_REBOOT_PLAY_MUSIC_AUTO
+bt_sbc_player in app_bt_stream.cpp (services\bt_app) : #ifdef USER_REBOOT_PLAY_MUSIC_AUTO
+bt_sbc_player in app_bt_stream.cpp (services\bt_app) : #if USER_REBOOT_PLAY_MUSIC_AUTO
+common.mk (config) line 1407 : USER_REBOOT_PLAY_MUSIC_AUTO ?= 0
+common.mk (config) line 1408 : ifeq ($(USER_REBOOT_PLAY_MUSIC_AUTO),1)
+common.mk (config) line 1409 : KBUILD_CPPFLAGS += -DUSER_REBOOT_PLAY_MUSIC_AUTO
+common.mk (config) line 1410 : export USER_REBOOT_PLAY_MUSIC_AUTO ?= 1
+hal_bootmode.h (platform\hal) line 67 : #ifdef USER_REBOOT_PLAY_MUSIC_AUTO
