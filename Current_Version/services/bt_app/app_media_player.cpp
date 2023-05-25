@@ -731,8 +731,8 @@ void media_runtime_audio_prompt_update(uint16_t id, uint8_t** ptr, uint32_t* len
 			break;
 
 		case AUD_ID_DEMO_MODE:
-			g_app_audio_data = (g_language==MEDIA_DEFAULT_LANGUAGE)? (U8*)EN_DEMO_MODE: (U8*)CN_DEMO_MODE;
-			g_app_audio_length = (g_language==MEDIA_DEFAULT_LANGUAGE)? sizeof(EN_DEMO_MODE): sizeof(CN_DEMO_MODE);
+			g_app_audio_data = (g_language==MEDIA_DEFAULT_LANGUAGE)? (U8*)CN_DEMO_MODE: (U8*)EN_DEMO_MODE;
+			g_app_audio_length = (g_language==MEDIA_DEFAULT_LANGUAGE)? sizeof(CN_DEMO_MODE): sizeof(EN_DEMO_MODE);
 			break;
 
 		case AUD_ID_RING_DIGITAL:
@@ -778,13 +778,13 @@ void media_runtime_audio_prompt_update(uint16_t id, uint8_t** ptr, uint32_t* len
 
 //add by cai
 		case AUD_ID_CALLING_MUTE:
-			g_app_audio_data = (g_language==MEDIA_DEFAULT_LANGUAGE)? (U8*)EN_CALLING_MUTE: (U8*)CN_MUTE;
-			g_app_audio_length = (g_language==MEDIA_DEFAULT_LANGUAGE)? sizeof(EN_CALLING_MUTE): sizeof(CN_MUTE);
+			g_app_audio_data = (g_language==MEDIA_DEFAULT_LANGUAGE)? (U8*)CN_MUTE: (U8*)EN_CALLING_MUTE;
+			g_app_audio_length = (g_language==MEDIA_DEFAULT_LANGUAGE)? sizeof(CN_MUTE): sizeof(EN_CALLING_MUTE);
 			break;
 
 		case AUD_ID_CALLING_UNMUTE:
-			g_app_audio_data = (g_language==MEDIA_DEFAULT_LANGUAGE)? (U8*)EN_CALLING_UNMUTE: (U8*)CN_UNMUTE;
-			g_app_audio_length = (g_language==MEDIA_DEFAULT_LANGUAGE)? sizeof(EN_CALLING_UNMUTE): sizeof(CN_UNMUTE);
+			g_app_audio_data = (g_language==MEDIA_DEFAULT_LANGUAGE)? (U8*)CN_UNMUTE: (U8*)EN_CALLING_UNMUTE;
+			g_app_audio_length = (g_language==MEDIA_DEFAULT_LANGUAGE)? sizeof(CN_UNMUTE): sizeof(EN_CALLING_UNMUTE);
 			break;
 //end add
 

@@ -976,11 +976,14 @@ static void app_ntc_timer_handler(void const *param)
 }
 #endif
 
-#if 0 //ntc电阻10k
-#define CHARGE_HIGH_TEMPERATURE    785  // 45C
-#define CHARGE_LOW_TEMPERATURE     1780 //  0C
-#define DISCHARGE_HIGH_TEMPERATURE 576  // 50C
-#define DISCHARGE_LOW_TEMPERATURE  1630 //-10C -12
+#if 1 //1.97v reference volt ntc电阻10k
+#define CHARGE_HIGH_TEMPERATURE         590     // 45C
+#define CHARGE_LOW_TEMPERATURE     		1320    // 0C 
+#define CHARGE_HIGH_TEMPERATURE_RECOVER	530		// 43C
+#define CHARGE_LOW_TEMPERATURE_RECOVER  1270    // 2C
+
+#define DISCHARGE_HIGH_TEMPERATURE 		380   	// 60C
+#define DISCHARGE_LOW_TEMPERATURE  		1730 	//-25C
 #else //ntc 30k ok
 //#define CHARGE_HIGH_TEMPERATURE         380     // 45C
 //#define CHARGE_LOW_TEMPERATURE     		1150    // 0C 

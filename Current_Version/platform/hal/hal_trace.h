@@ -23,7 +23,7 @@ extern "C" {
 #include "plat_types.h"
 #include "hal_trace_mod.h"
 
-#if 0
+#if 1
 //#define AUDIO_DEBUG  //open for audio dump
 #define AUDIO_DEBUG_V0_1_0
 //#define INTERSYS_RAW_DATA_ONLY
