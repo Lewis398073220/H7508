@@ -139,6 +139,7 @@
 #include "analog.h"
 #include "hal_codec.h"
 #include "tgt_hardware.h"
+#include "audio_prompt_sbc.h"//add by cai
 #ifdef __USER_DEFINE_CTR__ 
 #include "app_user.h"
 #endif
@@ -722,6 +723,7 @@ int app_voice_report_handler(APP_STATUS_INDICATION_T status, uint8_t device_id, 
 #ifdef BT_USB_AUDIO_DUAL_MODE
     if(btusb_is_usb_mode()) {
         if(hal_usb_configured()){
+			audio_prompt_stop_playing();//add by cai for prompt cutdown to play
             usb_audio_start_audio_prompt(id);
         }
     }
@@ -1782,19 +1784,24 @@ bool app_usbaudio_mode_on(void)
 void app_usb_key(APP_KEY_STATUS *status, void *param)
 {
     TRACE(3,"%s %d,%d",__func__, status->code, status->event);
-
+	usb_audio_app_key((HAL_KEY_CODE_T)status->code, (HAL_KEY_EVENT_T)status->event);//add by cai
 }
 
-const APP_KEY_HANDLE  app_usb_handle_cfg[] = {
-    {{APP_KEY_CODE_FN1,APP_KEY_EVENT_UP},"USB HID FN1 UP key",app_usb_key, NULL},
-    {{APP_KEY_CODE_FN2,APP_KEY_EVENT_UP},"USB HID FN2 UP key",app_usb_key, NULL},
-    {{APP_KEY_CODE_PWR,APP_KEY_EVENT_UP},"USB HID PWR UP key",app_usb_key, NULL},
+const APP_KEY_HANDLE  app_usb_handle_cfg[] = {//m by cai
+    {{APP_KEY_CODE_FN1,APP_KEY_EVENT_UP},"USB HID VOLUMEUP key",app_usb_key, NULL},
+	{{APP_KEY_CODE_FN1,APP_KEY_EVENT_REPEAT},"USB HID VOLUMEDOWN key",app_usb_key, NULL},
+    {{APP_KEY_CODE_PWR,APP_KEY_EVENT_CLICK},"USB HID PWR CLICK key",app_usb_key, NULL},
+	{{APP_KEY_CODE_PWR,APP_KEY_EVENT_DOUBLECLICK},"USB HID PWR DOUBLECLICK key",app_usb_key, NULL},
+	{{APP_KEY_CODE_PWR,APP_KEY_EVENT_TRIPLECLICK},"USB HID PWR TRIPLECLICK key",app_usb_key, NULL},
+	{{HAL_KEY_CODE_FN5,APP_KEY_EVENT_CLICK},"bt anc key",app_bt_key, NULL},
 };
 
 void app_usb_key_init(void)
 {
     uint8_t i = 0;
     TRACE(1,"%s",__func__);
+
+	app_key_handle_clear();//add by cai
     for (i=0; i<(sizeof(app_usb_handle_cfg)/sizeof(APP_KEY_HANDLE)); i++){
         app_key_handle_registration(&app_usb_handle_cfg[i]);
     }
@@ -2527,6 +2534,7 @@ exit:
 #ifdef BT_USB_AUDIO_DUAL_MODE
 	    if(usb_plugin)
 	    {
+	   	    app_usb_key_init();//add by cai
 	        btusb_switch(BTUSB_MODE_USB);
 	    }
 	    else
