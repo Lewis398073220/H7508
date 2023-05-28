@@ -116,7 +116,7 @@ extern const struct HAL_KEY_GPIOKEY_CFG_T cfg_hw_gpio_key_cfg[CFG_HW_GPIOKEY_NUM
 #define ANC_VMIC_CFG                        (AUD_VMIC_MAP_VMIC1)
 
 // audio codec
-#define CFG_HW_AUD_INPUT_PATH_NUM           4
+#define CFG_HW_AUD_INPUT_PATH_NUM           5//4 //m by cai
 extern const struct AUD_IO_PATH_CFG_T cfg_audio_input_path_cfg[CFG_HW_AUD_INPUT_PATH_NUM];
 
 #define CFG_HW_AUD_OUTPUT_PATH_SPEAKER_DEV  (AUD_CHANNEL_MAP_CH0 | AUD_CHANNEL_MAP_CH1)

@@ -348,9 +348,9 @@ const uint8_t *uaud_string_desc(uint8_t index)
         USB_AUDIO_STR_DESC_PRODUCT;
 #else
     {
-        0x16,                                                       //bLength
+        0x20,//m by cai                                             //bLength
         STRING_DESCRIPTOR,                                          //bDescriptorType 0x03
-        'B',0,'e',0,'s',0,'t',0,' ',0,'A',0,'u',0,'d',0,'i',0,'o',0 //bString iProduct - Best Audio
+        'P',0,'h',0,'i',0,'l',0,'i',0,'p',0,'s',0,' ',0,'T',0,'A',0,'H',0,'7',0,'5',0,'0',0,'8',0 //bString iProduct - Philips TAH7508//Best Audio//m by cai
     };
 #endif
 

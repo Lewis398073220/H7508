@@ -475,6 +475,8 @@ extern void app_hfp_set_battery_level(uint8_t level);
 
 int app_status_battery_report(uint8_t level)
 {
+	TRACE(2,"%s: %d",__func__, level);//add by cai
+
 #ifdef __SUPPORT_ANC_SINGLE_MODE_WITHOUT_BT__
     if (anc_single_mode_on)  //anc power on,anc only mode
         return 0;
@@ -2036,6 +2038,9 @@ extern int rpc_service_setup(void);
         switch (nRet) {
             case APP_BATTERY_OPEN_MODE_NORMAL:
                 nRet = 0;
+#if defined(__DEFINE_DEMO_MODE__)
+				if(demo_mode_on) demo_mode_power_on=1;//add by cai
+#endif
                 break;
             case APP_BATTERY_OPEN_MODE_CHARGING:
                 app_status_indication_set(APP_STATUS_INDICATION_CHARGING);
@@ -2052,8 +2057,13 @@ extern int rpc_service_setup(void);
 				#endif
 				/** end add **/
                 nRet = 0;
+#if defined(__DEFINE_DEMO_MODE__)
+				if(demo_mode_on) 
+					goto exit;//add by cai	
+#endif	
 #if defined(BT_USB_AUDIO_DUAL_MODE)
                 usb_plugin = 1;
+				need_check_key = false;//add by cai	
 #elif defined(BTUSB_AUDIO_MODE)
                 goto exit;
 #else
@@ -2188,9 +2198,13 @@ extern int rpc_service_setup(void);
 #ifdef ANC_APP
 		poweron_set_anc();//add by cai for Pairing tone distortion
 #endif
-        app_status_indication_set(APP_STATUS_INDICATION_POWERON);
+#if defined(__DEFINE_DEMO_MODE__)
+		if(demo_mode_power_on){
+	        app_status_indication_set(APP_STATUS_INDICATION_POWERON);
 #ifdef MEDIA_PLAYER_SUPPORT
-        app_voice_report(APP_STATUS_INDICATION_POWERON, 0);
+	        app_voice_report(APP_STATUS_INDICATION_POWERON, 0);
+#endif
+		}
 #endif
         app_bt_start_custom_function_in_bt_thread((uint32_t)1,
                     0, (uint32_t)btif_me_write_bt_sleep_enable);
@@ -2242,8 +2256,17 @@ extern int rpc_service_setup(void);
 #endif
 #if defined( __BTIF_EARPHONE__) && defined(__BTIF_BT_RECONNECT__)
 #if !defined(IBRT)
-		power_on_open_reconnect_flag=1;//add by pang
-        app_bt_profile_connect_manager_opening_reconnect();
+		//power_on_open_reconnect_flag=1;//add by pang
+#if defined(BT_USB_AUDIO_DUAL_MODE)//m by cai
+		if(demo_mode_power_on || app_battery_charger_indication_open() != APP_BATTERY_CHARGER_PLUGIN){
+			power_on_open_reconnect_flag=0;
+			app_bt_profile_connect_manager_opening_reconnect();
+		}
+#else
+		power_on_open_reconnect_flag=0;//add by pang
+		app_bt_profile_connect_manager_opening_reconnect();
+#endif
+
 #endif
 #endif
 
@@ -2301,7 +2324,7 @@ extern int rpc_service_setup(void);
         {
             pwron_case = APP_POWERON_CASE_NORMAL;
 		/** add by pang **/
-	#if defined(__DEFINE_DEMO_MODE__)
+#if defined(__DEFINE_DEMO_MODE__)
 		if(demo_mode_power_on){
 			app_status_indication_recover_set(APP_STATUS_INDICATION_POWERON);//m by cai
 #ifdef ANC_APP
@@ -2312,8 +2335,19 @@ extern int rpc_service_setup(void);
 			app_voice_report(APP_STATUS_INDICATION_POWERON, 0);
 			#endif
 		}
-	#endif
+#endif
 		/** end add **/
+		//add by cai
+#ifdef BT_USB_AUDIO_DUAL_MODE
+#ifdef __DEFINE_DEMO_MODE__	
+		if(demo_mode_power_on==0 && app_battery_charger_indication_open() == APP_BATTERY_CHARGER_PLUGIN){
+#endif
+			poweron_set_anc();	
+#ifdef __DEFINE_DEMO_MODE__	
+		}
+#endif		
+#endif
+		//end add
         }
         if (pwron_case != APP_POWERON_CASE_INVALID && pwron_case != APP_POWERON_CASE_DITHERING){
             AUTO_TEST_TRACE(1,"power on case:%d\n", pwron_case);
@@ -2417,8 +2451,15 @@ extern int rpc_service_setup(void);
                 default:
                     //app_status_indication_set(APP_STATUS_INDICATION_PAGESCAN);
 #if defined( __BTIF_EARPHONE__) && defined(__BTIF_BT_RECONNECT__) && !defined(IBRT)
+#if defined(BT_USB_AUDIO_DUAL_MODE)//m by cai
+					if(demo_mode_power_on || app_battery_charger_indication_open() != APP_BATTERY_CHARGER_PLUGIN){
+						power_on_open_reconnect_flag=0;
+						app_bt_profile_connect_manager_opening_reconnect();
+					}
+#else
 					power_on_open_reconnect_flag=0;//add by pang
                     app_bt_profile_connect_manager_opening_reconnect();
+#endif
 #endif
 #ifdef __THIRDPARTY
                     app_thirdparty_specific_lib_event_handle(THIRDPARTY_FUNC_NO2,THIRDPARTY_BT_CONNECTABLE);
@@ -2479,29 +2520,37 @@ exit:
 #ifdef ANC_APP
     app_anc_set_init_done();
 #endif
+
+#ifdef __DEFINE_DEMO_MODE__	
+	if(!(demo_mode_on==1 && demo_mode_power_on==0 && app_battery_charger_indication_open() == APP_BATTERY_CHARGER_PLUGIN)) {//add by cai
+#endif
 #ifdef BT_USB_AUDIO_DUAL_MODE
-    if(usb_plugin)
-    {
-        btusb_switch(BTUSB_MODE_USB);
-    }
-    else
-    {
-        btusb_switch(BTUSB_MODE_BT);
-    }
+	    if(usb_plugin)
+	    {
+	        btusb_switch(BTUSB_MODE_USB);
+	    }
+	    else
+	    {
+	        btusb_switch(BTUSB_MODE_BT);
+	    }
 #else //BT_USB_AUDIO_DUAL_MODE
 #if defined(BTUSB_AUDIO_MODE)
-    if(pwron_case == APP_POWERON_CASE_CHARGING) {
+	    if(pwron_case == APP_POWERON_CASE_CHARGING) {
 #ifdef __WATCHER_DOG_RESET__
-        app_wdt_close();
+	        app_wdt_close();
 #endif
-        af_open();
-        app_key_handle_clear();
-        app_usb_key_init();
-        app_usbaudio_entry();
-    }
+	        af_open();
+	        app_key_handle_clear();
+	        app_usb_key_init();
+	        app_usbaudio_entry();
+	    }
 
 #endif // BTUSB_AUDIO_MODE
 #endif // BT_USB_AUDIO_DUAL_MODE
+#ifdef __DEFINE_DEMO_MODE__
+	}//add by cai		
+#endif
+
     #if 0
     app_sysfreq_req(APP_SYSFREQ_USER_APP_INIT, APP_SYSFREQ_32K);
 	#else //m by pang for pwm led

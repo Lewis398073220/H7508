@@ -413,12 +413,12 @@ int app_battery_handle_process_normal(uint32_t status,  union APP_BATTERY_MSG_PR
 			app_10_second_timer_check();
             break;
         case APP_BATTERY_STATUS_PDVOLT:
-#ifndef BT_USB_AUDIO_DUAL_MODE
+//#ifndef BT_USB_AUDIO_DUAL_MODE //m by cai
             TRACE(1,"PDVOLT-->POWEROFF:%d", prams.volt);
 			battery_pd_poweroff=1;//add by pang
             osTimerStop(app_battery_timer);
             app_shutdown();
-#endif
+//#endif
             break;
         case APP_BATTERY_STATUS_CHARGING:
             TRACE(1,"CHARGING-->APP_BATTERY_CHARGER :%d", prams.charger);
@@ -426,7 +426,15 @@ int app_battery_handle_process_normal(uint32_t status,  union APP_BATTERY_MSG_PR
             {
 #ifdef BT_USB_AUDIO_DUAL_MODE
                 TRACE(1,"%s:PLUGIN.", __func__);
+#if 0//m by cai
                 btusb_switch(BTUSB_MODE_USB);
+#else
+#ifdef __DEFINE_DEMO_MODE__
+				if(app_nvrecord_demo_mode_get()!=DEMO_MODE) 
+#endif
+					btusb_switch(BTUSB_MODE_USB);
+#endif
+
 #else
 #if CHARGER_PLUGINOUT_RESET
                 app_reset();
@@ -452,7 +460,7 @@ int app_battery_handle_process_charging(uint32_t status,  union APP_BATTERY_MSG_
         case APP_BATTERY_STATUS_NORMAL:
         case APP_BATTERY_STATUS_UNDERVOLT:
             app_battery_measure.currvolt = prams.volt;
-            app_status_battery_report(prams.volt);
+            app_status_battery_report(app_battery_measure.currlevel-1);//m by cai
             break;
         case APP_BATTERY_STATUS_CHARGING:
             TRACE(1,"CHARGING:%d", prams.charger);
@@ -460,7 +468,13 @@ int app_battery_handle_process_charging(uint32_t status,  union APP_BATTERY_MSG_
             {
 #ifdef BT_USB_AUDIO_DUAL_MODE
                 TRACE(1,"%s:PlUGOUT.", __func__);
+#if 0//m by cai
                 btusb_switch(BTUSB_MODE_BT);
+#else
+				osTimerStop(app_battery_timer);
+				app_shutdown();
+#endif
+
 #else
 #if CHARGER_PLUGINOUT_RESET
                 TRACE(0,"CHARGING-->RESET");
@@ -475,7 +489,14 @@ int app_battery_handle_process_charging(uint32_t status,  union APP_BATTERY_MSG_
             {
 #ifdef BT_USB_AUDIO_DUAL_MODE
                 TRACE(1,"%s:PLUGIN.", __func__);
+#if 0//m by cai
                 btusb_switch(BTUSB_MODE_USB);
+#else
+#ifdef __DEFINE_DEMO_MODE__
+				if(app_nvrecord_demo_mode_get()!=DEMO_MODE) 
+#endif
+					btusb_switch(BTUSB_MODE_USB);
+#endif
 #endif
             }
             break;
@@ -527,6 +548,8 @@ static int app_battery_handle_process(APP_MESSAGE_BODY *msg_body)
         generatedSeed ^= (((uint32_t)(bt_addr[index])) << (hal_sys_timer_get()&0xF));
     }
     srand(generatedSeed);
+
+	APP_BATTERY_TRACE(3,"********%s: %d  %d",__func__, status, app_battery_measure.status);//add by cai
 
     if (status == APP_BATTERY_STATUS_PLUGINOUT){
         app_battery_pluginout_debounce_start();

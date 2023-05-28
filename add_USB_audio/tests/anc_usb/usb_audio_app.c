@@ -2987,7 +2987,8 @@ static int usb_audio_open_codec_stream(enum AUD_STREAM_T stream, enum AUDIO_STRE
 #if !defined(USB_AUDIO_SPEECH) && defined(BTUSB_AUDIO_MODE)
             stream_cfg.io_path = AUD_INPUT_PATH_USBAUDIO;
 #else
-            stream_cfg.io_path = AUD_INPUT_PATH_MAINMIC;
+            //stream_cfg.io_path = AUD_INPUT_PATH_MAINMIC;
+            stream_cfg.io_path = AUD_INPUT_PATH_USBAUDIO;//add by cai
 #endif
             stream_cfg.data_ptr = capture_buf;
             stream_cfg.data_size = capture_size;
