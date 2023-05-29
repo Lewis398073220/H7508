@@ -1787,6 +1787,7 @@ void app_usb_key(APP_KEY_STATUS *status, void *param)
 	usb_audio_app_key((HAL_KEY_CODE_T)status->code, (HAL_KEY_EVENT_T)status->event);//add by cai
 }
 
+#if 1
 const APP_KEY_HANDLE  app_usb_handle_cfg[] = {//m by cai
     {{APP_KEY_CODE_FN1,APP_KEY_EVENT_UP},"USB HID VOLUMEUP key",app_usb_key, NULL},
 	{{APP_KEY_CODE_FN1,APP_KEY_EVENT_REPEAT},"USB HID VOLUMEDOWN key",app_usb_key, NULL},
@@ -1795,6 +1796,16 @@ const APP_KEY_HANDLE  app_usb_handle_cfg[] = {//m by cai
 	{{APP_KEY_CODE_PWR,APP_KEY_EVENT_TRIPLECLICK},"USB HID PWR TRIPLECLICK key",app_usb_key, NULL},
 	{{HAL_KEY_CODE_FN5,APP_KEY_EVENT_CLICK},"bt anc key",app_bt_key, NULL},
 };
+#else//for debug
+const APP_KEY_HANDLE  app_usb_handle_cfg[] = {//m by cai
+    {{APP_KEY_CODE_PWR,APP_KEY_EVENT_UP},"USB HID VOLUMEUP key",app_usb_key, NULL},
+ //{{APP_KEY_CODE_FN1,APP_KEY_EVENT_REPEAT},"USB HID VOLUMEDOWN key",app_usb_key, NULL},
+    //{{APP_KEY_CODE_PWR,APP_KEY_EVENT_CLICK},"USB HID PWR CLICK key",app_usb_key, NULL},
+ {{APP_KEY_CODE_PWR,APP_KEY_EVENT_DOUBLECLICK},"USB HID PWR DOUBLECLICK key",app_usb_key, NULL},
+ {{APP_KEY_CODE_PWR,APP_KEY_EVENT_TRIPLECLICK},"USB HID PWR TRIPLECLICK key",app_usb_key, NULL},
+ //{{HAL_KEY_CODE_FN5,APP_KEY_EVENT_CLICK},"bt anc key",app_bt_key, NULL},
+};
+#endif
 
 void app_usb_key_init(void)
 {

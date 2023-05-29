@@ -96,6 +96,33 @@
 #endif
 #endif
 
+//add by cai
+uint8_t usb_volume_key_trigger_flag = 0;
+uint8_t old_playback_vol = 1;
+uint8_t max_volume_increase_count = 0;
+
+uint8_t usb_persent_volume[TGT_VOLUME_LEVEL_QTY]={
+	0xff,//invalid
+	0,//0%
+	6,//6%
+	13,//13%
+	19,//19%
+	25,//25%
+	31,//31%
+	38,//38%
+	44,//44%
+	50,//50%
+	56,//56%
+	63,//63%
+	69,//69%
+	75,//75%
+	81,//81%
+	88,//88%
+	94,//94%
+	100,//100%
+};
+//end add
+
 #if defined(__SW_IIR_EQ_PROCESS__)
 static uint8_t audio_eq_sw_iir_index = 0;
 extern const IIR_CFG_T * const audio_eq_sw_iir_cfg_list[];
@@ -210,6 +237,7 @@ extern const IIR_CFG_T * const audio_eq_hw_iir_cfg_list[];
     USB_AUDIO_KEY_VOICE_CMD \
 }
 #else
+#if 1
 #define USB_AUDIO_KEY_MAP               { \
     { USB_AUDIO_HID_PLAY_PAUSE,     HAL_KEY_CODE_PWR,   KEY_EVENT_SET(CLICK),       }, \
     { USB_AUDIO_HID_SCAN_NEXT,      HAL_KEY_CODE_PWR,   KEY_EVENT_SET(DOUBLECLICK), }, \
@@ -217,6 +245,15 @@ extern const IIR_CFG_T * const audio_eq_hw_iir_cfg_list[];
     { USB_AUDIO_HID_VOL_UP,         HAL_KEY_CODE_FN1,   KEY_EVENT_SET(UP), }, \
     { USB_AUDIO_HID_VOL_DOWN,       HAL_KEY_CODE_FN1,   KEY_EVENT_SET(REPEAT), }, \
 }
+#else
+#define USB_AUDIO_KEY_MAP               { \
+	{ USB_AUDIO_HID_PLAY_PAUSE,     HAL_KEY_CODE_PWR,   KEY_EVENT_SET(CLICK),       }, \
+    { USB_AUDIO_HID_SCAN_NEXT,      HAL_KEY_CODE_PWR,   KEY_EVENT_SET(DOUBLECLICK), }, \
+    { USB_AUDIO_HID_SCAN_PREV,      HAL_KEY_CODE_PWR,   KEY_EVENT_SET(TRIPLECLICK), }, \
+    { USB_AUDIO_HID_VOL_UP,         HAL_KEY_CODE_PWR,   KEY_EVENT_SET(UP), }, \
+    { USB_AUDIO_HID_VOL_DOWN,       HAL_KEY_CODE_FN1,   KEY_EVENT_SET(REPEAT), }, \
+}
+#endif
 #endif
 #endif
 
@@ -4147,7 +4184,7 @@ static float playback_gain_to_float(uint32_t level)
         return 0;
     }
 
-    db = codec_dac_vol[level].sdac_volume;
+    db = codec_dac_vol[level+17].sdac_volume;//m by cai for Volume independent
     if (db <= USB_AUDIO_MIN_DBVAL) {
         return 0;
     }
@@ -5888,6 +5925,31 @@ static void usb_audio_cmd_handler(void *param)
 
         case AUDIO_CMD_SET_VOLUME:
             usb_audio_cmd_set_volume();
+			//add by cai
+			TRACE(2,"[%s]new_playback_vol = %d", __func__, new_playback_vol);
+			if(usb_volume_key_trigger_flag==1) {
+				if(old_playback_vol != MAX_VOLUME_VAL)
+				{
+					if(old_playback_vol >= new_playback_vol)
+						usb_audio_hid_set_event(USB_AUDIO_HID_VOL_UP, 1);
+					else usb_volume_key_trigger_flag=0;
+				}else{
+					max_volume_increase_count--;
+					if(max_volume_increase_count)usb_audio_hid_set_event(USB_AUDIO_HID_VOL_UP, 1);
+					else{
+						usb_volume_key_trigger_flag=0;
+						max_volume_increase_count=0;
+					}
+				}
+			} else if(usb_volume_key_trigger_flag==2){
+				if(old_playback_vol != MIN_VOLUME_VAL)
+				{
+					if(old_playback_vol <= new_playback_vol)
+						usb_audio_hid_set_event(USB_AUDIO_HID_VOL_DOWN, 1);
+					else usb_volume_key_trigger_flag=0;
+				}else usb_volume_key_trigger_flag=0;
+			}
+			//end add
             break;
 
         case AUDIO_CMD_SET_CAP_VOLUME:
@@ -6251,6 +6313,18 @@ int usb_audio_app_key(enum HAL_KEY_CODE_T code, enum HAL_KEY_EVENT_T event)
 #endif
                 app_key_trace(__LINE__, code, event, uevt, state);
                 usb_audio_hid_set_event(uevt, state);
+				//add by cai
+				if(uevt==USB_AUDIO_HID_VOL_UP) {
+					old_playback_vol = new_playback_vol;
+					usb_volume_key_trigger_flag=1;
+					max_volume_increase_count=4;
+					TRACE(3,"[%s]uevt = %d  old_playback_vol = %d", __func__, uevt, old_playback_vol);
+				} else if(uevt==USB_AUDIO_HID_VOL_DOWN) {
+					old_playback_vol = new_playback_vol;
+					usb_volume_key_trigger_flag=2;
+					TRACE(3,"[%s]uevt = %d  old_playback_vol = %d", __func__, uevt, old_playback_vol);
+				}
+				//end add
                 // The key event has been processed
                 return 0;
             }
