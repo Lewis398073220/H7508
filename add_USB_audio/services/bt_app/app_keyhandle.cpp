@@ -75,6 +75,11 @@ extern struct BT_DEVICE_T  app_bt_device;
 #include "hwtimer_list.h"
 #include "philips_ble_api.h"
 #include "app_media_player.h"
+#include "../../../tests/anc_usb/usb_audio_app.h"//add by cai
+
+#ifdef BT_USB_AUDIO_DUAL_MODE
+extern "C" int hal_usb_configured(void);//add by cai
+#endif
 
 void bt_key_handle_cover_key(enum APP_KEY_EVENT_T event);
 /** end add **/
@@ -198,7 +203,11 @@ static void quick_awareness_swtimer_handler(void const *param)
 	if(hfcall_machine == HFCALL_MACHINE_CURRENT_IDLE_ANOTHER_IDLE){	
 		//app_keyhandle_timer_stop();
 		//hal_codec_dac_mute(0);
-		app_bt_stream_volumeset(app_bt_stream_a2dpvolume_get_user()+17);//for volume independent
+		if(!hal_usb_configured()){//m by cai
+			app_bt_stream_volumeset(app_bt_stream_a2dpvolume_get_user()+17);//for volume independent
+		}else{
+			usb_audio_set_volume_for_quick_awareness(false, 3);
+		}
 		app_monitor_moment(false);			
 	}
 }
@@ -1354,7 +1363,11 @@ void bt_key_handle_cover_key(enum APP_KEY_EVENT_T event)
 				//app_keyhandle_timer_set(KEYHANDLE_EVENT_TOUCH_PALM_PRESS,200);
 
 				//hal_codec_dac_mute(1);
-				app_bt_stream_volumeset(3+17);//m 5 by pang for volume independent
+				if(!hal_usb_configured()){//m by cai
+					app_bt_stream_volumeset(3+17);//m 5 by pang for volume independent
+				}else{
+					usb_audio_set_volume_for_quick_awareness(true, 3);
+				}
 				app_monitor_moment(true);
 				app_quick_awareness_swtimer_start();//add by cai for exit quick Awareness after 15s
 			}
@@ -1366,8 +1379,13 @@ void bt_key_handle_cover_key(enum APP_KEY_EVENT_T event)
 				//app_keyhandle_timer_stop();
 				//hal_codec_dac_mute(0);
 				app_quick_awareness_swtimer_stop();//add by cai for exit quick Awareness after 15s
-				app_bt_stream_volumeset(app_bt_stream_a2dpvolume_get_user()+17);//for volume independent
-				app_monitor_moment(false);			
+				app_monitor_moment(false);
+				if(!hal_usb_configured()){//m by cai
+					app_bt_stream_volumeset(app_bt_stream_a2dpvolume_get_user()+17);//for volume independent
+				}else{
+					usb_audio_set_volume_for_quick_awareness(false, 3);
+				}
+							
 			}
             break;
 		case  APP_KEY_EVENT_DOUBLECLICK:

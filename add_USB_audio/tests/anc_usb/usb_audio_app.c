@@ -5590,6 +5590,24 @@ static void usb_audio_cmd_set_volume(void)
 #endif
 }
 
+//add by cai
+void usb_audio_set_volume_for_quick_awareness(uint8_t quick_awareness_on, uint8_t vol)
+{
+	if(quick_awareness_on){
+		usb_audio_set_codec_volume(AUD_STREAM_PLAYBACK, vol);
+	
+#ifdef UNMUTE_WHEN_SET_VOL
+		// Unmute if muted before
+		if (mute_user_map & (1 << CODEC_MUTE_USER_CMD)) {
+			usb_audio_codec_unmute(CODEC_MUTE_USER_CMD);
+		}
+#endif
+	}else{
+		usb_audio_cmd_set_volume();
+	}
+}
+//end add
+
 static void usb_audio_cmd_set_cap_volume(void)
 {
     capture_vol = new_capture_vol;
