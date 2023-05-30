@@ -2548,7 +2548,9 @@ exit:
 	    if(usb_plugin)
 	    {
 	   	    app_usb_key_init();//add by cai
+	   	    analog_aud_codec_mute();//add by cai for pop noise when insert USB
 	        btusb_switch(BTUSB_MODE_USB);
+			analog_aud_codec_nomute();//add by cai
 	    }
 	    else
 	    {

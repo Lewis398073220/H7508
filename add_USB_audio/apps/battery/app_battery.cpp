@@ -39,6 +39,7 @@
 #include "app_user.h"
 #include "philips_ble_api.h"
 #include "hal_bootmode.h"
+#include "analog.h"//add by cai
 bool battery_pd_poweroff=0;
 /** end add **/
 
@@ -432,7 +433,11 @@ int app_battery_handle_process_normal(uint32_t status,  union APP_BATTERY_MSG_PR
 #ifdef __DEFINE_DEMO_MODE__
 				if(app_nvrecord_demo_mode_get()!=DEMO_MODE) 
 #endif
+				{
+					analog_aud_codec_mute();//add by cai
 					btusb_switch(BTUSB_MODE_USB);
+					analog_aud_codec_nomute();//add by cai
+				}
 #endif
 
 #else
@@ -495,7 +500,7 @@ int app_battery_handle_process_charging(uint32_t status,  union APP_BATTERY_MSG_
 #ifdef __DEFINE_DEMO_MODE__
 				if(app_nvrecord_demo_mode_get()!=DEMO_MODE) 
 #endif
-					btusb_switch(BTUSB_MODE_USB);
+					;//btusb_switch(BTUSB_MODE_USB);//m by cai for pop noise when insert USB
 #endif
 #endif
             }
