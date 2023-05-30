@@ -3605,7 +3605,7 @@ static void usb_audio_vol_control(uint32_t percent)
     TRACE(2,"VOL CTRL: percent=%u new_playback_vol=%u", percent, new_playback_vol);
 
 #ifdef USB_AUDIO_MULTIFUNC
-    new_playback_coef = playback_gain_to_float(new_playback_vol);
+    new_playback_coef = playback_gain_to_float(new_playback_vol+17);//m by cai for Volume independent
 #else
     usb_audio_enqueue_cmd(AUDIO_CMD_SET_VOLUME);
 #endif
@@ -4184,7 +4184,7 @@ static float playback_gain_to_float(uint32_t level)
         return 0;
     }
 
-    db = codec_dac_vol[level+17].sdac_volume;//m by cai for Volume independent
+    db = codec_dac_vol[level].sdac_volume;
     if (db <= USB_AUDIO_MIN_DBVAL) {
         return 0;
     }
@@ -5580,7 +5580,7 @@ static void usb_audio_cmd_set_volume(void)
     playback_vol = new_playback_vol;
 #endif
 
-    usb_audio_set_codec_volume(AUD_STREAM_PLAYBACK, playback_vol);
+    usb_audio_set_codec_volume(AUD_STREAM_PLAYBACK, playback_vol+17);//m by cai for Volume independent
 
 #ifdef UNMUTE_WHEN_SET_VOL
     // Unmute if muted before
@@ -5594,7 +5594,7 @@ static void usb_audio_cmd_set_volume(void)
 void usb_audio_set_volume_for_quick_awareness(uint8_t quick_awareness_on, uint8_t vol)
 {
 	if(quick_awareness_on){
-		usb_audio_set_codec_volume(AUD_STREAM_PLAYBACK, vol);
+		usb_audio_set_codec_volume(AUD_STREAM_PLAYBACK, vol+17);//m by cai for Volume independent
 	
 #ifdef UNMUTE_WHEN_SET_VOL
 		// Unmute if muted before
