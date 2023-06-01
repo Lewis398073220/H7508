@@ -643,9 +643,9 @@ void Get_Connect_Phone_Mac(void)
 void Get_Device_Feature_Config(void)
 {
 	uint8_t device_feature[3] = {0};
-	device_feature[0] = FOTA_SUPPORT | ANC_MODE_SUPPORT | EQUALIZER_SUPPORT | CUSTOMIZATION_EQ_SUPPORT | NOWPLAYING_SUPPORT; //| EAR_DETECTION_SUPPORT;//  | HEART_RATE_SUPPORT;
-    device_feature[1] = BATTERY_STATUS_SUPPORT  | SPECIAL_FUNCTION1_SUPPORT |SPECIAL_FUNCTION2_SUPPORT;//| MULTI_LANGAUAGE_VOICE_PROMPT_SUPPORT
-    device_feature[2] = NOT_SUPPORT ;
+	device_feature[0] = FOTA_SUPPORT | ANC_MODE_SUPPORT | EQUALIZER_SUPPORT | CUSTOMIZATION_EQ_SUPPORT; //| NOWPLAYING_SUPPORT; //| EAR_DETECTION_SUPPORT;//  | HEART_RATE_SUPPORT;
+    device_feature[1] = BATTERY_STATUS_SUPPORT  | SPECIAL_FUNCTION1_SUPPORT; //|SPECIAL_FUNCTION2_SUPPORT;//| MULTI_LANGAUAGE_VOICE_PROMPT_SUPPORT
+    device_feature[2] = NOWPLAYING2_0_SUPPORT | KEY_DEFINE_CHANGE_SUPPORT;
     
     g_valueLen = 11;
     uint8_t i =0;
@@ -656,7 +656,7 @@ void Get_Device_Feature_Config(void)
      
      data[7] = device_feature[0];
      data[8] = device_feature[1];
-     data[9] = device_feature[2] & 0x01;	
+     data[9] = device_feature[2];	
 	 
      //Do checksum
      data[g_valueLen - 1]=Do_CheckSum(data,g_valueLen);
@@ -668,7 +668,7 @@ void Get_Device_Feature_Config(void)
     Philips_Send_Notify(g_valuePtr, (uint32_t)g_valueLen);
 }
 
-unsigned char Version[] = "API V2.0";
+unsigned char Version[] = "API V5.0";
 void Get_Api_Version()
 {
 	  uint8_t Api_Version[10]= {0};
@@ -711,6 +711,8 @@ void Get_Api_Version()
 
 void Get_Sound_Quality(void)
 {
+	TRACE(0,"********%s",__func__);
+
 	uint8_t sound_quality[]= {0x00}; //0 is SBC ,1 is AAC
 
 	if(0x02==bt_sbc_player_get_codec_type())
@@ -787,6 +789,8 @@ void Get_Left_Ear_MAC_Address(void)
 
 void Notification_Sound_Quality_Change(void)
 {
+	TRACE(0,"********%s",__func__);
+
     g_valueLen = 9;
     uint8_t i =0;
     uint8_t head[9] = {0xff,0x01,0x00,0x04,0x71,0x80,0x06,0x00,0x00};

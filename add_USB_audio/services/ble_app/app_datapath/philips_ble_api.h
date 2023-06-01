@@ -259,7 +259,8 @@ extern u8 album[150], album_len;
 #define SPECIAL_FUNCTION2_SUPPORT 		  			0x40
 #define MULTIPOINT_SUPPORT                				0x80
 //Byte 2
-#define GAME_MODE_SUPPORT 				       	0x01
+//#define GAME_MODE_SUPPORT 				       	0x01
+#define NOWPLAYING2_0_SUPPORT 				       	0x01
 #define KEY_DEFINE_CHANGE_SUPPORT 	 			0x02
 
 //ANC
