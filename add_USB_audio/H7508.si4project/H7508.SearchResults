@@ -1,5 +1,0 @@
----- appm_start_advertising Matches (4 in 4 files) ----
-app.c (services\ble_app\app_main) line 610 : void appm_start_advertising(void *param)
-app.h (services\ble_app\app_main) line 206 : void appm_start_advertising(void *param);
-ble_start_adv in app_ble_mode_switch.c (services\ble_app\app_main) :         appm_start_advertising(&bleModeEnv.advInfo);
-vob_start_advertising in voice_over_ble.c (services\ble_app\app_vob) :     appm_start_advertising();
