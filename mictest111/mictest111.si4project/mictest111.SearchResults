@@ -1,0 +1,34 @@
+---- AUDIO_ANC_FB_MC_HW Matches (33 in 9 files) ----
+tool_anc_open in anc_cfg.c (services\multimedia\audio\process\anc\cfg) : #ifdef  AUDIO_ANC_FB_MC_HW
+anc_cfg.c (services\multimedia\audio\process\anc\cfg) line 1609 : #if !defined( AUDIO_ANC_TT_HW)&& !defined( AUDIO_ANC_FB_MC_HW)
+handle_anc_cmd in anc_cfg.c (services\multimedia\audio\process\anc\cfg) : #ifdef  AUDIO_ANC_FB_MC_HW
+handle_anc_cmd in anc_cfg.c (services\multimedia\audio\process\anc\cfg) : #if !defined( AUDIO_ANC_TT_HW)&& !defined( AUDIO_ANC_FB_MC_HW)
+anc_key_proc_open in anc_usb_app.c (tests\anc_usb) : #if defined(AUDIO_ANC_FB_MC_HW)
+anc_key_proc_open in anc_usb_app.c (tests\anc_usb) : #if defined(AUDIO_ANC_FB_MC_HW)
+anc_key_proc_open in anc_usb_app.c (tests\anc_usb) : #ifdef AUDIO_ANC_FB_MC_HW
+anc_state_transition in anc_usb_app.c (tests\anc_usb) : #ifdef AUDIO_ANC_FB_MC_HW
+anc_state_transition in anc_usb_app.c (tests\anc_usb) : #ifdef AUDIO_ANC_FB_MC_HW
+anc_state_transition in anc_usb_app.c (tests\anc_usb) : #ifdef AUDIO_ANC_FB_MC_HW
+anc_state_transition in anc_usb_app.c (tests\anc_usb) : #ifdef AUDIO_ANC_FB_MC_HW
+anc_state_transition in anc_usb_app.c (tests\anc_usb) : #ifdef AUDIO_ANC_FB_MC_HW
+anc_sample_rate_change in anc_usb_app.c (tests\anc_usb) : #if defined(AUDIO_ANC_FB_MC_HW)
+anc_full_open in anc_usb_app.c (tests\anc_usb) : #if defined(AUDIO_ANC_FB_MC_HW)
+anc_full_close in anc_usb_app.c (tests\anc_usb) : #if defined(AUDIO_ANC_FB_MC_HW)
+anc_fade_thread in app_anc.c (apps\anc\src) : #ifdef AUDIO_ANC_FB_MC_HW
+app_anc_select_coef in app_anc.c (apps\anc\src) : #ifdef AUDIO_ANC_FB_MC_HW
+app_anc_enable in app_anc.c (apps\anc\src) : #ifdef AUDIO_ANC_FB_MC_HW
+anc_sample_rate_change in app_anc.c (apps\anc\src) : #ifdef AUDIO_ANC_FB_MC_HW
+app_anc_open_anc in app_anc.c (apps\anc\src) : #ifdef AUDIO_ANC_FB_MC_HW
+app_anc_status_change in app_anc.c (apps\anc\src) : #ifdef AUDIO_ANC_FB_MC_HW
+app_anc_Key_Pro in app_anc.c (apps\anc\src) : #ifdef AUDIO_ANC_FB_MC_HW
+app_anc.c (apps\anc\src) line 2020 : #ifdef AUDIO_ANC_FB_MC_HW
+app_anc.c (apps\anc\src) line 2100 : #ifdef AUDIO_ANC_FB_MC_HW
+set_anc_mode in app_anc.c (apps\anc\src) : #ifdef AUDIO_ANC_FB_MC_HW
+app_monitor_moment in app_anc.c (apps\anc\src) : #ifdef AUDIO_ANC_FB_MC_HW
+common.mk (config) line 1302 : ifeq ($(AUDIO_ANC_FB_MC_HW),1)
+common.mk (config) line 1303 : KBUILD_CPPFLAGS += -DAUDIO_ANC_FB_MC_HW
+hal_codec_open in hal_codec_best2300a.c (platform\hal\best2300a) : #elif defined(AUDIO_ANC_FB_MC_HW)
+hal_codec_open in hal_codec_best2300p.c (platform\hal\best2300p) : #elif defined(AUDIO_ANC_FB_MC_HW)
+hal_codec_open in hal_codec_best3003.c (platform\hal\best3003) : #if defined(AUDIO_ANC_TT_HW)|| defined(AUDIO_ANC_FB_MC_HW)
+target.mk (config\anc_usb) line 28 : ifeq ($(AUDIO_ANC_FB_MC_HW),1)
+target.mk (config\H7508_best2300p_ep_anc) line 69 : export AUDIO_ANC_FB_MC_HW ?= 1

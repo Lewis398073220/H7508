@@ -93,9 +93,15 @@ const uint16_t CFG_HW_ADCKEY_MAP_TABLE[CFG_HW_ADCKEY_NUMBER] = {
 #define CFG_HW_GPIOKEY_UP_LEVEL            (1)
 const struct HAL_KEY_GPIOKEY_CFG_T cfg_hw_gpio_key_cfg[CFG_HW_GPIOKEY_NUM] = {
 #if (CFG_HW_GPIOKEY_NUM > 0)
+	#if 0
 	{HAL_KEY_CODE_FN5,{HAL_IOMUX_PIN_P2_1, HAL_IOMUX_FUNC_AS_GPIO, HAL_IOMUX_PIN_VOLTAGE_VIO, HAL_IOMUX_PIN_PULLUP_ENALBE},CFG_HW_GPIOKEY_DOWN_LEVEL},//anc key
 	{HAL_KEY_CODE_FN6,{HAL_IOMUX_PIN_P1_0, HAL_IOMUX_FUNC_AS_GPIO, HAL_IOMUX_PIN_VOLTAGE_VIO, HAL_IOMUX_PIN_NOPULL},1},//monitor key
     {HAL_KEY_CODE_FN1,{HAL_IOMUX_PIN_P2_0, HAL_IOMUX_FUNC_AS_GPIO, HAL_IOMUX_PIN_VOLTAGE_VIO, HAL_IOMUX_PIN_PULLUP_ENALBE},CFG_HW_GPIOKEY_DOWN_LEVEL},//volum key
+	#else
+	{HAL_KEY_CODE_FN5,{HAL_IOMUX_PIN_P1_0, HAL_IOMUX_FUNC_AS_GPIO, HAL_IOMUX_PIN_VOLTAGE_VIO, HAL_IOMUX_PIN_PULLUP_ENALBE}},
+    {HAL_KEY_CODE_FN6,{HAL_IOMUX_PIN_P1_3, HAL_IOMUX_FUNC_AS_GPIO, HAL_IOMUX_PIN_VOLTAGE_VIO, HAL_IOMUX_PIN_PULLUP_ENALBE}},
+    {HAL_KEY_CODE_FN1,{HAL_IOMUX_PIN_P1_2, HAL_IOMUX_FUNC_AS_GPIO, HAL_IOMUX_PIN_VOLTAGE_VIO, HAL_IOMUX_PIN_PULLUP_ENALBE}}, 
+    #endif
 #endif
 };
 
@@ -761,7 +767,7 @@ Filter5_A=[     16777216,    -32048020,     15334169];
 
 
     .anc_cfg_mc_l = {
-        .total_gain = 0,
+        .total_gain = 512,
 
 		.iir_bypass_flag=0,
 		.iir_counter=5,
@@ -789,7 +795,7 @@ Filter5_A=[     16777216,    -32048020,     15334169];
 		.adc_gain_offset=(0)*4,
     },
     .anc_cfg_mc_r = {
-        .total_gain = 0,
+        .total_gain = 512,
 
 		.iir_bypass_flag=0,
 		.iir_counter=5,
@@ -2099,7 +2105,7 @@ Filter5_A=[     16777216,    -31915122,     15212684];
 
 
     .anc_cfg_mc_l = {
-        .total_gain = 0,
+        .total_gain = 512,
 
 		.iir_bypass_flag=0,
 		.iir_counter=5,
@@ -2127,7 +2133,7 @@ Filter5_A=[     16777216,    -31915122,     15212684];
 		.adc_gain_offset=(0)*4,
     },
     .anc_cfg_mc_r = {
-        .total_gain = 0,
+        .total_gain = 512,
 
 		.iir_bypass_flag=0,
 		.iir_counter=5,
@@ -3513,26 +3519,29 @@ const IIR_CFG_T audio_eq_sw_iir_cfg_anc_on = {
     .gain1 = 0,
     .num = 8,
     .param = {
-    	{IIR_TYPE_PEAK,      -9,   18, 0.8},
-		{IIR_TYPE_PEAK,      -3,   80, 1.3},
-		{IIR_TYPE_PEAK,     -14,  200, 0.6},
-		{IIR_TYPE_PEAK,     -14,  700, 1.3},
-		{IIR_TYPE_PEAK,      -5, 7100, 3.0},
-		{IIR_TYPE_PEAK,      -5, 1400, 2.0},
-		{IIR_TYPE_PEAK,    -3.5,  450, 1.0},
-		{IIR_TYPE_PEAK,      -3, 2200, 1.0},
+    	{IIR_TYPE_PEAK,      0,   18, 0.8},
+		{IIR_TYPE_PEAK,      0,   80, 1.3},
+		{IIR_TYPE_PEAK,     0,  200, 0.6},
+		{IIR_TYPE_PEAK,     0,  700, 1.3},
+		{IIR_TYPE_PEAK,     0, 7100, 3.0},
+		{IIR_TYPE_PEAK,      0, 1400, 2.0},
+		{IIR_TYPE_PEAK,    0,  450, 1.0},
+		{IIR_TYPE_PEAK,      0, 2200, 1.0},
     }
 };
 const IIR_CFG_T audio_eq_sw_iir_cfg_anc_off = {
     .gain0 = 0,
     .gain1 = 0,
-    .num = 5,
+    .num = 8,
     .param = {
-    	{IIR_TYPE_PEAK,    -12,    16, 0.8},
-		{IIR_TYPE_PEAK,     -4,    80, 0.8},
-		{IIR_TYPE_PEAK,    -12,   200, 0.8},
-		{IIR_TYPE_PEAK,    -14,   650, 0.8},
-		{IIR_TYPE_PEAK,     -3,  7100, 3.0},
+    	{IIR_TYPE_PEAK,      0,   18, 0.8},
+		{IIR_TYPE_PEAK,      0,   80, 1.3},
+		{IIR_TYPE_PEAK,     0,  200, 0.6},
+		{IIR_TYPE_PEAK,     0,  700, 1.3},
+		{IIR_TYPE_PEAK,     0, 7100, 3.0},
+		{IIR_TYPE_PEAK,      0, 1400, 2.0},
+		{IIR_TYPE_PEAK,    0,  450, 1.0},
+		{IIR_TYPE_PEAK,      0, 2200, 1.0},
     }
 };
 

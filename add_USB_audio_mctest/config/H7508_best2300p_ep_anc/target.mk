@@ -65,8 +65,8 @@ export ANC_APP		    ?= 1
 export ANC_FF_ENABLED	?= 1
 export ANC_FB_ENABLED	?= 1
 export ANC_WNR_ENABLED	?= 0
-#export AUDIO_ANC_FB_MC ?= 1
-export AUDIO_ANC_FB_MC_HW ?= 1
+export AUDIO_ANC_FB_MC ?= 1
+#export AUDIO_ANC_FB_MC_HW ?= 1
 export AUDIO_SECTION_SUPPT ?= 1
 export AUD_SECTION_STRUCT_VERSION ?= 2
 export ANC_CAP_ADC_EN_WORKAROUND ?= 0
@@ -318,7 +318,7 @@ export SPEECH_CODEC ?= 1
 
 export MIX_AUDIO_PROMPT_WITH_A2DP_MEDIA_ENABLED ?= 1
 #add by cai
-export PLAYBACK_FORCE_48K ?= 1
+#export PLAYBACK_FORCE_48K ?= 0
 
 export FLASH_SIZE ?= 0x400000
 export FLASH_SUSPEND ?= 1

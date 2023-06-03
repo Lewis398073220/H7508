@@ -137,7 +137,7 @@ uint32_t codec_int_stream_setup(enum AUD_STREAM_T stream, struct HAL_CODEC_CONFI
         if (codec_anc_handler) {
             enum AUD_SAMPRATE_T cfg_rate;
             enum AUD_SAMPRATE_T old_rate;
-			#if 0
+			#if 1
             cfg_rate = hal_codec_anc_convert_rate(cfg->sample_rate);
             if (cfg_rate != codec_anc_samp_rate) {
                 old_rate = codec_anc_samp_rate;
@@ -513,6 +513,7 @@ int codec_anc_open(enum ANC_TYPE_T type, enum AUD_SAMPRATE_T dac_rate, enum AUD_
             cfg_adc_rate = adc_rate;
         }
         if (codec_int_cfg.stream_cfg[AUD_STREAM_PLAYBACK].opened && codec_int_cfg.stream_cfg[AUD_STREAM_CAPTURE].opened) {
+			cfg_adc_rate = cfg_dac_rate;//add by cai
             ASSERT(cfg_dac_rate == cfg_adc_rate, "%s: Unmatched cfg rates: dac_rate=%u adc_rate=%u", __func__, cfg_dac_rate, cfg_adc_rate);
         } else if (codec_int_cfg.stream_cfg[AUD_STREAM_CAPTURE].opened) {
             cfg_dac_rate = cfg_adc_rate;
