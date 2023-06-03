@@ -1,0 +1,3 @@
+---- m by pang for pop noice Matches (2 in 2 files) ----
+codec_int_stream_setup in codec_best2300p.c (platform\drivers\codec\best2300p) : 			#else //m by pang for pop noice
+hal_codec_anc_convert_rate in hal_codec_best2300p.c (platform\hal\best2300p) : #else//m by pang for pop noice
