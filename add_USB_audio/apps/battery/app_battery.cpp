@@ -210,6 +210,7 @@ void app_battery_irqhandler(uint16_t irq_val, HAL_GPADC_MV_T volt)
     uint8_t i;
     uint32_t meanBattVolt = 0;
     HAL_GPADC_MV_T vbat = volt;
+	static uint8_t battery_level_init = 0;//add by cai
     APP_BATTERY_TRACE(2,"%s %d",__func__, vbat);
     if (vbat == HAL_GPADC_BAD_VALUE)
     {
@@ -278,7 +279,15 @@ void app_battery_irqhandler(uint16_t irq_val, HAL_GPADC_MV_T volt)
         APP_BATTERY_INFO_T* pBatteryInfo = (APP_BATTERY_INFO_T*)&app_battery_measure.currentBatteryInfo;
         pBatteryInfo->batteryLevel = level;
 #else
+#if 0//m by cai
         app_battery_measure.currlevel = level+1;
+#else
+		if(battery_level_init==0)
+		{
+			app_battery_measure.currlevel = level+1;
+			battery_level_init=1;
+		}
+#endif
 #endif
     }
 }
@@ -405,11 +414,12 @@ int app_battery_handle_process_normal(uint32_t status,  union APP_BATTERY_MSG_PR
 			if(level_count>3){
 				level_count=0;
 				app_battery_measure.currlevel = level+1;
+				//#if defined(__HAYLOU_APP__)
+				Notification_Battery_Level_Change();//notify app while battery level change
+				//#endif
 			}
 			app_status_battery_report(app_battery_measure.currlevel-1);//m by cai
-			//#if defined(__HAYLOU_APP__)
-			Notification_Battery_Level_Change();
-			//#endif
+			
 			#endif
 			app_10_second_timer_check();
             break;
@@ -459,13 +469,49 @@ int app_battery_handle_process_normal(uint32_t status,  union APP_BATTERY_MSG_PR
 
 int app_battery_handle_process_charging(uint32_t status,  union APP_BATTERY_MSG_PRAMS prams)
 {
+	//add by cai
+	int8_t level = 0;
+	int8_t i = 0;
+	static int8_t level_count=0;
+	//end add
+	
     switch (status)
     {
         case APP_BATTERY_STATUS_OVERVOLT:
         case APP_BATTERY_STATUS_NORMAL:
         case APP_BATTERY_STATUS_UNDERVOLT:
             app_battery_measure.currvolt = prams.volt;
-            app_status_battery_report(app_battery_measure.currlevel-1);//m by cai
+#if 0//m by cai
+            app_status_battery_report(prams.volt);
+#else
+			for(i=0;i<9;i++){
+				if(app_battery_measure.currvolt>=batterylevel[i])
+					break;
+			}
+			level=9-i;
+			
+			if (level<APP_BATTERY_LEVEL_MIN)
+				level = APP_BATTERY_LEVEL_MIN;
+			if (level>APP_BATTERY_LEVEL_MAX)
+				level = APP_BATTERY_LEVEL_MAX;
+
+			TRACE(3,"%s:volt=%d,level=%d",__func__, prams.volt,level);
+			TRACE(1,"********currlevel:%d", app_battery_measure.currlevel);//add by cai
+			
+			if(app_battery_measure.currlevel-1 < level)
+				level_count++;
+			else
+				level_count=0;
+
+			if(level_count>3){
+				level_count=0;
+				app_battery_measure.currlevel = level+1;
+				//#if defined(__HAYLOU_APP__)
+				Notification_Battery_Level_Change();//notify app while battery level change
+				//#endif
+			}
+			app_status_battery_report(app_battery_measure.currlevel-1);
+#endif
             break;
         case APP_BATTERY_STATUS_CHARGING:
             TRACE(1,"CHARGING:%d", prams.charger);

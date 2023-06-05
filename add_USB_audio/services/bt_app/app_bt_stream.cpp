@@ -1659,7 +1659,7 @@ uint32_t bt_audio_set_eq(AUDIO_EQ_TYPE_T audio_eq_type, uint8_t index)
 			if(eq_index < 5){
 				iir_cfg=audio_eq_sw_iir_cfg_list[index+eq_index*3];	
 			}
-			else if(eq_index == 0xf0){
+			else if(eq_index == 0x3f){//m by cai to 0x3f
 				iir_cfg= &eq_custom_para;
 			}
 			else

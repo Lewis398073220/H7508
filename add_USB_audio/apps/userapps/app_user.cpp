@@ -1017,7 +1017,7 @@ void apps_audio_fadein_event_process(void)
 IIR_CFG_T eq_custom_para={
     .gain0 = -8,
     .gain1 = -8,
-    .num = 8,
+    .num = 6,
     .param = {
         {IIR_TYPE_PEAK, .0,   100, 0.8},
         {IIR_TYPE_PEAK, .0,   400, 1.0},
@@ -1025,8 +1025,8 @@ IIR_CFG_T eq_custom_para={
         {IIR_TYPE_PEAK, .0,  2500, 1.0},
         {IIR_TYPE_PEAK, .0,  6300, 0.8},
 		{IIR_TYPE_PEAK, .0, 12000, 1.0},
-		{IIR_TYPE_PEAK, -6,  7000, 0.6},
-		{IIR_TYPE_PEAK, -6, 28000, 0.6},
+		//{IIR_TYPE_PEAK, -6,  7000, 0.6},
+		//{IIR_TYPE_PEAK, -6, 28000, 0.6},
 	}
 };
 /*

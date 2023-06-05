@@ -835,14 +835,14 @@ void Get_BLE_MAC_Address(void)
 
 void Get_Sales_Region(void)
 {
-	  uint8_t sound_quality[]= {0x00}; //00 is Global region , /93 is China
-    g_valueLen = 9;
-    uint8_t i =0;
-    uint8_t head[9] = {0xff,0x01,0x00,0x04,0x71,0x80,0x08,0x00,0x00};
+	 uint8_t sales_region[]= {0x01}; //00 is Global region , /93 is China
+     g_valueLen = 9;
+     uint8_t i =0;
+     uint8_t head[9] = {0xff,0x01,0x00,0x04,0x71,0x80,0x08,0x00,0x00};
      //Data length
      head[2] = 0x09;
      //sound quality Item status 1 byte  
-     head[7] = sound_quality[0];
+     head[7] = sales_region[0];
      //Do checksum
      head[g_valueLen - 1]=Do_CheckSum(head,g_valueLen);
 	 
@@ -897,7 +897,7 @@ void Get_Chipset_Vendor(void)
 
 void Get_Chipset_Solution(void)
 {
-	  unsigned char Solution[] = "BES2300YP";
+	  unsigned char Solution[] = "BES2500HP";
 	  uint8_t Chipset_Solution[10]= {0};
     uint8_t i =0;
     uint8_t head[7] = {0xff,0x01,0x00,0x04,0x71,0x80,0x11};
@@ -938,7 +938,7 @@ void Get_Chipset_Solution(void)
 
 void Get_Chipset_Version(void)
 {
-	unsigned char Version[] = "V2.4.9.0";
+	unsigned char Version[] = "V0.1.6";
 	uint8_t FW_Version[10]= {0};
     uint8_t i =0;
     uint8_t head[7] = {0xff,0x01,0x00,0x04,0x71,0x80,0x12};
@@ -3277,7 +3277,9 @@ void Notification_TalkMicLed_Change(void)
 bool Philips_Functions_Call(uint8_t *data, uint8_t size)
 {
 	uint16_t command_id = ((uint16_t)data[5] << 8) | ((uint16_t)data[6]);
-	   
+
+	TRACE(3,"********%s: %d %d",__func__,command_id,size);
+	
 	switch(command_id)
 	{
 		case GET_CONNECT_PHONE_MAC:
