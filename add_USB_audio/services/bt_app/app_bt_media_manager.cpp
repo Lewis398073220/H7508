@@ -726,8 +726,15 @@ void  bt_media_start(uint16_t stream_type,enum BT_DEVICE_ID_T device_id, uint16_
                         }
                     }
                 }
+#if 0 //m by cai for mute prompt cut while calling
+				break;
+#else
+				if(bt_meida.curr_active_media == BT_STREAM_VOICE)
+				{
+					audio_prompt_stop_playing();
+				}else break;
+#endif
 
-                break;
             }
 
 #ifdef AUDIO_LINEIN
