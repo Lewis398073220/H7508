@@ -538,13 +538,14 @@ bool CheckCommandID(uint8_t *data)
 		case SET_SIDE_TONE_CONTROL_STATUS:		
 			//TRACE(0,"Philips : SET_SIDE_TONE_CONTROL_STATUS!\r\n");
 			return true;
-/*
+
 		case GET_LOW_LATENCY_STATUS:		
 			//TRACE(0,"Philips : GET_LOW_LATENCY_STATUS!\r\n");
 			return true;				
 		case SET_LOW_LATENCY_STATUS:		
 			//TRACE(0,"Philips : SET_LOW_LATENCY_STATUS!\r\n");
-			return true;				
+			return true;
+/*
 		case GET_VIBRATION_STATUS:		
 			//TRACE(0,"Philips : GET_VIBRATION_STATUS!\r\n");
 			return true;				
@@ -3090,7 +3091,7 @@ void Set_Side_Tone_Status(uint8_t set_side_tone_value[1])
 		}
 	}
 }
-/*
+
 uint8_t g_set_low_latency_value[]= {0x00};
 void Get_Low_Latency_Status(void)
 {
@@ -3099,7 +3100,8 @@ void Get_Low_Latency_Status(void)
     uint8_t head[9] = {0xff,0x01,0x00,0x04,0x71,0x81,0x17,0x00,0x00};
      //Data length
      head[2] = 0x09;
-     //Get_Side_Tone_Status 1 byte  
+     //Get_Side_Tone_Status 1 byte
+     g_set_low_latency_value[0] = app_get_low_latency_status();
      head[7] =  g_set_low_latency_value[0];
 	 
      
@@ -3111,18 +3113,18 @@ void Get_Low_Latency_Status(void)
       }	   
 
     Philips_Send_Notify(g_valuePtr, (uint32_t)g_valueLen);   
-   
 }
 
 
 void Set_Low_Latency_Status(uint8_t set_low_latency_value[1])
 {
-
     g_set_low_latency_value[0] =  set_low_latency_value[0]; 
-   	
+   	app_low_latency_set(g_set_low_latency_value[0]);
+	TRACE(2,"********%s: %d",__func__,app_get_low_latency_status());
+	app_gaming_mode(app_get_low_latency_status());
 }
 
-
+/*
 uint8_t g_set_vibration_status_value[]= {0x00};
 void Get_Vibration_Status(void)
 {
@@ -4113,7 +4115,7 @@ bool Philips_Functions_Call(uint8_t *data, uint8_t size)
 	             set_side_tone_value[0] = data[7];		
 			Set_Side_Tone_Status(set_side_tone_value);			
 			return true;
-/*
+
 		case GET_LOW_LATENCY_STATUS:		
 			//TRACE(0,"Philips :Philips_Functions_Call GET_LOW_LATENCY_STATUS!\r\n");
 			Get_Low_Latency_Status();
@@ -4126,7 +4128,8 @@ bool Philips_Functions_Call(uint8_t *data, uint8_t size)
 			uint8_t set_low_latency_value[1] = {0};
 	             set_low_latency_value[0] = data[7];		
 			Set_Low_Latency_Status(set_low_latency_value);			
-			return true;			
+			return true;	
+/*		
 		case GET_VIBRATION_STATUS:		
 			//TRACE(0,"Philips : Philips_Functions_Call GET_VIBRATION_STATUS!\r\n");
 			Get_Vibration_Status();		

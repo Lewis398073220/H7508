@@ -154,6 +154,8 @@ uint16_t get_auto_pwoff_time(void);//add by cai
 void app_auto_poweroff_set(uint16_t pftime);//m by cai
 uint8_t app_get_sidetone(void);
 void app_nvrecord_sidetone_set(uint8_t on);
+uint8_t app_get_low_latency_status(void);//add by cai
+void app_low_latency_set(uint8_t on);//add by cai
 uint8_t app_get_fota_flag(void);
 void app_nvrecord_fotaflag_set(uint8_t on);
 uint8_t app_get_new_multipoint_flag(void);

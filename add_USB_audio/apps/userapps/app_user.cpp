@@ -64,7 +64,8 @@ static uint8_t monitor_level=20;
 static uint8_t focus_on=0;
 static uint8_t sensor_enable=1;
 static uint8_t touch_lock=0;
-static uint8_t sidetone=1;
+static uint8_t sidetone=0;
+static uint8_t low_latency_on=0;//add by cai
 static uint8_t anc_table_value=1;
 static uint8_t fota_flag=0;
 static uint8_t multipoint=1;
@@ -1448,6 +1449,17 @@ void app_nvrecord_sidetone_set(uint8_t on)
 #endif
 }
 
+//add by cai
+uint8_t app_get_low_latency_status(void)
+{
+	return (low_latency_on);
+}
+
+void app_low_latency_set(uint8_t on)
+{
+	low_latency_on = on;
+}
+//end add
 
 uint8_t app_get_fota_flag(void)
 {
@@ -1567,6 +1579,7 @@ void app_nvrecord_para_get(void)
 	talkmic_led=nvrecord_env->talkmic_led;
 	if(nvrecord_env->auto_pwoff_time==0x00) app_auto_poweroff_set(0x00);
 	else auto_poweroff_time = nvrecord_env->auto_pwoff_time;//add by cai
+	low_latency_on=0;//add by cai
 
 	//for(i=0;i<bt_name_len;i++){
 		//bt_name[i]=nvrecord_env->bt_name[i];
