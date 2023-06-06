@@ -2822,7 +2822,10 @@ void Get_Auto_Power_Off_Timer(void)
 void Set_Auto_Power_Off_Timer(uint8_t auto_power_off_timer_value[1])
 {
    g_auto_power_off_timer_value[0] =  auto_power_off_timer_value[0];
+   if(g_auto_power_off_timer_value[0]>0x05)//add by cai
+   	return;
    app_auto_poweroff_set(g_auto_power_off_timer_value[0]);  
+   app_start_10_second_timer(APP_AUTO_PWOFF_TIMER_ID);//add by cai to fresh timer
 }
 
 
@@ -2962,7 +2965,7 @@ void Get_Special_Function1_Support_List(void)
      //Data length
      head[2] = 0x09;
      //Special Function1 Support List 1 byte  
-     head[7] = TOUCH_LOCK_SUPPORT | SIDE_TONE_SUPPORT;// |DEVICE_COLOUR_SUPPORT;// | LOW_LATENCY_SUPPORT| VIBRATION_SUPPORT;  
+     head[7] = TOUCH_LOCK_SUPPORT | SIDE_TONE_SUPPORT | LOW_LATENCY_SUPPORT | DEVICE_COLOUR_SUPPORT;//| VIBRATION_SUPPORT;  
 	 
      //Do checksum
      head[g_valueLen - 1]=Do_CheckSum(head,g_valueLen);

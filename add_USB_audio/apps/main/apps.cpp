@@ -243,6 +243,11 @@ void CloseEarphone_bt_off(void)
  	}
 }
 
+void CloseEarphone_auto_pwoff(void)
+{
+	TRACE(0,"!!!CloseEarphone---auto pwoff\n");
+	app_shutdown();
+}
 
 #if defined(__BTIF_EARPHONE__) && defined(__BTIF_AUTOPOWEROFF__)
 
@@ -279,6 +284,7 @@ APP_10_SECOND_TIMER_STRUCT app_10_second_array[] =
     INIT_APP_TIMER(APP_PAIR_TIMER_ID, 0, 0, 39, PairingTransferToConnectable),//m by cai 6
     INIT_APP_TIMER(APP_POWEROFF_TIMER_ID, 0, 0, 255, CloseEarphone),//m by cai255
     INIT_APP_TIMER(APP_BTOFF_POWEROFF_TIMER_ID, 0, 0, 30, CloseEarphone_bt_off), //m by cai 30
+    INIT_APP_TIMER(APP_AUTO_PWOFF_TIMER_ID, 0, 0, 4095, CloseEarphone_auto_pwoff),//add by cai
 #ifdef GFPS_ENABLED
     INIT_APP_TIMER(APP_FASTPAIR_LASTING_TIMER_ID, 0, 0, APP_FAST_PAIRING_TIMEOUT_IN_SECOND/10,
         app_fast_pairing_timeout_timehandler),
@@ -335,22 +341,12 @@ void app_10_second_timer_check(void)
 {
     APP_10_SECOND_TIMER_STRUCT *timer = app_10_second_array;
 	unsigned int i;
-    static uint8_t auto_power_off_type=0;
-    static uint32_t auto_power_off_count=0;
-	bool auto_power_off_flag=0;
+    //static uint8_t auto_power_off_type=0;
+    //static uint32_t auto_power_off_count=0;
+	//bool auto_power_off_flag=0;
 	
     for(i = 0; i < ARRAY_SIZE(app_10_second_array); i++) {
-		if(i != 1){
-			if (timer->timer_en) {
-				timer->timer_count++;
-					if (timer->timer_count >= timer->timer_period) {
-					timer->timer_en = 0;
-					if (timer->cb)
-						timer->cb();
-				}
-			}
-		}
-        else{
+        if(i == APP_POWEROFF_TIMER_ID){//m by cai
 			if ((timer->timer_en)&&(get_sleep_time()!=SLEEP_TIME_PERM)) {
             	timer->timer_count++;
             	if (timer->timer_count >= get_sleep_time()) {
@@ -359,7 +355,7 @@ void app_10_second_timer_check(void)
                     	timer->cb();
            	 	}
    			}
-
+			/*
 			if(auto_power_off_type){
 				auto_power_off_count++;
 
@@ -387,7 +383,26 @@ void app_10_second_timer_check(void)
 			}
 
 			auto_power_off_type=app_get_auto_poweroff();
-        }
+			*/
+        }else if(i == APP_AUTO_PWOFF_TIMER_ID){
+			if ((timer->timer_en)&&(get_auto_pwoff_time()!=AUTO_PWOFF_TIME_PERM)) {
+				timer->timer_count++;
+				if (timer->timer_count >= get_auto_pwoff_time()) {
+					timer->timer_en = 0;
+					if (timer->cb)
+						timer->cb();
+				}
+			}
+		} else{
+			if (timer->timer_en) {
+				timer->timer_count++;
+					if (timer->timer_count >= timer->timer_period) {
+					timer->timer_en = 0;
+					if (timer->cb)
+						timer->cb();
+				}
+			}
+		}
 		timer++;		
     }
 }
@@ -2264,7 +2279,19 @@ extern int rpc_service_setup(void);
         app_key_init();
         app_battery_start();
 #if defined(__BTIF_EARPHONE__) && defined(__BTIF_AUTOPOWEROFF__)
-        app_start_10_second_timer(APP_POWEROFF_TIMER_ID);
+#if defined(BT_USB_AUDIO_DUAL_MODE)//m by cai
+		if(demo_mode_power_on || app_battery_charger_indication_open() != APP_BATTERY_CHARGER_PLUGIN)
+		{
+			app_start_10_second_timer(APP_POWEROFF_TIMER_ID);
+			//app_start_10_second_timer(APP_AUTO_PWOFF_TIMER_ID);//add by cai
+		}
+
+#else
+		app_start_10_second_timer(APP_POWEROFF_TIMER_ID);
+		//app_start_10_second_timer(APP_AUTO_PWOFF_TIMER_ID);//add by cai
+
+#endif
+        
 #endif
 
 #if defined(__IAG_BLE_INCLUDE__) && defined(BTIF_BLE_APP_DATAPATH_SERVER)
@@ -2500,7 +2527,19 @@ extern int rpc_service_setup(void);
             app_key_init();
             app_battery_start();
 #if defined(__BTIF_EARPHONE__) && defined(__BTIF_AUTOPOWEROFF__)
-            app_start_10_second_timer(APP_POWEROFF_TIMER_ID);
+#if defined(BT_USB_AUDIO_DUAL_MODE)//m by cai
+		if(demo_mode_power_on || app_battery_charger_indication_open() != APP_BATTERY_CHARGER_PLUGIN)
+		{
+			app_start_10_second_timer(APP_POWEROFF_TIMER_ID);
+			//app_start_10_second_timer(APP_AUTO_PWOFF_TIMER_ID);//add by cai
+		}
+
+#else
+		app_start_10_second_timer(APP_POWEROFF_TIMER_ID);
+		//app_start_10_second_timer(APP_AUTO_PWOFF_TIMER_ID);//add by cai
+
+#endif
+
 #endif
 #ifdef __THIRDPARTY
             app_thirdparty_specific_lib_event_handle(THIRDPARTY_FUNC_NO1,THIRDPARTY_INIT);

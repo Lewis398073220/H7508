@@ -3462,6 +3462,7 @@ void app_bt_profile_connect_manager_hf(enum BT_DEVICE_ID_T id, hf_chan_handle_t 
 		app_stop_10_second_timer(APP_POWEROFF_TIMER_ID);
 		app_stop_10_second_timer(APP_BTOFF_POWEROFF_TIMER_ID);
 		app_stop_10_second_timer(APP_PAIR_TIMER_ID);//add by cai
+		app_start_10_second_timer(APP_AUTO_PWOFF_TIMER_ID);//add by cai to fresh timer
 		app_status_indication_recover_set(APP_STATUS_INDICATION_CONNECTING);//add by cai
 		app_status_indication_set(APP_STATUS_INDICATION_CONNECTED);
 		//app_status_indication_set_next(APP_STATUS_INDICATION_CONNECTING,APP_STATUS_INDICATION_CONNECTED);
@@ -3525,12 +3526,14 @@ void app_bt_profile_connect_manager_hf(enum BT_DEVICE_ID_T id, hf_chan_handle_t 
 			if((false==bt_profile_manager[0].has_connected)&&(false==lacal_bt_off)&&(false==factory_reset_flag)&&(app_poweroff_flag==0)){
 				app_status_indication_set(APP_STATUS_INDICATION_PAGESCAN);
 				//app_start_10_second_timer(APP_POWEROFF_TIMER_ID);//m by cai
+				app_stop_10_second_timer(APP_AUTO_PWOFF_TIMER_ID);//add by cai to fresh timer
         	}
         }
 		else{	
 			if((false==bt_profile_manager[0].has_connected)&&(false==bt_profile_manager[1].has_connected)&&(false==lacal_bt_off)&&(false==factory_reset_flag)&&(app_poweroff_flag==0)){
 				app_status_indication_set(APP_STATUS_INDICATION_PAGESCAN);
 				//app_start_10_second_timer(APP_POWEROFF_TIMER_ID);//m by cai
+				app_stop_10_second_timer(APP_AUTO_PWOFF_TIMER_ID);//add by cai to fresh timer
 			}
 		}
 
@@ -3953,6 +3956,7 @@ void app_bt_profile_connect_manager_a2dp(enum BT_DEVICE_ID_T id, a2dp_stream_t *
 		app_stop_10_second_timer(APP_POWEROFF_TIMER_ID);
 		app_stop_10_second_timer(APP_BTOFF_POWEROFF_TIMER_ID);
 		app_stop_10_second_timer(APP_PAIR_TIMER_ID);//add by cai
+		app_start_10_second_timer(APP_AUTO_PWOFF_TIMER_ID);//add by cai to fresh timer
 		app_status_indication_recover_set(APP_STATUS_INDICATION_CONNECTING);//add by cai
 		app_status_indication_set(APP_STATUS_INDICATION_CONNECTED);
 		//app_status_indication_set_next(APP_STATUS_INDICATION_CONNECTING,APP_STATUS_INDICATION_CONNECTED);
@@ -4015,12 +4019,14 @@ void app_bt_profile_connect_manager_a2dp(enum BT_DEVICE_ID_T id, a2dp_stream_t *
 			if((false==bt_profile_manager[0].has_connected)&&(false==lacal_bt_off)&&(false==factory_reset_flag)&&(app_poweroff_flag==0)){
 				app_status_indication_set(APP_STATUS_INDICATION_PAGESCAN);
 				//app_start_10_second_timer(APP_POWEROFF_TIMER_ID);//m by cai
+				app_stop_10_second_timer(APP_AUTO_PWOFF_TIMER_ID);//add by cai to fresh timer
 			}
 		}
 		else{
 			if((false==bt_profile_manager[0].has_connected)&&(false==bt_profile_manager[1].has_connected)&&(false==lacal_bt_off)&&(false==factory_reset_flag)&&(app_poweroff_flag==0)){
 				app_status_indication_set(APP_STATUS_INDICATION_PAGESCAN);
 				//app_start_10_second_timer(APP_POWEROFF_TIMER_ID);//m by cai
+				app_stop_10_second_timer(APP_AUTO_PWOFF_TIMER_ID);//add by cai to fresh timer
         	}
 		}
 
@@ -5532,7 +5538,8 @@ void app_bt_off(void)
 		//app_status_indication_set(APP_STATUS_INDICATION_BTOFF);
 		app_status_indication_set(APP_STATUS_INDICATION_PAGESCAN);//add by cai
 		app_stop_10_second_timer(APP_POWEROFF_TIMER_ID);//add by cai
-		app_stop_10_second_timer(APP_BTOFF_POWEROFF_TIMER_ID);
+		//app_stop_10_second_timer(APP_BTOFF_POWEROFF_TIMER_ID);
+		app_stop_10_second_timer(APP_AUTO_PWOFF_TIMER_ID);//add by cai to fresh timer
 	}
 	else{
 		lacal_bt_off=0;	
@@ -5540,7 +5547,9 @@ void app_bt_off(void)
 		//app_voice_report(APP_STATUS_INDICATION_BEEP_22, 0);//add by cai
 #endif
 		app_bt_profile_connect_manager_opening_reconnect();
-		app_start_10_second_timer(APP_BTOFF_POWEROFF_TIMER_ID);    
+		//app_start_10_second_timer(APP_BTOFF_POWEROFF_TIMER_ID);
+		app_start_10_second_timer(APP_POWEROFF_TIMER_ID);//add by cai
+		//app_start_10_second_timer(APP_AUTO_PWOFF_TIMER_ID);//add by cai to fresh timer
 	}
 }
 

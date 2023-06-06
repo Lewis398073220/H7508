@@ -56,6 +56,7 @@ enum
 
 #if defined(__EVRCORD_USER_DEFINE__)
 static uint8_t sleep_time=DEFAULT_SLEEP_TIME;
+static uint16_t auto_poweroff_time=DEFAULT_AUTO_PWOFF_TIME;//add by cai
 static uint8_t vibrate_mode=1;
 static uint8_t eq_set_index=0;
 static uint8_t anc_set_index=1;
@@ -67,7 +68,7 @@ static uint8_t sidetone=1;
 static uint8_t anc_table_value=1;
 static uint8_t fota_flag=0;
 static uint8_t multipoint=1;
-static uint8_t auto_powoff=0;
+//static uint8_t auto_powoff=0;
 static uint8_t talkmic_led=1;
 #endif
 
@@ -1369,12 +1370,62 @@ void app_nvrecord_touchlock_set(uint8_t on)
 
 uint8_t app_get_auto_poweroff(void)
 {
+#if 0//m by cai
 	return (auto_powoff);
+#else
+	if(auto_poweroff_time ==AUTO_PWOFF_TIME_PERM)
+		return (0x00);
+	else if(auto_poweroff_time==AUTO_PWOFF_TIME_30MIN)
+		return (0x01); 
+	else if(auto_poweroff_time==AUTO_PWOFF_TIME_1HOUR)
+		return (0x02);
+	else if(auto_poweroff_time==AUTO_PWOFF_TIME_2HOUR)
+		return (0x03);
+	else if(auto_poweroff_time==AUTO_PWOFF_TIME_4HOUR)
+		return (0x04);
+	else	
+		return (0x05);
+
+#endif
 }	
 
-void app_auto_poweroff_set(uint8_t pftime)
+uint16_t get_auto_pwoff_time(void)
 {
+	return(auto_poweroff_time);
+}
+
+void app_nvrecord_auto_pwoff_time_set(uint16_t pftime)
+{
+   if(pftime==0x00)
+		auto_poweroff_time =AUTO_PWOFF_TIME_PERM;
+   else if(pftime==0x01)
+   		auto_poweroff_time =AUTO_PWOFF_TIME_30MIN;
+   else if(pftime==0x02)
+		auto_poweroff_time =AUTO_PWOFF_TIME_1HOUR;
+   else if(pftime==0x03)
+		auto_poweroff_time =AUTO_PWOFF_TIME_2HOUR;
+   else if(pftime==0x04)
+		auto_poweroff_time =AUTO_PWOFF_TIME_4HOUR;
+   else
+   		auto_poweroff_time =AUTO_PWOFF_TIME_6HOUR;
+
+	struct nvrecord_env_t *nvrecord_env;
+	nv_record_env_get(&nvrecord_env);
+	nvrecord_env->auto_pwoff_time = auto_poweroff_time;
+	nv_record_env_set(nvrecord_env);
+	
+#if FPGA==0
+    nv_record_flash_flush();
+#endif
+}
+
+void app_auto_poweroff_set(uint16_t pftime)
+{
+#if 0//m by cai
    	auto_powoff=pftime;
+#else
+	app_nvrecord_auto_pwoff_time_set(pftime);
+#endif
 }
 
 
@@ -1514,6 +1565,8 @@ void app_nvrecord_para_get(void)
 	multipoint=nvrecord_env->multipoint;
 	new_multipoint=multipoint;
 	talkmic_led=nvrecord_env->talkmic_led;
+	if(nvrecord_env->auto_pwoff_time==0x00) app_auto_poweroff_set(0x00);
+	else auto_poweroff_time = nvrecord_env->auto_pwoff_time;//add by cai
 
 	//for(i=0;i<bt_name_len;i++){
 		//bt_name[i]=nvrecord_env->bt_name[i];
@@ -1576,7 +1629,7 @@ void app_nvrecord_para_get(void)
 	app_get_custom_bin_config();//for debug
 #endif
 
-	TRACE(5,"sleep=%d,eq=%d,monitor=%d,focus=%d,multipoint=%d",sleep_time,eq_set_index,monitor_level,focus_on,multipoint);
+	TRACE(6,"sleep=%d,eq=%d,monitor=%d,focus=%d,multipoint=%d,auto_pwoff=%d",sleep_time,eq_set_index,monitor_level,focus_on,multipoint,auto_poweroff_time);
 }
 
 

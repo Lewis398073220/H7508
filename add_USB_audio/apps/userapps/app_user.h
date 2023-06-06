@@ -49,6 +49,16 @@
 
 #define DEFAULT_SLEEP_TIME SLEEP_TIME_5MIN
 
+//add by cai
+#define AUTO_PWOFF_TIME_30MIN  240
+#define AUTO_PWOFF_TIME_1HOUR  480
+#define AUTO_PWOFF_TIME_2HOUR  960
+#define AUTO_PWOFF_TIME_4HOUR  1920
+#define AUTO_PWOFF_TIME_6HOUR  2880
+#define AUTO_PWOFF_TIME_PERM   4095
+
+#define DEFAULT_AUTO_PWOFF_TIME AUTO_PWOFF_TIME_PERM
+//end add
 extern IIR_CFG_T eq_custom_para;
 extern IIR_CFG_T eq_custom_para_ancoff;
 #if defined(AUDIO_LINEIN)
@@ -140,7 +150,8 @@ void app_nvrecord_sensor_set(uint8_t on);
 uint8_t app_get_touchlock(void);
 void app_nvrecord_touchlock_set(uint8_t on);
 uint8_t app_get_auto_poweroff(void);
-void app_auto_poweroff_set(uint8_t pftime);
+uint16_t get_auto_pwoff_time(void);//add by cai
+void app_auto_poweroff_set(uint16_t pftime);//m by cai
 uint8_t app_get_sidetone(void);
 void app_nvrecord_sidetone_set(uint8_t on);
 uint8_t app_get_fota_flag(void);

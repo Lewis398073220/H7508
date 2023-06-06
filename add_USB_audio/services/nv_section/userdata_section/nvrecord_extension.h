@@ -162,6 +162,7 @@ struct nvrecord_env_t {
 	uint8_t fota_flag;
 	uint8_t multipoint;
 	uint8_t talkmic_led;
+	uint16_t auto_pwoff_time;//add by cai
 	uint8_t reserved1;
 	uint8_t reserved2;
 	uint8_t reserved3;
