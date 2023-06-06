@@ -1234,10 +1234,14 @@ uint8_t app_get_sleep_time(void)
 
 uint8_t get_sleep_time(void)
 {
+#if 0//m by cai
     if(sleep_time<SLEEP_TIME_3MIN)
 		return(DEFAULT_SLEEP_TIME);
 	else
 		return(sleep_time);
+#else
+	return(sleep_time);
+#endif
 }
 
 void app_nvrecord_sleep_time_set(uint8_t sltime)

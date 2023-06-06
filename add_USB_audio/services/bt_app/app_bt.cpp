@@ -598,6 +598,7 @@ void PairingTransferToConnectable(void)
     if(activeCons == 0){
         TRACE(0,"!!!PairingTransferToConnectable  BAM_CONNECTABLE_ONLY\n");
         app_bt_accessmode_set_req(BTIF_BAM_CONNECTABLE_ONLY);
+		app_status_indication_set(APP_STATUS_INDICATION_PAGESCAN);//add by cai	
     }
 }
 int app_bt_get_audio_up_id(void)
@@ -904,6 +905,7 @@ void app_bt_accessible_manager_process(const btif_event_t *Event)
 			#else //m by pang
 			if(factory_reset_flag&&(btif_me_get_activeCons() == 0)){
 				app_bt_accessmode_set_req(BTIF_BT_DEFAULT_ACCESS_MODE_PAIR);
+				app_start_10_second_timer(APP_PAIR_TIMER_ID);//add by cai
 				//app_bt_accessmode_set_req(BTIF_BAM_CONNECTABLE_ONLY);//add by cai
 			}
 			else if(app_bt_get_current_access_mode() == BTIF_BT_DEFAULT_ACCESS_MODE_PAIR){//add by cai
@@ -2058,6 +2060,7 @@ static int app_bt_handle_process(APP_MESSAGE_BODY *msg_body)
 					app_voice_report(APP_STATUS_INDICATION_BOTHSCAN, 0);
 #endif
 					app_start_10_second_timer(APP_POWEROFF_TIMER_ID);
+					app_start_10_second_timer(APP_PAIR_TIMER_ID);//add by cai
 #endif
 				}
 #endif				
@@ -2630,6 +2633,7 @@ void app_bt_profile_connect_manager_opening_reconnect(void)
 #else
         //app_bt_accessmode_set_req(BTIF_BAM_CONNECTABLE_ONLY);
 		app_bt_accessmode_set_req(BTIF_BT_DEFAULT_ACCESS_MODE_PAIR);//m by pang
+		app_start_10_second_timer(APP_PAIR_TIMER_ID);//add by cai
 #endif
     }
 	power_on_open_reconnect_flag=1;//add by pang
@@ -3457,6 +3461,7 @@ void app_bt_profile_connect_manager_hf(enum BT_DEVICE_ID_T id, hf_chan_handle_t 
 		factory_reset_flag=0;
 		app_stop_10_second_timer(APP_POWEROFF_TIMER_ID);
 		app_stop_10_second_timer(APP_BTOFF_POWEROFF_TIMER_ID);
+		app_stop_10_second_timer(APP_PAIR_TIMER_ID);//add by cai
 		app_status_indication_recover_set(APP_STATUS_INDICATION_CONNECTING);//add by cai
 		app_status_indication_set(APP_STATUS_INDICATION_CONNECTED);
 		//app_status_indication_set_next(APP_STATUS_INDICATION_CONNECTING,APP_STATUS_INDICATION_CONNECTED);
@@ -3947,6 +3952,7 @@ void app_bt_profile_connect_manager_a2dp(enum BT_DEVICE_ID_T id, a2dp_stream_t *
 		factory_reset_flag=0;
 		app_stop_10_second_timer(APP_POWEROFF_TIMER_ID);
 		app_stop_10_second_timer(APP_BTOFF_POWEROFF_TIMER_ID);
+		app_stop_10_second_timer(APP_PAIR_TIMER_ID);//add by cai
 		app_status_indication_recover_set(APP_STATUS_INDICATION_CONNECTING);//add by cai
 		app_status_indication_set(APP_STATUS_INDICATION_CONNECTED);
 		//app_status_indication_set_next(APP_STATUS_INDICATION_CONNECTING,APP_STATUS_INDICATION_CONNECTED);

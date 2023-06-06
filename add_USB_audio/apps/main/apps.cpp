@@ -276,8 +276,8 @@ typedef struct
 
 APP_10_SECOND_TIMER_STRUCT app_10_second_array[] =
 {
-    INIT_APP_TIMER(APP_PAIR_TIMER_ID, 0, 0, 6, PairingTransferToConnectable),
-    INIT_APP_TIMER(APP_POWEROFF_TIMER_ID, 0, 0, 30, CloseEarphone),//m by cai
+    INIT_APP_TIMER(APP_PAIR_TIMER_ID, 0, 0, 39, PairingTransferToConnectable),//m by cai 6
+    INIT_APP_TIMER(APP_POWEROFF_TIMER_ID, 0, 0, 255, CloseEarphone),//m by cai255
     INIT_APP_TIMER(APP_BTOFF_POWEROFF_TIMER_ID, 0, 0, 30, CloseEarphone_bt_off), //m by cai 30
 #ifdef GFPS_ENABLED
     INIT_APP_TIMER(APP_FASTPAIR_LASTING_TIMER_ID, 0, 0, APP_FAST_PAIRING_TIMEOUT_IN_SECOND/10,
@@ -351,7 +351,7 @@ void app_10_second_timer_check(void)
 			}
 		}
         else{
-			if ((timer->timer_en)&&(get_sleep_time()!=0xff)) {
+			if ((timer->timer_en)&&(get_sleep_time()!=SLEEP_TIME_PERM)) {
             	timer->timer_count++;
             	if (timer->timer_count >= get_sleep_time()) {
                 	timer->timer_en = 0;
@@ -866,6 +866,7 @@ void app_factory_reset(void)
 	app_nvrecord_language_set(MEDIA_DEFAULT_LANGUAGE);
 
 	app_bt_accessmode_set_req(BTIF_BT_DEFAULT_ACCESS_MODE_PAIR);
+	app_start_10_second_timer(APP_PAIR_TIMER_ID);//add by cai
 
 	//add by cai for reset to high ANC On mode after facreset.
 	app_set_anc_on_mode(1);
@@ -2411,6 +2412,7 @@ extern int rpc_service_setup(void);
 						nv_record_env_get(&nvrecord_env);
 					    power_on_open_reconnect_flag=1;//add by pang
 						app_bt_accessmode_set(BTIF_BT_DEFAULT_ACCESS_MODE_PAIR);
+						app_start_10_second_timer(APP_PAIR_TIMER_ID);//add by cai
 					break;
                 case APP_POWERON_CASE_BOTHSCAN:
 /* //c by pang
@@ -2428,6 +2430,7 @@ extern int rpc_service_setup(void);
 #else
 					power_on_open_reconnect_flag=1;//add by pang
                     app_bt_accessmode_set(BTIF_BT_DEFAULT_ACCESS_MODE_PAIR);
+					app_start_10_second_timer(APP_PAIR_TIMER_ID);//add by cai
 #endif
 #ifdef GFPS_ENABLED
                     app_enter_fastpairing_mode();
