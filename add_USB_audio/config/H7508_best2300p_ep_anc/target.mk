@@ -15,6 +15,8 @@ KERNEL      ?= RTX
 #add by pang
 CALIB_SLOW_TIMER ?= 0
 
+export SPEECH_SIDETONE ?= 1
+
 #add by pang
 SUSPEND_ANOTHER_DEV_A2DP_STREAMING_WHEN_CALL_IS_COMING ?= 1
 

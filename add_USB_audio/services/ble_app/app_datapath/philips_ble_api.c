@@ -50,6 +50,8 @@ extern avrcp_media_status_t    media_status;
 #include "app_battery.h"
 #include "../../../apps/anc/inc/app_anc.h"
 #include "app_bt.h"
+#include "hal_codec.h"//add by cai
+#include "app_hfp.h"//add by cai
 
 static uint8_t protocol_port=0;
 
@@ -3067,10 +3069,26 @@ void Get_Side_Tone_Status(void)
 
 void Set_Side_Tone_Status(uint8_t set_side_tone_value[1])
 {
-
     g_set_side_tone_value[0] =  set_side_tone_value[0];
 	app_nvrecord_sidetone_set(g_set_side_tone_value[0]);
-   	
+
+	//add by cai
+	if(btapp_hfp_is_call_active())
+	{
+		if(app_get_sidetone()){
+			hal_codec_dac_mute(1);
+			osDelay(60);	
+			hal_codec_sidetone_enable();
+			osDelay(60);
+			hal_codec_dac_mute(0);
+		} else{
+			hal_codec_dac_mute(1);
+			osDelay(60);	
+			hal_codec_sidetone_disable();
+			osDelay(60);
+			hal_codec_dac_mute(0);
+		}
+	}
 }
 /*
 uint8_t g_set_low_latency_value[]= {0x00};
