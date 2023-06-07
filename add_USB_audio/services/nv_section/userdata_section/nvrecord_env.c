@@ -65,6 +65,7 @@ void nvrecord_rebuild_system_env(struct nvrecord_env_t* pSystemEnv)
 	pSystemEnv->multipoint=1;
 	pSystemEnv->talkmic_led=1;
 	pSystemEnv->auto_pwoff_time=DEFAULT_AUTO_PWOFF_TIME;//add by cai
+	pSystemEnv->anc_toggle_mode=0x00;//add by cai,default AncOn_AncOff_Awareness
 	pSystemEnv->reserved1=0;
 	pSystemEnv->reserved2=0;
 	pSystemEnv->reserved3=0;

@@ -563,11 +563,24 @@ bool CheckCommandID(uint8_t *data)
 		case GET_DEVICE_COLOUR_STATUS:		
 			//TRACE(0,"Philips : GET_DEVICE_COLOUR_STATUS!\r\n");
 			return true;
-
+		//add by cai
 		case SET_DEVICE_COLOUR_STATUS:		
 			//TRACE(0,"Philips : SET_DEVICE_COLOUR_STATUS!\r\n");
 			return true;
 
+		case GET_KEY_DEFINE_SUPPORT_LIST:
+			//TRACE(0,"Philips : GET_KEY_DEFINE_SUPPORT_LIST!\r\n");
+			return true;
+
+		case GET_UX_ANC_TOGGLE_STATUS:
+			//TRACE(0,"Philips : GET_UX_ANC_TOGGLE_STATUS!\r\n");
+			return true;
+
+		case SET_UX_ANC_TOGGLE_STATUS:
+			//TRACE(0,"Philips : SET_UX_ANC_TOGGLE_STATUS!\r\n");
+			return true;
+		//end add
+		
 		case GET_SPECIAL_FUNCTION2_SUPPORT_LIST:
 		case GET_TALK_MIC_LED_STATUS:					
 		case SET_TALK_MIC_LED_STATUS:					
@@ -3233,7 +3246,8 @@ void Get_Device_Colour(void)
     Philips_Send_Notify(g_valuePtr, (uint32_t)g_valueLen);      
 }
 
-void Set_Device_Colour(uint8_t set_device_colour_value[1])//add by cai
+//add by cai
+void Set_Device_Colour(uint8_t set_device_colour_value[1])
 {
     g_set_device_colour_value[0] =  set_device_colour_value[0]; 
 
@@ -3243,6 +3257,64 @@ void Set_Device_Colour(uint8_t set_device_colour_value[1])//add by cai
 	TRACE(2,"********%s: color param=%d",__func__,g_set_device_colour_value[0]);
 	set_custom_bin_config(0, g_set_device_colour_value[0]);
 }
+
+void Get_Key_Define_Support_List(void)
+{
+    g_valueLen = 11;
+    uint8_t i =0;
+    uint8_t head[11] = {0xff,0x01,0x00,0x04,0x71,0x81,0xB0,0x00,0x00,0x00,0x00};
+     //Data length
+     head[2] = 0x0B;
+     //UX ANC Toggle support 1 byte  
+     head[7] = UX_ANC_TOGGLE_SUPPORT;
+	 head[8] = NOT_SUPPORT;
+	 head[9] = NOT_SUPPORT;
+     //Do checksum
+     head[g_valueLen - 1]=Do_CheckSum(head,g_valueLen);
+	 
+     for (i =0;i <  g_valueLen; i++){
+			g_valuePtr[i] = head[i];
+    }	   
+    Philips_Send_Notify(g_valuePtr, (uint32_t)g_valueLen);      
+}
+
+static uint8_t g_set_anc_toggle_mode_value[]= {0x00};
+void Get_UX_ANC_Toggle_Status(void)
+{
+    g_valueLen = 9;
+    uint8_t i =0;
+    uint8_t head[9] = {0xff,0x01,0x00,0x04,0x71,0x81,0xB1,0x00,0x00};
+     //Data length
+     head[2] = 0x09;
+     //ANC toggle mode Status 1 byte  
+     g_set_anc_toggle_mode_value[0]=app_nvrecord_anc_toggle_mode_get();
+     head[7] =  g_set_anc_toggle_mode_value[0];    
+	 
+     //Do checksum
+     head[g_valueLen - 1]=Do_CheckSum(head,g_valueLen);
+	 
+     for (i =0;i <  g_valueLen; i++){
+			g_valuePtr[i] = head[i];
+    }	   
+
+    Philips_Send_Notify(g_valuePtr, (uint32_t)g_valueLen); 
+}
+
+void Set_UX_ANC_Toggle_Status(uint8_t set_anc_toggle_mode_status_value[1])
+{
+   uint8_t anc_toggle_mode_status_value;
+   
+   anc_toggle_mode_status_value = set_anc_toggle_mode_status_value[0];
+
+   if(anc_toggle_mode_status_value>=0x00 && anc_toggle_mode_status_value<0x04)
+   		app_nvrecord_anc_toggle_mode_set(anc_toggle_mode_status_value);
+   else{
+		TRACE(1,"********%s: error value %d",__func__,anc_toggle_mode_status_value);
+		return;
+   } 
+}
+
+//end add
 
 void Get_Special_Function2_Support_List(void)
 {
@@ -4177,16 +4249,35 @@ bool Philips_Functions_Call(uint8_t *data, uint8_t size)
 		case GET_DEVICE_COLOUR_STATUS:
 			Get_Device_Colour();
 		return true;
-
-		case SET_DEVICE_COLOUR_STATUS://add by cai
+		
+		//add by cai
+		case SET_DEVICE_COLOUR_STATUS:
 			if (size != 9){
 			    return false;
 			}
 			uint8_t set_device_colour_value[1] = {0};
-	             set_device_colour_value[0] = data[7];		
+	        set_device_colour_value[0] = data[7];		
 			Set_Device_Colour(set_device_colour_value);
 		return true;
 
+		case GET_KEY_DEFINE_SUPPORT_LIST:
+			Get_Key_Define_Support_List();
+		return true;
+
+		case GET_UX_ANC_TOGGLE_STATUS:
+			Get_UX_ANC_Toggle_Status();
+		return true;
+
+		case SET_UX_ANC_TOGGLE_STATUS:
+			if (size != 9){
+				return false;
+			}
+			uint8_t set_anc_toggle_mode_value[1] = {0};
+			set_anc_toggle_mode_value[0] = data[7];
+			Set_UX_ANC_Toggle_Status(set_anc_toggle_mode_value);
+		return true;
+		//end add
+		
 		case GET_SPECIAL_FUNCTION2_SUPPORT_LIST:
 			//TRACE(0,"Philips : Philips_Functions_Call GET_SPECIAL_FUNCTION1_SUPPORT_LIST!\r\n");
 			Get_Special_Function2_Support_List();

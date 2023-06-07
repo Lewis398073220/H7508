@@ -134,6 +134,8 @@ void app_nvrecord_eq_param_set(uint8_t customization_eq_value[6]);
 uint8_t app_nvrecord_anc_get(void);
 uint8_t app_nvrecord_anc_table_get(void);
 void app_nvrecord_anc_set(uint8_t nc);
+uint8_t app_nvrecord_anc_toggle_mode_get(void);//add by cai
+void app_nvrecord_anc_toggle_mode_set(uint8_t nc_toggle);//add by cai
 void app_nvrecord_demo_mode_set(uint8_t mod);
 uint8_t app_nvrecord_demo_mode_get(void);
 uint8_t app_get_sleep_time(void);

@@ -210,9 +210,19 @@ enum
 	clearvoice5,
 };
 
+
+enum//add by cai
+{
+	AncOn_AncOff_Awareness = 0x00,
+	AncOn_Awareness,
+	AncOn_AncOff,
+	Awareness_AncOff,
+};
+
 static uint8_t anc_current_mode=anc_on;
 static uint8_t anc_on_mode=anc_high;//add by pang
 static uint8_t monitor_mode=monitor1;//add by pang
+static uint8_t anc_toggle_method=AncOn_AncOff_Awareness;
 
 
 uint8_t app_get_anc_mode(void)
@@ -320,6 +330,13 @@ uint8_t api_get_anc_mode(void)
 	return (ancmode);
 }
 
+//add by cai
+uint8_t app_get_anc_toggle_method(void)
+{
+	anc_toggle_method = app_nvrecord_anc_toggle_mode_get();
+	return (anc_toggle_method);
+}
+//end add
 /** end add **/
 
 bool app_anc_is_on(void)
@@ -1850,48 +1867,184 @@ void app_anc_Key_Pro(void)
     static bool power_anc_init=0;
 	bool anc_open_flag=0;
 	//TRACE(2," %s anc_current_mode: %d", __func__, anc_current_mode);
-	if(anc_current_mode == monitor)
-	{	
-		anc_current_mode = anc_on; 
-		anc_coef_idx = anc_on_mode;
-		
-		anc_open_flag=1;
 
-		if(power_anc_init){
-			//power_anc_init=0;
-		}
-		else{
+	if(app_get_anc_toggle_method()==AncOn_AncOff_Awareness) {//m by cai for ANC toggle method define function
+		if(anc_current_mode == monitor)
+		{	
+			anc_current_mode = anc_on; 
+			anc_coef_idx = anc_on_mode;
+			
+			anc_open_flag=1;
+
+			if(power_anc_init){
+				//power_anc_init=0;
+			}
+			else{
 #ifdef ANC_LED_PIN
-		app_anc_switch_turnled(true);
-		app_monitor_switch_turnled(false);
+			app_anc_switch_turnled(true);
+			app_monitor_switch_turnled(false);
 #endif
 #ifdef MEDIA_PLAYER_SUPPORT		
-		app_voice_report(APP_STATUS_INDICATION_ANC_ON, 0);
+			app_voice_report(APP_STATUS_INDICATION_ANC_ON, 0);
+#endif
+			}
+		}
+		else if(anc_current_mode == anc_off)
+		{
+			anc_current_mode = monitor;
+			anc_coef_idx = monitor_mode;
+			anc_open_flag=1;
+#ifdef ANC_LED_PIN
+			app_monitor_switch_turnled(true);
+			app_anc_switch_turnled(false);
+#endif
+#ifdef MEDIA_PLAYER_SUPPORT
+			app_voice_report(APP_STATUS_INDICATION_AWARENESS_ON, 0);
 #endif
 		}
-	}
-	else if(anc_current_mode == anc_off)
-	{
-		anc_current_mode = monitor;
-		anc_coef_idx = monitor_mode;
-		anc_open_flag=1;
+		else
+		{
+			anc_current_mode = anc_off;
 #ifdef ANC_LED_PIN
-		app_monitor_switch_turnled(true);
-		app_anc_switch_turnled(false);
-#endif
-#ifdef MEDIA_PLAYER_SUPPORT
-		app_voice_report(APP_STATUS_INDICATION_AWARENESS_ON, 0);
-#endif
-	}
-	else
-	{
-		anc_current_mode = anc_off;
-#ifdef ANC_LED_PIN
-		app_anc_switch_turnled(false);
+			app_anc_switch_turnled(false);
 #endif		
 #ifdef MEDIA_PLAYER_SUPPORT
-		app_voice_report(APP_STATUS_INDICATION_ANC_OFF, 0);
+			app_voice_report(APP_STATUS_INDICATION_ANC_OFF, 0);
 #endif
+		}
+	}else if(app_get_anc_toggle_method()==AncOn_Awareness) {
+		if(anc_current_mode == monitor)
+		{	
+			anc_current_mode = anc_on; 
+			anc_coef_idx = anc_on_mode;
+			
+			anc_open_flag=1;
+
+			if(power_anc_init){
+				//power_anc_init=0;
+			}
+			else{
+#ifdef ANC_LED_PIN
+			app_anc_switch_turnled(true);
+			app_monitor_switch_turnled(false);
+#endif
+#ifdef MEDIA_PLAYER_SUPPORT		
+			app_voice_report(APP_STATUS_INDICATION_ANC_ON, 0);
+#endif
+			}
+		}
+		else if(anc_current_mode == anc_off)
+		{
+			anc_current_mode = monitor;
+			anc_coef_idx = monitor_mode;
+			anc_open_flag=1;
+#ifdef ANC_LED_PIN
+			app_monitor_switch_turnled(true);
+			app_anc_switch_turnled(false);
+#endif
+#ifdef MEDIA_PLAYER_SUPPORT
+			app_voice_report(APP_STATUS_INDICATION_AWARENESS_ON, 0);
+#endif
+		}
+		else
+		{
+			anc_current_mode = monitor;
+			anc_coef_idx = monitor_mode;
+			anc_open_flag=1;
+#ifdef ANC_LED_PIN
+			app_monitor_switch_turnled(true);
+			app_anc_switch_turnled(false);
+#endif
+#ifdef MEDIA_PLAYER_SUPPORT
+			app_voice_report(APP_STATUS_INDICATION_AWARENESS_ON, 0);
+#endif
+		}
+	}else if(app_get_anc_toggle_method()==AncOn_AncOff) {
+		if(anc_current_mode == monitor)
+		{	
+			anc_current_mode = anc_on; 
+			anc_coef_idx = anc_on_mode;
+			
+			anc_open_flag=1;
+
+			if(power_anc_init){
+				//power_anc_init=0;
+			}
+			else{
+#ifdef ANC_LED_PIN
+			app_anc_switch_turnled(true);
+			app_monitor_switch_turnled(false);
+#endif
+#ifdef MEDIA_PLAYER_SUPPORT		
+			app_voice_report(APP_STATUS_INDICATION_ANC_ON, 0);
+#endif
+			}
+		}
+		else if(anc_current_mode == anc_off)
+		{
+			anc_current_mode = anc_on; 
+			anc_coef_idx = anc_on_mode;
+			
+			anc_open_flag=1;
+
+			if(power_anc_init){
+				//power_anc_init=0;
+			}
+			else{
+#ifdef ANC_LED_PIN
+			app_anc_switch_turnled(true);
+			app_monitor_switch_turnled(false);
+#endif
+#ifdef MEDIA_PLAYER_SUPPORT		
+			app_voice_report(APP_STATUS_INDICATION_ANC_ON, 0);
+#endif
+			}
+
+		}
+		else
+		{
+			anc_current_mode = anc_off;
+#ifdef ANC_LED_PIN
+			app_anc_switch_turnled(false);
+#endif		
+#ifdef MEDIA_PLAYER_SUPPORT
+			app_voice_report(APP_STATUS_INDICATION_ANC_OFF, 0);
+#endif
+		}
+	}else if(app_get_anc_toggle_method()==Awareness_AncOff){
+		if(anc_current_mode == monitor)
+		{	
+			anc_current_mode = anc_off;
+#ifdef ANC_LED_PIN
+			app_anc_switch_turnled(false);
+#endif		
+#ifdef MEDIA_PLAYER_SUPPORT
+			app_voice_report(APP_STATUS_INDICATION_ANC_OFF, 0);
+#endif
+		}
+		else if(anc_current_mode == anc_off)
+		{
+			anc_current_mode = monitor;
+			anc_coef_idx = monitor_mode;
+			anc_open_flag=1;
+#ifdef ANC_LED_PIN
+			app_monitor_switch_turnled(true);
+			app_anc_switch_turnled(false);
+#endif
+#ifdef MEDIA_PLAYER_SUPPORT
+			app_voice_report(APP_STATUS_INDICATION_AWARENESS_ON, 0);
+#endif
+		}
+		else
+		{
+			anc_current_mode = anc_off;
+#ifdef ANC_LED_PIN
+			app_anc_switch_turnled(false);
+#endif		
+#ifdef MEDIA_PLAYER_SUPPORT
+			app_voice_report(APP_STATUS_INDICATION_ANC_OFF, 0);
+#endif
+		}
 	}
 
 	switch (anc_work_status)

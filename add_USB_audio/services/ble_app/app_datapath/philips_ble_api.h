@@ -241,6 +241,15 @@ extern u8 album[150], album_len;
 		SET_MULTIPOINT_STATUS,	                                  //0x8171						
 	}PHILIPS_MULTIPOINT_COMMAND;
 
+	//add by cai
+	typedef enum PHILIPS_KEY_DEFINE_CHANGE_COMMAND
+	{
+		GET_KEY_DEFINE_SUPPORT_LIST=0x81B0,                  //0x81B0
+		GET_UX_ANC_TOGGLE_STATUS,	                         //0x81B1
+		SET_UX_ANC_TOGGLE_STATUS,	                         //0x81B2
+	}PHILIPS_KEY_DEFINE_CHANGE_COMMAND;
+	//end add
+	
 //Byte 0
 #define FOTA_SUPPORT 				  0x01
 #define ANC_MODE_SUPPORT 			  0x02
@@ -263,6 +272,10 @@ extern u8 album[150], album_len;
 //#define GAME_MODE_SUPPORT 				       	0x01
 #define NOWPLAYING2_0_SUPPORT 				       	0x01
 #define KEY_DEFINE_CHANGE_SUPPORT 	 			0x02
+
+//Key Define
+#define UX_ANC_TOGGLE_SUPPORT 				   0x01
+#define UX_VOLUME_SUPPORT 	 				   0x02
 
 //ANC
 #define ANC_OFF_SUPPORT 			  0x01

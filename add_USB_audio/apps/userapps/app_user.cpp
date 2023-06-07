@@ -62,6 +62,7 @@ static uint8_t eq_set_index=0;
 static uint8_t anc_set_index=1;
 static uint8_t monitor_level=20;
 static uint8_t focus_on=0;
+static uint8_t anc_toggle_mode=0x00;//add by cai,default AncOn_AncOff_Awareness
 static uint8_t sensor_enable=1;
 static uint8_t touch_lock=0;
 static uint8_t sidetone=0;
@@ -1200,6 +1201,30 @@ void app_nvrecord_anc_set(uint8_t nc)
 #endif
 }
 
+//add by cai
+uint8_t app_nvrecord_anc_toggle_mode_get(void)
+{
+	return(anc_toggle_mode);
+}
+
+void app_nvrecord_anc_toggle_mode_set(uint8_t nc_toggle)
+{	
+	struct nvrecord_env_t *nvrecord_env;
+	nv_record_env_get(&nvrecord_env);
+	
+	if(nc_toggle>=0x00 && nc_toggle<0x04){ 
+		nvrecord_env->anc_toggle_mode = nc_toggle;
+		anc_toggle_mode = nc_toggle;
+	}else return;
+	nv_record_env_set(nvrecord_env);
+
+#if FPGA==0
+    nv_record_flash_flush();
+#endif
+}
+
+//end add
+
 void app_nvrecord_demo_mode_set(uint8_t mod)
 {
 	struct nvrecord_env_t *nvrecord_env;
@@ -1579,6 +1604,7 @@ void app_nvrecord_para_get(void)
 	talkmic_led=nvrecord_env->talkmic_led;
 	if(nvrecord_env->auto_pwoff_time==0x00) app_auto_poweroff_set(0x00);
 	else auto_poweroff_time = nvrecord_env->auto_pwoff_time;//add by cai
+	anc_toggle_mode = nvrecord_env->anc_toggle_mode;//add by cai
 	low_latency_on=0;//add by cai
 
 	//for(i=0;i<bt_name_len;i++){
