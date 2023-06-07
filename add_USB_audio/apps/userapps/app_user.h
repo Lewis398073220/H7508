@@ -174,7 +174,7 @@ void app_nvrecord_set_bt_name(void);
 #if defined(CUSTOM_BIN_CONFIG)
 void app_get_custom_bin_config(void);
 uint8_t get_custom_bin_config(uint8_t config_num);
-
+void set_custom_bin_config(uint8_t config_num,uint8_t binconfig_value);//add by cai
 #endif
 
 

@@ -561,7 +561,11 @@ bool CheckCommandID(uint8_t *data)
 			return true;
 
 		case GET_DEVICE_COLOUR_STATUS:		
-			//TRACE(0,"Philips : SET_MULTIPOINT_STATUS!\r\n");
+			//TRACE(0,"Philips : GET_DEVICE_COLOUR_STATUS!\r\n");
+			return true;
+
+		case SET_DEVICE_COLOUR_STATUS:		
+			//TRACE(0,"Philips : SET_DEVICE_COLOUR_STATUS!\r\n");
 			return true;
 
 		case GET_SPECIAL_FUNCTION2_SUPPORT_LIST:
@@ -3207,6 +3211,7 @@ void Set_Multipoint_Status(uint8_t set_multipoint_status_value[1])
 	app_nvrecord_multipoint_set(g_set_multipoint_status_value[0]);
 }
 
+static uint8_t g_set_device_colour_value[]= {0x00};
 void Get_Device_Colour(void)
 {
     g_valueLen = 9;
@@ -3214,9 +3219,10 @@ void Get_Device_Colour(void)
     uint8_t head[9] = {0xff,0x01,0x00,0x04,0x71,0x81,0x1B,0x00,0x00};
      //Data length
      head[2] = 0x09;
- 
-     head[7] =  get_custom_bin_config(0);
-   
+
+	 g_set_device_colour_value[0]=get_custom_bin_config(0);
+     head[7] = g_set_device_colour_value[0];
+   	 TRACE(2,"********%s: color param=%d",__func__,head[7]);
      //Do checksum
      head[g_valueLen - 1]=Do_CheckSum(head,g_valueLen);
 	 
@@ -3225,6 +3231,17 @@ void Get_Device_Colour(void)
       }	   
 
     Philips_Send_Notify(g_valuePtr, (uint32_t)g_valueLen);      
+}
+
+void Set_Device_Colour(uint8_t set_device_colour_value[1])//add by cai
+{
+    g_set_device_colour_value[0] =  set_device_colour_value[0]; 
+
+	if(g_set_device_colour_value[0]>0x08)
+		return;
+	
+	TRACE(2,"********%s: color param=%d",__func__,g_set_device_colour_value[0]);
+	set_custom_bin_config(0, g_set_device_colour_value[0]);
 }
 
 void Get_Special_Function2_Support_List(void)
@@ -4159,6 +4176,15 @@ bool Philips_Functions_Call(uint8_t *data, uint8_t size)
 
 		case GET_DEVICE_COLOUR_STATUS:
 			Get_Device_Colour();
+		return true;
+
+		case SET_DEVICE_COLOUR_STATUS://add by cai
+			if (size != 9){
+			    return false;
+			}
+			uint8_t set_device_colour_value[1] = {0};
+	             set_device_colour_value[0] = data[7];		
+			Set_Device_Colour(set_device_colour_value);
 		return true;
 
 		case GET_SPECIAL_FUNCTION2_SUPPORT_LIST:

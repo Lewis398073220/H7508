@@ -221,7 +221,8 @@ extern u8 album[150], album_len;
 		SET_LOW_LATENCY_STATUS,	                                 //0x8118	
 		GET_VIBRATION_STATUS,                                    //0x8119
 		SET_VIBRATION_STATUS,	                                 //0x811a
-		GET_DEVICE_COLOUR_STATUS,
+		GET_DEVICE_COLOUR_STATUS,								 //0x811b
+		SET_DEVICE_COLOUR_STATUS,								 //0x811c  RD using only
 	}PHILIPS_SPECIAL_FUNCTION1_COMMAND;
 
 	typedef enum PHILIPS_SPECIAL_FUNCTION2_COMMAND

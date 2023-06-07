@@ -1688,8 +1688,10 @@ uint8_t binconfig[1]={0x00};
 
 void app_get_custom_bin_config(void)
 {		
-	memcpy(binconfig,__custom_bin_start,1);
+	//memcpy(binconfig,__custom_bin_start,1);//m by cai
 	//TRACE(1,"***app_get_custom_bin_config %d %d",binconfig[0],binconfig[1]);
+	memcpy(binconfig,(const void *)0x383e9000,1);//color, add by cai
+
 	TRACE(1,"***app_get_custom_bin_config %d",binconfig[0]);
 	//if((binconfig[0]==0x00)&&(binconfig[1]==0x00)){
 	//	binconfig[0]=0x01;
@@ -1699,8 +1701,18 @@ void app_get_custom_bin_config(void)
 
 uint8_t get_custom_bin_config(uint8_t config_num)
 {	
-    //if(config_num==0)
+    if(config_num==0)
 		return (binconfig[0]);
+	else
+		return 0xff;//invalid value
+	//else
+		//return (binconfig[1]);
+}
+
+void set_custom_bin_config(uint8_t config_num,uint8_t binconfig_value)
+{	
+    if(config_num==0)
+		binconfig[0]=binconfig_value;
 	//else
 		//return (binconfig[1]);
 }
