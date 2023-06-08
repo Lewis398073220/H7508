@@ -1115,29 +1115,35 @@ static const struct_anc_cfg POSSIBLY_UNUSED AncFirCoef_48k_Anc_Wind = {
 
 static const struct_anc_cfg POSSIBLY_UNUSED AncFirCoef_48k_Monitor1 = {
     .anc_cfg_ff_l = {
-		.total_gain =512,
+		.total_gain =323,
 
 		.iir_bypass_flag=0,
-		.iir_counter=5, 
-		.iir_coef[0].coef_b={0xffffa829,0xffff5052,0xffffa829}, .iir_coef[0].coef_a={0x08000000,0xf0236863,0x07dec47a},
+		.iir_counter=7, 
+		.iir_coef[0].coef_b={0xfb6c1d54,0x08e7e656,0xfbaac3ac}, .iir_coef[0].coef_a={0x08000000,0xf029b383,0x07d8787e},
 		.iir_coef[1].coef_b={0x081f9a92,0xf01e1522,0x07c32a0c}, .iir_coef[1].coef_a={0x08000000,0xf01e1522,0x07e2c49f},
-		.iir_coef[2].coef_b={0x080cb25a,0xf00bd219,0x07e78f3c}, .iir_coef[2].coef_a={0x08000000,0xf00bd219,0x07f44196},
+		.iir_coef[2].coef_b={0x0806cb0a,0xf0078c6f,0x07f1bc3a}, .iir_coef[2].coef_a={0x08000000,0xf0078c6f,0x07f88745},
 		.iir_coef[3].coef_b={0x0807bbda,0xf01afd6b,0x07ddd230}, .iir_coef[3].coef_a={0x08000000,0xf01afd6b,0x07e58e0a},
-		.iir_coef[4].coef_b={0x07ff6b72,0xf00750d0,0x07f94875}, .iir_coef[4].coef_a={0x08000000,0xf00751c9,0x07f8b4e0},
+		.iir_coef[4].coef_b={0x07fe5aa4,0xf008238d,0x07f983af}, .iir_coef[4].coef_a={0x08000000,0xf0082542,0x07f7e008},
+		.iir_coef[5].coef_b={0x08025bbe,0xf004c2d8,0x07f8e705}, .iir_coef[5].coef_a={0x08000000,0xf004c2d8,0x07fb42c4},
+		.iir_coef[6].coef_b={0x07ff58cf,0xf00196c3,0x07ff107c}, .iir_coef[6].coef_a={0x08000000,0xf00196c3,0x07fe694b},
+		.iir_coef[7].coef_b={0,0,0},	.iir_coef[7].coef_a={0,0,0},
 
 		.dac_gain_offset=0,
 		.adc_gain_offset=(-6)*4,
     },
     .anc_cfg_ff_r = {
-		.total_gain =512,
+		.total_gain =323,
 
 		.iir_bypass_flag=0,
-		.iir_counter=5, 
-		.iir_coef[0].coef_b={0xffffa829,0xffff5052,0xffffa829}, .iir_coef[0].coef_a={0x08000000,0xf0236863,0x07dec47a},
+		.iir_counter=7, 
+		.iir_coef[0].coef_b={0xfb6c1d54,0x08e7e656,0xfbaac3ac}, .iir_coef[0].coef_a={0x08000000,0xf029b383,0x07d8787e},
 		.iir_coef[1].coef_b={0x081f9a92,0xf01e1522,0x07c32a0c}, .iir_coef[1].coef_a={0x08000000,0xf01e1522,0x07e2c49f},
-		.iir_coef[2].coef_b={0x080cb25a,0xf00bd219,0x07e78f3c}, .iir_coef[2].coef_a={0x08000000,0xf00bd219,0x07f44196},
+		.iir_coef[2].coef_b={0x0806cb0a,0xf0078c6f,0x07f1bc3a}, .iir_coef[2].coef_a={0x08000000,0xf0078c6f,0x07f88745},
 		.iir_coef[3].coef_b={0x0807bbda,0xf01afd6b,0x07ddd230}, .iir_coef[3].coef_a={0x08000000,0xf01afd6b,0x07e58e0a},
-		.iir_coef[4].coef_b={0x07ff6b72,0xf00750d0,0x07f94875}, .iir_coef[4].coef_a={0x08000000,0xf00751c9,0x07f8b4e0},
+		.iir_coef[4].coef_b={0x07fe5aa4,0xf008238d,0x07f983af}, .iir_coef[4].coef_a={0x08000000,0xf0082542,0x07f7e008},
+		.iir_coef[5].coef_b={0x08025bbe,0xf004c2d8,0x07f8e705}, .iir_coef[5].coef_a={0x08000000,0xf004c2d8,0x07fb42c4},
+		.iir_coef[6].coef_b={0x07ff58cf,0xf00196c3,0x07ff107c}, .iir_coef[6].coef_a={0x08000000,0xf00196c3,0x07fe694b},
+		.iir_coef[7].coef_b={0,0,0},	.iir_coef[7].coef_a={0,0,0},
 
 		.dac_gain_offset=0,
 		.adc_gain_offset=(-6)*4,
@@ -1147,7 +1153,7 @@ static const struct_anc_cfg POSSIBLY_UNUSED AncFirCoef_48k_Monitor1 = {
 
 		.iir_bypass_flag=0,
 		.iir_counter=1, 
-		.iir_coef[0].coef_b={0x08000000,0xf021c7e1,0x07dec359}, .iir_coef[0].coef_a={0x08000000,0xf021c7e1,0x07dec359},
+		.iir_coef[0].coef_b={0x0800b545,0xf0016cc5,0x07fdde77}, .iir_coef[0].coef_a={0x08000000,0xf0016cc5,0x07fe93bc},
 
 		.dac_gain_offset=0,
 		.adc_gain_offset=(-6)*4,
@@ -1157,7 +1163,7 @@ static const struct_anc_cfg POSSIBLY_UNUSED AncFirCoef_48k_Monitor1 = {
 
 		.iir_bypass_flag=0,
 		.iir_counter=1, 
-		.iir_coef[0].coef_b={0x08000000,0xf021c7e1,0x07dec359}, .iir_coef[0].coef_a={0x08000000,0xf021c7e1,0x07dec359},
+		.iir_coef[0].coef_b={0x0800b545,0xf0016cc5,0x07fdde77}, .iir_coef[0].coef_a={0x08000000,0xf0016cc5,0x07fe93bc},
 
 		.dac_gain_offset=0,
 		.adc_gain_offset=(-6)*4,
@@ -1193,31 +1199,38 @@ static const struct_anc_cfg POSSIBLY_UNUSED AncFirCoef_48k_Monitor1 = {
 #endif
 };
 
+
 static const struct_anc_cfg POSSIBLY_UNUSED AncFirCoef_48k_Monitor2 = {
     .anc_cfg_ff_l = {
-		.total_gain =512,
+		.total_gain =364,
 
 		.iir_bypass_flag=0,
-		.iir_counter=5, 
-		.iir_coef[0].coef_b={0xffffa829,0xffff5052,0xffffa829}, .iir_coef[0].coef_a={0x08000000,0xf0236863,0x07dec47a},
+		.iir_counter=7, 
+		.iir_coef[0].coef_b={0xfb6c1d54,0x08e7e656,0xfbaac3ac}, .iir_coef[0].coef_a={0x08000000,0xf029b383,0x07d8787e},
 		.iir_coef[1].coef_b={0x081f9a92,0xf01e1522,0x07c32a0c}, .iir_coef[1].coef_a={0x08000000,0xf01e1522,0x07e2c49f},
-		.iir_coef[2].coef_b={0x080cb25a,0xf00bd219,0x07e78f3c}, .iir_coef[2].coef_a={0x08000000,0xf00bd219,0x07f44196},
+		.iir_coef[2].coef_b={0x0806cb0a,0xf0078c6f,0x07f1bc3a}, .iir_coef[2].coef_a={0x08000000,0xf0078c6f,0x07f88745},
 		.iir_coef[3].coef_b={0x0807bbda,0xf01afd6b,0x07ddd230}, .iir_coef[3].coef_a={0x08000000,0xf01afd6b,0x07e58e0a},
-		.iir_coef[4].coef_b={0x07ff6b72,0xf00750d0,0x07f94875}, .iir_coef[4].coef_a={0x08000000,0xf00751c9,0x07f8b4e0},
+		.iir_coef[4].coef_b={0x07fe5aa4,0xf008238d,0x07f983af}, .iir_coef[4].coef_a={0x08000000,0xf0082542,0x07f7e008},
+		.iir_coef[5].coef_b={0x08025bbe,0xf004c2d8,0x07f8e705}, .iir_coef[5].coef_a={0x08000000,0xf004c2d8,0x07fb42c4},
+		.iir_coef[6].coef_b={0x07ff58cf,0xf00196c3,0x07ff107c}, .iir_coef[6].coef_a={0x08000000,0xf00196c3,0x07fe694b},
+		.iir_coef[7].coef_b={0,0,0},	.iir_coef[7].coef_a={0,0,0},
 
 		.dac_gain_offset=0,
 		.adc_gain_offset=(-6)*4,
     },
     .anc_cfg_ff_r = {
-		.total_gain =512,
+		.total_gain =364,
 
 		.iir_bypass_flag=0,
-		.iir_counter=5, 
-		.iir_coef[0].coef_b={0xffffa829,0xffff5052,0xffffa829}, .iir_coef[0].coef_a={0x08000000,0xf0236863,0x07dec47a},
+		.iir_counter=7, 
+		.iir_coef[0].coef_b={0xfb6c1d54,0x08e7e656,0xfbaac3ac}, .iir_coef[0].coef_a={0x08000000,0xf029b383,0x07d8787e},
 		.iir_coef[1].coef_b={0x081f9a92,0xf01e1522,0x07c32a0c}, .iir_coef[1].coef_a={0x08000000,0xf01e1522,0x07e2c49f},
-		.iir_coef[2].coef_b={0x080cb25a,0xf00bd219,0x07e78f3c}, .iir_coef[2].coef_a={0x08000000,0xf00bd219,0x07f44196},
+		.iir_coef[2].coef_b={0x0806cb0a,0xf0078c6f,0x07f1bc3a}, .iir_coef[2].coef_a={0x08000000,0xf0078c6f,0x07f88745},
 		.iir_coef[3].coef_b={0x0807bbda,0xf01afd6b,0x07ddd230}, .iir_coef[3].coef_a={0x08000000,0xf01afd6b,0x07e58e0a},
-		.iir_coef[4].coef_b={0x07ff6b72,0xf00750d0,0x07f94875}, .iir_coef[4].coef_a={0x08000000,0xf00751c9,0x07f8b4e0},
+		.iir_coef[4].coef_b={0x07fe5aa4,0xf008238d,0x07f983af}, .iir_coef[4].coef_a={0x08000000,0xf0082542,0x07f7e008},
+		.iir_coef[5].coef_b={0x08025bbe,0xf004c2d8,0x07f8e705}, .iir_coef[5].coef_a={0x08000000,0xf004c2d8,0x07fb42c4},
+		.iir_coef[6].coef_b={0x07ff58cf,0xf00196c3,0x07ff107c}, .iir_coef[6].coef_a={0x08000000,0xf00196c3,0x07fe694b},
+		.iir_coef[7].coef_b={0,0,0},	.iir_coef[7].coef_a={0,0,0},
 
 		.dac_gain_offset=0,
 		.adc_gain_offset=(-6)*4,
@@ -1227,7 +1240,7 @@ static const struct_anc_cfg POSSIBLY_UNUSED AncFirCoef_48k_Monitor2 = {
 
 		.iir_bypass_flag=0,
 		.iir_counter=1, 
-		.iir_coef[0].coef_b={0x08000000,0xf021c7e1,0x07dec359}, .iir_coef[0].coef_a={0x08000000,0xf021c7e1,0x07dec359},
+		.iir_coef[0].coef_b={0x0800b545,0xf0016cc5,0x07fdde77}, .iir_coef[0].coef_a={0x08000000,0xf0016cc5,0x07fe93bc},
 
 		.dac_gain_offset=0,
 		.adc_gain_offset=(-6)*4,
@@ -1237,7 +1250,7 @@ static const struct_anc_cfg POSSIBLY_UNUSED AncFirCoef_48k_Monitor2 = {
 
 		.iir_bypass_flag=0,
 		.iir_counter=1, 
-		.iir_coef[0].coef_b={0x08000000,0xf021c7e1,0x07dec359}, .iir_coef[0].coef_a={0x08000000,0xf021c7e1,0x07dec359},
+		.iir_coef[0].coef_b={0x0800b545,0xf0016cc5,0x07fdde77}, .iir_coef[0].coef_a={0x08000000,0xf0016cc5,0x07fe93bc},
 
 		.dac_gain_offset=0,
 		.adc_gain_offset=(-6)*4,
@@ -1275,29 +1288,35 @@ static const struct_anc_cfg POSSIBLY_UNUSED AncFirCoef_48k_Monitor2 = {
 
 static const struct_anc_cfg POSSIBLY_UNUSED AncFirCoef_48k_Monitor3 = {
     .anc_cfg_ff_l = {
-		.total_gain =512,
+		.total_gain =404,
 
 		.iir_bypass_flag=0,
-		.iir_counter=5, 
-		.iir_coef[0].coef_b={0xffffa829,0xffff5052,0xffffa829}, .iir_coef[0].coef_a={0x08000000,0xf0236863,0x07dec47a},
+		.iir_counter=7, 
+		.iir_coef[0].coef_b={0xfb6c1d54,0x08e7e656,0xfbaac3ac}, .iir_coef[0].coef_a={0x08000000,0xf029b383,0x07d8787e},
 		.iir_coef[1].coef_b={0x081f9a92,0xf01e1522,0x07c32a0c}, .iir_coef[1].coef_a={0x08000000,0xf01e1522,0x07e2c49f},
-		.iir_coef[2].coef_b={0x080cb25a,0xf00bd219,0x07e78f3c}, .iir_coef[2].coef_a={0x08000000,0xf00bd219,0x07f44196},
+		.iir_coef[2].coef_b={0x0806cb0a,0xf0078c6f,0x07f1bc3a}, .iir_coef[2].coef_a={0x08000000,0xf0078c6f,0x07f88745},
 		.iir_coef[3].coef_b={0x0807bbda,0xf01afd6b,0x07ddd230}, .iir_coef[3].coef_a={0x08000000,0xf01afd6b,0x07e58e0a},
-		.iir_coef[4].coef_b={0x07ff6b72,0xf00750d0,0x07f94875}, .iir_coef[4].coef_a={0x08000000,0xf00751c9,0x07f8b4e0},
+		.iir_coef[4].coef_b={0x07fe5aa4,0xf008238d,0x07f983af}, .iir_coef[4].coef_a={0x08000000,0xf0082542,0x07f7e008},
+		.iir_coef[5].coef_b={0x08025bbe,0xf004c2d8,0x07f8e705}, .iir_coef[5].coef_a={0x08000000,0xf004c2d8,0x07fb42c4},
+		.iir_coef[6].coef_b={0x07ff58cf,0xf00196c3,0x07ff107c}, .iir_coef[6].coef_a={0x08000000,0xf00196c3,0x07fe694b},
+		.iir_coef[7].coef_b={0,0,0},	.iir_coef[7].coef_a={0,0,0},
 
 		.dac_gain_offset=0,
 		.adc_gain_offset=(-6)*4,
     },
     .anc_cfg_ff_r = {
-		.total_gain =512,
+		.total_gain =404,
 
 		.iir_bypass_flag=0,
-		.iir_counter=5, 
-		.iir_coef[0].coef_b={0xffffa829,0xffff5052,0xffffa829}, .iir_coef[0].coef_a={0x08000000,0xf0236863,0x07dec47a},
+		.iir_counter=7, 
+		.iir_coef[0].coef_b={0xfb6c1d54,0x08e7e656,0xfbaac3ac}, .iir_coef[0].coef_a={0x08000000,0xf029b383,0x07d8787e},
 		.iir_coef[1].coef_b={0x081f9a92,0xf01e1522,0x07c32a0c}, .iir_coef[1].coef_a={0x08000000,0xf01e1522,0x07e2c49f},
-		.iir_coef[2].coef_b={0x080cb25a,0xf00bd219,0x07e78f3c}, .iir_coef[2].coef_a={0x08000000,0xf00bd219,0x07f44196},
+		.iir_coef[2].coef_b={0x0806cb0a,0xf0078c6f,0x07f1bc3a}, .iir_coef[2].coef_a={0x08000000,0xf0078c6f,0x07f88745},
 		.iir_coef[3].coef_b={0x0807bbda,0xf01afd6b,0x07ddd230}, .iir_coef[3].coef_a={0x08000000,0xf01afd6b,0x07e58e0a},
-		.iir_coef[4].coef_b={0x07ff6b72,0xf00750d0,0x07f94875}, .iir_coef[4].coef_a={0x08000000,0xf00751c9,0x07f8b4e0},
+		.iir_coef[4].coef_b={0x07fe5aa4,0xf008238d,0x07f983af}, .iir_coef[4].coef_a={0x08000000,0xf0082542,0x07f7e008},
+		.iir_coef[5].coef_b={0x08025bbe,0xf004c2d8,0x07f8e705}, .iir_coef[5].coef_a={0x08000000,0xf004c2d8,0x07fb42c4},
+		.iir_coef[6].coef_b={0x07ff58cf,0xf00196c3,0x07ff107c}, .iir_coef[6].coef_a={0x08000000,0xf00196c3,0x07fe694b},
+		.iir_coef[7].coef_b={0,0,0},	.iir_coef[7].coef_a={0,0,0},
 
 		.dac_gain_offset=0,
 		.adc_gain_offset=(-6)*4,
@@ -1307,7 +1326,7 @@ static const struct_anc_cfg POSSIBLY_UNUSED AncFirCoef_48k_Monitor3 = {
 
 		.iir_bypass_flag=0,
 		.iir_counter=1, 
-		.iir_coef[0].coef_b={0x08000000,0xf021c7e1,0x07dec359}, .iir_coef[0].coef_a={0x08000000,0xf021c7e1,0x07dec359},
+		.iir_coef[0].coef_b={0x0800b545,0xf0016cc5,0x07fdde77}, .iir_coef[0].coef_a={0x08000000,0xf0016cc5,0x07fe93bc},
 
 		.dac_gain_offset=0,
 		.adc_gain_offset=(-6)*4,
@@ -1317,7 +1336,7 @@ static const struct_anc_cfg POSSIBLY_UNUSED AncFirCoef_48k_Monitor3 = {
 
 		.iir_bypass_flag=0,
 		.iir_counter=1, 
-		.iir_coef[0].coef_b={0x08000000,0xf021c7e1,0x07dec359}, .iir_coef[0].coef_a={0x08000000,0xf021c7e1,0x07dec359},
+		.iir_coef[0].coef_b={0x0800b545,0xf0016cc5,0x07fdde77}, .iir_coef[0].coef_a={0x08000000,0xf0016cc5,0x07fe93bc},
 
 		.dac_gain_offset=0,
 		.adc_gain_offset=(-6)*4,
@@ -1355,29 +1374,35 @@ static const struct_anc_cfg POSSIBLY_UNUSED AncFirCoef_48k_Monitor3 = {
 
 static const struct_anc_cfg POSSIBLY_UNUSED AncFirCoef_48k_Monitor4 = {
     .anc_cfg_ff_l = {
-		.total_gain =512,
+		.total_gain =456,
 
 		.iir_bypass_flag=0,
-		.iir_counter=5, 
-		.iir_coef[0].coef_b={0xffffa829,0xffff5052,0xffffa829}, .iir_coef[0].coef_a={0x08000000,0xf0236863,0x07dec47a},
+		.iir_counter=7, 
+		.iir_coef[0].coef_b={0xfb6c1d54,0x08e7e656,0xfbaac3ac}, .iir_coef[0].coef_a={0x08000000,0xf029b383,0x07d8787e},
 		.iir_coef[1].coef_b={0x081f9a92,0xf01e1522,0x07c32a0c}, .iir_coef[1].coef_a={0x08000000,0xf01e1522,0x07e2c49f},
-		.iir_coef[2].coef_b={0x080cb25a,0xf00bd219,0x07e78f3c}, .iir_coef[2].coef_a={0x08000000,0xf00bd219,0x07f44196},
+		.iir_coef[2].coef_b={0x0806cb0a,0xf0078c6f,0x07f1bc3a}, .iir_coef[2].coef_a={0x08000000,0xf0078c6f,0x07f88745},
 		.iir_coef[3].coef_b={0x0807bbda,0xf01afd6b,0x07ddd230}, .iir_coef[3].coef_a={0x08000000,0xf01afd6b,0x07e58e0a},
-		.iir_coef[4].coef_b={0x07ff6b72,0xf00750d0,0x07f94875}, .iir_coef[4].coef_a={0x08000000,0xf00751c9,0x07f8b4e0},
+		.iir_coef[4].coef_b={0x07fe5aa4,0xf008238d,0x07f983af}, .iir_coef[4].coef_a={0x08000000,0xf0082542,0x07f7e008},
+		.iir_coef[5].coef_b={0x08025bbe,0xf004c2d8,0x07f8e705}, .iir_coef[5].coef_a={0x08000000,0xf004c2d8,0x07fb42c4},
+		.iir_coef[6].coef_b={0x07ff58cf,0xf00196c3,0x07ff107c}, .iir_coef[6].coef_a={0x08000000,0xf00196c3,0x07fe694b},
+		.iir_coef[7].coef_b={0,0,0},	.iir_coef[7].coef_a={0,0,0},
 
 		.dac_gain_offset=0,
 		.adc_gain_offset=(-6)*4,
     },
     .anc_cfg_ff_r = {
-		.total_gain =512,
+		.total_gain =456,
 
 		.iir_bypass_flag=0,
-		.iir_counter=5, 
-		.iir_coef[0].coef_b={0xffffa829,0xffff5052,0xffffa829}, .iir_coef[0].coef_a={0x08000000,0xf0236863,0x07dec47a},
+		.iir_counter=7, 
+		.iir_coef[0].coef_b={0xfb6c1d54,0x08e7e656,0xfbaac3ac}, .iir_coef[0].coef_a={0x08000000,0xf029b383,0x07d8787e},
 		.iir_coef[1].coef_b={0x081f9a92,0xf01e1522,0x07c32a0c}, .iir_coef[1].coef_a={0x08000000,0xf01e1522,0x07e2c49f},
-		.iir_coef[2].coef_b={0x080cb25a,0xf00bd219,0x07e78f3c}, .iir_coef[2].coef_a={0x08000000,0xf00bd219,0x07f44196},
+		.iir_coef[2].coef_b={0x0806cb0a,0xf0078c6f,0x07f1bc3a}, .iir_coef[2].coef_a={0x08000000,0xf0078c6f,0x07f88745},
 		.iir_coef[3].coef_b={0x0807bbda,0xf01afd6b,0x07ddd230}, .iir_coef[3].coef_a={0x08000000,0xf01afd6b,0x07e58e0a},
-		.iir_coef[4].coef_b={0x07ff6b72,0xf00750d0,0x07f94875}, .iir_coef[4].coef_a={0x08000000,0xf00751c9,0x07f8b4e0},
+		.iir_coef[4].coef_b={0x07fe5aa4,0xf008238d,0x07f983af}, .iir_coef[4].coef_a={0x08000000,0xf0082542,0x07f7e008},
+		.iir_coef[5].coef_b={0x08025bbe,0xf004c2d8,0x07f8e705}, .iir_coef[5].coef_a={0x08000000,0xf004c2d8,0x07fb42c4},
+		.iir_coef[6].coef_b={0x07ff58cf,0xf00196c3,0x07ff107c}, .iir_coef[6].coef_a={0x08000000,0xf00196c3,0x07fe694b},
+		.iir_coef[7].coef_b={0,0,0},	.iir_coef[7].coef_a={0,0,0},
 
 		.dac_gain_offset=0,
 		.adc_gain_offset=(-6)*4,
@@ -1387,7 +1412,7 @@ static const struct_anc_cfg POSSIBLY_UNUSED AncFirCoef_48k_Monitor4 = {
 
 		.iir_bypass_flag=0,
 		.iir_counter=1, 
-		.iir_coef[0].coef_b={0x08000000,0xf021c7e1,0x07dec359}, .iir_coef[0].coef_a={0x08000000,0xf021c7e1,0x07dec359},
+		.iir_coef[0].coef_b={0x0800b545,0xf0016cc5,0x07fdde77}, .iir_coef[0].coef_a={0x08000000,0xf0016cc5,0x07fe93bc},
 
 		.dac_gain_offset=0,
 		.adc_gain_offset=(-6)*4,
@@ -1397,7 +1422,7 @@ static const struct_anc_cfg POSSIBLY_UNUSED AncFirCoef_48k_Monitor4 = {
 
 		.iir_bypass_flag=0,
 		.iir_counter=1, 
-		.iir_coef[0].coef_b={0x08000000,0xf021c7e1,0x07dec359}, .iir_coef[0].coef_a={0x08000000,0xf021c7e1,0x07dec359},
+		.iir_coef[0].coef_b={0x0800b545,0xf0016cc5,0x07fdde77}, .iir_coef[0].coef_a={0x08000000,0xf0016cc5,0x07fe93bc},
 
 		.dac_gain_offset=0,
 		.adc_gain_offset=(-6)*4,
@@ -1438,12 +1463,15 @@ static const struct_anc_cfg POSSIBLY_UNUSED AncFirCoef_48k_Monitor5 = {
 		.total_gain =512,
 
 		.iir_bypass_flag=0,
-		.iir_counter=5, 
-		.iir_coef[0].coef_b={0xffffa829,0xffff5052,0xffffa829}, .iir_coef[0].coef_a={0x08000000,0xf0236863,0x07dec47a},
+		.iir_counter=7, 
+		.iir_coef[0].coef_b={0xfb6c1d54,0x08e7e656,0xfbaac3ac}, .iir_coef[0].coef_a={0x08000000,0xf029b383,0x07d8787e},
 		.iir_coef[1].coef_b={0x081f9a92,0xf01e1522,0x07c32a0c}, .iir_coef[1].coef_a={0x08000000,0xf01e1522,0x07e2c49f},
-		.iir_coef[2].coef_b={0x080cb25a,0xf00bd219,0x07e78f3c}, .iir_coef[2].coef_a={0x08000000,0xf00bd219,0x07f44196},
+		.iir_coef[2].coef_b={0x0806cb0a,0xf0078c6f,0x07f1bc3a}, .iir_coef[2].coef_a={0x08000000,0xf0078c6f,0x07f88745},
 		.iir_coef[3].coef_b={0x0807bbda,0xf01afd6b,0x07ddd230}, .iir_coef[3].coef_a={0x08000000,0xf01afd6b,0x07e58e0a},
-		.iir_coef[4].coef_b={0x07ff6b72,0xf00750d0,0x07f94875}, .iir_coef[4].coef_a={0x08000000,0xf00751c9,0x07f8b4e0},
+		.iir_coef[4].coef_b={0x07fe5aa4,0xf008238d,0x07f983af}, .iir_coef[4].coef_a={0x08000000,0xf0082542,0x07f7e008},
+		.iir_coef[5].coef_b={0x08025bbe,0xf004c2d8,0x07f8e705}, .iir_coef[5].coef_a={0x08000000,0xf004c2d8,0x07fb42c4},
+		.iir_coef[6].coef_b={0x07ff58cf,0xf00196c3,0x07ff107c}, .iir_coef[6].coef_a={0x08000000,0xf00196c3,0x07fe694b},
+		.iir_coef[7].coef_b={0,0,0},	.iir_coef[7].coef_a={0,0,0},
 
 		.dac_gain_offset=0,
 		.adc_gain_offset=(-6)*4,
@@ -1452,12 +1480,15 @@ static const struct_anc_cfg POSSIBLY_UNUSED AncFirCoef_48k_Monitor5 = {
 		.total_gain =512,
 
 		.iir_bypass_flag=0,
-		.iir_counter=5, 
-		.iir_coef[0].coef_b={0xffffa829,0xffff5052,0xffffa829}, .iir_coef[0].coef_a={0x08000000,0xf0236863,0x07dec47a},
+		.iir_counter=7, 
+		.iir_coef[0].coef_b={0xfb6c1d54,0x08e7e656,0xfbaac3ac}, .iir_coef[0].coef_a={0x08000000,0xf029b383,0x07d8787e},
 		.iir_coef[1].coef_b={0x081f9a92,0xf01e1522,0x07c32a0c}, .iir_coef[1].coef_a={0x08000000,0xf01e1522,0x07e2c49f},
-		.iir_coef[2].coef_b={0x080cb25a,0xf00bd219,0x07e78f3c}, .iir_coef[2].coef_a={0x08000000,0xf00bd219,0x07f44196},
+		.iir_coef[2].coef_b={0x0806cb0a,0xf0078c6f,0x07f1bc3a}, .iir_coef[2].coef_a={0x08000000,0xf0078c6f,0x07f88745},
 		.iir_coef[3].coef_b={0x0807bbda,0xf01afd6b,0x07ddd230}, .iir_coef[3].coef_a={0x08000000,0xf01afd6b,0x07e58e0a},
-		.iir_coef[4].coef_b={0x07ff6b72,0xf00750d0,0x07f94875}, .iir_coef[4].coef_a={0x08000000,0xf00751c9,0x07f8b4e0},
+		.iir_coef[4].coef_b={0x07fe5aa4,0xf008238d,0x07f983af}, .iir_coef[4].coef_a={0x08000000,0xf0082542,0x07f7e008},
+		.iir_coef[5].coef_b={0x08025bbe,0xf004c2d8,0x07f8e705}, .iir_coef[5].coef_a={0x08000000,0xf004c2d8,0x07fb42c4},
+		.iir_coef[6].coef_b={0x07ff58cf,0xf00196c3,0x07ff107c}, .iir_coef[6].coef_a={0x08000000,0xf00196c3,0x07fe694b},
+		.iir_coef[7].coef_b={0,0,0},	.iir_coef[7].coef_a={0,0,0},
 
 		.dac_gain_offset=0,
 		.adc_gain_offset=(-6)*4,
@@ -1467,7 +1498,7 @@ static const struct_anc_cfg POSSIBLY_UNUSED AncFirCoef_48k_Monitor5 = {
 
 		.iir_bypass_flag=0,
 		.iir_counter=1, 
-		.iir_coef[0].coef_b={0x08000000,0xf021c7e1,0x07dec359}, .iir_coef[0].coef_a={0x08000000,0xf021c7e1,0x07dec359},
+		.iir_coef[0].coef_b={0x0800b545,0xf0016cc5,0x07fdde77}, .iir_coef[0].coef_a={0x08000000,0xf0016cc5,0x07fe93bc},
 
 		.dac_gain_offset=0,
 		.adc_gain_offset=(-6)*4,
@@ -1477,7 +1508,7 @@ static const struct_anc_cfg POSSIBLY_UNUSED AncFirCoef_48k_Monitor5 = {
 
 		.iir_bypass_flag=0,
 		.iir_counter=1, 
-		.iir_coef[0].coef_b={0x08000000,0xf021c7e1,0x07dec359}, .iir_coef[0].coef_a={0x08000000,0xf021c7e1,0x07dec359},
+		.iir_coef[0].coef_b={0x0800b545,0xf0016cc5,0x07fdde77}, .iir_coef[0].coef_a={0x08000000,0xf0016cc5,0x07fe93bc},
 
 		.dac_gain_offset=0,
 		.adc_gain_offset=(-6)*4,
@@ -1515,49 +1546,57 @@ static const struct_anc_cfg POSSIBLY_UNUSED AncFirCoef_48k_Monitor5 = {
 
 static const struct_anc_cfg POSSIBLY_UNUSED AncFirCoef_48k_Clear_Voice1 ={
     .anc_cfg_ff_l = {
-		.total_gain =512,
+		.total_gain =323,
 
 		.iir_bypass_flag=0,
-		.iir_counter=5, 
-		.iir_coef[0].coef_b={0xffffa829,0xffff5052,0xffffa829}, .iir_coef[0].coef_a={0x08000000,0xf0236863,0x07dec47a},
-		.iir_coef[1].coef_b={0x081f9a92,0xf01e1522,0x07c32a0c}, .iir_coef[1].coef_a={0x08000000,0xf01e1522,0x07e2c49f},
-		.iir_coef[2].coef_b={0x080cb25a,0xf00bd219,0x07e78f3c}, .iir_coef[2].coef_a={0x08000000,0xf00bd219,0x07f44196},
-		.iir_coef[3].coef_b={0x0807bbda,0xf01afd6b,0x07ddd230}, .iir_coef[3].coef_a={0x08000000,0xf01afd6b,0x07e58e0a},
-		.iir_coef[4].coef_b={0x07ff6b72,0xf00750d0,0x07f94875}, .iir_coef[4].coef_a={0x08000000,0xf00751c9,0x07f8b4e0},
+		.iir_counter=7, 
+		.iir_coef[0].coef_b={0xfa5696e2,0x0b529efe,0xfa56ca15}, .iir_coef[0].coef_a={0x08000000,0xf00196c3,0x07fe694b},
+		.iir_coef[1].coef_b={0x07fe5aa4,0xf008238d,0x07f983af}, .iir_coef[1].coef_a={0x08000000,0xf0082542,0x07f7e008},
+		.iir_coef[2].coef_b={0x08025bbe,0xf004c2d8,0x07f8e705}, .iir_coef[2].coef_a={0x08000000,0xf004c2d8,0x07fb42c4},
+		.iir_coef[3].coef_b={0x0806cb0a,0xf0078c6f,0x07f1bc3a}, .iir_coef[3].coef_a={0x08000000,0xf0078c6f,0x07f88745},
+		.iir_coef[4].coef_b={0x0807bbda,0xf01afd6b,0x07ddd230}, .iir_coef[4].coef_a={0x08000000,0xf01afd6b,0x07e58e0a},
+		.iir_coef[5].coef_b={0x081f9a92,0xf01e1522,0x07c32a0c}, .iir_coef[5].coef_a={0x08000000,0xf01e1522,0x07e2c49f},
+		.iir_coef[6].coef_b={0x0823f092,0xf029b383,0x07b487ec}, .iir_coef[6].coef_a={0x08000000,0xf029b383,0x07d8787e},
+		.iir_coef[7].coef_b={0,0,0},	.iir_coef[7].coef_a={0,0,0},
 
 		.dac_gain_offset=0,
 		.adc_gain_offset=(-6)*4,
     },
     .anc_cfg_ff_r = {
-		.total_gain =512,
+		.total_gain =323,
 
 		.iir_bypass_flag=0,
-		.iir_counter=5, 
-		.iir_coef[0].coef_b={0xffffa829,0xffff5052,0xffffa829}, .iir_coef[0].coef_a={0x08000000,0xf0236863,0x07dec47a},
-		.iir_coef[1].coef_b={0x081f9a92,0xf01e1522,0x07c32a0c}, .iir_coef[1].coef_a={0x08000000,0xf01e1522,0x07e2c49f},
-		.iir_coef[2].coef_b={0x080cb25a,0xf00bd219,0x07e78f3c}, .iir_coef[2].coef_a={0x08000000,0xf00bd219,0x07f44196},
-		.iir_coef[3].coef_b={0x0807bbda,0xf01afd6b,0x07ddd230}, .iir_coef[3].coef_a={0x08000000,0xf01afd6b,0x07e58e0a},
-		.iir_coef[4].coef_b={0x07ff6b72,0xf00750d0,0x07f94875}, .iir_coef[4].coef_a={0x08000000,0xf00751c9,0x07f8b4e0},
+		.iir_counter=7, 
+		.iir_coef[0].coef_b={0xfa5696e2,0x0b529efe,0xfa56ca15}, .iir_coef[0].coef_a={0x08000000,0xf00196c3,0x07fe694b},
+		.iir_coef[1].coef_b={0x07fe5aa4,0xf008238d,0x07f983af}, .iir_coef[1].coef_a={0x08000000,0xf0082542,0x07f7e008},
+		.iir_coef[2].coef_b={0x08025bbe,0xf004c2d8,0x07f8e705}, .iir_coef[2].coef_a={0x08000000,0xf004c2d8,0x07fb42c4},
+		.iir_coef[3].coef_b={0x0806cb0a,0xf0078c6f,0x07f1bc3a}, .iir_coef[3].coef_a={0x08000000,0xf0078c6f,0x07f88745},
+		.iir_coef[4].coef_b={0x0807bbda,0xf01afd6b,0x07ddd230}, .iir_coef[4].coef_a={0x08000000,0xf01afd6b,0x07e58e0a},
+		.iir_coef[5].coef_b={0x081f9a92,0xf01e1522,0x07c32a0c}, .iir_coef[5].coef_a={0x08000000,0xf01e1522,0x07e2c49f},
+		.iir_coef[6].coef_b={0x0823f092,0xf029b383,0x07b487ec}, .iir_coef[6].coef_a={0x08000000,0xf029b383,0x07d8787e},
+		.iir_coef[7].coef_b={0,0,0},	.iir_coef[7].coef_a={0,0,0},
 
 		.dac_gain_offset=0,
 		.adc_gain_offset=(-6)*4,
     },
     .anc_cfg_fb_l = {
-        .total_gain = 0,
+        .total_gain = 323,
 
 		.iir_bypass_flag=0,
-		.iir_counter=1, 
-		.iir_coef[0].coef_b={0x08000000,0xf021c7e1,0x07dec359}, .iir_coef[0].coef_a={0x08000000,0xf021c7e1,0x07dec359},
+		.iir_counter=2, 
+		.iir_coef[0].coef_b={0x0b4f0325,0xe96898c9,0x0b486491}, .iir_coef[0].coef_a={0x08000000,0xf001aa02,0x07fe5658},
+		.iir_coef[1].coef_b={0x08036651,0xf003c066,0x07f8dc70}, .iir_coef[1].coef_a={0x08000000,0xf003c066,0x07fc42c1},
 
 		.dac_gain_offset=0,
 		.adc_gain_offset=(-6)*4,
     },
     .anc_cfg_fb_r = {
-        .total_gain = 0,
+        .total_gain = 323,
 
 		.iir_bypass_flag=0,
-		.iir_counter=1, 
-		.iir_coef[0].coef_b={0x08000000,0xf021c7e1,0x07dec359}, .iir_coef[0].coef_a={0x08000000,0xf021c7e1,0x07dec359},
+		.iir_counter=2, 
+		.iir_coef[0].coef_b={0x0b4f0325,0xe96898c9,0x0b486491}, .iir_coef[0].coef_a={0x08000000,0xf001aa02,0x07fe5658},
+		.iir_coef[1].coef_b={0x08036651,0xf003c066,0x07f8dc70}, .iir_coef[1].coef_a={0x08000000,0xf003c066,0x07fc42c1},
 
 		.dac_gain_offset=0,
 		.adc_gain_offset=(-6)*4,
@@ -1568,11 +1607,8 @@ static const struct_anc_cfg POSSIBLY_UNUSED AncFirCoef_48k_Clear_Voice1 ={
         .total_gain = 0,
 
 		.iir_bypass_flag=0,
-		.iir_counter=4, 
-		.iir_coef[0].coef_b={0x0336f0fc,0xf9bbc38b,0x030f41c9}, .iir_coef[0].coef_a={0x08000000,0xf040db8f,0x07c11ac1},
-		.iir_coef[1].coef_b={0x080bf1a1,0xf0201608,0x07d55cf8}, .iir_coef[1].coef_a={0x08000000,0xf0201608,0x07e14e99},
-		.iir_coef[2].coef_b={0x07fcbf73,0xf00986c0,0x07f9bd62}, .iir_coef[2].coef_a={0x08000000,0xf00986c0,0x07f67cd6},
-		.iir_coef[3].coef_b={0x07ab0604,0xf122878f,0x073a9cbd}, .iir_coef[3].coef_a={0x08000000,0xf122878f,0x06e5a2c1},
+		.iir_counter=1, 
+		.iir_coef[0].coef_b={0x08000000,0xf11bd5e4,0x07050f3c}, .iir_coef[0].coef_a={0x08000000,0xf11bd5e4,0x07050f3c},
 
 		.dac_gain_offset=0,
 		.adc_gain_offset=(0)*4,
@@ -1581,11 +1617,8 @@ static const struct_anc_cfg POSSIBLY_UNUSED AncFirCoef_48k_Clear_Voice1 ={
         .total_gain = 0,
 
 		.iir_bypass_flag=0,
-		.iir_counter=4, 
-		.iir_coef[0].coef_b={0x0336f0fc,0xf9bbc38b,0x030f41c9}, .iir_coef[0].coef_a={0x08000000,0xf040db8f,0x07c11ac1},
-		.iir_coef[1].coef_b={0x080bf1a1,0xf0201608,0x07d55cf8}, .iir_coef[1].coef_a={0x08000000,0xf0201608,0x07e14e99},
-		.iir_coef[2].coef_b={0x07fcbf73,0xf00986c0,0x07f9bd62}, .iir_coef[2].coef_a={0x08000000,0xf00986c0,0x07f67cd6},
-		.iir_coef[3].coef_b={0x07ab0604,0xf122878f,0x073a9cbd}, .iir_coef[3].coef_a={0x08000000,0xf122878f,0x06e5a2c1},
+		.iir_counter=1, 
+		.iir_coef[0].coef_b={0x08000000,0xf11bd5e4,0x07050f3c}, .iir_coef[0].coef_a={0x08000000,0xf11bd5e4,0x07050f3c},
 
 		.dac_gain_offset=0,
 		.adc_gain_offset=(0)*4,
@@ -1595,49 +1628,57 @@ static const struct_anc_cfg POSSIBLY_UNUSED AncFirCoef_48k_Clear_Voice1 ={
 
 static const struct_anc_cfg POSSIBLY_UNUSED AncFirCoef_48k_Clear_Voice2 ={
     .anc_cfg_ff_l = {
-		.total_gain =512,
+		.total_gain =364,
 
 		.iir_bypass_flag=0,
-		.iir_counter=5, 
-		.iir_coef[0].coef_b={0xffffa829,0xffff5052,0xffffa829}, .iir_coef[0].coef_a={0x08000000,0xf0236863,0x07dec47a},
-		.iir_coef[1].coef_b={0x081f9a92,0xf01e1522,0x07c32a0c}, .iir_coef[1].coef_a={0x08000000,0xf01e1522,0x07e2c49f},
-		.iir_coef[2].coef_b={0x080cb25a,0xf00bd219,0x07e78f3c}, .iir_coef[2].coef_a={0x08000000,0xf00bd219,0x07f44196},
-		.iir_coef[3].coef_b={0x0807bbda,0xf01afd6b,0x07ddd230}, .iir_coef[3].coef_a={0x08000000,0xf01afd6b,0x07e58e0a},
-		.iir_coef[4].coef_b={0x07ff6b72,0xf00750d0,0x07f94875}, .iir_coef[4].coef_a={0x08000000,0xf00751c9,0x07f8b4e0},
+		.iir_counter=7, 
+		.iir_coef[0].coef_b={0xfa5696e2,0x0b529efe,0xfa56ca15}, .iir_coef[0].coef_a={0x08000000,0xf00196c3,0x07fe694b},
+		.iir_coef[1].coef_b={0x07fe5aa4,0xf008238d,0x07f983af}, .iir_coef[1].coef_a={0x08000000,0xf0082542,0x07f7e008},
+		.iir_coef[2].coef_b={0x08025bbe,0xf004c2d8,0x07f8e705}, .iir_coef[2].coef_a={0x08000000,0xf004c2d8,0x07fb42c4},
+		.iir_coef[3].coef_b={0x0806cb0a,0xf0078c6f,0x07f1bc3a}, .iir_coef[3].coef_a={0x08000000,0xf0078c6f,0x07f88745},
+		.iir_coef[4].coef_b={0x0807bbda,0xf01afd6b,0x07ddd230}, .iir_coef[4].coef_a={0x08000000,0xf01afd6b,0x07e58e0a},
+		.iir_coef[5].coef_b={0x081f9a92,0xf01e1522,0x07c32a0c}, .iir_coef[5].coef_a={0x08000000,0xf01e1522,0x07e2c49f},
+		.iir_coef[6].coef_b={0x0823f092,0xf029b383,0x07b487ec}, .iir_coef[6].coef_a={0x08000000,0xf029b383,0x07d8787e},
+		.iir_coef[7].coef_b={0,0,0},	.iir_coef[7].coef_a={0,0,0},
 
 		.dac_gain_offset=0,
 		.adc_gain_offset=(-6)*4,
     },
     .anc_cfg_ff_r = {
-		.total_gain =512,
+		.total_gain =364,
 
 		.iir_bypass_flag=0,
-		.iir_counter=5, 
-		.iir_coef[0].coef_b={0xffffa829,0xffff5052,0xffffa829}, .iir_coef[0].coef_a={0x08000000,0xf0236863,0x07dec47a},
-		.iir_coef[1].coef_b={0x081f9a92,0xf01e1522,0x07c32a0c}, .iir_coef[1].coef_a={0x08000000,0xf01e1522,0x07e2c49f},
-		.iir_coef[2].coef_b={0x080cb25a,0xf00bd219,0x07e78f3c}, .iir_coef[2].coef_a={0x08000000,0xf00bd219,0x07f44196},
-		.iir_coef[3].coef_b={0x0807bbda,0xf01afd6b,0x07ddd230}, .iir_coef[3].coef_a={0x08000000,0xf01afd6b,0x07e58e0a},
-		.iir_coef[4].coef_b={0x07ff6b72,0xf00750d0,0x07f94875}, .iir_coef[4].coef_a={0x08000000,0xf00751c9,0x07f8b4e0},
+		.iir_counter=7, 
+		.iir_coef[0].coef_b={0xfa5696e2,0x0b529efe,0xfa56ca15}, .iir_coef[0].coef_a={0x08000000,0xf00196c3,0x07fe694b},
+		.iir_coef[1].coef_b={0x07fe5aa4,0xf008238d,0x07f983af}, .iir_coef[1].coef_a={0x08000000,0xf0082542,0x07f7e008},
+		.iir_coef[2].coef_b={0x08025bbe,0xf004c2d8,0x07f8e705}, .iir_coef[2].coef_a={0x08000000,0xf004c2d8,0x07fb42c4},
+		.iir_coef[3].coef_b={0x0806cb0a,0xf0078c6f,0x07f1bc3a}, .iir_coef[3].coef_a={0x08000000,0xf0078c6f,0x07f88745},
+		.iir_coef[4].coef_b={0x0807bbda,0xf01afd6b,0x07ddd230}, .iir_coef[4].coef_a={0x08000000,0xf01afd6b,0x07e58e0a},
+		.iir_coef[5].coef_b={0x081f9a92,0xf01e1522,0x07c32a0c}, .iir_coef[5].coef_a={0x08000000,0xf01e1522,0x07e2c49f},
+		.iir_coef[6].coef_b={0x0823f092,0xf029b383,0x07b487ec}, .iir_coef[6].coef_a={0x08000000,0xf029b383,0x07d8787e},
+		.iir_coef[7].coef_b={0,0,0},	.iir_coef[7].coef_a={0,0,0},
 
 		.dac_gain_offset=0,
 		.adc_gain_offset=(-6)*4,
     },
     .anc_cfg_fb_l = {
-        .total_gain = 0,
+        .total_gain = 364,
 
 		.iir_bypass_flag=0,
-		.iir_counter=1, 
-		.iir_coef[0].coef_b={0x08000000,0xf021c7e1,0x07dec359}, .iir_coef[0].coef_a={0x08000000,0xf021c7e1,0x07dec359},
+		.iir_counter=2, 
+		.iir_coef[0].coef_b={0x0b4f0325,0xe96898c9,0x0b486491}, .iir_coef[0].coef_a={0x08000000,0xf001aa02,0x07fe5658},
+		.iir_coef[1].coef_b={0x08036651,0xf003c066,0x07f8dc70}, .iir_coef[1].coef_a={0x08000000,0xf003c066,0x07fc42c1},
 
 		.dac_gain_offset=0,
 		.adc_gain_offset=(-6)*4,
     },
     .anc_cfg_fb_r = {
-        .total_gain = 0,
+        .total_gain = 364,
 
 		.iir_bypass_flag=0,
-		.iir_counter=1, 
-		.iir_coef[0].coef_b={0x08000000,0xf021c7e1,0x07dec359}, .iir_coef[0].coef_a={0x08000000,0xf021c7e1,0x07dec359},
+		.iir_counter=2, 
+		.iir_coef[0].coef_b={0x0b4f0325,0xe96898c9,0x0b486491}, .iir_coef[0].coef_a={0x08000000,0xf001aa02,0x07fe5658},
+		.iir_coef[1].coef_b={0x08036651,0xf003c066,0x07f8dc70}, .iir_coef[1].coef_a={0x08000000,0xf003c066,0x07fc42c1},
 
 		.dac_gain_offset=0,
 		.adc_gain_offset=(-6)*4,
@@ -1648,11 +1689,8 @@ static const struct_anc_cfg POSSIBLY_UNUSED AncFirCoef_48k_Clear_Voice2 ={
         .total_gain = 0,
 
 		.iir_bypass_flag=0,
-		.iir_counter=4, 
-		.iir_coef[0].coef_b={0x0336f0fc,0xf9bbc38b,0x030f41c9}, .iir_coef[0].coef_a={0x08000000,0xf040db8f,0x07c11ac1},
-		.iir_coef[1].coef_b={0x080bf1a1,0xf0201608,0x07d55cf8}, .iir_coef[1].coef_a={0x08000000,0xf0201608,0x07e14e99},
-		.iir_coef[2].coef_b={0x07fcbf73,0xf00986c0,0x07f9bd62}, .iir_coef[2].coef_a={0x08000000,0xf00986c0,0x07f67cd6},
-		.iir_coef[3].coef_b={0x07ab0604,0xf122878f,0x073a9cbd}, .iir_coef[3].coef_a={0x08000000,0xf122878f,0x06e5a2c1},
+		.iir_counter=1, 
+		.iir_coef[0].coef_b={0x08000000,0xf11bd5e4,0x07050f3c}, .iir_coef[0].coef_a={0x08000000,0xf11bd5e4,0x07050f3c},
 
 		.dac_gain_offset=0,
 		.adc_gain_offset=(0)*4,
@@ -1661,11 +1699,8 @@ static const struct_anc_cfg POSSIBLY_UNUSED AncFirCoef_48k_Clear_Voice2 ={
         .total_gain = 0,
 
 		.iir_bypass_flag=0,
-		.iir_counter=4, 
-		.iir_coef[0].coef_b={0x0336f0fc,0xf9bbc38b,0x030f41c9}, .iir_coef[0].coef_a={0x08000000,0xf040db8f,0x07c11ac1},
-		.iir_coef[1].coef_b={0x080bf1a1,0xf0201608,0x07d55cf8}, .iir_coef[1].coef_a={0x08000000,0xf0201608,0x07e14e99},
-		.iir_coef[2].coef_b={0x07fcbf73,0xf00986c0,0x07f9bd62}, .iir_coef[2].coef_a={0x08000000,0xf00986c0,0x07f67cd6},
-		.iir_coef[3].coef_b={0x07ab0604,0xf122878f,0x073a9cbd}, .iir_coef[3].coef_a={0x08000000,0xf122878f,0x06e5a2c1},
+		.iir_counter=1, 
+		.iir_coef[0].coef_b={0x08000000,0xf11bd5e4,0x07050f3c}, .iir_coef[0].coef_a={0x08000000,0xf11bd5e4,0x07050f3c},
 
 		.dac_gain_offset=0,
 		.adc_gain_offset=(0)*4,
@@ -1675,49 +1710,57 @@ static const struct_anc_cfg POSSIBLY_UNUSED AncFirCoef_48k_Clear_Voice2 ={
 
 static const struct_anc_cfg POSSIBLY_UNUSED AncFirCoef_48k_Clear_Voice3 ={
     .anc_cfg_ff_l = {
-		.total_gain =512,
+		.total_gain =404,
 
 		.iir_bypass_flag=0,
-		.iir_counter=5, 
-		.iir_coef[0].coef_b={0xffffa829,0xffff5052,0xffffa829}, .iir_coef[0].coef_a={0x08000000,0xf0236863,0x07dec47a},
-		.iir_coef[1].coef_b={0x081f9a92,0xf01e1522,0x07c32a0c}, .iir_coef[1].coef_a={0x08000000,0xf01e1522,0x07e2c49f},
-		.iir_coef[2].coef_b={0x080cb25a,0xf00bd219,0x07e78f3c}, .iir_coef[2].coef_a={0x08000000,0xf00bd219,0x07f44196},
-		.iir_coef[3].coef_b={0x0807bbda,0xf01afd6b,0x07ddd230}, .iir_coef[3].coef_a={0x08000000,0xf01afd6b,0x07e58e0a},
-		.iir_coef[4].coef_b={0x07ff6b72,0xf00750d0,0x07f94875}, .iir_coef[4].coef_a={0x08000000,0xf00751c9,0x07f8b4e0},
+		.iir_counter=7, 
+		.iir_coef[0].coef_b={0xfa5696e2,0x0b529efe,0xfa56ca15}, .iir_coef[0].coef_a={0x08000000,0xf00196c3,0x07fe694b},
+		.iir_coef[1].coef_b={0x07fe5aa4,0xf008238d,0x07f983af}, .iir_coef[1].coef_a={0x08000000,0xf0082542,0x07f7e008},
+		.iir_coef[2].coef_b={0x08025bbe,0xf004c2d8,0x07f8e705}, .iir_coef[2].coef_a={0x08000000,0xf004c2d8,0x07fb42c4},
+		.iir_coef[3].coef_b={0x0806cb0a,0xf0078c6f,0x07f1bc3a}, .iir_coef[3].coef_a={0x08000000,0xf0078c6f,0x07f88745},
+		.iir_coef[4].coef_b={0x0807bbda,0xf01afd6b,0x07ddd230}, .iir_coef[4].coef_a={0x08000000,0xf01afd6b,0x07e58e0a},
+		.iir_coef[5].coef_b={0x081f9a92,0xf01e1522,0x07c32a0c}, .iir_coef[5].coef_a={0x08000000,0xf01e1522,0x07e2c49f},
+		.iir_coef[6].coef_b={0x0823f092,0xf029b383,0x07b487ec}, .iir_coef[6].coef_a={0x08000000,0xf029b383,0x07d8787e},
+		.iir_coef[7].coef_b={0,0,0},	.iir_coef[7].coef_a={0,0,0},
 
 		.dac_gain_offset=0,
 		.adc_gain_offset=(-6)*4,
     },
     .anc_cfg_ff_r = {
-		.total_gain =512,
+		.total_gain =404,
 
 		.iir_bypass_flag=0,
-		.iir_counter=5, 
-		.iir_coef[0].coef_b={0xffffa829,0xffff5052,0xffffa829}, .iir_coef[0].coef_a={0x08000000,0xf0236863,0x07dec47a},
-		.iir_coef[1].coef_b={0x081f9a92,0xf01e1522,0x07c32a0c}, .iir_coef[1].coef_a={0x08000000,0xf01e1522,0x07e2c49f},
-		.iir_coef[2].coef_b={0x080cb25a,0xf00bd219,0x07e78f3c}, .iir_coef[2].coef_a={0x08000000,0xf00bd219,0x07f44196},
-		.iir_coef[3].coef_b={0x0807bbda,0xf01afd6b,0x07ddd230}, .iir_coef[3].coef_a={0x08000000,0xf01afd6b,0x07e58e0a},
-		.iir_coef[4].coef_b={0x07ff6b72,0xf00750d0,0x07f94875}, .iir_coef[4].coef_a={0x08000000,0xf00751c9,0x07f8b4e0},
+		.iir_counter=7, 
+		.iir_coef[0].coef_b={0xfa5696e2,0x0b529efe,0xfa56ca15}, .iir_coef[0].coef_a={0x08000000,0xf00196c3,0x07fe694b},
+		.iir_coef[1].coef_b={0x07fe5aa4,0xf008238d,0x07f983af}, .iir_coef[1].coef_a={0x08000000,0xf0082542,0x07f7e008},
+		.iir_coef[2].coef_b={0x08025bbe,0xf004c2d8,0x07f8e705}, .iir_coef[2].coef_a={0x08000000,0xf004c2d8,0x07fb42c4},
+		.iir_coef[3].coef_b={0x0806cb0a,0xf0078c6f,0x07f1bc3a}, .iir_coef[3].coef_a={0x08000000,0xf0078c6f,0x07f88745},
+		.iir_coef[4].coef_b={0x0807bbda,0xf01afd6b,0x07ddd230}, .iir_coef[4].coef_a={0x08000000,0xf01afd6b,0x07e58e0a},
+		.iir_coef[5].coef_b={0x081f9a92,0xf01e1522,0x07c32a0c}, .iir_coef[5].coef_a={0x08000000,0xf01e1522,0x07e2c49f},
+		.iir_coef[6].coef_b={0x0823f092,0xf029b383,0x07b487ec}, .iir_coef[6].coef_a={0x08000000,0xf029b383,0x07d8787e},
+		.iir_coef[7].coef_b={0,0,0},	.iir_coef[7].coef_a={0,0,0},
 
 		.dac_gain_offset=0,
 		.adc_gain_offset=(-6)*4,
     },
     .anc_cfg_fb_l = {
-        .total_gain = 0,
+        .total_gain = 404,
 
 		.iir_bypass_flag=0,
-		.iir_counter=1, 
-		.iir_coef[0].coef_b={0x08000000,0xf021c7e1,0x07dec359}, .iir_coef[0].coef_a={0x08000000,0xf021c7e1,0x07dec359},
+		.iir_counter=2, 
+		.iir_coef[0].coef_b={0x0b4f0325,0xe96898c9,0x0b486491}, .iir_coef[0].coef_a={0x08000000,0xf001aa02,0x07fe5658},
+		.iir_coef[1].coef_b={0x08036651,0xf003c066,0x07f8dc70}, .iir_coef[1].coef_a={0x08000000,0xf003c066,0x07fc42c1},
 
 		.dac_gain_offset=0,
 		.adc_gain_offset=(-6)*4,
     },
     .anc_cfg_fb_r = {
-        .total_gain = 0,
+        .total_gain = 404,
 
 		.iir_bypass_flag=0,
-		.iir_counter=1, 
-		.iir_coef[0].coef_b={0x08000000,0xf021c7e1,0x07dec359}, .iir_coef[0].coef_a={0x08000000,0xf021c7e1,0x07dec359},
+		.iir_counter=2, 
+		.iir_coef[0].coef_b={0x0b4f0325,0xe96898c9,0x0b486491}, .iir_coef[0].coef_a={0x08000000,0xf001aa02,0x07fe5658},
+		.iir_coef[1].coef_b={0x08036651,0xf003c066,0x07f8dc70}, .iir_coef[1].coef_a={0x08000000,0xf003c066,0x07fc42c1},
 
 		.dac_gain_offset=0,
 		.adc_gain_offset=(-6)*4,
@@ -1728,11 +1771,8 @@ static const struct_anc_cfg POSSIBLY_UNUSED AncFirCoef_48k_Clear_Voice3 ={
         .total_gain = 0,
 
 		.iir_bypass_flag=0,
-		.iir_counter=4, 
-		.iir_coef[0].coef_b={0x0336f0fc,0xf9bbc38b,0x030f41c9}, .iir_coef[0].coef_a={0x08000000,0xf040db8f,0x07c11ac1},
-		.iir_coef[1].coef_b={0x080bf1a1,0xf0201608,0x07d55cf8}, .iir_coef[1].coef_a={0x08000000,0xf0201608,0x07e14e99},
-		.iir_coef[2].coef_b={0x07fcbf73,0xf00986c0,0x07f9bd62}, .iir_coef[2].coef_a={0x08000000,0xf00986c0,0x07f67cd6},
-		.iir_coef[3].coef_b={0x07ab0604,0xf122878f,0x073a9cbd}, .iir_coef[3].coef_a={0x08000000,0xf122878f,0x06e5a2c1},
+		.iir_counter=1, 
+		.iir_coef[0].coef_b={0x08000000,0xf11bd5e4,0x07050f3c}, .iir_coef[0].coef_a={0x08000000,0xf11bd5e4,0x07050f3c},
 
 		.dac_gain_offset=0,
 		.adc_gain_offset=(0)*4,
@@ -1741,11 +1781,8 @@ static const struct_anc_cfg POSSIBLY_UNUSED AncFirCoef_48k_Clear_Voice3 ={
         .total_gain = 0,
 
 		.iir_bypass_flag=0,
-		.iir_counter=4, 
-		.iir_coef[0].coef_b={0x0336f0fc,0xf9bbc38b,0x030f41c9}, .iir_coef[0].coef_a={0x08000000,0xf040db8f,0x07c11ac1},
-		.iir_coef[1].coef_b={0x080bf1a1,0xf0201608,0x07d55cf8}, .iir_coef[1].coef_a={0x08000000,0xf0201608,0x07e14e99},
-		.iir_coef[2].coef_b={0x07fcbf73,0xf00986c0,0x07f9bd62}, .iir_coef[2].coef_a={0x08000000,0xf00986c0,0x07f67cd6},
-		.iir_coef[3].coef_b={0x07ab0604,0xf122878f,0x073a9cbd}, .iir_coef[3].coef_a={0x08000000,0xf122878f,0x06e5a2c1},
+		.iir_counter=1, 
+		.iir_coef[0].coef_b={0x08000000,0xf11bd5e4,0x07050f3c}, .iir_coef[0].coef_a={0x08000000,0xf11bd5e4,0x07050f3c},
 
 		.dac_gain_offset=0,
 		.adc_gain_offset=(0)*4,
@@ -1756,49 +1793,57 @@ static const struct_anc_cfg POSSIBLY_UNUSED AncFirCoef_48k_Clear_Voice3 ={
 
 static const struct_anc_cfg POSSIBLY_UNUSED AncFirCoef_48k_Clear_Voice4 ={
     .anc_cfg_ff_l = {
-		.total_gain =512,
+		.total_gain =456,
 
 		.iir_bypass_flag=0,
-		.iir_counter=5, 
-		.iir_coef[0].coef_b={0xffffa829,0xffff5052,0xffffa829}, .iir_coef[0].coef_a={0x08000000,0xf0236863,0x07dec47a},
-		.iir_coef[1].coef_b={0x081f9a92,0xf01e1522,0x07c32a0c}, .iir_coef[1].coef_a={0x08000000,0xf01e1522,0x07e2c49f},
-		.iir_coef[2].coef_b={0x080cb25a,0xf00bd219,0x07e78f3c}, .iir_coef[2].coef_a={0x08000000,0xf00bd219,0x07f44196},
-		.iir_coef[3].coef_b={0x0807bbda,0xf01afd6b,0x07ddd230}, .iir_coef[3].coef_a={0x08000000,0xf01afd6b,0x07e58e0a},
-		.iir_coef[4].coef_b={0x07ff6b72,0xf00750d0,0x07f94875}, .iir_coef[4].coef_a={0x08000000,0xf00751c9,0x07f8b4e0},
+		.iir_counter=7, 
+		.iir_coef[0].coef_b={0xfa5696e2,0x0b529efe,0xfa56ca15}, .iir_coef[0].coef_a={0x08000000,0xf00196c3,0x07fe694b},
+		.iir_coef[1].coef_b={0x07fe5aa4,0xf008238d,0x07f983af}, .iir_coef[1].coef_a={0x08000000,0xf0082542,0x07f7e008},
+		.iir_coef[2].coef_b={0x08025bbe,0xf004c2d8,0x07f8e705}, .iir_coef[2].coef_a={0x08000000,0xf004c2d8,0x07fb42c4},
+		.iir_coef[3].coef_b={0x0806cb0a,0xf0078c6f,0x07f1bc3a}, .iir_coef[3].coef_a={0x08000000,0xf0078c6f,0x07f88745},
+		.iir_coef[4].coef_b={0x0807bbda,0xf01afd6b,0x07ddd230}, .iir_coef[4].coef_a={0x08000000,0xf01afd6b,0x07e58e0a},
+		.iir_coef[5].coef_b={0x081f9a92,0xf01e1522,0x07c32a0c}, .iir_coef[5].coef_a={0x08000000,0xf01e1522,0x07e2c49f},
+		.iir_coef[6].coef_b={0x0823f092,0xf029b383,0x07b487ec}, .iir_coef[6].coef_a={0x08000000,0xf029b383,0x07d8787e},
+		.iir_coef[7].coef_b={0,0,0},	.iir_coef[7].coef_a={0,0,0},
 
 		.dac_gain_offset=0,
 		.adc_gain_offset=(-6)*4,
     },
     .anc_cfg_ff_r = {
-		.total_gain =512,
+		.total_gain =456,
 
 		.iir_bypass_flag=0,
-		.iir_counter=5, 
-		.iir_coef[0].coef_b={0xffffa829,0xffff5052,0xffffa829}, .iir_coef[0].coef_a={0x08000000,0xf0236863,0x07dec47a},
-		.iir_coef[1].coef_b={0x081f9a92,0xf01e1522,0x07c32a0c}, .iir_coef[1].coef_a={0x08000000,0xf01e1522,0x07e2c49f},
-		.iir_coef[2].coef_b={0x080cb25a,0xf00bd219,0x07e78f3c}, .iir_coef[2].coef_a={0x08000000,0xf00bd219,0x07f44196},
-		.iir_coef[3].coef_b={0x0807bbda,0xf01afd6b,0x07ddd230}, .iir_coef[3].coef_a={0x08000000,0xf01afd6b,0x07e58e0a},
-		.iir_coef[4].coef_b={0x07ff6b72,0xf00750d0,0x07f94875}, .iir_coef[4].coef_a={0x08000000,0xf00751c9,0x07f8b4e0},
+		.iir_counter=7, 
+		.iir_coef[0].coef_b={0xfa5696e2,0x0b529efe,0xfa56ca15}, .iir_coef[0].coef_a={0x08000000,0xf00196c3,0x07fe694b},
+		.iir_coef[1].coef_b={0x07fe5aa4,0xf008238d,0x07f983af}, .iir_coef[1].coef_a={0x08000000,0xf0082542,0x07f7e008},
+		.iir_coef[2].coef_b={0x08025bbe,0xf004c2d8,0x07f8e705}, .iir_coef[2].coef_a={0x08000000,0xf004c2d8,0x07fb42c4},
+		.iir_coef[3].coef_b={0x0806cb0a,0xf0078c6f,0x07f1bc3a}, .iir_coef[3].coef_a={0x08000000,0xf0078c6f,0x07f88745},
+		.iir_coef[4].coef_b={0x0807bbda,0xf01afd6b,0x07ddd230}, .iir_coef[4].coef_a={0x08000000,0xf01afd6b,0x07e58e0a},
+		.iir_coef[5].coef_b={0x081f9a92,0xf01e1522,0x07c32a0c}, .iir_coef[5].coef_a={0x08000000,0xf01e1522,0x07e2c49f},
+		.iir_coef[6].coef_b={0x0823f092,0xf029b383,0x07b487ec}, .iir_coef[6].coef_a={0x08000000,0xf029b383,0x07d8787e},
+		.iir_coef[7].coef_b={0,0,0},	.iir_coef[7].coef_a={0,0,0},
 
 		.dac_gain_offset=0,
 		.adc_gain_offset=(-6)*4,
     },
     .anc_cfg_fb_l = {
-        .total_gain = 0,
+        .total_gain = 456,
 
 		.iir_bypass_flag=0,
-		.iir_counter=1, 
-		.iir_coef[0].coef_b={0x08000000,0xf021c7e1,0x07dec359}, .iir_coef[0].coef_a={0x08000000,0xf021c7e1,0x07dec359},
+		.iir_counter=2, 
+		.iir_coef[0].coef_b={0x0b4f0325,0xe96898c9,0x0b486491}, .iir_coef[0].coef_a={0x08000000,0xf001aa02,0x07fe5658},
+		.iir_coef[1].coef_b={0x08036651,0xf003c066,0x07f8dc70}, .iir_coef[1].coef_a={0x08000000,0xf003c066,0x07fc42c1},
 
 		.dac_gain_offset=0,
 		.adc_gain_offset=(-6)*4,
     },
     .anc_cfg_fb_r = {
-        .total_gain = 0,
+        .total_gain = 456,
 
 		.iir_bypass_flag=0,
-		.iir_counter=1, 
-		.iir_coef[0].coef_b={0x08000000,0xf021c7e1,0x07dec359}, .iir_coef[0].coef_a={0x08000000,0xf021c7e1,0x07dec359},
+		.iir_counter=2, 
+		.iir_coef[0].coef_b={0x0b4f0325,0xe96898c9,0x0b486491}, .iir_coef[0].coef_a={0x08000000,0xf001aa02,0x07fe5658},
+		.iir_coef[1].coef_b={0x08036651,0xf003c066,0x07f8dc70}, .iir_coef[1].coef_a={0x08000000,0xf003c066,0x07fc42c1},
 
 		.dac_gain_offset=0,
 		.adc_gain_offset=(-6)*4,
@@ -1809,11 +1854,8 @@ static const struct_anc_cfg POSSIBLY_UNUSED AncFirCoef_48k_Clear_Voice4 ={
         .total_gain = 0,
 
 		.iir_bypass_flag=0,
-		.iir_counter=4, 
-		.iir_coef[0].coef_b={0x0336f0fc,0xf9bbc38b,0x030f41c9}, .iir_coef[0].coef_a={0x08000000,0xf040db8f,0x07c11ac1},
-		.iir_coef[1].coef_b={0x080bf1a1,0xf0201608,0x07d55cf8}, .iir_coef[1].coef_a={0x08000000,0xf0201608,0x07e14e99},
-		.iir_coef[2].coef_b={0x07fcbf73,0xf00986c0,0x07f9bd62}, .iir_coef[2].coef_a={0x08000000,0xf00986c0,0x07f67cd6},
-		.iir_coef[3].coef_b={0x07ab0604,0xf122878f,0x073a9cbd}, .iir_coef[3].coef_a={0x08000000,0xf122878f,0x06e5a2c1},
+		.iir_counter=1, 
+		.iir_coef[0].coef_b={0x08000000,0xf11bd5e4,0x07050f3c}, .iir_coef[0].coef_a={0x08000000,0xf11bd5e4,0x07050f3c},
 
 		.dac_gain_offset=0,
 		.adc_gain_offset=(0)*4,
@@ -1822,11 +1864,8 @@ static const struct_anc_cfg POSSIBLY_UNUSED AncFirCoef_48k_Clear_Voice4 ={
         .total_gain = 0,
 
 		.iir_bypass_flag=0,
-		.iir_counter=4, 
-		.iir_coef[0].coef_b={0x0336f0fc,0xf9bbc38b,0x030f41c9}, .iir_coef[0].coef_a={0x08000000,0xf040db8f,0x07c11ac1},
-		.iir_coef[1].coef_b={0x080bf1a1,0xf0201608,0x07d55cf8}, .iir_coef[1].coef_a={0x08000000,0xf0201608,0x07e14e99},
-		.iir_coef[2].coef_b={0x07fcbf73,0xf00986c0,0x07f9bd62}, .iir_coef[2].coef_a={0x08000000,0xf00986c0,0x07f67cd6},
-		.iir_coef[3].coef_b={0x07ab0604,0xf122878f,0x073a9cbd}, .iir_coef[3].coef_a={0x08000000,0xf122878f,0x06e5a2c1},
+		.iir_counter=1, 
+		.iir_coef[0].coef_b={0x08000000,0xf11bd5e4,0x07050f3c}, .iir_coef[0].coef_a={0x08000000,0xf11bd5e4,0x07050f3c},
 
 		.dac_gain_offset=0,
 		.adc_gain_offset=(0)*4,
@@ -1840,12 +1879,15 @@ static const struct_anc_cfg POSSIBLY_UNUSED AncFirCoef_48k_Clear_Voice5 ={
 		.total_gain =512,
 
 		.iir_bypass_flag=0,
-		.iir_counter=5, 
-		.iir_coef[0].coef_b={0xffffa829,0xffff5052,0xffffa829}, .iir_coef[0].coef_a={0x08000000,0xf0236863,0x07dec47a},
-		.iir_coef[1].coef_b={0x081f9a92,0xf01e1522,0x07c32a0c}, .iir_coef[1].coef_a={0x08000000,0xf01e1522,0x07e2c49f},
-		.iir_coef[2].coef_b={0x080cb25a,0xf00bd219,0x07e78f3c}, .iir_coef[2].coef_a={0x08000000,0xf00bd219,0x07f44196},
-		.iir_coef[3].coef_b={0x0807bbda,0xf01afd6b,0x07ddd230}, .iir_coef[3].coef_a={0x08000000,0xf01afd6b,0x07e58e0a},
-		.iir_coef[4].coef_b={0x07ff6b72,0xf00750d0,0x07f94875}, .iir_coef[4].coef_a={0x08000000,0xf00751c9,0x07f8b4e0},
+		.iir_counter=7, 
+		.iir_coef[0].coef_b={0xfa5696e2,0x0b529efe,0xfa56ca15}, .iir_coef[0].coef_a={0x08000000,0xf00196c3,0x07fe694b},
+		.iir_coef[1].coef_b={0x07fe5aa4,0xf008238d,0x07f983af}, .iir_coef[1].coef_a={0x08000000,0xf0082542,0x07f7e008},
+		.iir_coef[2].coef_b={0x08025bbe,0xf004c2d8,0x07f8e705}, .iir_coef[2].coef_a={0x08000000,0xf004c2d8,0x07fb42c4},
+		.iir_coef[3].coef_b={0x0806cb0a,0xf0078c6f,0x07f1bc3a}, .iir_coef[3].coef_a={0x08000000,0xf0078c6f,0x07f88745},
+		.iir_coef[4].coef_b={0x0807bbda,0xf01afd6b,0x07ddd230}, .iir_coef[4].coef_a={0x08000000,0xf01afd6b,0x07e58e0a},
+		.iir_coef[5].coef_b={0x081f9a92,0xf01e1522,0x07c32a0c}, .iir_coef[5].coef_a={0x08000000,0xf01e1522,0x07e2c49f},
+		.iir_coef[6].coef_b={0x0823f092,0xf029b383,0x07b487ec}, .iir_coef[6].coef_a={0x08000000,0xf029b383,0x07d8787e},
+		.iir_coef[7].coef_b={0,0,0},	.iir_coef[7].coef_a={0,0,0},
 
 		.dac_gain_offset=0,
 		.adc_gain_offset=(-6)*4,
@@ -1854,32 +1896,37 @@ static const struct_anc_cfg POSSIBLY_UNUSED AncFirCoef_48k_Clear_Voice5 ={
 		.total_gain =512,
 
 		.iir_bypass_flag=0,
-		.iir_counter=5, 
-		.iir_coef[0].coef_b={0xffffa829,0xffff5052,0xffffa829}, .iir_coef[0].coef_a={0x08000000,0xf0236863,0x07dec47a},
-		.iir_coef[1].coef_b={0x081f9a92,0xf01e1522,0x07c32a0c}, .iir_coef[1].coef_a={0x08000000,0xf01e1522,0x07e2c49f},
-		.iir_coef[2].coef_b={0x080cb25a,0xf00bd219,0x07e78f3c}, .iir_coef[2].coef_a={0x08000000,0xf00bd219,0x07f44196},
-		.iir_coef[3].coef_b={0x0807bbda,0xf01afd6b,0x07ddd230}, .iir_coef[3].coef_a={0x08000000,0xf01afd6b,0x07e58e0a},
-		.iir_coef[4].coef_b={0x07ff6b72,0xf00750d0,0x07f94875}, .iir_coef[4].coef_a={0x08000000,0xf00751c9,0x07f8b4e0},
+		.iir_counter=7, 
+		.iir_coef[0].coef_b={0xfa5696e2,0x0b529efe,0xfa56ca15}, .iir_coef[0].coef_a={0x08000000,0xf00196c3,0x07fe694b},
+		.iir_coef[1].coef_b={0x07fe5aa4,0xf008238d,0x07f983af}, .iir_coef[1].coef_a={0x08000000,0xf0082542,0x07f7e008},
+		.iir_coef[2].coef_b={0x08025bbe,0xf004c2d8,0x07f8e705}, .iir_coef[2].coef_a={0x08000000,0xf004c2d8,0x07fb42c4},
+		.iir_coef[3].coef_b={0x0806cb0a,0xf0078c6f,0x07f1bc3a}, .iir_coef[3].coef_a={0x08000000,0xf0078c6f,0x07f88745},
+		.iir_coef[4].coef_b={0x0807bbda,0xf01afd6b,0x07ddd230}, .iir_coef[4].coef_a={0x08000000,0xf01afd6b,0x07e58e0a},
+		.iir_coef[5].coef_b={0x081f9a92,0xf01e1522,0x07c32a0c}, .iir_coef[5].coef_a={0x08000000,0xf01e1522,0x07e2c49f},
+		.iir_coef[6].coef_b={0x0823f092,0xf029b383,0x07b487ec}, .iir_coef[6].coef_a={0x08000000,0xf029b383,0x07d8787e},
+		.iir_coef[7].coef_b={0,0,0},	.iir_coef[7].coef_a={0,0,0},
 
 		.dac_gain_offset=0,
 		.adc_gain_offset=(-6)*4,
     },
     .anc_cfg_fb_l = {
-        .total_gain = 0,
+        .total_gain = 512,
 
 		.iir_bypass_flag=0,
-		.iir_counter=1, 
-		.iir_coef[0].coef_b={0x08000000,0xf021c7e1,0x07dec359}, .iir_coef[0].coef_a={0x08000000,0xf021c7e1,0x07dec359},
+		.iir_counter=2, 
+		.iir_coef[0].coef_b={0x0b4f0325,0xe96898c9,0x0b486491}, .iir_coef[0].coef_a={0x08000000,0xf001aa02,0x07fe5658},
+		.iir_coef[1].coef_b={0x08036651,0xf003c066,0x07f8dc70}, .iir_coef[1].coef_a={0x08000000,0xf003c066,0x07fc42c1},
 
 		.dac_gain_offset=0,
 		.adc_gain_offset=(-6)*4,
     },
     .anc_cfg_fb_r = {
-        .total_gain = 0,
+        .total_gain = 512,
 
 		.iir_bypass_flag=0,
-		.iir_counter=1, 
-		.iir_coef[0].coef_b={0x08000000,0xf021c7e1,0x07dec359}, .iir_coef[0].coef_a={0x08000000,0xf021c7e1,0x07dec359},
+		.iir_counter=2, 
+		.iir_coef[0].coef_b={0x0b4f0325,0xe96898c9,0x0b486491}, .iir_coef[0].coef_a={0x08000000,0xf001aa02,0x07fe5658},
+		.iir_coef[1].coef_b={0x08036651,0xf003c066,0x07f8dc70}, .iir_coef[1].coef_a={0x08000000,0xf003c066,0x07fc42c1},
 
 		.dac_gain_offset=0,
 		.adc_gain_offset=(-6)*4,
@@ -1890,11 +1937,8 @@ static const struct_anc_cfg POSSIBLY_UNUSED AncFirCoef_48k_Clear_Voice5 ={
         .total_gain = 0,
 
 		.iir_bypass_flag=0,
-		.iir_counter=4, 
-		.iir_coef[0].coef_b={0x0336f0fc,0xf9bbc38b,0x030f41c9}, .iir_coef[0].coef_a={0x08000000,0xf040db8f,0x07c11ac1},
-		.iir_coef[1].coef_b={0x080bf1a1,0xf0201608,0x07d55cf8}, .iir_coef[1].coef_a={0x08000000,0xf0201608,0x07e14e99},
-		.iir_coef[2].coef_b={0x07fcbf73,0xf00986c0,0x07f9bd62}, .iir_coef[2].coef_a={0x08000000,0xf00986c0,0x07f67cd6},
-		.iir_coef[3].coef_b={0x07ab0604,0xf122878f,0x073a9cbd}, .iir_coef[3].coef_a={0x08000000,0xf122878f,0x06e5a2c1},
+		.iir_counter=1, 
+		.iir_coef[0].coef_b={0x08000000,0xf11bd5e4,0x07050f3c}, .iir_coef[0].coef_a={0x08000000,0xf11bd5e4,0x07050f3c},
 
 		.dac_gain_offset=0,
 		.adc_gain_offset=(0)*4,
@@ -1903,11 +1947,8 @@ static const struct_anc_cfg POSSIBLY_UNUSED AncFirCoef_48k_Clear_Voice5 ={
         .total_gain = 0,
 
 		.iir_bypass_flag=0,
-		.iir_counter=4, 
-		.iir_coef[0].coef_b={0x0336f0fc,0xf9bbc38b,0x030f41c9}, .iir_coef[0].coef_a={0x08000000,0xf040db8f,0x07c11ac1},
-		.iir_coef[1].coef_b={0x080bf1a1,0xf0201608,0x07d55cf8}, .iir_coef[1].coef_a={0x08000000,0xf0201608,0x07e14e99},
-		.iir_coef[2].coef_b={0x07fcbf73,0xf00986c0,0x07f9bd62}, .iir_coef[2].coef_a={0x08000000,0xf00986c0,0x07f67cd6},
-		.iir_coef[3].coef_b={0x07ab0604,0xf122878f,0x073a9cbd}, .iir_coef[3].coef_a={0x08000000,0xf122878f,0x06e5a2c1},
+		.iir_counter=1, 
+		.iir_coef[0].coef_b={0x08000000,0xf11bd5e4,0x07050f3c}, .iir_coef[0].coef_a={0x08000000,0xf11bd5e4,0x07050f3c},
 
 		.dac_gain_offset=0,
 		.adc_gain_offset=(0)*4,
@@ -2449,29 +2490,35 @@ static const struct_anc_cfg POSSIBLY_UNUSED AncFirCoef_44p1k_Anc_Wind = {
 
 static const struct_anc_cfg POSSIBLY_UNUSED AncFirCoef_44p1k_Monitor1 = {
     .anc_cfg_ff_l = {
-		.total_gain =512,
+		.total_gain =323,
 
 		.iir_bypass_flag=0,
-		.iir_counter=5, 
-		.iir_coef[0].coef_b={0xffff9803,0xffff3007,0xffff9803}, .iir_coef[0].coef_a={0x08000000,0xf026b82d,0x07dbdb0e},
+		.iir_counter=7, 
+		.iir_coef[0].coef_b={0xfb6a58c3,0x08e5bb25,0xfbae7a01}, .iir_coef[0].coef_a={0x08000000,0xf02d8ecd,0x07d50352},
 		.iir_coef[1].coef_b={0x08226066,0xf020cdbd,0x07bdd3ab}, .iir_coef[1].coef_a={0x08000000,0xf020cdbd,0x07e03411},
-		.iir_coef[2].coef_b={0x080dd0e6,0xf00cdec4,0x07e567a6}, .iir_coef[2].coef_a={0x08000000,0xf00cdec4,0x07f3388c},
+		.iir_coef[2].coef_b={0x08076486,0xf00838e3,0x07f079ee}, .iir_coef[2].coef_a={0x08000000,0xf00838e3,0x07f7de74},
 		.iir_coef[3].coef_b={0x080869b2,0xf01d6985,0x07dad1e8}, .iir_coef[3].coef_a={0x08000000,0xf01d6985,0x07e33b9a},
-		.iir_coef[4].coef_b={0x07ff5e4a,0xf007f6aa,0x07f8b0a3}, .iir_coef[4].coef_a={0x08000000,0xf007f7d1,0x07f81013},
+		.iir_coef[4].coef_b={0x07fe3561,0xf008dbc2,0x07f8f117}, .iir_coef[4].coef_a={0x08000000,0xf008ddc8,0x07f7287d},
+		.iir_coef[5].coef_b={0x08029112,0xf0052f09,0x07f8468a}, .iir_coef[5].coef_a={0x08000000,0xf0052f09,0x07fad79c},
+		.iir_coef[6].coef_b={0x07ff4a08,0xf001bab9,0x07fefb50}, .iir_coef[6].coef_a={0x08000000,0xf001bab9,0x07fe4558},
+		.iir_coef[7].coef_b={0,0,0},	.iir_coef[7].coef_a={0,0,0},
 
 		.dac_gain_offset=0,
 		.adc_gain_offset=(-6)*4,
     },
     .anc_cfg_ff_r = {
-		.total_gain =512,
+		.total_gain =323,
 
 		.iir_bypass_flag=0,
-		.iir_counter=5, 
-		.iir_coef[0].coef_b={0xffff9803,0xffff3007,0xffff9803}, .iir_coef[0].coef_a={0x08000000,0xf026b82d,0x07dbdb0e},
+		.iir_counter=7, 
+		.iir_coef[0].coef_b={0xfb6a58c3,0x08e5bb25,0xfbae7a01}, .iir_coef[0].coef_a={0x08000000,0xf02d8ecd,0x07d50352},
 		.iir_coef[1].coef_b={0x08226066,0xf020cdbd,0x07bdd3ab}, .iir_coef[1].coef_a={0x08000000,0xf020cdbd,0x07e03411},
-		.iir_coef[2].coef_b={0x080dd0e6,0xf00cdec4,0x07e567a6}, .iir_coef[2].coef_a={0x08000000,0xf00cdec4,0x07f3388c},
+		.iir_coef[2].coef_b={0x08076486,0xf00838e3,0x07f079ee}, .iir_coef[2].coef_a={0x08000000,0xf00838e3,0x07f7de74},
 		.iir_coef[3].coef_b={0x080869b2,0xf01d6985,0x07dad1e8}, .iir_coef[3].coef_a={0x08000000,0xf01d6985,0x07e33b9a},
-		.iir_coef[4].coef_b={0x07ff5e4a,0xf007f6aa,0x07f8b0a3}, .iir_coef[4].coef_a={0x08000000,0xf007f7d1,0x07f81013},
+		.iir_coef[4].coef_b={0x07fe3561,0xf008dbc2,0x07f8f117}, .iir_coef[4].coef_a={0x08000000,0xf008ddc8,0x07f7287d},
+		.iir_coef[5].coef_b={0x08029112,0xf0052f09,0x07f8468a}, .iir_coef[5].coef_a={0x08000000,0xf0052f09,0x07fad79c},
+		.iir_coef[6].coef_b={0x07ff4a08,0xf001bab9,0x07fefb50}, .iir_coef[6].coef_a={0x08000000,0xf001bab9,0x07fe4558},
+		.iir_coef[7].coef_b={0,0,0},	.iir_coef[7].coef_a={0,0,0},
 
 		.dac_gain_offset=0,
 		.adc_gain_offset=(-6)*4,
@@ -2481,7 +2528,7 @@ static const struct_anc_cfg POSSIBLY_UNUSED AncFirCoef_44p1k_Monitor1 = {
 
 		.iir_bypass_flag=0,
 		.iir_counter=1, 
-		.iir_coef[0].coef_b={0x08000000,0xf024cb39,0x07dbd999}, .iir_coef[0].coef_a={0x08000000,0xf024cb39,0x07dbd999},
+		.iir_coef[0].coef_b={0x0800c54b,0xf0018d11,0x07fdae3d}, .iir_coef[0].coef_a={0x08000000,0xf0018d11,0x07fe7388},
 
 		.dac_gain_offset=0,
 		.adc_gain_offset=(-6)*4,
@@ -2491,7 +2538,7 @@ static const struct_anc_cfg POSSIBLY_UNUSED AncFirCoef_44p1k_Monitor1 = {
 
 		.iir_bypass_flag=0,
 		.iir_counter=1, 
-		.iir_coef[0].coef_b={0x08000000,0xf024cb39,0x07dbd999}, .iir_coef[0].coef_a={0x08000000,0xf024cb39,0x07dbd999},
+		.iir_coef[0].coef_b={0x0800c54b,0xf0018d11,0x07fdae3d}, .iir_coef[0].coef_a={0x08000000,0xf0018d11,0x07fe7388},
 
 		.dac_gain_offset=0,
 		.adc_gain_offset=(-6)*4,
@@ -2528,29 +2575,35 @@ static const struct_anc_cfg POSSIBLY_UNUSED AncFirCoef_44p1k_Monitor1 = {
 
 static const struct_anc_cfg POSSIBLY_UNUSED AncFirCoef_44p1k_Monitor2 = {
     .anc_cfg_ff_l = {
-		.total_gain =512,
+		.total_gain =364,
 
 		.iir_bypass_flag=0,
-		.iir_counter=5, 
-		.iir_coef[0].coef_b={0xffff9803,0xffff3007,0xffff9803}, .iir_coef[0].coef_a={0x08000000,0xf026b82d,0x07dbdb0e},
+		.iir_counter=7, 
+		.iir_coef[0].coef_b={0xfb6a58c3,0x08e5bb25,0xfbae7a01}, .iir_coef[0].coef_a={0x08000000,0xf02d8ecd,0x07d50352},
 		.iir_coef[1].coef_b={0x08226066,0xf020cdbd,0x07bdd3ab}, .iir_coef[1].coef_a={0x08000000,0xf020cdbd,0x07e03411},
-		.iir_coef[2].coef_b={0x080dd0e6,0xf00cdec4,0x07e567a6}, .iir_coef[2].coef_a={0x08000000,0xf00cdec4,0x07f3388c},
+		.iir_coef[2].coef_b={0x08076486,0xf00838e3,0x07f079ee}, .iir_coef[2].coef_a={0x08000000,0xf00838e3,0x07f7de74},
 		.iir_coef[3].coef_b={0x080869b2,0xf01d6985,0x07dad1e8}, .iir_coef[3].coef_a={0x08000000,0xf01d6985,0x07e33b9a},
-		.iir_coef[4].coef_b={0x07ff5e4a,0xf007f6aa,0x07f8b0a3}, .iir_coef[4].coef_a={0x08000000,0xf007f7d1,0x07f81013},
+		.iir_coef[4].coef_b={0x07fe3561,0xf008dbc2,0x07f8f117}, .iir_coef[4].coef_a={0x08000000,0xf008ddc8,0x07f7287d},
+		.iir_coef[5].coef_b={0x08029112,0xf0052f09,0x07f8468a}, .iir_coef[5].coef_a={0x08000000,0xf0052f09,0x07fad79c},
+		.iir_coef[6].coef_b={0x07ff4a08,0xf001bab9,0x07fefb50}, .iir_coef[6].coef_a={0x08000000,0xf001bab9,0x07fe4558},
+		.iir_coef[7].coef_b={0,0,0},	.iir_coef[7].coef_a={0,0,0},
 
 		.dac_gain_offset=0,
 		.adc_gain_offset=(-6)*4,
     },
     .anc_cfg_ff_r = {
-		.total_gain =512,
+		.total_gain =364,
 
 		.iir_bypass_flag=0,
-		.iir_counter=5, 
-		.iir_coef[0].coef_b={0xffff9803,0xffff3007,0xffff9803}, .iir_coef[0].coef_a={0x08000000,0xf026b82d,0x07dbdb0e},
+		.iir_counter=7, 
+		.iir_coef[0].coef_b={0xfb6a58c3,0x08e5bb25,0xfbae7a01}, .iir_coef[0].coef_a={0x08000000,0xf02d8ecd,0x07d50352},
 		.iir_coef[1].coef_b={0x08226066,0xf020cdbd,0x07bdd3ab}, .iir_coef[1].coef_a={0x08000000,0xf020cdbd,0x07e03411},
-		.iir_coef[2].coef_b={0x080dd0e6,0xf00cdec4,0x07e567a6}, .iir_coef[2].coef_a={0x08000000,0xf00cdec4,0x07f3388c},
+		.iir_coef[2].coef_b={0x08076486,0xf00838e3,0x07f079ee}, .iir_coef[2].coef_a={0x08000000,0xf00838e3,0x07f7de74},
 		.iir_coef[3].coef_b={0x080869b2,0xf01d6985,0x07dad1e8}, .iir_coef[3].coef_a={0x08000000,0xf01d6985,0x07e33b9a},
-		.iir_coef[4].coef_b={0x07ff5e4a,0xf007f6aa,0x07f8b0a3}, .iir_coef[4].coef_a={0x08000000,0xf007f7d1,0x07f81013},
+		.iir_coef[4].coef_b={0x07fe3561,0xf008dbc2,0x07f8f117}, .iir_coef[4].coef_a={0x08000000,0xf008ddc8,0x07f7287d},
+		.iir_coef[5].coef_b={0x08029112,0xf0052f09,0x07f8468a}, .iir_coef[5].coef_a={0x08000000,0xf0052f09,0x07fad79c},
+		.iir_coef[6].coef_b={0x07ff4a08,0xf001bab9,0x07fefb50}, .iir_coef[6].coef_a={0x08000000,0xf001bab9,0x07fe4558},
+		.iir_coef[7].coef_b={0,0,0},	.iir_coef[7].coef_a={0,0,0},
 
 		.dac_gain_offset=0,
 		.adc_gain_offset=(-6)*4,
@@ -2560,7 +2613,7 @@ static const struct_anc_cfg POSSIBLY_UNUSED AncFirCoef_44p1k_Monitor2 = {
 
 		.iir_bypass_flag=0,
 		.iir_counter=1, 
-		.iir_coef[0].coef_b={0x08000000,0xf024cb39,0x07dbd999}, .iir_coef[0].coef_a={0x08000000,0xf024cb39,0x07dbd999},
+		.iir_coef[0].coef_b={0x0800c54b,0xf0018d11,0x07fdae3d}, .iir_coef[0].coef_a={0x08000000,0xf0018d11,0x07fe7388},
 
 		.dac_gain_offset=0,
 		.adc_gain_offset=(-6)*4,
@@ -2570,7 +2623,7 @@ static const struct_anc_cfg POSSIBLY_UNUSED AncFirCoef_44p1k_Monitor2 = {
 
 		.iir_bypass_flag=0,
 		.iir_counter=1, 
-		.iir_coef[0].coef_b={0x08000000,0xf024cb39,0x07dbd999}, .iir_coef[0].coef_a={0x08000000,0xf024cb39,0x07dbd999},
+		.iir_coef[0].coef_b={0x0800c54b,0xf0018d11,0x07fdae3d}, .iir_coef[0].coef_a={0x08000000,0xf0018d11,0x07fe7388},
 
 		.dac_gain_offset=0,
 		.adc_gain_offset=(-6)*4,
@@ -2604,32 +2657,37 @@ static const struct_anc_cfg POSSIBLY_UNUSED AncFirCoef_44p1k_Monitor2 = {
     },
 #endif
 };
-
 static const struct_anc_cfg POSSIBLY_UNUSED AncFirCoef_44p1k_Monitor3 = {
     .anc_cfg_ff_l = {
-		.total_gain =512,
+		.total_gain =404,
 
 		.iir_bypass_flag=0,
-		.iir_counter=5, 
-		.iir_coef[0].coef_b={0xffff9803,0xffff3007,0xffff9803}, .iir_coef[0].coef_a={0x08000000,0xf026b82d,0x07dbdb0e},
+		.iir_counter=7, 
+		.iir_coef[0].coef_b={0xfb6a58c3,0x08e5bb25,0xfbae7a01}, .iir_coef[0].coef_a={0x08000000,0xf02d8ecd,0x07d50352},
 		.iir_coef[1].coef_b={0x08226066,0xf020cdbd,0x07bdd3ab}, .iir_coef[1].coef_a={0x08000000,0xf020cdbd,0x07e03411},
-		.iir_coef[2].coef_b={0x080dd0e6,0xf00cdec4,0x07e567a6}, .iir_coef[2].coef_a={0x08000000,0xf00cdec4,0x07f3388c},
+		.iir_coef[2].coef_b={0x08076486,0xf00838e3,0x07f079ee}, .iir_coef[2].coef_a={0x08000000,0xf00838e3,0x07f7de74},
 		.iir_coef[3].coef_b={0x080869b2,0xf01d6985,0x07dad1e8}, .iir_coef[3].coef_a={0x08000000,0xf01d6985,0x07e33b9a},
-		.iir_coef[4].coef_b={0x07ff5e4a,0xf007f6aa,0x07f8b0a3}, .iir_coef[4].coef_a={0x08000000,0xf007f7d1,0x07f81013},
+		.iir_coef[4].coef_b={0x07fe3561,0xf008dbc2,0x07f8f117}, .iir_coef[4].coef_a={0x08000000,0xf008ddc8,0x07f7287d},
+		.iir_coef[5].coef_b={0x08029112,0xf0052f09,0x07f8468a}, .iir_coef[5].coef_a={0x08000000,0xf0052f09,0x07fad79c},
+		.iir_coef[6].coef_b={0x07ff4a08,0xf001bab9,0x07fefb50}, .iir_coef[6].coef_a={0x08000000,0xf001bab9,0x07fe4558},
+		.iir_coef[7].coef_b={0,0,0},	.iir_coef[7].coef_a={0,0,0},
 
 		.dac_gain_offset=0,
 		.adc_gain_offset=(-6)*4,
     },
     .anc_cfg_ff_r = {
-		.total_gain =512,
+		.total_gain =404,
 
 		.iir_bypass_flag=0,
-		.iir_counter=5, 
-		.iir_coef[0].coef_b={0xffff9803,0xffff3007,0xffff9803}, .iir_coef[0].coef_a={0x08000000,0xf026b82d,0x07dbdb0e},
+		.iir_counter=7, 
+		.iir_coef[0].coef_b={0xfb6a58c3,0x08e5bb25,0xfbae7a01}, .iir_coef[0].coef_a={0x08000000,0xf02d8ecd,0x07d50352},
 		.iir_coef[1].coef_b={0x08226066,0xf020cdbd,0x07bdd3ab}, .iir_coef[1].coef_a={0x08000000,0xf020cdbd,0x07e03411},
-		.iir_coef[2].coef_b={0x080dd0e6,0xf00cdec4,0x07e567a6}, .iir_coef[2].coef_a={0x08000000,0xf00cdec4,0x07f3388c},
+		.iir_coef[2].coef_b={0x08076486,0xf00838e3,0x07f079ee}, .iir_coef[2].coef_a={0x08000000,0xf00838e3,0x07f7de74},
 		.iir_coef[3].coef_b={0x080869b2,0xf01d6985,0x07dad1e8}, .iir_coef[3].coef_a={0x08000000,0xf01d6985,0x07e33b9a},
-		.iir_coef[4].coef_b={0x07ff5e4a,0xf007f6aa,0x07f8b0a3}, .iir_coef[4].coef_a={0x08000000,0xf007f7d1,0x07f81013},
+		.iir_coef[4].coef_b={0x07fe3561,0xf008dbc2,0x07f8f117}, .iir_coef[4].coef_a={0x08000000,0xf008ddc8,0x07f7287d},
+		.iir_coef[5].coef_b={0x08029112,0xf0052f09,0x07f8468a}, .iir_coef[5].coef_a={0x08000000,0xf0052f09,0x07fad79c},
+		.iir_coef[6].coef_b={0x07ff4a08,0xf001bab9,0x07fefb50}, .iir_coef[6].coef_a={0x08000000,0xf001bab9,0x07fe4558},
+		.iir_coef[7].coef_b={0,0,0},	.iir_coef[7].coef_a={0,0,0},
 
 		.dac_gain_offset=0,
 		.adc_gain_offset=(-6)*4,
@@ -2639,7 +2697,7 @@ static const struct_anc_cfg POSSIBLY_UNUSED AncFirCoef_44p1k_Monitor3 = {
 
 		.iir_bypass_flag=0,
 		.iir_counter=1, 
-		.iir_coef[0].coef_b={0x08000000,0xf024cb39,0x07dbd999}, .iir_coef[0].coef_a={0x08000000,0xf024cb39,0x07dbd999},
+		.iir_coef[0].coef_b={0x0800c54b,0xf0018d11,0x07fdae3d}, .iir_coef[0].coef_a={0x08000000,0xf0018d11,0x07fe7388},
 
 		.dac_gain_offset=0,
 		.adc_gain_offset=(-6)*4,
@@ -2649,7 +2707,7 @@ static const struct_anc_cfg POSSIBLY_UNUSED AncFirCoef_44p1k_Monitor3 = {
 
 		.iir_bypass_flag=0,
 		.iir_counter=1, 
-		.iir_coef[0].coef_b={0x08000000,0xf024cb39,0x07dbd999}, .iir_coef[0].coef_a={0x08000000,0xf024cb39,0x07dbd999},
+		.iir_coef[0].coef_b={0x0800c54b,0xf0018d11,0x07fdae3d}, .iir_coef[0].coef_a={0x08000000,0xf0018d11,0x07fe7388},
 
 		.dac_gain_offset=0,
 		.adc_gain_offset=(-6)*4,
@@ -2686,29 +2744,35 @@ static const struct_anc_cfg POSSIBLY_UNUSED AncFirCoef_44p1k_Monitor3 = {
 
 static const struct_anc_cfg POSSIBLY_UNUSED AncFirCoef_44p1k_Monitor4 = {
     .anc_cfg_ff_l = {
-		.total_gain =512,
+		.total_gain =456,
 
 		.iir_bypass_flag=0,
-		.iir_counter=5, 
-		.iir_coef[0].coef_b={0xffff9803,0xffff3007,0xffff9803}, .iir_coef[0].coef_a={0x08000000,0xf026b82d,0x07dbdb0e},
+		.iir_counter=7, 
+		.iir_coef[0].coef_b={0xfb6a58c3,0x08e5bb25,0xfbae7a01}, .iir_coef[0].coef_a={0x08000000,0xf02d8ecd,0x07d50352},
 		.iir_coef[1].coef_b={0x08226066,0xf020cdbd,0x07bdd3ab}, .iir_coef[1].coef_a={0x08000000,0xf020cdbd,0x07e03411},
-		.iir_coef[2].coef_b={0x080dd0e6,0xf00cdec4,0x07e567a6}, .iir_coef[2].coef_a={0x08000000,0xf00cdec4,0x07f3388c},
+		.iir_coef[2].coef_b={0x08076486,0xf00838e3,0x07f079ee}, .iir_coef[2].coef_a={0x08000000,0xf00838e3,0x07f7de74},
 		.iir_coef[3].coef_b={0x080869b2,0xf01d6985,0x07dad1e8}, .iir_coef[3].coef_a={0x08000000,0xf01d6985,0x07e33b9a},
-		.iir_coef[4].coef_b={0x07ff5e4a,0xf007f6aa,0x07f8b0a3}, .iir_coef[4].coef_a={0x08000000,0xf007f7d1,0x07f81013},
+		.iir_coef[4].coef_b={0x07fe3561,0xf008dbc2,0x07f8f117}, .iir_coef[4].coef_a={0x08000000,0xf008ddc8,0x07f7287d},
+		.iir_coef[5].coef_b={0x08029112,0xf0052f09,0x07f8468a}, .iir_coef[5].coef_a={0x08000000,0xf0052f09,0x07fad79c},
+		.iir_coef[6].coef_b={0x07ff4a08,0xf001bab9,0x07fefb50}, .iir_coef[6].coef_a={0x08000000,0xf001bab9,0x07fe4558},
+		.iir_coef[7].coef_b={0,0,0},	.iir_coef[7].coef_a={0,0,0},
 
 		.dac_gain_offset=0,
 		.adc_gain_offset=(-6)*4,
     },
     .anc_cfg_ff_r = {
-		.total_gain =512,
+		.total_gain =456,
 
 		.iir_bypass_flag=0,
-		.iir_counter=5, 
-		.iir_coef[0].coef_b={0xffff9803,0xffff3007,0xffff9803}, .iir_coef[0].coef_a={0x08000000,0xf026b82d,0x07dbdb0e},
+		.iir_counter=7, 
+		.iir_coef[0].coef_b={0xfb6a58c3,0x08e5bb25,0xfbae7a01}, .iir_coef[0].coef_a={0x08000000,0xf02d8ecd,0x07d50352},
 		.iir_coef[1].coef_b={0x08226066,0xf020cdbd,0x07bdd3ab}, .iir_coef[1].coef_a={0x08000000,0xf020cdbd,0x07e03411},
-		.iir_coef[2].coef_b={0x080dd0e6,0xf00cdec4,0x07e567a6}, .iir_coef[2].coef_a={0x08000000,0xf00cdec4,0x07f3388c},
+		.iir_coef[2].coef_b={0x08076486,0xf00838e3,0x07f079ee}, .iir_coef[2].coef_a={0x08000000,0xf00838e3,0x07f7de74},
 		.iir_coef[3].coef_b={0x080869b2,0xf01d6985,0x07dad1e8}, .iir_coef[3].coef_a={0x08000000,0xf01d6985,0x07e33b9a},
-		.iir_coef[4].coef_b={0x07ff5e4a,0xf007f6aa,0x07f8b0a3}, .iir_coef[4].coef_a={0x08000000,0xf007f7d1,0x07f81013},
+		.iir_coef[4].coef_b={0x07fe3561,0xf008dbc2,0x07f8f117}, .iir_coef[4].coef_a={0x08000000,0xf008ddc8,0x07f7287d},
+		.iir_coef[5].coef_b={0x08029112,0xf0052f09,0x07f8468a}, .iir_coef[5].coef_a={0x08000000,0xf0052f09,0x07fad79c},
+		.iir_coef[6].coef_b={0x07ff4a08,0xf001bab9,0x07fefb50}, .iir_coef[6].coef_a={0x08000000,0xf001bab9,0x07fe4558},
+		.iir_coef[7].coef_b={0,0,0},	.iir_coef[7].coef_a={0,0,0},
 
 		.dac_gain_offset=0,
 		.adc_gain_offset=(-6)*4,
@@ -2718,7 +2782,7 @@ static const struct_anc_cfg POSSIBLY_UNUSED AncFirCoef_44p1k_Monitor4 = {
 
 		.iir_bypass_flag=0,
 		.iir_counter=1, 
-		.iir_coef[0].coef_b={0x08000000,0xf024cb39,0x07dbd999}, .iir_coef[0].coef_a={0x08000000,0xf024cb39,0x07dbd999},
+		.iir_coef[0].coef_b={0x0800c54b,0xf0018d11,0x07fdae3d}, .iir_coef[0].coef_a={0x08000000,0xf0018d11,0x07fe7388},
 
 		.dac_gain_offset=0,
 		.adc_gain_offset=(-6)*4,
@@ -2728,7 +2792,7 @@ static const struct_anc_cfg POSSIBLY_UNUSED AncFirCoef_44p1k_Monitor4 = {
 
 		.iir_bypass_flag=0,
 		.iir_counter=1, 
-		.iir_coef[0].coef_b={0x08000000,0xf024cb39,0x07dbd999}, .iir_coef[0].coef_a={0x08000000,0xf024cb39,0x07dbd999},
+		.iir_coef[0].coef_b={0x0800c54b,0xf0018d11,0x07fdae3d}, .iir_coef[0].coef_a={0x08000000,0xf0018d11,0x07fe7388},
 
 		.dac_gain_offset=0,
 		.adc_gain_offset=(-6)*4,
@@ -2768,12 +2832,15 @@ static const struct_anc_cfg POSSIBLY_UNUSED AncFirCoef_44p1k_Monitor5 = {
 		.total_gain =512,
 
 		.iir_bypass_flag=0,
-		.iir_counter=5, 
-		.iir_coef[0].coef_b={0xffff9803,0xffff3007,0xffff9803}, .iir_coef[0].coef_a={0x08000000,0xf026b82d,0x07dbdb0e},
+		.iir_counter=7, 
+		.iir_coef[0].coef_b={0xfb6a58c3,0x08e5bb25,0xfbae7a01}, .iir_coef[0].coef_a={0x08000000,0xf02d8ecd,0x07d50352},
 		.iir_coef[1].coef_b={0x08226066,0xf020cdbd,0x07bdd3ab}, .iir_coef[1].coef_a={0x08000000,0xf020cdbd,0x07e03411},
-		.iir_coef[2].coef_b={0x080dd0e6,0xf00cdec4,0x07e567a6}, .iir_coef[2].coef_a={0x08000000,0xf00cdec4,0x07f3388c},
+		.iir_coef[2].coef_b={0x08076486,0xf00838e3,0x07f079ee}, .iir_coef[2].coef_a={0x08000000,0xf00838e3,0x07f7de74},
 		.iir_coef[3].coef_b={0x080869b2,0xf01d6985,0x07dad1e8}, .iir_coef[3].coef_a={0x08000000,0xf01d6985,0x07e33b9a},
-		.iir_coef[4].coef_b={0x07ff5e4a,0xf007f6aa,0x07f8b0a3}, .iir_coef[4].coef_a={0x08000000,0xf007f7d1,0x07f81013},
+		.iir_coef[4].coef_b={0x07fe3561,0xf008dbc2,0x07f8f117}, .iir_coef[4].coef_a={0x08000000,0xf008ddc8,0x07f7287d},
+		.iir_coef[5].coef_b={0x08029112,0xf0052f09,0x07f8468a}, .iir_coef[5].coef_a={0x08000000,0xf0052f09,0x07fad79c},
+		.iir_coef[6].coef_b={0x07ff4a08,0xf001bab9,0x07fefb50}, .iir_coef[6].coef_a={0x08000000,0xf001bab9,0x07fe4558},
+		.iir_coef[7].coef_b={0,0,0},	.iir_coef[7].coef_a={0,0,0},
 
 		.dac_gain_offset=0,
 		.adc_gain_offset=(-6)*4,
@@ -2782,12 +2849,15 @@ static const struct_anc_cfg POSSIBLY_UNUSED AncFirCoef_44p1k_Monitor5 = {
 		.total_gain =512,
 
 		.iir_bypass_flag=0,
-		.iir_counter=5, 
-		.iir_coef[0].coef_b={0xffff9803,0xffff3007,0xffff9803}, .iir_coef[0].coef_a={0x08000000,0xf026b82d,0x07dbdb0e},
+		.iir_counter=7, 
+		.iir_coef[0].coef_b={0xfb6a58c3,0x08e5bb25,0xfbae7a01}, .iir_coef[0].coef_a={0x08000000,0xf02d8ecd,0x07d50352},
 		.iir_coef[1].coef_b={0x08226066,0xf020cdbd,0x07bdd3ab}, .iir_coef[1].coef_a={0x08000000,0xf020cdbd,0x07e03411},
-		.iir_coef[2].coef_b={0x080dd0e6,0xf00cdec4,0x07e567a6}, .iir_coef[2].coef_a={0x08000000,0xf00cdec4,0x07f3388c},
+		.iir_coef[2].coef_b={0x08076486,0xf00838e3,0x07f079ee}, .iir_coef[2].coef_a={0x08000000,0xf00838e3,0x07f7de74},
 		.iir_coef[3].coef_b={0x080869b2,0xf01d6985,0x07dad1e8}, .iir_coef[3].coef_a={0x08000000,0xf01d6985,0x07e33b9a},
-		.iir_coef[4].coef_b={0x07ff5e4a,0xf007f6aa,0x07f8b0a3}, .iir_coef[4].coef_a={0x08000000,0xf007f7d1,0x07f81013},
+		.iir_coef[4].coef_b={0x07fe3561,0xf008dbc2,0x07f8f117}, .iir_coef[4].coef_a={0x08000000,0xf008ddc8,0x07f7287d},
+		.iir_coef[5].coef_b={0x08029112,0xf0052f09,0x07f8468a}, .iir_coef[5].coef_a={0x08000000,0xf0052f09,0x07fad79c},
+		.iir_coef[6].coef_b={0x07ff4a08,0xf001bab9,0x07fefb50}, .iir_coef[6].coef_a={0x08000000,0xf001bab9,0x07fe4558},
+		.iir_coef[7].coef_b={0,0,0},	.iir_coef[7].coef_a={0,0,0},
 
 		.dac_gain_offset=0,
 		.adc_gain_offset=(-6)*4,
@@ -2797,7 +2867,7 @@ static const struct_anc_cfg POSSIBLY_UNUSED AncFirCoef_44p1k_Monitor5 = {
 
 		.iir_bypass_flag=0,
 		.iir_counter=1, 
-		.iir_coef[0].coef_b={0x08000000,0xf024cb39,0x07dbd999}, .iir_coef[0].coef_a={0x08000000,0xf024cb39,0x07dbd999},
+		.iir_coef[0].coef_b={0x0800c54b,0xf0018d11,0x07fdae3d}, .iir_coef[0].coef_a={0x08000000,0xf0018d11,0x07fe7388},
 
 		.dac_gain_offset=0,
 		.adc_gain_offset=(-6)*4,
@@ -2807,7 +2877,7 @@ static const struct_anc_cfg POSSIBLY_UNUSED AncFirCoef_44p1k_Monitor5 = {
 
 		.iir_bypass_flag=0,
 		.iir_counter=1, 
-		.iir_coef[0].coef_b={0x08000000,0xf024cb39,0x07dbd999}, .iir_coef[0].coef_a={0x08000000,0xf024cb39,0x07dbd999},
+		.iir_coef[0].coef_b={0x0800c54b,0xf0018d11,0x07fdae3d}, .iir_coef[0].coef_a={0x08000000,0xf0018d11,0x07fe7388},
 
 		.dac_gain_offset=0,
 		.adc_gain_offset=(-6)*4,
@@ -2843,49 +2913,57 @@ static const struct_anc_cfg POSSIBLY_UNUSED AncFirCoef_44p1k_Monitor5 = {
 };
 static const struct_anc_cfg POSSIBLY_UNUSED AncFirCoef_44p1k_Clear_Voice1 = {
     .anc_cfg_ff_l = {
-		.total_gain =512,
+		.total_gain =323,
 
 		.iir_bypass_flag=0,
-		.iir_counter=5, 
-		.iir_coef[0].coef_b={0xffff9803,0xffff3007,0xffff9803}, .iir_coef[0].coef_a={0x08000000,0xf026b82d,0x07dbdb0e},
-		.iir_coef[1].coef_b={0x08226066,0xf020cdbd,0x07bdd3ab}, .iir_coef[1].coef_a={0x08000000,0xf020cdbd,0x07e03411},
-		.iir_coef[2].coef_b={0x080dd0e6,0xf00cdec4,0x07e567a6}, .iir_coef[2].coef_a={0x08000000,0xf00cdec4,0x07f3388c},
-		.iir_coef[3].coef_b={0x080869b2,0xf01d6985,0x07dad1e8}, .iir_coef[3].coef_a={0x08000000,0xf01d6985,0x07e33b9a},
-		.iir_coef[4].coef_b={0x07ff5e4a,0xf007f6aa,0x07f8b0a3}, .iir_coef[4].coef_a={0x08000000,0xf007f7d1,0x07f81013},
+		.iir_counter=7, 
+		.iir_coef[0].coef_b={0xfa56a159,0x0b528589,0xfa56d913}, .iir_coef[0].coef_a={0x08000000,0xf001bab9,0x07fe4558},
+		.iir_coef[1].coef_b={0x07fe3561,0xf008dbc2,0x07f8f117}, .iir_coef[1].coef_a={0x08000000,0xf008ddc8,0x07f7287d},
+		.iir_coef[2].coef_b={0x08029112,0xf0052f09,0x07f8468a}, .iir_coef[2].coef_a={0x08000000,0xf0052f09,0x07fad79c},
+		.iir_coef[3].coef_b={0x08076486,0xf00838e3,0x07f079ee}, .iir_coef[3].coef_a={0x08000000,0xf00838e3,0x07f7de74},
+		.iir_coef[4].coef_b={0x080869b2,0xf01d6985,0x07dad1e8}, .iir_coef[4].coef_a={0x08000000,0xf01d6985,0x07e33b9a},
+		.iir_coef[5].coef_b={0x08226066,0xf020cdbd,0x07bdd3ab}, .iir_coef[5].coef_a={0x08000000,0xf020cdbd,0x07e03411},
+		.iir_coef[6].coef_b={0x0827155c,0xf02d8ecd,0x07adedf6}, .iir_coef[6].coef_a={0x08000000,0xf02d8ecd,0x07d50352},
+		.iir_coef[7].coef_b={0,0,0},	.iir_coef[7].coef_a={0,0,0},
 
 		.dac_gain_offset=0,
 		.adc_gain_offset=(-6)*4,
     },
     .anc_cfg_ff_r = {
-		.total_gain =512,
+		.total_gain =323,
 
 		.iir_bypass_flag=0,
-		.iir_counter=5, 
-		.iir_coef[0].coef_b={0xffff9803,0xffff3007,0xffff9803}, .iir_coef[0].coef_a={0x08000000,0xf026b82d,0x07dbdb0e},
-		.iir_coef[1].coef_b={0x08226066,0xf020cdbd,0x07bdd3ab}, .iir_coef[1].coef_a={0x08000000,0xf020cdbd,0x07e03411},
-		.iir_coef[2].coef_b={0x080dd0e6,0xf00cdec4,0x07e567a6}, .iir_coef[2].coef_a={0x08000000,0xf00cdec4,0x07f3388c},
-		.iir_coef[3].coef_b={0x080869b2,0xf01d6985,0x07dad1e8}, .iir_coef[3].coef_a={0x08000000,0xf01d6985,0x07e33b9a},
-		.iir_coef[4].coef_b={0x07ff5e4a,0xf007f6aa,0x07f8b0a3}, .iir_coef[4].coef_a={0x08000000,0xf007f7d1,0x07f81013},
+		.iir_counter=7, 
+		.iir_coef[0].coef_b={0xfa56a159,0x0b528589,0xfa56d913}, .iir_coef[0].coef_a={0x08000000,0xf001bab9,0x07fe4558},
+		.iir_coef[1].coef_b={0x07fe3561,0xf008dbc2,0x07f8f117}, .iir_coef[1].coef_a={0x08000000,0xf008ddc8,0x07f7287d},
+		.iir_coef[2].coef_b={0x08029112,0xf0052f09,0x07f8468a}, .iir_coef[2].coef_a={0x08000000,0xf0052f09,0x07fad79c},
+		.iir_coef[3].coef_b={0x08076486,0xf00838e3,0x07f079ee}, .iir_coef[3].coef_a={0x08000000,0xf00838e3,0x07f7de74},
+		.iir_coef[4].coef_b={0x080869b2,0xf01d6985,0x07dad1e8}, .iir_coef[4].coef_a={0x08000000,0xf01d6985,0x07e33b9a},
+		.iir_coef[5].coef_b={0x08226066,0xf020cdbd,0x07bdd3ab}, .iir_coef[5].coef_a={0x08000000,0xf020cdbd,0x07e03411},
+		.iir_coef[6].coef_b={0x0827155c,0xf02d8ecd,0x07adedf6}, .iir_coef[6].coef_a={0x08000000,0xf02d8ecd,0x07d50352},
+		.iir_coef[7].coef_b={0,0,0},	.iir_coef[7].coef_a={0,0,0},
 
 		.dac_gain_offset=0,
 		.adc_gain_offset=(-6)*4,
     },
     .anc_cfg_fb_l = {
-        .total_gain = 0,
+        .total_gain = 323,
 
 		.iir_bypass_flag=0,
-		.iir_counter=1, 
-		.iir_coef[0].coef_b={0x08000000,0xf024cb39,0x07dbd999}, .iir_coef[0].coef_a={0x08000000,0xf024cb39,0x07dbd999},
+		.iir_counter=2, 
+		.iir_coef[0].coef_b={0x0b4f3377,0xe968ce07,0x0b47ff19}, .iir_coef[0].coef_a={0x08000000,0xf001cfb3,0x07fe30b7},
+		.iir_coef[1].coef_b={0x0803b335,0xf004158d,0x07f83afa}, .iir_coef[1].coef_a={0x08000000,0xf004158d,0x07fbee30},
 
 		.dac_gain_offset=0,
 		.adc_gain_offset=(-6)*4,
     },
     .anc_cfg_fb_r = {
-        .total_gain = 0,
+        .total_gain = 323,
 
 		.iir_bypass_flag=0,
-		.iir_counter=1, 
-		.iir_coef[0].coef_b={0x08000000,0xf024cb39,0x07dbd999}, .iir_coef[0].coef_a={0x08000000,0xf024cb39,0x07dbd999},
+		.iir_counter=2, 
+		.iir_coef[0].coef_b={0x0b4f3377,0xe968ce07,0x0b47ff19}, .iir_coef[0].coef_a={0x08000000,0xf001cfb3,0x07fe30b7},
+		.iir_coef[1].coef_b={0x0803b335,0xf004158d,0x07f83afa}, .iir_coef[1].coef_a={0x08000000,0xf004158d,0x07fbee30},
 
 		.dac_gain_offset=0,
 		.adc_gain_offset=(-6)*4,
@@ -2895,11 +2973,8 @@ static const struct_anc_cfg POSSIBLY_UNUSED AncFirCoef_44p1k_Clear_Voice1 = {
         .total_gain = 0,
 
 		.iir_bypass_flag=0,
-		.iir_counter=4, 
-		.iir_coef[0].coef_b={0x0337a1cc,0xf9be3119,0x030c7f64}, .iir_coef[0].coef_a={0x08000000,0xf046af51,0x07bba2f7},
-		.iir_coef[1].coef_b={0x080cfdc2,0xf02308a4,0x07d19fd0}, .iir_coef[1].coef_a={0x08000000,0xf02308a4,0x07de9d91},
-		.iir_coef[2].coef_b={0x07fc7603,0xf00a5e38,0x07f93004}, .iir_coef[2].coef_a={0x08000000,0xf00a5e38,0x07f5a607},
-		.iir_coef[3].coef_b={0x07a4148a,0xf13b0cc3,0x072a7bef}, .iir_coef[3].coef_a={0x08000000,0xf13b0cc3,0x06ce9079},
+		.iir_counter=1, 
+		.iir_coef[0].coef_b={0x08000000,0xf1364740,0x06f07928}, .iir_coef[0].coef_a={0x08000000,0xf1364740,0x06f07928},
 
 		.dac_gain_offset=0,
 		.adc_gain_offset=(0)*4,
@@ -2908,11 +2983,8 @@ static const struct_anc_cfg POSSIBLY_UNUSED AncFirCoef_44p1k_Clear_Voice1 = {
         .total_gain = 0,
 
 		.iir_bypass_flag=0,
-		.iir_counter=4, 
-		.iir_coef[0].coef_b={0x0337a1cc,0xf9be3119,0x030c7f64}, .iir_coef[0].coef_a={0x08000000,0xf046af51,0x07bba2f7},
-		.iir_coef[1].coef_b={0x080cfdc2,0xf02308a4,0x07d19fd0}, .iir_coef[1].coef_a={0x08000000,0xf02308a4,0x07de9d91},
-		.iir_coef[2].coef_b={0x07fc7603,0xf00a5e38,0x07f93004}, .iir_coef[2].coef_a={0x08000000,0xf00a5e38,0x07f5a607},
-		.iir_coef[3].coef_b={0x07a4148a,0xf13b0cc3,0x072a7bef}, .iir_coef[3].coef_a={0x08000000,0xf13b0cc3,0x06ce9079},
+		.iir_counter=1, 
+		.iir_coef[0].coef_b={0x08000000,0xf1364740,0x06f07928}, .iir_coef[0].coef_a={0x08000000,0xf1364740,0x06f07928},
 
 		.dac_gain_offset=0,
 		.adc_gain_offset=(0)*4,
@@ -2922,49 +2994,57 @@ static const struct_anc_cfg POSSIBLY_UNUSED AncFirCoef_44p1k_Clear_Voice1 = {
 
 static const struct_anc_cfg POSSIBLY_UNUSED AncFirCoef_44p1k_Clear_Voice2 = {
     .anc_cfg_ff_l = {
-		.total_gain =512,
+		.total_gain =364,
 
 		.iir_bypass_flag=0,
-		.iir_counter=5, 
-		.iir_coef[0].coef_b={0xffff9803,0xffff3007,0xffff9803}, .iir_coef[0].coef_a={0x08000000,0xf026b82d,0x07dbdb0e},
-		.iir_coef[1].coef_b={0x08226066,0xf020cdbd,0x07bdd3ab}, .iir_coef[1].coef_a={0x08000000,0xf020cdbd,0x07e03411},
-		.iir_coef[2].coef_b={0x080dd0e6,0xf00cdec4,0x07e567a6}, .iir_coef[2].coef_a={0x08000000,0xf00cdec4,0x07f3388c},
-		.iir_coef[3].coef_b={0x080869b2,0xf01d6985,0x07dad1e8}, .iir_coef[3].coef_a={0x08000000,0xf01d6985,0x07e33b9a},
-		.iir_coef[4].coef_b={0x07ff5e4a,0xf007f6aa,0x07f8b0a3}, .iir_coef[4].coef_a={0x08000000,0xf007f7d1,0x07f81013},
+		.iir_counter=7, 
+		.iir_coef[0].coef_b={0xfa56a159,0x0b528589,0xfa56d913}, .iir_coef[0].coef_a={0x08000000,0xf001bab9,0x07fe4558},
+		.iir_coef[1].coef_b={0x07fe3561,0xf008dbc2,0x07f8f117}, .iir_coef[1].coef_a={0x08000000,0xf008ddc8,0x07f7287d},
+		.iir_coef[2].coef_b={0x08029112,0xf0052f09,0x07f8468a}, .iir_coef[2].coef_a={0x08000000,0xf0052f09,0x07fad79c},
+		.iir_coef[3].coef_b={0x08076486,0xf00838e3,0x07f079ee}, .iir_coef[3].coef_a={0x08000000,0xf00838e3,0x07f7de74},
+		.iir_coef[4].coef_b={0x080869b2,0xf01d6985,0x07dad1e8}, .iir_coef[4].coef_a={0x08000000,0xf01d6985,0x07e33b9a},
+		.iir_coef[5].coef_b={0x08226066,0xf020cdbd,0x07bdd3ab}, .iir_coef[5].coef_a={0x08000000,0xf020cdbd,0x07e03411},
+		.iir_coef[6].coef_b={0x0827155c,0xf02d8ecd,0x07adedf6}, .iir_coef[6].coef_a={0x08000000,0xf02d8ecd,0x07d50352},
+		.iir_coef[7].coef_b={0,0,0},	.iir_coef[7].coef_a={0,0,0},
 
 		.dac_gain_offset=0,
 		.adc_gain_offset=(-6)*4,
     },
     .anc_cfg_ff_r = {
-		.total_gain =512,
+		.total_gain =364,
 
 		.iir_bypass_flag=0,
-		.iir_counter=5, 
-		.iir_coef[0].coef_b={0xffff9803,0xffff3007,0xffff9803}, .iir_coef[0].coef_a={0x08000000,0xf026b82d,0x07dbdb0e},
-		.iir_coef[1].coef_b={0x08226066,0xf020cdbd,0x07bdd3ab}, .iir_coef[1].coef_a={0x08000000,0xf020cdbd,0x07e03411},
-		.iir_coef[2].coef_b={0x080dd0e6,0xf00cdec4,0x07e567a6}, .iir_coef[2].coef_a={0x08000000,0xf00cdec4,0x07f3388c},
-		.iir_coef[3].coef_b={0x080869b2,0xf01d6985,0x07dad1e8}, .iir_coef[3].coef_a={0x08000000,0xf01d6985,0x07e33b9a},
-		.iir_coef[4].coef_b={0x07ff5e4a,0xf007f6aa,0x07f8b0a3}, .iir_coef[4].coef_a={0x08000000,0xf007f7d1,0x07f81013},
+		.iir_counter=7, 
+		.iir_coef[0].coef_b={0xfa56a159,0x0b528589,0xfa56d913}, .iir_coef[0].coef_a={0x08000000,0xf001bab9,0x07fe4558},
+		.iir_coef[1].coef_b={0x07fe3561,0xf008dbc2,0x07f8f117}, .iir_coef[1].coef_a={0x08000000,0xf008ddc8,0x07f7287d},
+		.iir_coef[2].coef_b={0x08029112,0xf0052f09,0x07f8468a}, .iir_coef[2].coef_a={0x08000000,0xf0052f09,0x07fad79c},
+		.iir_coef[3].coef_b={0x08076486,0xf00838e3,0x07f079ee}, .iir_coef[3].coef_a={0x08000000,0xf00838e3,0x07f7de74},
+		.iir_coef[4].coef_b={0x080869b2,0xf01d6985,0x07dad1e8}, .iir_coef[4].coef_a={0x08000000,0xf01d6985,0x07e33b9a},
+		.iir_coef[5].coef_b={0x08226066,0xf020cdbd,0x07bdd3ab}, .iir_coef[5].coef_a={0x08000000,0xf020cdbd,0x07e03411},
+		.iir_coef[6].coef_b={0x0827155c,0xf02d8ecd,0x07adedf6}, .iir_coef[6].coef_a={0x08000000,0xf02d8ecd,0x07d50352},
+		.iir_coef[7].coef_b={0,0,0},	.iir_coef[7].coef_a={0,0,0},
 
 		.dac_gain_offset=0,
 		.adc_gain_offset=(-6)*4,
     },
     .anc_cfg_fb_l = {
-        .total_gain = 0,
+        .total_gain = 364,
 
 		.iir_bypass_flag=0,
-		.iir_counter=1, 
-		.iir_coef[0].coef_b={0x08000000,0xf024cb39,0x07dbd999}, .iir_coef[0].coef_a={0x08000000,0xf024cb39,0x07dbd999},
+		.iir_counter=2, 
+		.iir_coef[0].coef_b={0x0b4f3377,0xe968ce07,0x0b47ff19}, .iir_coef[0].coef_a={0x08000000,0xf001cfb3,0x07fe30b7},
+		.iir_coef[1].coef_b={0x0803b335,0xf004158d,0x07f83afa}, .iir_coef[1].coef_a={0x08000000,0xf004158d,0x07fbee30},
 
 		.dac_gain_offset=0,
 		.adc_gain_offset=(-6)*4,
     },
     .anc_cfg_fb_r = {
-        .total_gain = 0,
+        .total_gain = 364,
 
 		.iir_bypass_flag=0,
-		.iir_counter=1, 
-		.iir_coef[0].coef_b={0x08000000,0xf024cb39,0x07dbd999}, .iir_coef[0].coef_a={0x08000000,0xf024cb39,0x07dbd999},
+		.iir_counter=2, 
+		.iir_coef[0].coef_b={0x0b4f3377,0xe968ce07,0x0b47ff19}, .iir_coef[0].coef_a={0x08000000,0xf001cfb3,0x07fe30b7},
+		.iir_coef[1].coef_b={0x0803b335,0xf004158d,0x07f83afa}, .iir_coef[1].coef_a={0x08000000,0xf004158d,0x07fbee30},
 
 		.dac_gain_offset=0,
 		.adc_gain_offset=(-6)*4,
@@ -2974,11 +3054,8 @@ static const struct_anc_cfg POSSIBLY_UNUSED AncFirCoef_44p1k_Clear_Voice2 = {
         .total_gain = 0,
 
 		.iir_bypass_flag=0,
-		.iir_counter=4, 
-		.iir_coef[0].coef_b={0x0337a1cc,0xf9be3119,0x030c7f64}, .iir_coef[0].coef_a={0x08000000,0xf046af51,0x07bba2f7},
-		.iir_coef[1].coef_b={0x080cfdc2,0xf02308a4,0x07d19fd0}, .iir_coef[1].coef_a={0x08000000,0xf02308a4,0x07de9d91},
-		.iir_coef[2].coef_b={0x07fc7603,0xf00a5e38,0x07f93004}, .iir_coef[2].coef_a={0x08000000,0xf00a5e38,0x07f5a607},
-		.iir_coef[3].coef_b={0x07a4148a,0xf13b0cc3,0x072a7bef}, .iir_coef[3].coef_a={0x08000000,0xf13b0cc3,0x06ce9079},
+		.iir_counter=1, 
+		.iir_coef[0].coef_b={0x08000000,0xf1364740,0x06f07928}, .iir_coef[0].coef_a={0x08000000,0xf1364740,0x06f07928},
 
 		.dac_gain_offset=0,
 		.adc_gain_offset=(0)*4,
@@ -2987,11 +3064,8 @@ static const struct_anc_cfg POSSIBLY_UNUSED AncFirCoef_44p1k_Clear_Voice2 = {
         .total_gain = 0,
 
 		.iir_bypass_flag=0,
-		.iir_counter=4, 
-		.iir_coef[0].coef_b={0x0337a1cc,0xf9be3119,0x030c7f64}, .iir_coef[0].coef_a={0x08000000,0xf046af51,0x07bba2f7},
-		.iir_coef[1].coef_b={0x080cfdc2,0xf02308a4,0x07d19fd0}, .iir_coef[1].coef_a={0x08000000,0xf02308a4,0x07de9d91},
-		.iir_coef[2].coef_b={0x07fc7603,0xf00a5e38,0x07f93004}, .iir_coef[2].coef_a={0x08000000,0xf00a5e38,0x07f5a607},
-		.iir_coef[3].coef_b={0x07a4148a,0xf13b0cc3,0x072a7bef}, .iir_coef[3].coef_a={0x08000000,0xf13b0cc3,0x06ce9079},
+		.iir_counter=1, 
+		.iir_coef[0].coef_b={0x08000000,0xf1364740,0x06f07928}, .iir_coef[0].coef_a={0x08000000,0xf1364740,0x06f07928},
 
 		.dac_gain_offset=0,
 		.adc_gain_offset=(0)*4,
@@ -3001,49 +3075,57 @@ static const struct_anc_cfg POSSIBLY_UNUSED AncFirCoef_44p1k_Clear_Voice2 = {
 
 static const struct_anc_cfg POSSIBLY_UNUSED AncFirCoef_44p1k_Clear_Voice3 = {
     .anc_cfg_ff_l = {
-		.total_gain =512,
+		.total_gain =404,
 
 		.iir_bypass_flag=0,
-		.iir_counter=5, 
-		.iir_coef[0].coef_b={0xffff9803,0xffff3007,0xffff9803}, .iir_coef[0].coef_a={0x08000000,0xf026b82d,0x07dbdb0e},
-		.iir_coef[1].coef_b={0x08226066,0xf020cdbd,0x07bdd3ab}, .iir_coef[1].coef_a={0x08000000,0xf020cdbd,0x07e03411},
-		.iir_coef[2].coef_b={0x080dd0e6,0xf00cdec4,0x07e567a6}, .iir_coef[2].coef_a={0x08000000,0xf00cdec4,0x07f3388c},
-		.iir_coef[3].coef_b={0x080869b2,0xf01d6985,0x07dad1e8}, .iir_coef[3].coef_a={0x08000000,0xf01d6985,0x07e33b9a},
-		.iir_coef[4].coef_b={0x07ff5e4a,0xf007f6aa,0x07f8b0a3}, .iir_coef[4].coef_a={0x08000000,0xf007f7d1,0x07f81013},
+		.iir_counter=7, 
+		.iir_coef[0].coef_b={0xfa56a159,0x0b528589,0xfa56d913}, .iir_coef[0].coef_a={0x08000000,0xf001bab9,0x07fe4558},
+		.iir_coef[1].coef_b={0x07fe3561,0xf008dbc2,0x07f8f117}, .iir_coef[1].coef_a={0x08000000,0xf008ddc8,0x07f7287d},
+		.iir_coef[2].coef_b={0x08029112,0xf0052f09,0x07f8468a}, .iir_coef[2].coef_a={0x08000000,0xf0052f09,0x07fad79c},
+		.iir_coef[3].coef_b={0x08076486,0xf00838e3,0x07f079ee}, .iir_coef[3].coef_a={0x08000000,0xf00838e3,0x07f7de74},
+		.iir_coef[4].coef_b={0x080869b2,0xf01d6985,0x07dad1e8}, .iir_coef[4].coef_a={0x08000000,0xf01d6985,0x07e33b9a},
+		.iir_coef[5].coef_b={0x08226066,0xf020cdbd,0x07bdd3ab}, .iir_coef[5].coef_a={0x08000000,0xf020cdbd,0x07e03411},
+		.iir_coef[6].coef_b={0x0827155c,0xf02d8ecd,0x07adedf6}, .iir_coef[6].coef_a={0x08000000,0xf02d8ecd,0x07d50352},
+		.iir_coef[7].coef_b={0,0,0},	.iir_coef[7].coef_a={0,0,0},
 
 		.dac_gain_offset=0,
 		.adc_gain_offset=(-6)*4,
     },
     .anc_cfg_ff_r = {
-		.total_gain =512,
+		.total_gain =404,
 
 		.iir_bypass_flag=0,
-		.iir_counter=5, 
-		.iir_coef[0].coef_b={0xffff9803,0xffff3007,0xffff9803}, .iir_coef[0].coef_a={0x08000000,0xf026b82d,0x07dbdb0e},
-		.iir_coef[1].coef_b={0x08226066,0xf020cdbd,0x07bdd3ab}, .iir_coef[1].coef_a={0x08000000,0xf020cdbd,0x07e03411},
-		.iir_coef[2].coef_b={0x080dd0e6,0xf00cdec4,0x07e567a6}, .iir_coef[2].coef_a={0x08000000,0xf00cdec4,0x07f3388c},
-		.iir_coef[3].coef_b={0x080869b2,0xf01d6985,0x07dad1e8}, .iir_coef[3].coef_a={0x08000000,0xf01d6985,0x07e33b9a},
-		.iir_coef[4].coef_b={0x07ff5e4a,0xf007f6aa,0x07f8b0a3}, .iir_coef[4].coef_a={0x08000000,0xf007f7d1,0x07f81013},
+		.iir_counter=7, 
+		.iir_coef[0].coef_b={0xfa56a159,0x0b528589,0xfa56d913}, .iir_coef[0].coef_a={0x08000000,0xf001bab9,0x07fe4558},
+		.iir_coef[1].coef_b={0x07fe3561,0xf008dbc2,0x07f8f117}, .iir_coef[1].coef_a={0x08000000,0xf008ddc8,0x07f7287d},
+		.iir_coef[2].coef_b={0x08029112,0xf0052f09,0x07f8468a}, .iir_coef[2].coef_a={0x08000000,0xf0052f09,0x07fad79c},
+		.iir_coef[3].coef_b={0x08076486,0xf00838e3,0x07f079ee}, .iir_coef[3].coef_a={0x08000000,0xf00838e3,0x07f7de74},
+		.iir_coef[4].coef_b={0x080869b2,0xf01d6985,0x07dad1e8}, .iir_coef[4].coef_a={0x08000000,0xf01d6985,0x07e33b9a},
+		.iir_coef[5].coef_b={0x08226066,0xf020cdbd,0x07bdd3ab}, .iir_coef[5].coef_a={0x08000000,0xf020cdbd,0x07e03411},
+		.iir_coef[6].coef_b={0x0827155c,0xf02d8ecd,0x07adedf6}, .iir_coef[6].coef_a={0x08000000,0xf02d8ecd,0x07d50352},
+		.iir_coef[7].coef_b={0,0,0},	.iir_coef[7].coef_a={0,0,0},
 
 		.dac_gain_offset=0,
 		.adc_gain_offset=(-6)*4,
     },
     .anc_cfg_fb_l = {
-        .total_gain = 0,
+        .total_gain = 404,
 
 		.iir_bypass_flag=0,
-		.iir_counter=1, 
-		.iir_coef[0].coef_b={0x08000000,0xf024cb39,0x07dbd999}, .iir_coef[0].coef_a={0x08000000,0xf024cb39,0x07dbd999},
+		.iir_counter=2, 
+		.iir_coef[0].coef_b={0x0b4f3377,0xe968ce07,0x0b47ff19}, .iir_coef[0].coef_a={0x08000000,0xf001cfb3,0x07fe30b7},
+		.iir_coef[1].coef_b={0x0803b335,0xf004158d,0x07f83afa}, .iir_coef[1].coef_a={0x08000000,0xf004158d,0x07fbee30},
 
 		.dac_gain_offset=0,
 		.adc_gain_offset=(-6)*4,
     },
     .anc_cfg_fb_r = {
-        .total_gain = 0,
+        .total_gain = 404,
 
 		.iir_bypass_flag=0,
-		.iir_counter=1, 
-		.iir_coef[0].coef_b={0x08000000,0xf024cb39,0x07dbd999}, .iir_coef[0].coef_a={0x08000000,0xf024cb39,0x07dbd999},
+		.iir_counter=2, 
+		.iir_coef[0].coef_b={0x0b4f3377,0xe968ce07,0x0b47ff19}, .iir_coef[0].coef_a={0x08000000,0xf001cfb3,0x07fe30b7},
+		.iir_coef[1].coef_b={0x0803b335,0xf004158d,0x07f83afa}, .iir_coef[1].coef_a={0x08000000,0xf004158d,0x07fbee30},
 
 		.dac_gain_offset=0,
 		.adc_gain_offset=(-6)*4,
@@ -3053,11 +3135,8 @@ static const struct_anc_cfg POSSIBLY_UNUSED AncFirCoef_44p1k_Clear_Voice3 = {
         .total_gain = 0,
 
 		.iir_bypass_flag=0,
-		.iir_counter=4, 
-		.iir_coef[0].coef_b={0x0337a1cc,0xf9be3119,0x030c7f64}, .iir_coef[0].coef_a={0x08000000,0xf046af51,0x07bba2f7},
-		.iir_coef[1].coef_b={0x080cfdc2,0xf02308a4,0x07d19fd0}, .iir_coef[1].coef_a={0x08000000,0xf02308a4,0x07de9d91},
-		.iir_coef[2].coef_b={0x07fc7603,0xf00a5e38,0x07f93004}, .iir_coef[2].coef_a={0x08000000,0xf00a5e38,0x07f5a607},
-		.iir_coef[3].coef_b={0x07a4148a,0xf13b0cc3,0x072a7bef}, .iir_coef[3].coef_a={0x08000000,0xf13b0cc3,0x06ce9079},
+		.iir_counter=1, 
+		.iir_coef[0].coef_b={0x08000000,0xf1364740,0x06f07928}, .iir_coef[0].coef_a={0x08000000,0xf1364740,0x06f07928},
 
 		.dac_gain_offset=0,
 		.adc_gain_offset=(0)*4,
@@ -3066,11 +3145,8 @@ static const struct_anc_cfg POSSIBLY_UNUSED AncFirCoef_44p1k_Clear_Voice3 = {
         .total_gain = 0,
 
 		.iir_bypass_flag=0,
-		.iir_counter=4, 
-		.iir_coef[0].coef_b={0x0337a1cc,0xf9be3119,0x030c7f64}, .iir_coef[0].coef_a={0x08000000,0xf046af51,0x07bba2f7},
-		.iir_coef[1].coef_b={0x080cfdc2,0xf02308a4,0x07d19fd0}, .iir_coef[1].coef_a={0x08000000,0xf02308a4,0x07de9d91},
-		.iir_coef[2].coef_b={0x07fc7603,0xf00a5e38,0x07f93004}, .iir_coef[2].coef_a={0x08000000,0xf00a5e38,0x07f5a607},
-		.iir_coef[3].coef_b={0x07a4148a,0xf13b0cc3,0x072a7bef}, .iir_coef[3].coef_a={0x08000000,0xf13b0cc3,0x06ce9079},
+		.iir_counter=1, 
+		.iir_coef[0].coef_b={0x08000000,0xf1364740,0x06f07928}, .iir_coef[0].coef_a={0x08000000,0xf1364740,0x06f07928},
 
 		.dac_gain_offset=0,
 		.adc_gain_offset=(0)*4,
@@ -3079,49 +3155,57 @@ static const struct_anc_cfg POSSIBLY_UNUSED AncFirCoef_44p1k_Clear_Voice3 = {
 };
 static const struct_anc_cfg POSSIBLY_UNUSED AncFirCoef_44p1k_Clear_Voice4 = {
     .anc_cfg_ff_l = {
-		.total_gain =512,
+		.total_gain =456,
 
 		.iir_bypass_flag=0,
-		.iir_counter=5, 
-		.iir_coef[0].coef_b={0xffff9803,0xffff3007,0xffff9803}, .iir_coef[0].coef_a={0x08000000,0xf026b82d,0x07dbdb0e},
-		.iir_coef[1].coef_b={0x08226066,0xf020cdbd,0x07bdd3ab}, .iir_coef[1].coef_a={0x08000000,0xf020cdbd,0x07e03411},
-		.iir_coef[2].coef_b={0x080dd0e6,0xf00cdec4,0x07e567a6}, .iir_coef[2].coef_a={0x08000000,0xf00cdec4,0x07f3388c},
-		.iir_coef[3].coef_b={0x080869b2,0xf01d6985,0x07dad1e8}, .iir_coef[3].coef_a={0x08000000,0xf01d6985,0x07e33b9a},
-		.iir_coef[4].coef_b={0x07ff5e4a,0xf007f6aa,0x07f8b0a3}, .iir_coef[4].coef_a={0x08000000,0xf007f7d1,0x07f81013},
+		.iir_counter=7, 
+		.iir_coef[0].coef_b={0xfa56a159,0x0b528589,0xfa56d913}, .iir_coef[0].coef_a={0x08000000,0xf001bab9,0x07fe4558},
+		.iir_coef[1].coef_b={0x07fe3561,0xf008dbc2,0x07f8f117}, .iir_coef[1].coef_a={0x08000000,0xf008ddc8,0x07f7287d},
+		.iir_coef[2].coef_b={0x08029112,0xf0052f09,0x07f8468a}, .iir_coef[2].coef_a={0x08000000,0xf0052f09,0x07fad79c},
+		.iir_coef[3].coef_b={0x08076486,0xf00838e3,0x07f079ee}, .iir_coef[3].coef_a={0x08000000,0xf00838e3,0x07f7de74},
+		.iir_coef[4].coef_b={0x080869b2,0xf01d6985,0x07dad1e8}, .iir_coef[4].coef_a={0x08000000,0xf01d6985,0x07e33b9a},
+		.iir_coef[5].coef_b={0x08226066,0xf020cdbd,0x07bdd3ab}, .iir_coef[5].coef_a={0x08000000,0xf020cdbd,0x07e03411},
+		.iir_coef[6].coef_b={0x0827155c,0xf02d8ecd,0x07adedf6}, .iir_coef[6].coef_a={0x08000000,0xf02d8ecd,0x07d50352},
+		.iir_coef[7].coef_b={0,0,0},	.iir_coef[7].coef_a={0,0,0},
 
 		.dac_gain_offset=0,
 		.adc_gain_offset=(-6)*4,
     },
     .anc_cfg_ff_r = {
-		.total_gain =512,
+		.total_gain =456,
 
 		.iir_bypass_flag=0,
-		.iir_counter=5, 
-		.iir_coef[0].coef_b={0xffff9803,0xffff3007,0xffff9803}, .iir_coef[0].coef_a={0x08000000,0xf026b82d,0x07dbdb0e},
-		.iir_coef[1].coef_b={0x08226066,0xf020cdbd,0x07bdd3ab}, .iir_coef[1].coef_a={0x08000000,0xf020cdbd,0x07e03411},
-		.iir_coef[2].coef_b={0x080dd0e6,0xf00cdec4,0x07e567a6}, .iir_coef[2].coef_a={0x08000000,0xf00cdec4,0x07f3388c},
-		.iir_coef[3].coef_b={0x080869b2,0xf01d6985,0x07dad1e8}, .iir_coef[3].coef_a={0x08000000,0xf01d6985,0x07e33b9a},
-		.iir_coef[4].coef_b={0x07ff5e4a,0xf007f6aa,0x07f8b0a3}, .iir_coef[4].coef_a={0x08000000,0xf007f7d1,0x07f81013},
+		.iir_counter=7, 
+		.iir_coef[0].coef_b={0xfa56a159,0x0b528589,0xfa56d913}, .iir_coef[0].coef_a={0x08000000,0xf001bab9,0x07fe4558},
+		.iir_coef[1].coef_b={0x07fe3561,0xf008dbc2,0x07f8f117}, .iir_coef[1].coef_a={0x08000000,0xf008ddc8,0x07f7287d},
+		.iir_coef[2].coef_b={0x08029112,0xf0052f09,0x07f8468a}, .iir_coef[2].coef_a={0x08000000,0xf0052f09,0x07fad79c},
+		.iir_coef[3].coef_b={0x08076486,0xf00838e3,0x07f079ee}, .iir_coef[3].coef_a={0x08000000,0xf00838e3,0x07f7de74},
+		.iir_coef[4].coef_b={0x080869b2,0xf01d6985,0x07dad1e8}, .iir_coef[4].coef_a={0x08000000,0xf01d6985,0x07e33b9a},
+		.iir_coef[5].coef_b={0x08226066,0xf020cdbd,0x07bdd3ab}, .iir_coef[5].coef_a={0x08000000,0xf020cdbd,0x07e03411},
+		.iir_coef[6].coef_b={0x0827155c,0xf02d8ecd,0x07adedf6}, .iir_coef[6].coef_a={0x08000000,0xf02d8ecd,0x07d50352},
+		.iir_coef[7].coef_b={0,0,0},	.iir_coef[7].coef_a={0,0,0},
 
 		.dac_gain_offset=0,
 		.adc_gain_offset=(-6)*4,
     },
     .anc_cfg_fb_l = {
-        .total_gain = 0,
+        .total_gain = 456,
 
 		.iir_bypass_flag=0,
-		.iir_counter=1, 
-		.iir_coef[0].coef_b={0x08000000,0xf024cb39,0x07dbd999}, .iir_coef[0].coef_a={0x08000000,0xf024cb39,0x07dbd999},
+		.iir_counter=2, 
+		.iir_coef[0].coef_b={0x0b4f3377,0xe968ce07,0x0b47ff19}, .iir_coef[0].coef_a={0x08000000,0xf001cfb3,0x07fe30b7},
+		.iir_coef[1].coef_b={0x0803b335,0xf004158d,0x07f83afa}, .iir_coef[1].coef_a={0x08000000,0xf004158d,0x07fbee30},
 
 		.dac_gain_offset=0,
 		.adc_gain_offset=(-6)*4,
     },
     .anc_cfg_fb_r = {
-        .total_gain = 0,
+        .total_gain = 456,
 
 		.iir_bypass_flag=0,
-		.iir_counter=1, 
-		.iir_coef[0].coef_b={0x08000000,0xf024cb39,0x07dbd999}, .iir_coef[0].coef_a={0x08000000,0xf024cb39,0x07dbd999},
+		.iir_counter=2, 
+		.iir_coef[0].coef_b={0x0b4f3377,0xe968ce07,0x0b47ff19}, .iir_coef[0].coef_a={0x08000000,0xf001cfb3,0x07fe30b7},
+		.iir_coef[1].coef_b={0x0803b335,0xf004158d,0x07f83afa}, .iir_coef[1].coef_a={0x08000000,0xf004158d,0x07fbee30},
 
 		.dac_gain_offset=0,
 		.adc_gain_offset=(-6)*4,
@@ -3131,11 +3215,8 @@ static const struct_anc_cfg POSSIBLY_UNUSED AncFirCoef_44p1k_Clear_Voice4 = {
         .total_gain = 0,
 
 		.iir_bypass_flag=0,
-		.iir_counter=4, 
-		.iir_coef[0].coef_b={0x0337a1cc,0xf9be3119,0x030c7f64}, .iir_coef[0].coef_a={0x08000000,0xf046af51,0x07bba2f7},
-		.iir_coef[1].coef_b={0x080cfdc2,0xf02308a4,0x07d19fd0}, .iir_coef[1].coef_a={0x08000000,0xf02308a4,0x07de9d91},
-		.iir_coef[2].coef_b={0x07fc7603,0xf00a5e38,0x07f93004}, .iir_coef[2].coef_a={0x08000000,0xf00a5e38,0x07f5a607},
-		.iir_coef[3].coef_b={0x07a4148a,0xf13b0cc3,0x072a7bef}, .iir_coef[3].coef_a={0x08000000,0xf13b0cc3,0x06ce9079},
+		.iir_counter=1, 
+		.iir_coef[0].coef_b={0x08000000,0xf1364740,0x06f07928}, .iir_coef[0].coef_a={0x08000000,0xf1364740,0x06f07928},
 
 		.dac_gain_offset=0,
 		.adc_gain_offset=(0)*4,
@@ -3144,11 +3225,8 @@ static const struct_anc_cfg POSSIBLY_UNUSED AncFirCoef_44p1k_Clear_Voice4 = {
         .total_gain = 0,
 
 		.iir_bypass_flag=0,
-		.iir_counter=4, 
-		.iir_coef[0].coef_b={0x0337a1cc,0xf9be3119,0x030c7f64}, .iir_coef[0].coef_a={0x08000000,0xf046af51,0x07bba2f7},
-		.iir_coef[1].coef_b={0x080cfdc2,0xf02308a4,0x07d19fd0}, .iir_coef[1].coef_a={0x08000000,0xf02308a4,0x07de9d91},
-		.iir_coef[2].coef_b={0x07fc7603,0xf00a5e38,0x07f93004}, .iir_coef[2].coef_a={0x08000000,0xf00a5e38,0x07f5a607},
-		.iir_coef[3].coef_b={0x07a4148a,0xf13b0cc3,0x072a7bef}, .iir_coef[3].coef_a={0x08000000,0xf13b0cc3,0x06ce9079},
+		.iir_counter=1, 
+		.iir_coef[0].coef_b={0x08000000,0xf1364740,0x06f07928}, .iir_coef[0].coef_a={0x08000000,0xf1364740,0x06f07928},
 
 		.dac_gain_offset=0,
 		.adc_gain_offset=(0)*4,
@@ -3161,12 +3239,15 @@ static const struct_anc_cfg POSSIBLY_UNUSED AncFirCoef_44p1k_Clear_Voice5 = {
 		.total_gain =512,
 
 		.iir_bypass_flag=0,
-		.iir_counter=5, 
-		.iir_coef[0].coef_b={0xffff9803,0xffff3007,0xffff9803}, .iir_coef[0].coef_a={0x08000000,0xf026b82d,0x07dbdb0e},
-		.iir_coef[1].coef_b={0x08226066,0xf020cdbd,0x07bdd3ab}, .iir_coef[1].coef_a={0x08000000,0xf020cdbd,0x07e03411},
-		.iir_coef[2].coef_b={0x080dd0e6,0xf00cdec4,0x07e567a6}, .iir_coef[2].coef_a={0x08000000,0xf00cdec4,0x07f3388c},
-		.iir_coef[3].coef_b={0x080869b2,0xf01d6985,0x07dad1e8}, .iir_coef[3].coef_a={0x08000000,0xf01d6985,0x07e33b9a},
-		.iir_coef[4].coef_b={0x07ff5e4a,0xf007f6aa,0x07f8b0a3}, .iir_coef[4].coef_a={0x08000000,0xf007f7d1,0x07f81013},
+		.iir_counter=7, 
+		.iir_coef[0].coef_b={0xfa56a159,0x0b528589,0xfa56d913}, .iir_coef[0].coef_a={0x08000000,0xf001bab9,0x07fe4558},
+		.iir_coef[1].coef_b={0x07fe3561,0xf008dbc2,0x07f8f117}, .iir_coef[1].coef_a={0x08000000,0xf008ddc8,0x07f7287d},
+		.iir_coef[2].coef_b={0x08029112,0xf0052f09,0x07f8468a}, .iir_coef[2].coef_a={0x08000000,0xf0052f09,0x07fad79c},
+		.iir_coef[3].coef_b={0x08076486,0xf00838e3,0x07f079ee}, .iir_coef[3].coef_a={0x08000000,0xf00838e3,0x07f7de74},
+		.iir_coef[4].coef_b={0x080869b2,0xf01d6985,0x07dad1e8}, .iir_coef[4].coef_a={0x08000000,0xf01d6985,0x07e33b9a},
+		.iir_coef[5].coef_b={0x08226066,0xf020cdbd,0x07bdd3ab}, .iir_coef[5].coef_a={0x08000000,0xf020cdbd,0x07e03411},
+		.iir_coef[6].coef_b={0x0827155c,0xf02d8ecd,0x07adedf6}, .iir_coef[6].coef_a={0x08000000,0xf02d8ecd,0x07d50352},
+		.iir_coef[7].coef_b={0,0,0},	.iir_coef[7].coef_a={0,0,0},
 
 		.dac_gain_offset=0,
 		.adc_gain_offset=(-6)*4,
@@ -3175,32 +3256,37 @@ static const struct_anc_cfg POSSIBLY_UNUSED AncFirCoef_44p1k_Clear_Voice5 = {
 		.total_gain =512,
 
 		.iir_bypass_flag=0,
-		.iir_counter=5, 
-		.iir_coef[0].coef_b={0xffff9803,0xffff3007,0xffff9803}, .iir_coef[0].coef_a={0x08000000,0xf026b82d,0x07dbdb0e},
-		.iir_coef[1].coef_b={0x08226066,0xf020cdbd,0x07bdd3ab}, .iir_coef[1].coef_a={0x08000000,0xf020cdbd,0x07e03411},
-		.iir_coef[2].coef_b={0x080dd0e6,0xf00cdec4,0x07e567a6}, .iir_coef[2].coef_a={0x08000000,0xf00cdec4,0x07f3388c},
-		.iir_coef[3].coef_b={0x080869b2,0xf01d6985,0x07dad1e8}, .iir_coef[3].coef_a={0x08000000,0xf01d6985,0x07e33b9a},
-		.iir_coef[4].coef_b={0x07ff5e4a,0xf007f6aa,0x07f8b0a3}, .iir_coef[4].coef_a={0x08000000,0xf007f7d1,0x07f81013},
+		.iir_counter=7, 
+		.iir_coef[0].coef_b={0xfa56a159,0x0b528589,0xfa56d913}, .iir_coef[0].coef_a={0x08000000,0xf001bab9,0x07fe4558},
+		.iir_coef[1].coef_b={0x07fe3561,0xf008dbc2,0x07f8f117}, .iir_coef[1].coef_a={0x08000000,0xf008ddc8,0x07f7287d},
+		.iir_coef[2].coef_b={0x08029112,0xf0052f09,0x07f8468a}, .iir_coef[2].coef_a={0x08000000,0xf0052f09,0x07fad79c},
+		.iir_coef[3].coef_b={0x08076486,0xf00838e3,0x07f079ee}, .iir_coef[3].coef_a={0x08000000,0xf00838e3,0x07f7de74},
+		.iir_coef[4].coef_b={0x080869b2,0xf01d6985,0x07dad1e8}, .iir_coef[4].coef_a={0x08000000,0xf01d6985,0x07e33b9a},
+		.iir_coef[5].coef_b={0x08226066,0xf020cdbd,0x07bdd3ab}, .iir_coef[5].coef_a={0x08000000,0xf020cdbd,0x07e03411},
+		.iir_coef[6].coef_b={0x0827155c,0xf02d8ecd,0x07adedf6}, .iir_coef[6].coef_a={0x08000000,0xf02d8ecd,0x07d50352},
+		.iir_coef[7].coef_b={0,0,0},	.iir_coef[7].coef_a={0,0,0},
 
 		.dac_gain_offset=0,
 		.adc_gain_offset=(-6)*4,
     },
     .anc_cfg_fb_l = {
-        .total_gain = 0,
+        .total_gain = 512,
 
 		.iir_bypass_flag=0,
-		.iir_counter=1, 
-		.iir_coef[0].coef_b={0x08000000,0xf024cb39,0x07dbd999}, .iir_coef[0].coef_a={0x08000000,0xf024cb39,0x07dbd999},
+		.iir_counter=2, 
+		.iir_coef[0].coef_b={0x0b4f3377,0xe968ce07,0x0b47ff19}, .iir_coef[0].coef_a={0x08000000,0xf001cfb3,0x07fe30b7},
+		.iir_coef[1].coef_b={0x0803b335,0xf004158d,0x07f83afa}, .iir_coef[1].coef_a={0x08000000,0xf004158d,0x07fbee30},
 
 		.dac_gain_offset=0,
 		.adc_gain_offset=(-6)*4,
     },
     .anc_cfg_fb_r = {
-        .total_gain = 0,
+        .total_gain = 512,
 
 		.iir_bypass_flag=0,
-		.iir_counter=1, 
-		.iir_coef[0].coef_b={0x08000000,0xf024cb39,0x07dbd999}, .iir_coef[0].coef_a={0x08000000,0xf024cb39,0x07dbd999},
+		.iir_counter=2, 
+		.iir_coef[0].coef_b={0x0b4f3377,0xe968ce07,0x0b47ff19}, .iir_coef[0].coef_a={0x08000000,0xf001cfb3,0x07fe30b7},
+		.iir_coef[1].coef_b={0x0803b335,0xf004158d,0x07f83afa}, .iir_coef[1].coef_a={0x08000000,0xf004158d,0x07fbee30},
 
 		.dac_gain_offset=0,
 		.adc_gain_offset=(-6)*4,
@@ -3210,11 +3296,8 @@ static const struct_anc_cfg POSSIBLY_UNUSED AncFirCoef_44p1k_Clear_Voice5 = {
         .total_gain = 0,
 
 		.iir_bypass_flag=0,
-		.iir_counter=4, 
-		.iir_coef[0].coef_b={0x0337a1cc,0xf9be3119,0x030c7f64}, .iir_coef[0].coef_a={0x08000000,0xf046af51,0x07bba2f7},
-		.iir_coef[1].coef_b={0x080cfdc2,0xf02308a4,0x07d19fd0}, .iir_coef[1].coef_a={0x08000000,0xf02308a4,0x07de9d91},
-		.iir_coef[2].coef_b={0x07fc7603,0xf00a5e38,0x07f93004}, .iir_coef[2].coef_a={0x08000000,0xf00a5e38,0x07f5a607},
-		.iir_coef[3].coef_b={0x07a4148a,0xf13b0cc3,0x072a7bef}, .iir_coef[3].coef_a={0x08000000,0xf13b0cc3,0x06ce9079},
+		.iir_counter=1, 
+		.iir_coef[0].coef_b={0x08000000,0xf1364740,0x06f07928}, .iir_coef[0].coef_a={0x08000000,0xf1364740,0x06f07928},
 
 		.dac_gain_offset=0,
 		.adc_gain_offset=(0)*4,
@@ -3223,11 +3306,8 @@ static const struct_anc_cfg POSSIBLY_UNUSED AncFirCoef_44p1k_Clear_Voice5 = {
         .total_gain = 0,
 
 		.iir_bypass_flag=0,
-		.iir_counter=4, 
-		.iir_coef[0].coef_b={0x0337a1cc,0xf9be3119,0x030c7f64}, .iir_coef[0].coef_a={0x08000000,0xf046af51,0x07bba2f7},
-		.iir_coef[1].coef_b={0x080cfdc2,0xf02308a4,0x07d19fd0}, .iir_coef[1].coef_a={0x08000000,0xf02308a4,0x07de9d91},
-		.iir_coef[2].coef_b={0x07fc7603,0xf00a5e38,0x07f93004}, .iir_coef[2].coef_a={0x08000000,0xf00a5e38,0x07f5a607},
-		.iir_coef[3].coef_b={0x07a4148a,0xf13b0cc3,0x072a7bef}, .iir_coef[3].coef_a={0x08000000,0xf13b0cc3,0x06ce9079},
+		.iir_counter=1, 
+		.iir_coef[0].coef_b={0x08000000,0xf1364740,0x06f07928}, .iir_coef[0].coef_a={0x08000000,0xf1364740,0x06f07928},
 
 		.dac_gain_offset=0,
 		.adc_gain_offset=(0)*4,
