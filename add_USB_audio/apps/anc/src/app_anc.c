@@ -267,9 +267,9 @@ uint8_t app_get_anc_on_mode(void)
 
 void app_set_anc_on_mode(uint8_t anc_on_new_mode)
 {
-    if(anc_on_new_mode==1)
+    if(anc_on_new_mode==ANC_HIGH)
 	   anc_on_mode=anc_high;
-	else if(anc_on_new_mode==2)
+	else if(anc_on_new_mode==ANC_LOW)
 	   anc_on_mode=anc_low;
 	else //if(anc_on_new_mode==3)
 	   anc_on_mode=anc_wind;
@@ -2107,9 +2107,9 @@ void app_anc_Key_Pro(void)
 	if(power_anc_init){
 		power_anc_init=0;
 	}
-	#if defined(__TPV_APP__)
+	//#if defined(__TPV_APP__)
 	Notification_Nosie_Cancelling_Change();
-	#endif
+	//#endif
 }
 
 #if 0

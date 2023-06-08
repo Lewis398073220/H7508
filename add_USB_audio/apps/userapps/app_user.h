@@ -148,6 +148,7 @@ uint8_t app_get_focus(void);
 void app_nvrecord_monitor_level_set(uint8_t level);
 void app_nvrecord_focus_set(uint8_t focus);
 uint8_t app_get_focus(void);
+void app_focus_set_no_save(uint8_t focus);//add by cai
 void app_nvrecord_sensor_set(uint8_t on);
 uint8_t app_get_touchlock(void);
 void app_nvrecord_touchlock_set(uint8_t on);

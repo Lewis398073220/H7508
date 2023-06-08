@@ -1794,6 +1794,8 @@ void  Set_HW_Focus_On_Voice_Status(uint8_t set_hw_focus_on_voice_status[1] )
 */
 void Notification_Nosie_Cancelling_Change(void)
 {
+	TRACE(0,"********%s",__func__);
+
     g_valueLen = 9;
     uint8_t i =0;
     uint8_t head[9] = {0xff,0x01,0x00,0x04,0x71,0x80,0x59,0x00,0x00};
@@ -1859,16 +1861,16 @@ void Set_ANC_Mode_Status(uint8_t set_anc_mode_status_value[1])
    g_set_anc_mode_value[0] =  set_anc_mode_status_value[0];
 
    if(g_set_anc_mode_value[0]==0x00){
-     anc_mode_status_value=0x00;
+     anc_mode_status_value=NC_OFF;
    }
    else if(g_set_anc_mode_value[0]==0x01){
-     anc_mode_status_value=0x01;
+     anc_mode_status_value=ANC_HIGH;
    }
    else if(g_set_anc_mode_value[0]==0x02){
-     anc_mode_status_value=0x02;
+     anc_mode_status_value=ANC_LOW;
    }
    else if(g_set_anc_mode_value[0]==0x04){
-     anc_mode_status_value=0x03;
+     anc_mode_status_value=ANC_WIND;
    }
    else 
    	 return;
@@ -1892,8 +1894,9 @@ void Get_Awareness_Value(void)
     uint8_t head[9] = {0xff,0x01,0x00,0x04,0x71,0x80,0x23,0x00,0x00};
      //Data length
      head[2] = 0x09;
-     //Awareness value 1 byte  
-     g_set_awareness_value[0]=app_get_monitor_level();
+     //Awareness value 1 byte
+     if(g_set_awareness_value[1]==0x00)//add by cai
+     	g_set_awareness_value[0]=app_get_monitor_level();
      head[7] =  g_set_awareness_value[0];  
      
 	 
@@ -1914,11 +1917,11 @@ void Set_Awareness_Value(uint8_t set_awareness_value[2])
 
 	  g_set_awareness_value[0] =  set_awareness_value[0];
    	  if (set_awareness_value[1] == 0x00){  //save
-        g_set_anc_mode_value[0] = 0x05;  //ANC mode status is Awareness on
+        g_set_anc_mode_value[0] = MONITOR_ON;  //ANC mode status is Awareness on
         app_nvrecord_monitor_level_set(set_awareness_value[0]);
 	  	app_nvrecord_anc_set(MONITOR_ON);
 	  }else{   //no save
-		g_set_anc_mode_value[0] = 0x05;  //ANC mode status is Awareness on
+		g_set_anc_mode_value[0] = MONITOR_ON;  //ANC mode status is Awareness on
 	  }
 
       TRACE(1,"g_set_awareness_value [0]=%x",g_set_awareness_value[0]);
@@ -1962,15 +1965,17 @@ void Set_Enhance_Voice_Value(uint8_t set_enhance_voice_value[2])
 	  
 	  g_set_enhance_voice_value[0] =  set_enhance_voice_value[0];
    	  if (set_enhance_voice_value[1] == 0x00){  //save	  	
-        g_set_anc_mode_value[0] = 0x05;  //ANC mode status is Awareness on
+        g_set_anc_mode_value[0] = MONITOR_ON;  //ANC mode status is Awareness on
         app_nvrecord_focus_set(g_set_enhance_voice_value[0]);
 		app_nvrecord_anc_set(MONITOR_ON);
 	  }else{   //no save
-	  	g_set_anc_mode_value[0] = 0x05;  //ANC mode status is Awareness on
+	  	g_set_anc_mode_value[0] = MONITOR_ON;  //ANC mode status is Awareness on
+		app_focus_set_no_save(g_set_enhance_voice_value[0]);//add by cai
 	  }
 
-	  app_set_clearvoice_mode(g_set_awareness_value[0]);
-	  set_anc_mode(MONITOR_ON);	  
+	  //app_set_clearvoice_mode(g_set_awareness_value[0]);//m by cai
+	  app_set_monitor_mode(g_set_awareness_value[0]);//add by cai
+	  set_anc_mode(monitor);//m by cai 
 }
 	 
 void Get_ANC_Table_Value(void)

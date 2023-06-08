@@ -1190,7 +1190,7 @@ void app_nvrecord_anc_set(uint8_t nc)
 	struct nvrecord_env_t *nvrecord_env;
 	nv_record_env_get(&nvrecord_env);
 	nvrecord_env->anc_mode = nc;
-	if(nc>0 && nc<5){ 
+	if(nc>NC_OFF && nc<MONITOR_ON){ //m by cai
 		nvrecord_env->anc_table_value = nc;
 		anc_table_value=nc;
 	}
@@ -1340,6 +1340,12 @@ uint8_t app_get_focus(void)
 {
 	return (focus_on);
 }	
+
+void app_focus_set_no_save(uint8_t focus)//add by cai
+{
+	focus_on=focus;
+}
+
 
 void app_nvrecord_focus_set(uint8_t focus)
 {
