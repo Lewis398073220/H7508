@@ -918,9 +918,11 @@ void bt_key_handle_func_click(void)
         case HFCALL_MACHINE_CURRENT_IDLE:
         {
             if(app_bt_device.a2dp_play_pause_flag == 0){
-                a2dp_handleKey(AVRCP_KEY_PLAY);
+				btif_pts_ar_panel_play();
+                //a2dp_handleKey(AVRCP_KEY_PLAY);
             }else{
-                a2dp_handleKey(AVRCP_KEY_PAUSE);
+            	btif_pts_ar_panel_pause();
+                //a2dp_handleKey(AVRCP_KEY_PAUSE);
             }
         }
         break;                          
@@ -943,10 +945,11 @@ void bt_key_handle_func_click(void)
         case HFCALL_MACHINE_CURRENT_IDLE_ANOTHER_IDLE:
         {
             if(app_bt_device.a2dp_play_pause_flag == 0){
-                a2dp_handleKey(AVRCP_KEY_PLAY);
+				btif_pts_ar_panel_play();
+                //a2dp_handleKey(AVRCP_KEY_PLAY);
             }else{
-                a2dp_handleKey(AVRCP_KEY_PAUSE);
-				//app_keyhandle_timer_set(KEYHANDLE_EVENT_MUSIC_PAUSE,500);//500
+            	btif_pts_ar_panel_pause();
+                //a2dp_handleKey(AVRCP_KEY_PAUSE);
             }
         }
         break;           
@@ -1769,7 +1772,7 @@ void bt_key_handle_func_key(enum APP_KEY_EVENT_T event)
     switch (event) {
         case  APP_KEY_EVENT_UP:
         case  APP_KEY_EVENT_CLICK:
-            //bt_key_handle_func_click();
+            bt_key_handle_func_click();
             break;
         case  APP_KEY_EVENT_DOUBLECLICK:
             bt_key_handle_func_doubleclick();
@@ -1780,7 +1783,7 @@ void bt_key_handle_func_key(enum APP_KEY_EVENT_T event)
 			break;
         //case  APP_KEY_EVENT_LONGPRESS:
 		case  APP_KEY_EVENT_LONGLONGPRESS:
-            //bt_key_handle_func_longlongpress();
+            bt_key_handle_func_longlongpress();
             break;
 		case  APP_KEY_EVENT_LONGLONGLONGPRESS:
             bt_key_handle_func_longlonglongpress();
