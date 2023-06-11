@@ -199,17 +199,24 @@ osTimerDef(QUICK_AWARENESS_TIMER, quick_awareness_swtimer_handler);// define tim
 
 static void quick_awareness_swtimer_handler(void const *param)
 {
-    HFCALL_MACHINE_ENUM hfcall_machine = app_get_hfcall_machine();
-	if(hfcall_machine == HFCALL_MACHINE_CURRENT_IDLE_ANOTHER_IDLE){	
-		//app_keyhandle_timer_stop();
-		//hal_codec_dac_mute(0);
-		if(!hal_usb_configured()){//m by cai
+#ifdef BT_USB_AUDIO_DUAL_MODE
+	if(hal_usb_configured()) {
+		usb_audio_set_volume_for_quick_awareness(false, 3);
+		app_monitor_moment(false);
+	} else{
+		HFCALL_MACHINE_ENUM hfcall_machine = app_get_hfcall_machine();
+		if(hfcall_machine == HFCALL_MACHINE_CURRENT_IDLE_ANOTHER_IDLE){ 
 			app_bt_stream_volumeset(app_bt_stream_a2dpvolume_get_user()+17);//for volume independent
-		}else{
-			usb_audio_set_volume_for_quick_awareness(false, 3);
+			app_monitor_moment(false);
 		}
+	}
+#else	
+	HFCALL_MACHINE_ENUM hfcall_machine = app_get_hfcall_machine();
+	if(hfcall_machine == HFCALL_MACHINE_CURRENT_IDLE_ANOTHER_IDLE){ 
+		app_bt_stream_volumeset(app_bt_stream_a2dpvolume_get_user()+17);//for volume independent
 		app_monitor_moment(false);			
 	}
+#endif
 }
 
 void app_quick_awareness_swtimer_start(void)
@@ -1441,11 +1448,7 @@ void bt_key_handle_cover_key_func_longlongpress(void)
                 open_siri_flag = 1;
             }
 #endif
-			if(!hal_usb_configured()){//m by cai
-				app_bt_stream_volumeset(3+17);//m 5 by pang for volume independent
-			}else{
-				usb_audio_set_volume_for_quick_awareness(true, 3);
-			}
+			app_bt_stream_volumeset(3+17);//m 5 by pang for volume independent
 			app_monitor_moment(true);
 			app_quick_awareness_swtimer_start();//add by cai for exit quick Awareness after 15s
         }
@@ -1481,11 +1484,7 @@ void bt_key_handle_cover_key_func_longlongpress(void)
         break;               
 #ifdef __BT_ONE_BRING_TWO__
         case HFCALL_MACHINE_CURRENT_IDLE_ANOTHER_IDLE: 
-			if(!hal_usb_configured()){//m by cai
-				app_bt_stream_volumeset(3+17);//m 5 by pang for volume independent
-			}else{
-				usb_audio_set_volume_for_quick_awareness(true, 3);
-			}
+			app_bt_stream_volumeset(3+17);//m 5 by pang for volume independent
 			app_monitor_moment(true);
 			app_quick_awareness_swtimer_start();//add by cai for exit quick Awareness after 15s
         break;           
@@ -1633,12 +1632,7 @@ void bt_key_handle_cover_key(enum APP_KEY_EVENT_T event)
 				//hal_codec_dac_mute(0);
 				app_quick_awareness_swtimer_stop();//add by cai for exit quick Awareness after 15s
 				app_monitor_moment(false);
-				if(!hal_usb_configured()){//m by cai
-					app_bt_stream_volumeset(app_bt_stream_a2dpvolume_get_user()+17);//for volume independent
-				}else{
-					usb_audio_set_volume_for_quick_awareness(false, 3);
-				}
-							
+				app_bt_stream_volumeset(app_bt_stream_a2dpvolume_get_user()+17);//for volume independent			
 			}
             break;
 		case  APP_KEY_EVENT_DOUBLECLICK:
@@ -1655,6 +1649,41 @@ void bt_key_handle_cover_key(enum APP_KEY_EVENT_T event)
             TRACE(1,"unregister down key event=%x",event);
             break;
     }
+}
+
+void app_usb_key_pro(APP_KEY_STATUS *status, void *param)//add by cai
+{
+	switch(status->code)
+	{
+		case HAL_KEY_CODE_FN6:
+			switch(status->event)
+			{
+				case APP_KEY_EVENT_LONGLONGPRESS:
+					usb_audio_set_volume_for_quick_awareness(true, 3);
+					app_monitor_moment(true);
+					app_quick_awareness_swtimer_start();//add by cai for exit quick Awareness after 15s	
+				break;
+
+				case  APP_KEY_EVENT_UP_AFTER_LONGPRESS:
+					app_quick_awareness_swtimer_stop();//add by cai for exit quick Awareness after 15s
+					app_monitor_moment(false);
+					usb_audio_set_volume_for_quick_awareness(false, 3);
+				break;
+				
+				default:
+					TRACE(2,"%s: unregister down key event=%x",__func__,status->event);
+				break;
+			}
+		break;
+
+		case BTAPP_ANC_KEY:
+			app_anc_Key_Pro();
+		break;
+		
+		default:
+			TRACE(1,"%s: undefined key",__func__);
+		break;
+	}
 }
 /** end add **/
 
