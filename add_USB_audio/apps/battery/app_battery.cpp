@@ -40,6 +40,7 @@
 #include "philips_ble_api.h"
 #include "hal_bootmode.h"
 #include "analog.h"//add by cai
+#include "hal_usb.h"//add by cai
 bool battery_pd_poweroff=0;
 /** end add **/
 
@@ -444,9 +445,7 @@ int app_battery_handle_process_normal(uint32_t status,  union APP_BATTERY_MSG_PR
 				if(app_nvrecord_demo_mode_get()!=DEMO_MODE) 
 #endif
 				{
-					analog_aud_codec_mute();//add by cai
 					btusb_switch(BTUSB_MODE_USB);
-					analog_aud_codec_nomute();//add by cai
 				}
 #endif
 
@@ -519,8 +518,14 @@ int app_battery_handle_process_charging(uint32_t status,  union APP_BATTERY_MSG_
             {
 #ifdef BT_USB_AUDIO_DUAL_MODE
                 TRACE(1,"%s:PlUGOUT.", __func__);
-#if 0//m by cai
-                btusb_switch(BTUSB_MODE_BT);
+#if 1//m by cai
+				if(hal_usb_configured()) {
+					btusb_switch(BTUSB_MODE_BT);
+					app_battery_measure.status = APP_BATTERY_STATUS_NORMAL;
+				} else{
+					osTimerStop(app_battery_timer);
+					app_shutdown();
+				}           
 #else
 				osTimerStop(app_battery_timer);
 				app_shutdown();
@@ -546,7 +551,7 @@ int app_battery_handle_process_charging(uint32_t status,  union APP_BATTERY_MSG_
 #ifdef __DEFINE_DEMO_MODE__
 				if(app_nvrecord_demo_mode_get()!=DEMO_MODE) 
 #endif
-					;//btusb_switch(BTUSB_MODE_USB);//m by cai for pop noise when insert USB
+					;//btusb_switch(BTUSB_MODE_USB);//m by cai for pop noise when insert usb.
 #endif
 #endif
             }
