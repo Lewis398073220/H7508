@@ -143,6 +143,14 @@ int tgt_hardware_setup(void)
     }
 
 /** add by pang **/
+#if defined(__CHARGE_CURRRENT__)
+	if (cfg_charge_current_control.pin != HAL_IOMUX_PIN_NUM){
+		hal_iomux_init((struct HAL_IOMUX_PIN_FUNCTION_MAP *)&cfg_charge_current_control, 1);
+		hal_gpio_pin_set_dir((enum HAL_GPIO_PIN_T)cfg_charge_current_control.pin, HAL_GPIO_DIR_OUT, 0);//add by cai
+	}
+#endif
+
+	
 #if defined(__USE_AMP_MUTE_CTR__) 
 	if (cfg_hw_pio_AMP_mute_control.pin != HAL_IOMUX_PIN_NUM){
         hal_iomux_init((struct HAL_IOMUX_PIN_FUNCTION_MAP *)&cfg_hw_pio_AMP_mute_control, 1);

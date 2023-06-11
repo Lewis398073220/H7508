@@ -24,6 +24,9 @@
 #include "btapp.h"
 #include "usb_audio_app.h"
 #include "btusb_audio.h"
+#include "analog.h"//add by cai
+#include "hal_usb.h"//add by cai
+#include "app_status_ind.h"//add by cai
 
 extern void btusbaudio_entry(void);
 extern void btusbaudio_exit(void);
@@ -210,6 +213,42 @@ void btusb_btaudio_open(bool is_wait)
         btusb_bt_audio_is_suspend = false;
     }
 }
+//add by cai
+osTimerId btusb_sw_timer = NULL;
+static void btusb_swtimer_handler(void const *param);
+osTimerDef(BTUSB_TIMER, btusb_swtimer_handler);// define timers
+#define BTUSB_SWTIMER_IN_MS	(5000)
+
+
+static void btusb_swtimer_handler(void const *param)
+{
+    if(!hal_usb_configured()) {
+#if defined(__CHARGE_CURRRENT__)
+		hal_gpio_pin_set((enum HAL_GPIO_PIN_T)cfg_charge_current_control.pin);//add by cai for enter nomal charging mode when usb is not configed.
+#endif
+	} else{
+#if defined(__CHARGE_CURRRENT__)
+		hal_gpio_pin_clr((enum HAL_GPIO_PIN_T)cfg_charge_current_control.pin);//add by cai for enter usb mode when usb is configed.
+#endif
+	}
+}
+
+void app_btusb_swtimer_start(void)
+{
+	if(btusb_sw_timer == NULL)
+		btusb_sw_timer = osTimerCreate(osTimer(BTUSB_TIMER), osTimerOnce, NULL);
+	
+	osTimerStart(btusb_sw_timer,BTUSB_SWTIMER_IN_MS);
+}
+
+void app_btusb_swtimer_stop(void)
+{
+	if(btusb_sw_timer == NULL)
+		return;
+	
+	osTimerStop(btusb_sw_timer);
+}
+//end add
 
 void btusb_switch(enum BTUSB_MODE mode)
 {
@@ -233,8 +272,11 @@ void btusb_switch(enum BTUSB_MODE mode)
         else {
             TRACE(1,"%s: switch to USB mode.",__func__);
             //btusb_btaudio_close(true);
+            analog_aud_codec_mute();//add by cai for pop noise when insert USB
             osDelay(500);
             btusb_usbaudio_open();
+			app_btusb_swtimer_start();//add by cai
+			analog_aud_codec_nomute();//add by cai for pop noise when insert USB
             btusb_mode = BTUSB_MODE_USB;
         }
     }
@@ -260,11 +302,14 @@ void btusb_switch(enum BTUSB_MODE mode)
                 return;
             }
             TRACE(1,"%s: switch to USB mode.",__func__);
+			analog_aud_codec_mute();//add by cai for pop noise when insert USB
             btusb_btaudio_close(true);
             TRACE(1,"%s: btusb_btaudio_close done.",__func__);
             osDelay(500);
             btusb_usbaudio_open();
             btusb_mode = BTUSB_MODE_USB;
+			app_btusb_swtimer_start();//add by cai
+			analog_aud_codec_nomute();//add by cai for pop noise when insert USB
             TRACE(1,"%s: switch to USB mode done.",__func__);
         }
     }

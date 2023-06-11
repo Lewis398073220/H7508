@@ -37,6 +37,10 @@ extern const char *BT_FIRMWARE_VERSION;
 #endif
 #define ANC_KEY_DETECTE HAL_IOMUX_PIN_P1_0
 
+#if defined(__CHARGE_CURRRENT__)
+extern const struct HAL_IOMUX_PIN_FUNCTION_MAP cfg_charge_current_control;
+#endif
+
 #if defined(__LDO_3V3_CTR__)
 extern const struct HAL_IOMUX_PIN_FUNCTION_MAP cfg_hw_pio_3_3v_control;
 #endif

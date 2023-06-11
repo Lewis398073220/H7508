@@ -21,6 +21,12 @@
 #include "limiter.h"
 #include "spectrum_fix.h"
 
+#if defined(__CHARGE_CURRRENT__)
+const struct HAL_IOMUX_PIN_FUNCTION_MAP cfg_charge_current_control = {
+    HAL_GPIO_PIN_P0_0, HAL_IOMUX_FUNC_AS_GPIO, HAL_IOMUX_PIN_VOLTAGE_VIO, HAL_IOMUX_PIN_NOPULL
+};
+#endif
+
 #if defined(__LDO_3V3_CTR__)
 const struct HAL_IOMUX_PIN_FUNCTION_MAP cfg_hw_pio_3_3v_control = {
     HAL_GPIO_PIN_P1_1, HAL_IOMUX_FUNC_AS_GPIO, HAL_IOMUX_PIN_VOLTAGE_VIO, HAL_IOMUX_PIN_PULLUP_ENALBE

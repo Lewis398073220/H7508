@@ -493,7 +493,7 @@ int codec_anc_open(enum ANC_TYPE_T type, enum AUD_SAMPRATE_T dac_rate, enum AUD_
 {
     bool anc_running = false;
 
-    CODEC_TRACE(5,"%s: type=%d dac_rate=%d adc_rate=%d **%d", __func__, type, dac_rate, adc_rate,codec_int_cfg.stream_cfg[AUD_STREAM_PLAYBACK].codec_cfg.sample_rate);
+    CODEC_TRACE(6,"%s: type=%d dac_rate=%d adc_rate=%d **%d bit%d", __func__, type, dac_rate, adc_rate,codec_int_cfg.stream_cfg[AUD_STREAM_PLAYBACK].codec_cfg.sample_rate,codec_int_cfg.stream_cfg[AUD_STREAM_PLAYBACK].codec_cfg.bits);
 
     dac_rate = hal_codec_anc_convert_rate(dac_rate);
     adc_rate = hal_codec_anc_convert_rate(adc_rate);
