@@ -445,7 +445,7 @@ int app_battery_handle_process_normal(uint32_t status,  union APP_BATTERY_MSG_PR
 				if(app_nvrecord_demo_mode_get()!=DEMO_MODE) 
 #endif
 				{
-					btusb_switch(BTUSB_MODE_USB);
+					;//btusb_switch(BTUSB_MODE_USB);
 				}
 #endif
 

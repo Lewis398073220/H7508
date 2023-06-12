@@ -317,14 +317,14 @@ void btusb_switch(enum BTUSB_MODE mode)
             }
             TRACE(1,"%s: switch to USB mode.",__func__);
 			app_usb_key_init();//add by cai
-			analog_aud_codec_mute();//add by cai for pop noise when insert USB
+			//analog_aud_codec_mute();//add by cai for pop noise when insert USB
             btusb_btaudio_close(true);
             TRACE(1,"%s: btusb_btaudio_close done.",__func__);
             osDelay(500);
             btusb_usbaudio_open();
             btusb_mode = BTUSB_MODE_USB;
-			app_btusb_swtimer_start();//add by cai
-			analog_aud_codec_nomute();//add by cai for pop noise when insert USB
+			//app_btusb_swtimer_start();//add by cai
+			//analog_aud_codec_nomute();//add by cai for pop noise when insert USB
             TRACE(1,"%s: switch to USB mode done.",__func__);
         }
     }
