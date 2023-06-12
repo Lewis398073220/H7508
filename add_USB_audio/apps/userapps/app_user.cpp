@@ -24,6 +24,13 @@
 #ifdef MEDIA_PLAYER_SUPPORT
 #include "app_media_player.h"
 #endif
+#include "app_battery.h"
+#include "pmu.h"
+#include "hal_bootmode.h"
+
+#if defined(__DEFINE_DEMO_MODE__)
+	extern bool demo_mode_power_on;//add by cai
+#endif
 //end add
 
 #if defined(__AC107_ADC__)
@@ -96,7 +103,8 @@ static int app_user_event_handle_process(APP_MESSAGE_BODY *msg_body)
     {
 #if defined(__USE_3_5JACK_CTR__)    
 		case USER_EVENT_LINEIN:
-		    apps_jack_event_process();
+			if((PMU_CHARGER_PLUGOUT==pmu_charger_get_status()) || (demo_mode_power_on==1))//add by cai
+		   		apps_jack_event_process();
 		break;
 #endif
 
@@ -331,9 +339,10 @@ void apps_jack_event_process(void)
 	}
 #endif
 	
-	if((in_val==CHECK_3_5JACK_MAX_NUM)&&(jack_3p5_plug_in_flag==0)){
+	if((in_val>=CHECK_3_5JACK_MAX_NUM)&&(jack_3p5_plug_in_flag==0)){
 		TRACE(0,"***detected 3_5jack in!");
 	    reconncect_null_by_user=true;
+		in_val=0;//add by cai
 		//app_disconnect_all_bt_connections();
 	    //app_bt_accessmode_set(BTIF_BAM_NOT_ACCESSIBLE);	
 		//app_status_indication_set(APP_STATUS_INDICATION_CONNECTED);		
@@ -341,12 +350,20 @@ void apps_jack_event_process(void)
 		ac107_hw_open();
 		ac107_i2c_init();
 #endif
-	   hal_codec_dac_mute(1);
-		jack_3p5_plug_in_flag=1;
-		jack_count=0;
-	
-		//app_poweroff_flag = 1;
-		app_shutdown();//shutdown
+		if(PMU_CHARGER_PLUGOUT==pmu_charger_get_status()){
+		   hal_codec_dac_mute(1);
+			jack_3p5_plug_in_flag=1;
+			jack_count=0;
+		
+			//app_poweroff_flag = 1;
+			app_shutdown();//shutdown
+		} else if(demo_mode_power_on==1){
+			TRACE(0,"power off charging!!!");
+			jack_3p5_plug_in_flag=1;
+			jack_count=0;
+			hal_sw_bootmode_set(HAL_SW_BOOTMODE_CHARGING_POWEROFF);
+			app_reset();
+		}
 	}
 	/*
     if(in_val>(CHECK_3_5JACK_MAX_NUM+1) && (jack_3p5_plug_in_flag==0)){		

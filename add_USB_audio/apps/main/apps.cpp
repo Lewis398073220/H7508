@@ -1941,6 +1941,10 @@ extern uint32_t __factory_start[];
 extern uint32_t __custom_bin_start[];//add by pang
 #endif
 
+#if defined(__DEFINE_DEMO_MODE__)
+	bool demo_mode_power_on=0;//add by pang
+#endif
+
 int app_init(void)
 {
     int nRet = 0;
@@ -1952,10 +1956,6 @@ int app_init(void)
 #endif
 #ifdef IBRT_SEARCH_UI
     bool is_charging_poweron=false;
-#endif
-
-#if defined(__DEFINE_DEMO_MODE__)
-	bool demo_mode_power_on=0;//add by pang
 #endif
 	
     TRACE(0,"please check all sections sizes and heads is correct ........");
@@ -2087,18 +2087,20 @@ extern int rpc_service_setup(void);
 
                 app_key_open(false);
                 app_key_init_on_charging();
+                nRet = 0;
+#if defined(__DEFINE_DEMO_MODE__)
+				if(demo_mode_on || hal_gpio_pin_get_val((enum  HAL_GPIO_PIN_T)PIN_3_5JACK_DETECTE)) 
+					goto exit;//add by cai	
+#endif	
+
 				/** add by pang **/
 				//app_user_event_open_module_for_charge(); //m by cai
 				//apps_pwm_set(RED_PWM_LED, 1);//enable pwm  //m by cai
-				#if defined(__LDO_3V3_CTR__) 
-				hal_gpio_pin_set((enum HAL_GPIO_PIN_T)cfg_hw_pio_3_3v_control.pin);//for NTC reference voltage
-				#endif
+#if defined(__LDO_3V3_CTR__) 
+				hal_gpio_pin_set((enum HAL_GPIO_PIN_T)cfg_hw_pio_3_3v_control.pin);//for usb audio detect
+#endif
 				/** end add **/
-                nRet = 0;
-#if defined(__DEFINE_DEMO_MODE__)
-				if(demo_mode_on) 
-					goto exit;//add by cai	
-#endif	
+
 #if defined(BT_USB_AUDIO_DUAL_MODE)
                 usb_plugin = 1;
 				need_check_key = false;//add by cai	
@@ -2586,7 +2588,7 @@ exit:
 #endif
 
 #ifdef __DEFINE_DEMO_MODE__	
-	if(!(demo_mode_on==1 && demo_mode_power_on==0 && app_battery_charger_indication_open() == APP_BATTERY_CHARGER_PLUGIN)) {//add by cai
+	if(!(demo_mode_on==1 && demo_mode_power_on==0 && app_battery_charger_indication_open() == APP_BATTERY_CHARGER_PLUGIN) || !hal_gpio_pin_get_val((enum  HAL_GPIO_PIN_T)PIN_3_5JACK_DETECTE)) {//add by cai
 #endif
 #ifdef BT_USB_AUDIO_DUAL_MODE
 	    if(usb_plugin)
