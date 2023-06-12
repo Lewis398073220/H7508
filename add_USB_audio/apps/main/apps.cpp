@@ -2089,8 +2089,12 @@ extern int rpc_service_setup(void);
                 app_key_init_on_charging();
                 nRet = 0;
 #if defined(__DEFINE_DEMO_MODE__)
-				if(demo_mode_on || hal_gpio_pin_get_val((enum  HAL_GPIO_PIN_T)PIN_3_5JACK_DETECTE)) 
+				if(demo_mode_on || hal_gpio_pin_get_val((enum  HAL_GPIO_PIN_T)PIN_3_5JACK_DETECTE)){
+#if defined(__CHARGE_CURRRENT__)
+					hal_gpio_pin_set((enum HAL_GPIO_PIN_T)cfg_charge_current_control.pin);//add by cai for charging.
+#endif			
 					goto exit;//add by cai	
+				}		
 #endif	
 
 				/** add by pang **/

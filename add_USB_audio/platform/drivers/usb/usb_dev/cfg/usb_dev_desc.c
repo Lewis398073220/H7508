@@ -48,7 +48,7 @@
 #endif
 
 #ifndef USB_AUDIO_VENDOR_ID
-#define USB_AUDIO_VENDOR_ID                     0xBE57
+#define USB_AUDIO_VENDOR_ID                     0x9642//0xBE57 //m by cai
 #endif
 
 #ifndef USB_AUDIO_PRODUCT_ID
@@ -287,8 +287,10 @@ const uint8_t *uaud_dev_desc(uint8_t type)
         0,                    // bDeviceProtocol
         USB_MAX_PACKET_SIZE_CTRL, // bMaxPacketSize0
         LSB(USB_AUDIO_VENDOR_ID), MSB(USB_AUDIO_VENDOR_ID), // idVendor
-        LSB(USB_AUDIO_PRODUCT_ID), MSB(USB_AUDIO_PRODUCT_ID), // idProduct
-        0x00, 0x01,           // bcdDevice
+        //LSB(USB_AUDIO_PRODUCT_ID), MSB(USB_AUDIO_PRODUCT_ID), // idProduct
+		LSB(0x6004), MSB(0x6004), // idProduct //m by cai
+
+		0x00, 0x01,           // bcdDevice
         STRING_OFFSET_IMANUFACTURER, // iManufacturer
         STRING_OFFSET_IPRODUCT, // iProduct
         STRING_OFFSET_ISERIAL, // iSerialNumber
