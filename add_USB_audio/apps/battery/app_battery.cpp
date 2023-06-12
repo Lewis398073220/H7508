@@ -748,7 +748,7 @@ int app_battery_open(void)
 	#if defined(__DEFINE_DEMO_MODE__)
 		if(demo_mode_on){ //add by pang
 			nRet = APP_BATTERY_OPEN_MODE_CHARGING_PWRON;
-			if (hal_sw_bootmode_get() & HAL_SW_BOOTMODE_CHARGING_POWEROFF){
+			if (hal_sw_bootmode_get() & HAL_SW_BOOTMODE_CHARGING_POWEROFF || hal_gpio_pin_get_val((enum  HAL_GPIO_PIN_T)PIN_3_5JACK_DETECTE)){//m by cai
 				nRet = APP_BATTERY_OPEN_MODE_CHARGING;
 			}
 			else if (hal_sw_bootmode_get() & HAL_SW_BOOTMODE_CHARGING_POWERON){

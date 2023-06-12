@@ -958,7 +958,7 @@ void Get_Chipset_Solution(void)
 
 void Get_Chipset_Version(void)
 {
-	unsigned char Version[] = "V0.1.7";
+	unsigned char Version[] = "V0.1.9";
 	uint8_t FW_Version[10]= {0};
     uint8_t i =0;
     uint8_t head[7] = {0xff,0x01,0x00,0x04,0x71,0x80,0x12};
