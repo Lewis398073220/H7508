@@ -17,7 +17,7 @@
 #include "hal_gpio.h" 
 #include "hal_i2c.h"
 #include "string.h"
-#include "btapp.h"
+#include "../../services/bt_app/btapp.h"
 #include "app_thread.h"
 #include "app_status_ind.h"
 #include "hal_codec.h"

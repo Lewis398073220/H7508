@@ -141,7 +141,7 @@ int app_user_event_open_module(void)
     app_set_threadhandle(APP_MODUAL_USERDEF, app_user_event_handle_process);
 	
 #if defined(__USE_3_5JACK_CTR__)    
-	app_jack_start_timer();
+	//app_jack_start_timer();
 #endif
 
 #if defined(__USE_AMP_MUTE_CTR__)

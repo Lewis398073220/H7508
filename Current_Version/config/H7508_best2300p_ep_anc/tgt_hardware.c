@@ -3515,6 +3515,17 @@ const IIR_CFG_T audio_eq_sw_iir_cfg_anc_on = {
     	{IIR_TYPE_PEAK,      -9,   18, 0.8},
 		{IIR_TYPE_PEAK,      -3,   80, 1.3},
 		{IIR_TYPE_PEAK,     -14,  200, 0.6},
+		{IIR_TYPE_PEAK,      -6, 9000, 2.0},
+		{IIR_TYPE_PEAK,     -14,  700, 1.3},
+		{IIR_TYPE_PEAK,      -6, 1400, 2.0},
+		{IIR_TYPE_PEAK,      -3, 2200, 1.0},
+		{IIR_TYPE_PEAK,     -20, 6500, 2.0},
+		{IIR_TYPE_PEAK,     -10, 15000,1.0},
+		{IIR_TYPE_PEAK,      -6, 20000,1.0},
+    	/*
+    	{IIR_TYPE_PEAK,      -9,   18, 0.8},
+		{IIR_TYPE_PEAK,      -3,   80, 1.3},
+		{IIR_TYPE_PEAK,     -14,  200, 0.6},
 		{IIR_TYPE_PEAK,     -3.5, 450, 1.0},
 		{IIR_TYPE_PEAK,     -14,  700, 1.3},
 		{IIR_TYPE_PEAK,      -5, 1400, 2.0},
@@ -3522,15 +3533,6 @@ const IIR_CFG_T audio_eq_sw_iir_cfg_anc_on = {
 		{IIR_TYPE_PEAK,      -15,7500, 4.0},
 		{IIR_TYPE_PEAK,      -6, 15000,1.0},
 		{IIR_TYPE_PEAK,      -6, 20000,1.0},
-    	/*
-    	{IIR_TYPE_PEAK,      -9,   18, 0.8},
-		{IIR_TYPE_PEAK,      -3,   80, 1.3},
-		{IIR_TYPE_PEAK,     -14,  200, 0.6},
-		{IIR_TYPE_PEAK,     -14,  700, 1.3},
-		{IIR_TYPE_PEAK,      -5, 7100, 3.0},
-		{IIR_TYPE_PEAK,      -5, 1400, 2.0},
-		{IIR_TYPE_PEAK,    -3.5,  450, 1.0},
-		{IIR_TYPE_PEAK,      -3, 2200, 1.0},
 		*/
     }
 };
@@ -3539,19 +3541,21 @@ const IIR_CFG_T audio_eq_sw_iir_cfg_anc_off = {
     .gain1 = 0,
     .num = 7,
     .param = {
-   	    {IIR_TYPE_PEAK,  -13.5,    16, 0.8},
-		{IIR_TYPE_PEAK,   -5.5,    80, 0.8},
-		{IIR_TYPE_PEAK,    -14,   200, 0.75},
-		{IIR_TYPE_PEAK,  -13.5,   620, 0.75},
-		{IIR_TYPE_PEAK,    -12,  7500, 4.0},
-		{IIR_TYPE_PEAK,     -4, 15000, 1.0},
-		{IIR_TYPE_PEAK,     -4, 20000, 1.0},
+   	    {IIR_TYPE_PEAK,   -13.5,   16, 0.8},
+		{IIR_TYPE_PEAK,    -5.5,   80, 0.8},
+		{IIR_TYPE_PEAK,     -14,  200,0.75},
+		{IIR_TYPE_PEAK,   -13.5,  620,0.75},
+		{IIR_TYPE_PEAK,     -20, 6500, 2.0},
+		{IIR_TYPE_PEAK,     -10,15000, 1.0},
+		{IIR_TYPE_PEAK,      -4,20000, 1.0},
     	/*
-    	{IIR_TYPE_PEAK,    -12,    16, 0.8},
-		{IIR_TYPE_PEAK,     -4,    80, 0.8},
-		{IIR_TYPE_PEAK,    -12,   200, 0.8},
-		{IIR_TYPE_PEAK,    -14,   650, 0.8},
-		{IIR_TYPE_PEAK,     -3,  7100, 3.0},
+    	{IIR_TYPE_PEAK,      -6,   18, 0.6},
+		{IIR_TYPE_PEAK,      -3,  100, 2.0},
+		{IIR_TYPE_PEAK,      -9,  200, 0.8},
+		{IIR_TYPE_PEAK,      -9,  700, 1.0},
+		{IIR_TYPE_PEAK,     -11, 3000, 0.8},
+		{IIR_TYPE_PEAK,      -7, 7250, 1.0},
+		{IIR_TYPE_PEAK,      -9,12000, 1.0},
 		*/
     }
 };

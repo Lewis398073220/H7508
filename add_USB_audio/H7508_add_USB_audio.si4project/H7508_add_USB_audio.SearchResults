@@ -1,2 +1,4 @@
----- audio manager handler Matches (1 in 1 files) ----
-app_audio_manager_handle_process in app_bt_media_manager.cpp (services\bt_app) :           "audio manager handler id %d->:%s stream type 0x%x->:%s",
+---- m by pang for pop Matches (3 in 3 files) ----
+app_anc_open_anc in app_anc.c (apps\anc\src) :         anc_sample_rate[AUD_STREAM_PLAYBACK] = AUD_SAMPRATE_44100;//AUD_SAMPRATE_48000;//m by pang for pop noise
+codec_int_stream_setup in codec_best2300p.c (platform\drivers\codec\best2300p) : 			#else //m by pang for pop noice
+hal_codec_anc_convert_rate in hal_codec_best2300p.c (platform\hal\best2300p) : #else//m by pang for pop noice

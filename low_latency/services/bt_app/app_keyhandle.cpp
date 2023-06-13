@@ -908,6 +908,7 @@ HFCALL_MACHINE_ENUM app_get_hfcall_machine(void)
     return status;
 }
 
+void bt_key_handle_game_key(void);
 void bt_key_handle_func_click(void)
 {
     TRACE(0,"%s enter",__func__);
@@ -942,12 +943,7 @@ void bt_key_handle_func_click(void)
 #ifdef __BT_ONE_BRING_TWO__              
         case HFCALL_MACHINE_CURRENT_IDLE_ANOTHER_IDLE:
         {
-            if(app_bt_device.a2dp_play_pause_flag == 0){
-                a2dp_handleKey(AVRCP_KEY_PLAY);
-            }else{
-                a2dp_handleKey(AVRCP_KEY_PAUSE);
-				//app_keyhandle_timer_set(KEYHANDLE_EVENT_MUSIC_PAUSE,500);//500
-            }
+            bt_key_handle_game_key();
         }
         break;           
         case HFCALL_MACHINE_CURRENT_INCOMMING_ANOTHER_IDLE:
@@ -1574,19 +1570,19 @@ static void key_click_bt_off(void)
 #endif
 }
 */
-/*
-static void bt_key_handle_game_key(void)
+
+void bt_key_handle_game_key(void)
 {
 #ifdef __BT_ONE_BRING_TWO__	
 	HFCALL_MACHINE_ENUM hfcall_machine = app_get_hfcall_machine();
 	if(hfcall_machine==HFCALL_MACHINE_CURRENT_IDLE_ANOTHER_IDLE){
 		if(get_app_gaming_mode()){
 			app_gaming_mode(0);
-			app_voice_report(APP_STATUS_INDICATION_GAMING_OFF, 0);
+			//app_voice_report(APP_STATUS_INDICATION_GAMING_OFF, 0);
 		}
 		else{
 			app_gaming_mode(1);
-			app_voice_report(APP_STATUS_INDICATION_GAMING_ON, 0);
+			app_voice_report(APP_STATUS_INDICATION_BEEP_22, 0);
 		}
 		#if defined(__HAYLOU_APP__)
 		Set_Report_Device_Status();
@@ -1594,7 +1590,7 @@ static void bt_key_handle_game_key(void)
 	}
 #endif
 }
-*/
+
 
 void bt_key_handle_cover_key(enum APP_KEY_EVENT_T event)
 {
@@ -1769,7 +1765,7 @@ void bt_key_handle_func_key(enum APP_KEY_EVENT_T event)
     switch (event) {
         case  APP_KEY_EVENT_UP:
         case  APP_KEY_EVENT_CLICK:
-            //bt_key_handle_func_click();
+            bt_key_handle_func_click();
             break;
         case  APP_KEY_EVENT_DOUBLECLICK:
             bt_key_handle_func_doubleclick();
