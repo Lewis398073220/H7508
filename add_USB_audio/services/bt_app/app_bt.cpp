@@ -3527,6 +3527,7 @@ void app_bt_profile_connect_manager_hf(enum BT_DEVICE_ID_T id, hf_chan_handle_t 
 				app_status_indication_set(APP_STATUS_INDICATION_PAGESCAN);
 				//app_start_10_second_timer(APP_POWEROFF_TIMER_ID);//m by cai
 				app_stop_10_second_timer(APP_AUTO_PWOFF_TIMER_ID);//add by cai to fresh timer
+				app_start_10_second_timer(APP_BTOFF_POWEROFF_TIMER_ID);//add by cai
         	}
         }
 		else{	
@@ -3534,6 +3535,7 @@ void app_bt_profile_connect_manager_hf(enum BT_DEVICE_ID_T id, hf_chan_handle_t 
 				app_status_indication_set(APP_STATUS_INDICATION_PAGESCAN);
 				//app_start_10_second_timer(APP_POWEROFF_TIMER_ID);//m by cai
 				app_stop_10_second_timer(APP_AUTO_PWOFF_TIMER_ID);//add by cai to fresh timer
+				app_start_10_second_timer(APP_BTOFF_POWEROFF_TIMER_ID);//add by cai
 			}
 		}
 
@@ -4020,6 +4022,7 @@ void app_bt_profile_connect_manager_a2dp(enum BT_DEVICE_ID_T id, a2dp_stream_t *
 				app_status_indication_set(APP_STATUS_INDICATION_PAGESCAN);
 				//app_start_10_second_timer(APP_POWEROFF_TIMER_ID);//m by cai
 				app_stop_10_second_timer(APP_AUTO_PWOFF_TIMER_ID);//add by cai to fresh timer
+				app_start_10_second_timer(APP_BTOFF_POWEROFF_TIMER_ID);//add by cai
 			}
 		}
 		else{
@@ -4027,6 +4030,7 @@ void app_bt_profile_connect_manager_a2dp(enum BT_DEVICE_ID_T id, a2dp_stream_t *
 				app_status_indication_set(APP_STATUS_INDICATION_PAGESCAN);
 				//app_start_10_second_timer(APP_POWEROFF_TIMER_ID);//m by cai
 				app_stop_10_second_timer(APP_AUTO_PWOFF_TIMER_ID);//add by cai to fresh timer
+				app_start_10_second_timer(APP_BTOFF_POWEROFF_TIMER_ID);//add by cai
         	}
 		}
 
@@ -5538,8 +5542,8 @@ void app_bt_off(void)
 		//app_status_indication_set(APP_STATUS_INDICATION_BTOFF);
 		app_status_indication_set(APP_STATUS_INDICATION_PAGESCAN);//add by cai
 		app_stop_10_second_timer(APP_POWEROFF_TIMER_ID);//add by cai
-		//app_stop_10_second_timer(APP_BTOFF_POWEROFF_TIMER_ID);
 		app_stop_10_second_timer(APP_AUTO_PWOFF_TIMER_ID);//add by cai to fresh timer
+		app_start_10_second_timer(APP_BTOFF_POWEROFF_TIMER_ID);//add by cai
 	}
 	else{
 		lacal_bt_off=0;	
@@ -5549,6 +5553,7 @@ void app_bt_off(void)
 		app_bt_profile_connect_manager_opening_reconnect();
 		//app_start_10_second_timer(APP_BTOFF_POWEROFF_TIMER_ID);
 		app_start_10_second_timer(APP_POWEROFF_TIMER_ID);//add by cai
+		app_stop_10_second_timer(APP_BTOFF_POWEROFF_TIMER_ID);//add by cai
 		//app_start_10_second_timer(APP_AUTO_PWOFF_TIMER_ID);//add by cai to fresh timer
 	}
 }

@@ -1055,7 +1055,7 @@ static void app_ntc_timer_handler(void const *param)
 }
 #endif
 
-#if 0 //1.97v reference volt ntc电阻10k
+#if 1 //1.97v reference volt ntc电阻10k
 #define CHARGE_HIGH_TEMPERATURE         590     // 45C
 #define CHARGE_LOW_TEMPERATURE     		1320    // 0C 
 #define CHARGE_HIGH_TEMPERATURE_RECOVER	530		// 43C
