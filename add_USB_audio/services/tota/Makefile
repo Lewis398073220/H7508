@@ -84,5 +84,6 @@ subdir-ccflags-y += -Iplatform/drivers/ana \
 					-Iutils/crc32 \
 					-Ithirdparty/userapi \
 					-Iapps/battery \
-					-Iservices/nv_section/factory_section
-					
+					-Iservices/nv_section/factory_section \
+					-Iapps/userapps \
+					-Iapps/anc/inc

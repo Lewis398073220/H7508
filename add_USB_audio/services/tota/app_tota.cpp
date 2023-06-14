@@ -46,6 +46,8 @@
 #include "crc32.h"
 #include "factory_section.h"
 #include "bt_sco_chain.h"//add by pang for spp test
+#include "app_anc.h"//add by cai
+#include "app_user.h"//add by cai
 
 typedef struct
 {
@@ -306,6 +308,33 @@ static void app_tota_vendor_cmd_handler(APP_TOTA_CMD_CODE_E funcCode, uint8_t* p
 				else{
 					TRACE(1,"OP_TOTA_RESET_MIC_ONLY_CMD");
 					spp_test_mic_set(0);
+				}
+			}
+			if(resData[0]==0x51){
+				if(resData[1]==0x01){
+					TRACE(1,"OP_TOTA_ANCMODE1_ONLY_CMD");
+					app_set_anc_on_mode(ANC_HIGH);
+					set_anc_mode(anc_on);
+				}
+				else if(resData[1]==0x02){
+					TRACE(1,"OP_TOTA_ANCMODE2_ONLY_CMD");
+					app_set_anc_on_mode(ANC_LOW);
+					set_anc_mode(anc_on);
+				}
+				else if(resData[1]==0x03){
+					TRACE(1,"OP_TOTA_ANCMODE3_ONLY_CMD");
+					app_set_anc_on_mode(ANC_WIND);
+					set_anc_mode(anc_on);
+				}
+				else if(resData[1]==0x05){
+					TRACE(1,"OP_TOTA_MONITOR_ONLY_CMD");
+					app_focus_set_no_save(false);
+					app_set_monitor_mode(20);
+					set_anc_mode(monitor);
+				}
+				else if(resData[1]==0x00){
+					TRACE(1,"OP_TOTA_ANCOFF_ONLY_CMD");
+					set_anc_mode(anc_off);
 				}
 			}
 			if(resData[0]==0x52){
