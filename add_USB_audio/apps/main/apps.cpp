@@ -283,7 +283,7 @@ APP_10_SECOND_TIMER_STRUCT app_10_second_array[] =
 {
     INIT_APP_TIMER(APP_PAIR_TIMER_ID, 0, 0, 39, PairingTransferToConnectable),//m by cai 6
     INIT_APP_TIMER(APP_POWEROFF_TIMER_ID, 0, 0, 255, CloseEarphone),//m by cai255
-    INIT_APP_TIMER(APP_BTOFF_POWEROFF_TIMER_ID, 0, 0, 468, CloseEarphone_auto_pwoff), //m by cai 30
+    INIT_APP_TIMER(APP_BTOFF_POWEROFF_TIMER_ID, 0, 0, 431, CloseEarphone_auto_pwoff), //m by cai 30
     INIT_APP_TIMER(APP_AUTO_PWOFF_TIMER_ID, 0, 0, 4095, CloseEarphone_auto_pwoff),//add by cai
 #ifdef GFPS_ENABLED
     INIT_APP_TIMER(APP_FASTPAIR_LASTING_TIMER_ID, 0, 0, APP_FAST_PAIRING_TIMEOUT_IN_SECOND/10,
