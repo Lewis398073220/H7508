@@ -140,7 +140,7 @@ static void app_tota_vendor_cmd_handler(APP_TOTA_CMD_CODE_E funcCode, uint8_t* p
     TOTA_LOG_DBG(2,"Func code 0x%x, param len %d", funcCode, paramLen);
     TOTA_LOG_DBG(0,"Param content:");
     DUMP8("%02x ", ptrParam, paramLen);
-    uint8_t resData[20]={0};
+    uint8_t resData[51]={0};//m by cai
     uint32_t resLen=1;
     switch (funcCode)
     {
@@ -279,17 +279,34 @@ static void app_tota_vendor_cmd_handler(APP_TOTA_CMD_CODE_E funcCode, uint8_t* p
 		/**add by pang for spp test **/
 		case OP_TOTA_MIC_TEST_CMD:
 			resData[0] = ptrParam[0];
-			if(resData[0]==0x01){
-				TRACE(1,"OP_TOTA_MAIN_MIC_ONLY_CMD");		
-				//dualmic_test(0x01);
-			}
-			else if(resData[0]==0x02){
-				TRACE(1,"OP_TOTA_SECOND_MIC_ONLY_CMD");
-			    //dualmic_test(0x02);
-			}
-			else if(resData[0]==0x00){
-				TRACE(1,"OP_TOTA_BOTH_MIC_CMD");
-			    //dualmic_test(0x00);
+			resData[1] = ptrParam[1];
+			resLen = 2;
+			TRACE(2,"********OP_TOTA_MIC_TEST_CMD:0x%x,0x%x",resData[0],resData[1]);//add by cai
+			if(resData[0]==0x50){
+				if(resData[1]==0x01){
+					TRACE(1,"OP_TOTA_MAIN_MIC_ONLY_CMD");
+					spp_test_mic_set(1);
+				}
+				else if(resData[1]==0x02){
+					TRACE(1,"OP_TOTA_LFF_MIC_ONLY_CMD");
+					spp_test_mic_set(2);
+				}
+				else if(resData[1]==0x03){
+					TRACE(1,"OP_TOTA_RFF_MIC_ONLY_CMD");
+					spp_test_mic_set(3);
+				}
+				else if(resData[1]==0x04){
+					TRACE(1,"OP_TOTA_LFB_MIC_ONLY_CMD");
+					spp_test_mic_set(4);
+				}
+				else if(resData[1]==0x05){
+					TRACE(1,"OP_TOTA_RFB_MIC_ONLY_CMD");
+					spp_test_mic_set(5);
+				}
+				else{
+					TRACE(1,"OP_TOTA_RESET_MIC_ONLY_CMD");
+					spp_test_mic_set(0);
+				}
 			}
 		break;
 /** end add **/

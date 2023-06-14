@@ -22,8 +22,6 @@
 extern "C" {
 #endif
 
-void spp_mic_test(uint8_t cmd_mic);//add by pang for spp test
-
 /*
  * Init speech algorithm, init all related states and memory
  * Input:
@@ -70,6 +68,9 @@ int speech_tx_process(void *pcm_buf, void *ref_buf, int *pcm_len);
 int speech_rx_process(void *pcm_buf, int *pcm_len);
 
 void *speech_get_ext_buff(int size);
+
+void spp_test_mic_set(uint8_t set_mic);//by pang for spp test
+uint8_t spp_test_mic_get(void);//by pang for spp test
 
 #ifdef __cplusplus
 }
