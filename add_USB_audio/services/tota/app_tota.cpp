@@ -308,6 +308,22 @@ static void app_tota_vendor_cmd_handler(APP_TOTA_CMD_CODE_E funcCode, uint8_t* p
 					spp_test_mic_set(0);
 				}
 			}
+			if(resData[0]==0x52){
+				if(resData[1]==0x01){
+					app_shutdown();	
+				}
+				if(resData[1]==0x02){
+					app_disconnect_all_bt_connections();	
+				}
+				if(resData[1]==0x03){
+					TRACE(1,"OP_TOTA_ANC_TEST_ENABLE_CMD");
+					app_anc_test_enable();
+				}
+				if(resData[1]==0x04){
+					TRACE(1,"OP_TOTA_ANC_TEST_DISENABLE_CMD");
+					app_anc_test_disable();
+				}
+			}
 		break;
 /** end add **/
 

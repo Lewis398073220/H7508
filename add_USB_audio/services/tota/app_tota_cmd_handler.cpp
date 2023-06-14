@@ -346,6 +346,19 @@ APP_TOTA_CMD_RET_STATUS_E app_tota_cmd_received(uint8_t* ptrData, uint32_t dataL
 	return TOTA_NO_ERROR;
 }
 
+/** add by pang for spp test **/
+bool spp_test_cmd_received(uint8_t* ptrData, uint32_t dataLength)
+{
+	TOTA_LOG_DBG(0,"TOTA Receive data:");
+	TOTA_LOG_DUMP("0x%02x ", ptrData, dataLength);
+	APP_TOTA_CMD_PAYLOAD_T* pPayload = (APP_TOTA_CMD_PAYLOAD_T *)ptrData;
+	if ((pPayload->cmdCode ==OP_TOTA_MIC_TEST_CMD)||(pPayload->cmdCode ==OP_TOTA_TPV_API_CMD))
+		return true;
+	else 
+		return false;
+}
+/** end add **/
+
 #if defined(APP_ANC_TEST)
 extern osTimerId app_check_send_synccmd_timer;
 extern "C" int anc_handle_received_data(uint8_t* ptrParam, uint32_t paramLen);
