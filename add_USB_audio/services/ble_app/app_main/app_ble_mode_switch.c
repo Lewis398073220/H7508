@@ -377,7 +377,7 @@ void app_ble_mode_init(void)
 }
 
 // ble advertisement used functions
-#if 1
+#if 0
 static void ble_adv_config_param(uint8_t advType, uint16_t advInterval)
 {
     int8_t avail_space;
@@ -436,55 +436,40 @@ static void ble_adv_config_param(uint8_t advType, uint16_t advInterval)
         advParam.advDataLen += avail_space;
     }
 }
-#else //m by pang for Haylou ble ADV
-extern uint8_t remote_dev_name[10];
+#else //m by cai for TPV ble ADV
 static void ble_adv_config_param(uint8_t advType, uint16_t advInterval)
 {
-        static uint8_t adv_count=0;
-		uint8_t MacAddr[6] ={0};
-		uint8_t adv_data[31];
-		
-	    memcpy(MacAddr, bt_addr, 6);
-		
-		adv_data[0] = 0x1E;
-		adv_data[1] = 0xFF;
-		adv_data[2] = 0x4C;	
-		adv_data[3] = 0X53;
-		adv_data[4] = 0x3C;	
-		adv_data[5] = 0x01;
-		adv_data[6] = 0x10;
+	uint8_t MacAddr[6] = {0};
+	uint8_t adv_data[31];
+	uint8_t *pdevice_name = NULL;
+	uint8_t namelen=0, i=0;
 	
-		adv_data[7] = 0x10;
-		
-		adv_data[8] = 0xA2;
-		adv_data[9] = 0x06;
-		
-		adv_data[10] = adv_count++;
-		
-		adv_data[11] = 0x00;
-		adv_data[12] = app_battery_current_level()*10;
-		
-		adv_data[13] = MacAddr[5];
-		adv_data[14] = MacAddr[4];
-		adv_data[15] = MacAddr[3];
-		adv_data[16] = MacAddr[2];
-		adv_data[17] = MacAddr[1];
-		adv_data[18] = MacAddr[0];
-		
-		adv_data[19] = 0x00;
-		
-		adv_data[20] = MacAddr[5];
-		adv_data[21] = MacAddr[4];
-		adv_data[22] = MacAddr[3];
-		adv_data[23] = MacAddr[2];
-		adv_data[24] = MacAddr[1];
-		adv_data[25] = MacAddr[0];
-		
-		adv_data[26] = remote_dev_name[0];
-		adv_data[27] = remote_dev_name[1];
-		adv_data[28] = remote_dev_name[2];
-		adv_data[29] = remote_dev_name[3];
-		adv_data[30] = remote_dev_name[4];
+    memcpy(MacAddr, bt_addr, 6);
+
+	adv_data[1] = 0xFF;//adv type
+	
+	if((pdevice_name=app_dev_name_get()) != NULL){
+		namelen=strlen((const char *)pdevice_name);
+		if(namelen>0)
+		{
+			uint8_t dev_na[namelen];
+			memcpy(dev_na, pdevice_name, namelen);
+			for(i=2;i<2+namelen;i++)
+			{
+				adv_data[i] = dev_na[i-2];
+			}
+		}
+		adv_data[0] = namelen+1;
+	} else{
+		adv_data[2] = MacAddr[5];
+		adv_data[3] = MacAddr[4];
+		adv_data[4] = MacAddr[3];
+		adv_data[5] = MacAddr[2];
+		adv_data[6] = MacAddr[1];
+		adv_data[7] = MacAddr[0];
+
+		adv_data[0] = sizeof(MacAddr)+1;
+	}
 
     memset(&advParam, 0, sizeof(advParam));
 
@@ -518,9 +503,15 @@ static void ble_adv_config_param(uint8_t advType, uint16_t advInterval)
         }
     }
 
-    memcpy(&advParam.advData[advParam.advDataLen], adv_data, 31);
-    // Update adv Data Length
-    advParam.advDataLen = 31;
+	if(pdevice_name != NULL){
+		memcpy(&advParam.advData[advParam.advDataLen], adv_data, namelen+2);
+		// Update adv Data Length
+		advParam.advDataLen = namelen+2;
+	} else{
+		memcpy(&advParam.advData[advParam.advDataLen], adv_data, sizeof(MacAddr)+2);
+		// Update adv Data Length
+		advParam.advDataLen = sizeof(MacAddr)+2;
+	}  
 }
 #endif
 

@@ -5,7 +5,7 @@
 
 // #define HEAP_API_DEBUG
 
-#if 0
+#if 1
 extern uint32_t __HeapBase;
 extern uint32_t  __HeapLimit;
 static heap_handle_t global_heap = NULL;

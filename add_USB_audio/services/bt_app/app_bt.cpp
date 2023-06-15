@@ -121,7 +121,14 @@ extern uint8_t app_poweroff_flag;
 extern bool factory_reset_flag;
 
 //uint8_t remote_dev_name[30]={0};//m by cai for reconnect fail
+//add by cai
+uint8_t *dev_name_user = NULL;
 
+uint8_t * app_dev_name_get(void)
+{
+	return dev_name_user;
+}
+//end add
 
 static void reconnect_timeout_set(uint8_t rect);
 static void reconnect_timeout_stop(void);
@@ -1894,6 +1901,16 @@ void app_bt_global_handle(const btif_event_t *Event)
             if (nameLen > 0)
             {
                 TRACE(2,"remote dev name: %s, namelen: %d", ptrName, nameLen);
+				//add by cai
+				if(dev_name_user!=NULL) free(dev_name_user);
+				dev_name_user = (uint8_t*)malloc(nameLen+1);
+				if(dev_name_user!=NULL)
+				{
+					memset(dev_name_user, 0, nameLen+1);
+					memcpy(dev_name_user, ptrName, nameLen);
+					TRACE(2,"*******remote dev name: %s，namelen: %d",dev_name_user,nameLen);
+				}
+				//end add
 				//memcpy(remote_dev_name, ptrName, nameLen);//add by pang //m by cai for reconnect fail
             }
             //return;
