@@ -525,10 +525,10 @@ static void ble_adv_config_param(uint8_t advType, uint16_t advInterval)
     memcpy(MacAddr, bt_addr, 6);
 
 	//Manufacturer Specific Data adv type
-	adv_data[0] = 0x05;
 	adv_data[1] = 0xFF;
 	
 	if((pdevice_name=app_dev_name_get()) != NULL){
+		adv_data[0] = 0x05;
 		namelen=strlen((const char *)pdevice_name);
 		if(namelen>0)
 		{
@@ -547,6 +547,8 @@ static void ble_adv_config_param(uint8_t advType, uint16_t advInterval)
 		adv_data[7] = 0x08;
 		memcpy(&adv_data[8], bleModeEnv.bleEnv->dev_name, bleModeEnv.bleEnv->dev_name_len);
 	} else{
+		LOG_I("********pdevice_name is NULL");
+		adv_data[0] = sizeof(MacAddr)+1;
 		adv_data[2] = MacAddr[5];
 		adv_data[3] = MacAddr[4];
 		adv_data[4] = MacAddr[3];
@@ -554,7 +556,15 @@ static void ble_adv_config_param(uint8_t advType, uint16_t advInterval)
 		adv_data[6] = MacAddr[1];
 		adv_data[7] = MacAddr[0];
 
-		adv_data[0] = sizeof(MacAddr)+1;
+		//Shortened Local Name adv type
+		adv_data[9] = 0x08;
+		if(bleModeEnv.bleEnv->dev_name_len > 30-9){
+			adv_data[8] = 30-9+1;
+			memcpy(&adv_data[10], bleModeEnv.bleEnv->dev_name, 30-9);
+		} else{
+			adv_data[8] = bleModeEnv.bleEnv->dev_name_len+1;
+			memcpy(&adv_data[10], bleModeEnv.bleEnv->dev_name, bleModeEnv.bleEnv->dev_name_len);
+		}
 	}
 
     memset(&advParam, 0, sizeof(advParam));
@@ -594,9 +604,9 @@ static void ble_adv_config_param(uint8_t advType, uint16_t advInterval)
 		// Update adv Data Length
 		advParam.advDataLen = 31;
 	} else{
-		memcpy(&advParam.advData[advParam.advDataLen], adv_data, sizeof(MacAddr)+2);
+		memcpy(&advParam.advData[advParam.advDataLen], adv_data, 31);
 		// Update adv Data Length
-		advParam.advDataLen = sizeof(MacAddr)+2;
+		advParam.advDataLen = 31;
 	}  
 }
 #endif
