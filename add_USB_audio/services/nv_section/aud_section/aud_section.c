@@ -214,7 +214,7 @@ int anccfg_loadfrom_audsec(const struct_anc_cfg *list[], const struct_anc_cfg *l
 #endif // !PROGRAMMER
 }
 #else//m by pang
-#define ANC_COEF_LIST_LOAD_NUM 2
+#define ANC_COEF_LIST_LOAD_NUM 1//2 //m by cai
 int anccfg_loadfrom_audsec(const struct_anc_cfg *list[], const struct_anc_cfg *list_44p1k[], uint32_t count)
 {
 #ifdef PROGRAMMER
