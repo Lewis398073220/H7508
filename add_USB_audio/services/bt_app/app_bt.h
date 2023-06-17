@@ -51,7 +51,10 @@ void app_enter_pairing(void);
 void app_get_remote_dev_name(uint8_t* ptrName,uint16_t nameLen);
 void app_get_curr_remDev(unsigned char* mobile_addr);
 /** end add **/
-uint8_t * app_dev_name_get(void);//add by cai
+//add by cai
+uint8_t * app_dev_name_get(void);
+void app_cur_connect_devid_set(uint8_t id, uint8_t connect);
+//end add
 
 typedef void (*APP_BT_REQ_CONNECT_PROFILE_FN_T)(void *, void *);
 typedef bt_status_t  (*APP_BT_REQ_HF_OP_FN_T)(void *);

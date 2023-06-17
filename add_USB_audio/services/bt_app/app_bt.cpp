@@ -122,11 +122,30 @@ extern bool factory_reset_flag;
 
 //uint8_t remote_dev_name[30]={0};//m by cai for reconnect fail
 //add by cai
-uint8_t *dev_name_user = NULL;
+uint8_t *dev_name_user[BT_DEVICE_NUM] = {NULL};
+uint8_t cur_device_id=BT_DEVICE_ID_1;
+
+void app_cur_connect_devid_set(uint8_t id, uint8_t connect)
+{
+	if(connect == true) {
+		cur_device_id = id;
+	} else{
+		if(dev_name_user[id] != NULL) {
+			free(dev_name_user[id]);
+			dev_name_user[id] = NULL;
+		}
+		cur_device_id = (id==BT_DEVICE_ID_1? BT_DEVICE_ID_2 : BT_DEVICE_ID_1);
+	}
+}
+
+uint8_t app_cur_connect_devid_get(void)
+{
+	return cur_device_id;
+}
 
 uint8_t * app_dev_name_get(void)
 {
-	return dev_name_user;
+	return dev_name_user[app_cur_connect_devid_get()];
 }
 //end add
 
@@ -1896,19 +1915,20 @@ void app_bt_global_handle(const btif_event_t *Event)
         {
             uint8_t* ptrName;
             uint8_t nameLen;
+			uint8_t cur_devid = app_cur_connect_devid_get();//add by cai
             nameLen = btif_me_get_callback_event_remote_dev_name(Event, &ptrName);
             TRACE(1,"[BTEVENT] NAME_RESULT name len %d", nameLen);
             if (nameLen > 0)
             {
                 TRACE(2,"remote dev name: %s, namelen: %d", ptrName, nameLen);
 				//add by cai
-				if(dev_name_user!=NULL) free(dev_name_user);
-				dev_name_user = (uint8_t*)malloc(nameLen+1);
-				if(dev_name_user!=NULL)
+				if(dev_name_user[cur_devid]!=NULL) free(dev_name_user[cur_devid]);
+				dev_name_user[cur_devid] = (uint8_t*)malloc(nameLen+1);
+				if(dev_name_user[cur_devid] != NULL)
 				{
-					memset(dev_name_user, 0, nameLen+1);
-					memcpy(dev_name_user, ptrName, nameLen);
-					TRACE(2,"*******remote dev name: %s，namelen: %d",dev_name_user,nameLen);
+					memset(dev_name_user[cur_devid], 0, nameLen+1);
+					memcpy(dev_name_user[cur_devid], ptrName, nameLen);
+					TRACE(2,"*******remote dev name: %s，namelen: %d",dev_name_user[cur_devid],nameLen);
 				}
 				//end add
 				//memcpy(remote_dev_name, ptrName, nameLen);//add by pang //m by cai for reconnect fail
@@ -3451,7 +3471,8 @@ void app_bt_profile_connect_manager_hf(enum BT_DEVICE_ID_T id, hf_chan_handle_t 
 
         nv_record_btdevicerecord_set_last_active(btdevice_plf_p);
 		
-        TRACE(0,"BT connected!!!");
+		TRACE(1,"BT connected!!!: %d",id);//m by cai
+		app_cur_connect_devid_set(id, true);//add by cai
 		
 		if((bt_profile_manager[id].reconnect_mode == bt_profile_reconnect_null))//回连的时候不保存配对记录 
 		{																		//按键切换回连成功保存配对记录 ZCL @ 2020/07/24		
@@ -3515,7 +3536,8 @@ void app_bt_profile_connect_manager_hf(enum BT_DEVICE_ID_T id, hf_chan_handle_t 
          bt_profile_manager[id].a2dp_connect != bt_profile_connect_status_success)){
 
         bt_profile_manager[id].has_connected = false;
-        TRACE(0,"BT disconnected!!!");
+        TRACE(1,"BT disconnected!!!: %d",id);//m by cai
+		app_cur_connect_devid_set(id, false);//add by cai
 
 #ifdef GFPS_ENABLED
         if (app_gfps_is_last_response_pending())
@@ -3947,7 +3969,8 @@ void app_bt_profile_connect_manager_a2dp(enum BT_DEVICE_ID_T id, a2dp_stream_t *
         bt_profile_manager[id].has_connected = true;
 
         nv_record_btdevicerecord_set_last_active(btdevice_plf_p);
-        TRACE(0,"BT connected!!!");
+        TRACE(1,"BT connected!!!: %d",id);//m by cai
+		app_cur_connect_devid_set(id, true);//add by cai
 		
 		if((bt_profile_manager[id].reconnect_mode == bt_profile_reconnect_null))//回连的时候不保存配对记录 
 		{																	     //按键切换回连成功保存配对记录 ZCL @ 2020/07/24		
@@ -4010,7 +4033,8 @@ void app_bt_profile_connect_manager_a2dp(enum BT_DEVICE_ID_T id, a2dp_stream_t *
          bt_profile_manager[id].a2dp_connect != bt_profile_connect_status_success)){
 
         bt_profile_manager[id].has_connected = false;
-        TRACE(0,"BT disconnected!!!");
+		TRACE(1,"BT disconnected!!!: %d",id);
+		app_cur_connect_devid_set(id, false);//add by cai
 
 #ifdef GFPS_ENABLED
         if (app_gfps_is_last_response_pending())
