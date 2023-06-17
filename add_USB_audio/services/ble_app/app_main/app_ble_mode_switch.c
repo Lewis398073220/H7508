@@ -527,7 +527,7 @@ static void ble_adv_config_param(uint8_t advType, uint16_t advInterval)
 	//Manufacturer Specific Data adv type
 	adv_data[1] = 0xFF;
 	
-	if((pdevice_name=app_dev_name_get()) != NULL){
+	if((pdevice_name=app_dev_name_get()) != NULL && (btif_me_get_activeCons() || app_bt_is_connected())){
 		adv_data[0] = 0x05;
 		namelen=strlen((const char *)pdevice_name);
 		if(namelen>0)
