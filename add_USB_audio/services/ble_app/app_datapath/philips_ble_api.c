@@ -3444,10 +3444,34 @@ void Notification_Playback_Status_Change(uint8_t playstatus)
 	//TRACE(0,"Notification_Playback_Status_Change\n ");
 }
 
+void Notification_Media_Info_Change(uint8_t media_info)
+{
+	TRACE(1,"********%s!: \r\n", __func__);
+
+    uint8_t valueLen = 9;
+    uint8_t valuePtr[18] = {0};
+    uint8_t i =0;
+    uint8_t head[9] = {0xff,0x01,0x00,0x04,0x71,0x81,0x88,0x00,0x00};
+     //Data length
+     head[2] = 0x09;
+     //Notification_Media_Change 1 byte
+     head[7] = media_info;
+     //Do checksum
+     head[valueLen - 1]=Do_CheckSum(head,valueLen);
+
+     for (i =0;i <  valueLen; i++){
+	     valuePtr[i] = head[i];
+    }
+    //delay_5ms(30);
+    //osDelay(10);//150 c m by pang
+    //le_tx_notify(BLE_IDX_PHILIPS_APP_TX, valuePtr, valueLen);
+    Philips_Send_Notify(valuePtr, (uint32_t)valueLen);
+	//TRACE(0,"Notification_Playback_Status_Change\n ");
+}
+
+
 void NowPlaying2_Notification_Media_Title_Artist_Album(uint8_t type,char* media_buffer, uint8_t valueLen)
 {
-	TRACE(2,"********%s: %s\r\n", __func__, media_buffer);
-	
 	uint8_t i =0;
 	uint8_t head[7] = {0xff,0x02,0x00,0x04,0x71,0x81,0x85};//Title
     if (type == (uint8_t) 0x02){
@@ -3460,14 +3484,16 @@ void NowPlaying2_Notification_Media_Title_Artist_Album(uint8_t type,char* media_
 	uint8_t commandsize = valueLen + 8;
 	//TRACE(1,"commandsize %d : ", commandsize);
 	uint8_t Title_Artist_Album[commandsize];
-	
+
+	memset(Title_Artist_Album, 0, commandsize);
 	memcpy(Title_Artist_Album, head, 7);
 	Title_Artist_Album[2] = commandsize;
 		
 	for (i = 7 ; i < (7 + valueLen) ; i++){
 		Title_Artist_Album[i] = (uint8_t)media_buffer[i - 7];
 	}    
-	 
+	TRACE(3,"********%s: valueLen=%d %s\r\n", __func__, valueLen, &Title_Artist_Album[7]);
+	
 	//Do checksum
 	Title_Artist_Album[commandsize - 1]=Do_CheckSum(Title_Artist_Album, commandsize);
 

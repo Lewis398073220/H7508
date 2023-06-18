@@ -1079,7 +1079,8 @@ extern "C" void avrcp_callback_CT(btif_avrcp_chnl_handle_t chnl, const avrcp_cal
                         TRACE(1,"::avrcp_callback_CT ACRCP notify rsp playback states=%x",btif_get_avrcp_adv_notify(parms)->p.mediaStatus);
 						/**  add by pang   **/
 						#if defined(BLE_ENABLE)
-						Notification_Media_Change();
+						//Notification_Media_Change();//m by cai
+						Notification_Media_Info_Change(0x00);//add by cai
 						#endif
 						/** end add **/
 #if defined(__BT_ONE_BRING_TWO__)
@@ -1203,46 +1204,47 @@ extern "C" void avrcp_callback_CT(btif_avrcp_chnl_handle_t chnl, const avrcp_cal
                         //TRACE(2,"Philips Id=%d,%s\n",i,btif_get_avrcp_adv_rsp(parms)->element.txt[i].string);
 /** add by pang  for Philips BLE - start  **/
 #if defined(BLE_ENABLE)
-			     if (i == 0){  //Title
-			        if ((btif_get_avrcp_adv_rsp(parms)->element.txt[i].length > 0) && (btif_get_avrcp_adv_rsp(parms)->element.txt[i].length < sizeof(title))){
-				     if(memcmp(title, btif_get_avrcp_adv_rsp(parms)->element.txt[i].string, btif_get_avrcp_adv_rsp(parms)->element.txt[i].length) != 0){
-				        title_len = btif_get_avrcp_adv_rsp(parms)->element.txt[i].length;
-				        memcpy(title, btif_get_avrcp_adv_rsp(parms)->element.txt[i].string, title_len);
-				        get_song_total_time = 1;
-				        osDelay(20);//50 m by pang				 	
-				     	}	 	
-			        }	 				 
-			     }else if(i == 1){  //artist
-			        if ((btif_get_avrcp_adv_rsp(parms)->element.txt[i].length > 0) && (btif_get_avrcp_adv_rsp(parms)->element.txt[i].length < sizeof(artist))){
-				     if(memcmp(artist, btif_get_avrcp_adv_rsp(parms)->element.txt[i].string, btif_get_avrcp_adv_rsp(parms)->element.txt[i].length) != 0){			     
-			        	   artist_len = btif_get_avrcp_adv_rsp(parms)->element.txt[i].length;
-				  	   memcpy(artist, btif_get_avrcp_adv_rsp(parms)->element.txt[i].string, artist_len);			
-				  	   osDelay(20);//50 m by pang	
-				     	}	 	
-			        }					  
-			     }else if(i == 2){  //album
-			        if ((btif_get_avrcp_adv_rsp(parms)->element.txt[i].length > 0) && (btif_get_avrcp_adv_rsp(parms)->element.txt[i].length < sizeof(album))){
-				     if(memcmp(album, btif_get_avrcp_adv_rsp(parms)->element.txt[i].string, btif_get_avrcp_adv_rsp(parms)->element.txt[i].length) != 0){		
-				  	  album_len = btif_get_avrcp_adv_rsp(parms)->element.txt[i].length;
-				  	  memcpy(album, btif_get_avrcp_adv_rsp(parms)->element.txt[i].string, album_len);
-				  	  osDelay(20);//50 m by pang
-				     	}	 	
-			        }	
-			     }else if (i == 6){  //notify
-			     	      if (get_song_total_time)
-		                   {
-		                          u8 len = (btif_get_avrcp_adv_rsp(parms)->element.txt[i].length > 10)? 10: btif_get_avrcp_adv_rsp(parms)->element.txt[i].length;
-		                            get_song_total_time = 0;		
-	                                 if(memcmp(time_buf, btif_get_avrcp_adv_rsp(parms)->element.txt[i].string, len) != 0)
-	      	                          {
-	      	                                memset(time_buf,0,10);
-	      	                                memcpy(time_buf, btif_get_avrcp_adv_rsp(parms)->element.txt[i].string , len);
-		                                //Send notify to update UI 
-	                                      Notification_Media_Change();
-	      	                           }
-	                      	}
-
-			     }
+						 if (i == 0){  //Title
+						    if ((btif_get_avrcp_adv_rsp(parms)->element.txt[i].length > 0) && (btif_get_avrcp_adv_rsp(parms)->element.txt[i].length < sizeof(title))){
+								if(memcmp(title, btif_get_avrcp_adv_rsp(parms)->element.txt[i].string, btif_get_avrcp_adv_rsp(parms)->element.txt[i].length) != 0){
+									title_len = btif_get_avrcp_adv_rsp(parms)->element.txt[i].length;
+									memcpy(title, btif_get_avrcp_adv_rsp(parms)->element.txt[i].string, title_len);
+									get_song_total_time = 1;
+									Notification_Media_Info_Change(0x01);//add by cai
+									osDelay(20);//50 m by pang
+								}	 	
+						    }	 				 
+						 }else if(i == 1){  //artist
+						    if ((btif_get_avrcp_adv_rsp(parms)->element.txt[i].length > 0) && (btif_get_avrcp_adv_rsp(parms)->element.txt[i].length < sizeof(artist))){
+								if(memcmp(artist, btif_get_avrcp_adv_rsp(parms)->element.txt[i].string, btif_get_avrcp_adv_rsp(parms)->element.txt[i].length) != 0){			     
+									artist_len = btif_get_avrcp_adv_rsp(parms)->element.txt[i].length;
+									memcpy(artist, btif_get_avrcp_adv_rsp(parms)->element.txt[i].string, artist_len);			
+									osDelay(20);//50 m by pang	
+								}	 	
+						    }					  
+						 }else if(i == 2){  //album
+						    if ((btif_get_avrcp_adv_rsp(parms)->element.txt[i].length > 0) && (btif_get_avrcp_adv_rsp(parms)->element.txt[i].length < sizeof(album))){
+								if(memcmp(album, btif_get_avrcp_adv_rsp(parms)->element.txt[i].string, btif_get_avrcp_adv_rsp(parms)->element.txt[i].length) != 0){		
+									album_len = btif_get_avrcp_adv_rsp(parms)->element.txt[i].length;
+									memcpy(album, btif_get_avrcp_adv_rsp(parms)->element.txt[i].string, album_len);
+									osDelay(20);//50 m by pang
+								}	 	
+						    }	
+						 }else if (i == 6){  //notify
+							if (get_song_total_time)
+							{
+								u8 len = (btif_get_avrcp_adv_rsp(parms)->element.txt[i].length > 10)? 10: btif_get_avrcp_adv_rsp(parms)->element.txt[i].length;
+							    get_song_total_time = 0;		
+								if(memcmp(time_buf, btif_get_avrcp_adv_rsp(parms)->element.txt[i].string, len) != 0)
+								{
+								    memset(time_buf,0,10);
+								    memcpy(time_buf, btif_get_avrcp_adv_rsp(parms)->element.txt[i].string , len);
+									//Send notify to update UI 
+									//Notification_Media_Change();//m by cai
+									Notification_Media_Info_Change(0x00);//add by cai
+								}
+							}
+						 }
 #endif
 /** end add   Philips BLE - end  **/
                     }

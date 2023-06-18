@@ -547,7 +547,10 @@ void Set_P_Sensor_Reset(uint8_t set_p_sensor_reset_value[1]);
 void Get_Special_Function1_Support_List(void);
 void Notification_Touch_Key_OnOff_Change(void);
 void Notification_TalkMicLed_Change(void);
-void Notification_Playback_Status_Change(uint8_t playstatus);//add by cai
+//add by cai
+void Notification_Playback_Status_Change(uint8_t playstatus);
+void Notification_Media_Info_Change(uint8_t media_info);
+//end add
 
 #ifdef __cplusplus
 }
