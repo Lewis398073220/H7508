@@ -599,6 +599,18 @@ bool CheckCommandID(uint8_t *data)
 		case SET_NOWPLAYING2_PLAYBACK_PREVIOUS:
 			//TRACE(0,"Philips : SET_NOWPLAYING2_PLAYBACK_PREVIOUS!\r\n");
 			return true;
+
+		case GET_NOWPLAYING2_MEDIA_TITLE:
+			//TRACE(0,"Philips : GET_NOWPLAYING2_MEDIA_TITLE!\r\n");
+			return true;
+
+		case GET_NOWPLAYING2_MEDIA_ARTIST:
+			//TRACE(0,"Philips : GET_NOWPLAYING2_MEDIA_ARTIST!\r\n");
+			return true;
+
+		case GET_NOWPLAYING2_MEDIA_ALBUM:
+			//TRACE(0,"Philips : GET_NOWPLAYING2_MEDIA_ALBUM!\r\n");
+			return true;
 		//end add
 		
 		case GET_SPECIAL_FUNCTION2_SUPPORT_LIST:
@@ -3367,6 +3379,7 @@ void Get_Nowplaying2_Playback_Status(void)
      head[2] = 0x09;
      //Nowplaying Playback Status 1 byte  
      g_Nowplay2_Playback_Status[0] = app_bt_device.a2dp_play_pause_flag;
+	 TRACE(0,"********Philips : Get_Nowplaying2_Playback_Status!: %d\r\n",g_Nowplay2_Playback_Status[0]);
      head[7] = g_Nowplay2_Playback_Status[0]; 
      //Do checksum
      head[g_valueLen - 1]=Do_CheckSum(head,g_valueLen);
@@ -3406,8 +3419,10 @@ void Set_Nowplaying2_Playback_Previous(void)
   //Notification_Media_Change();
 }
 
-void Notification_Playback_Status_Change(void)
+void Notification_Playback_Status_Change(uint8_t playstatus)
 {
+	TRACE(0,"********Philips : Notification_Playback_Status_Change!\r\n");
+
     uint8_t valueLen = 9;
     uint8_t valuePtr[18] = {0};
     uint8_t i =0;
@@ -3415,7 +3430,7 @@ void Notification_Playback_Status_Change(void)
      //Data length
      head[2] = 0x09;
      //Notification_Media_Change 1 byte
-     head[7] = 0x01;
+     head[7] = playstatus;
      //Do checksum
      head[valueLen - 1]=Do_CheckSum(head,valueLen);
 
@@ -3427,6 +3442,51 @@ void Notification_Playback_Status_Change(void)
     //le_tx_notify(BLE_IDX_PHILIPS_APP_TX, valuePtr, valueLen);
     Philips_Send_Notify(valuePtr, (uint32_t)valueLen);
 	//TRACE(0,"Notification_Playback_Status_Change\n ");
+}
+
+void NowPlaying2_Notification_Media_Title_Artist_Album(uint8_t type,char* media_buffer, uint8_t valueLen)
+{
+	TRACE(2,"********%s: %s\r\n", __func__, media_buffer);
+	
+	uint8_t i =0;
+	uint8_t head[7] = {0xff,0x02,0x00,0x04,0x71,0x81,0x85};//Title
+    if (type == (uint8_t) 0x02){
+		head[6] = (uint8_t) 0x86; 	//Artist
+    }
+    else if (type == (uint8_t) 0x03){
+		head[6] = (uint8_t) 0x87; 		 //Album
+    }
+	
+	uint8_t commandsize = valueLen + 8;
+	//TRACE(1,"commandsize %d : ", commandsize);
+	uint8_t Title_Artist_Album[commandsize];
+	
+	memcpy(Title_Artist_Album, head, 7);
+	Title_Artist_Album[2] = commandsize;
+		
+	for (i = 7 ; i < (7 + valueLen) ; i++){
+		Title_Artist_Album[i] = (uint8_t)media_buffer[i - 7];
+	}    
+	 
+	//Do checksum
+	Title_Artist_Album[commandsize - 1]=Do_CheckSum(Title_Artist_Album, commandsize);
+
+    Philips_Send_Notify(Title_Artist_Album, (uint32_t)commandsize);
+}
+
+void Get_NowPlaying2_Media_Title(void)
+{
+	NowPlaying2_Notification_Media_Title_Artist_Album(0x01,(char*)title,title_len);
+}
+
+void Get_NowPlaying2_Media_Artist(void)
+{
+	NowPlaying2_Notification_Media_Title_Artist_Album(0x02,(char*)artist,artist_len);
+}
+
+void Get_NowPlaying2_Media_Album(void)
+{
+	NowPlaying2_Notification_Media_Title_Artist_Album(0x03,(char*)album,album_len);
 }
 //end add
 
@@ -4416,6 +4476,21 @@ bool Philips_Functions_Call(uint8_t *data, uint8_t size)
 		case SET_NOWPLAYING2_PLAYBACK_PREVIOUS:
 			Set_Nowplaying2_Playback_Previous();
 		return true;
+
+		case GET_NOWPLAYING2_MEDIA_TITLE:
+			//TRACE(0,"Philips : GET_NOWPLAYING2_MEDIA_TITLE!\r\n");
+			Get_NowPlaying2_Media_Title();
+			return true;
+
+		case GET_NOWPLAYING2_MEDIA_ARTIST:
+			//TRACE(0,"Philips : GET_NOWPLAYING2_MEDIA_ARTIST!\r\n");
+			Get_NowPlaying2_Media_Artist();
+			return true;
+
+		case GET_NOWPLAYING2_MEDIA_ALBUM:
+			//TRACE(0,"Philips : GET_NOWPLAYING2_MEDIA_ALBUM!\r\n");
+			Get_NowPlaying2_Media_Album();
+			return true;
 		//end add
 		
 		case GET_SPECIAL_FUNCTION2_SUPPORT_LIST:
