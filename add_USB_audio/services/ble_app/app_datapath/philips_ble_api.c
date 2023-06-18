@@ -579,6 +579,26 @@ bool CheckCommandID(uint8_t *data)
 		case SET_UX_ANC_TOGGLE_STATUS:
 			//TRACE(0,"Philips : SET_UX_ANC_TOGGLE_STATUS!\r\n");
 			return true;
+
+		case GET_NOWPLAYING2_SUPPORT_LIST:
+			//TRACE(0,"Philips : GET_NOWPLAYING2_SUPPORT_LIST!\r\n");
+			return true;
+
+		case GET_NOWPLAYING2_PLAYBACK_STATUS:
+			//TRACE(0,"Philips : GET_NOWPLAYING2_PLAYBACK_STATUS!\r\n");
+			return true;
+
+		case SET_NOWPLAYING2_PLAYBACK_STATUS:
+			//TRACE(0,"Philips : SET_NOWPLAYING2_PLAYBACK_STATUS!\r\n");
+			return true;
+
+		case SET_NOWPLAYING2_PLAYBACK_NEXT:
+			//TRACE(0,"Philips : SET_NOWPLAYING2_PLAYBACK_NEXT!\r\n");
+			return true;
+
+		case SET_NOWPLAYING2_PLAYBACK_PREVIOUS:
+			//TRACE(0,"Philips : SET_NOWPLAYING2_PLAYBACK_PREVIOUS!\r\n");
+			return true;
 		//end add
 		
 		case GET_SPECIAL_FUNCTION2_SUPPORT_LIST:
@@ -3319,6 +3339,95 @@ void Set_UX_ANC_Toggle_Status(uint8_t set_anc_toggle_mode_status_value[1])
    } 
 }
 
+void Get_Nowplaying2_Support_List(void)
+{
+    g_valueLen = 9;
+    uint8_t i =0;
+    uint8_t head[9] = {0xff,0x01,0x00,0x04,0x71,0x81,0x80,0x00,0x00};
+	 //Data length
+	 head[2] = 0x09;
+	 //Customization Eq Range 1 byte  
+	 head[7] = 0x01;  //support media title
+	 //Do checksum
+	 head[g_valueLen - 1]=Do_CheckSum(head,g_valueLen);
+	 
+	 for (i =0;i <  g_valueLen; i++){
+			g_valuePtr[i] = head[i];
+	}	   
+	Philips_Send_Notify(g_valuePtr, (uint32_t)g_valueLen); 
+}
+
+static uint8_t g_Nowplay2_Playback_Status[]= {0x00};
+void Get_Nowplaying2_Playback_Status(void)
+{
+    g_valueLen = 9;
+    uint8_t i =0;
+    uint8_t head[9] = {0xff,0x01,0x00,0x04,0x71,0x81,0x81,0x00,0x00};
+     //Data length
+     head[2] = 0x09;
+     //Nowplaying Playback Status 1 byte  
+     g_Nowplay2_Playback_Status[0] = app_bt_device.a2dp_play_pause_flag;
+     head[7] = g_Nowplay2_Playback_Status[0]; 
+     //Do checksum
+     head[g_valueLen - 1]=Do_CheckSum(head,g_valueLen);
+	 
+     for (i =0;i <  g_valueLen; i++){
+				g_valuePtr[i] = head[i];
+    	}	   
+    Philips_Send_Notify(g_valuePtr, (uint32_t)g_valueLen);   
+}
+
+void Set_Nowplaying2_Playback_Status(uint8_t set_nowplaying2_palyback_status_value[1])
+{
+    uint8_t playstatus = set_nowplaying2_palyback_status_value[0];
+
+    if (playstatus == 0x00){	
+		a2dp_handleKey(AVRCP_KEY_PAUSE); 
+		//Notification_Media_Change();
+    }	
+	else if(playstatus == 0x01){  
+		a2dp_handleKey(AVRCP_KEY_PLAY);  
+	}
+}
+
+void Set_Nowplaying2_Playback_Next(void)
+{
+   TRACE(0,"Philips : Set_Nowplaying2_Playback_Next!\r\n");
+   a2dp_handleKey(AVRCP_KEY_FORWARD);
+   //osDelay(100);
+   //Notification_Media_Change();
+}
+
+void Set_Nowplaying2_Playback_Previous(void)
+{
+  TRACE(0,"Philips : Set_Nowplaying2_Playback_Previous!\r\n");
+  a2dp_handleKey(AVRCP_KEY_BACKWARD);
+  //osDelay(100);
+  //Notification_Media_Change();
+}
+
+void Notification_Playback_Status_Change(void)
+{
+    uint8_t valueLen = 9;
+    uint8_t valuePtr[18] = {0};
+    uint8_t i =0;
+    uint8_t head[9] = {0xff,0x01,0x00,0x04,0x71,0x81,0x89,0x00,0x00};
+     //Data length
+     head[2] = 0x09;
+     //Notification_Media_Change 1 byte
+     head[7] = 0x01;
+     //Do checksum
+     head[valueLen - 1]=Do_CheckSum(head,valueLen);
+
+     for (i =0;i <  valueLen; i++){
+	     valuePtr[i] = head[i];
+    }
+    //delay_5ms(30);
+    //osDelay(10);//150 c m by pang
+    //le_tx_notify(BLE_IDX_PHILIPS_APP_TX, valuePtr, valueLen);
+    Philips_Send_Notify(valuePtr, (uint32_t)valueLen);
+	//TRACE(0,"Notification_Playback_Status_Change\n ");
+}
 //end add
 
 void Get_Special_Function2_Support_List(void)
@@ -4280,6 +4389,32 @@ bool Philips_Functions_Call(uint8_t *data, uint8_t size)
 			uint8_t set_anc_toggle_mode_value[1] = {0};
 			set_anc_toggle_mode_value[0] = data[7];
 			Set_UX_ANC_Toggle_Status(set_anc_toggle_mode_value);
+		return true;
+
+		case GET_NOWPLAYING2_SUPPORT_LIST:
+			Get_Nowplaying2_Support_List();
+		return true;
+
+		case GET_NOWPLAYING2_PLAYBACK_STATUS:
+			Get_Nowplaying2_Playback_Status();
+		return true;
+
+		case SET_NOWPLAYING2_PLAYBACK_STATUS:
+		    TRACE(0,"Philips : Philips_Functions_Call SET_NOWPLAYING_PLAYBACK_STATUS_VALUE!\r\n");
+			if (size != 9){
+				return false;
+			 }
+			uint8_t set_nowplaying2_palyback_status_value[1] = {0};
+			set_nowplaying2_palyback_status_value[0] = data[7]; 
+			Set_Nowplaying2_Playback_Status(set_nowplaying2_palyback_status_value);
+		return true;
+
+		case SET_NOWPLAYING2_PLAYBACK_NEXT:
+			Set_Nowplaying2_Playback_Next();
+		return true;
+
+		case SET_NOWPLAYING2_PLAYBACK_PREVIOUS:
+			Set_Nowplaying2_Playback_Previous();
 		return true;
 		//end add
 		
