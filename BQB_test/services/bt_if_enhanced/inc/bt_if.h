@@ -19,6 +19,7 @@
 #include "bluetooth.h"
 #include "btif_sys_config.h"
 #include "me_api.h"
+#include "app_key.h"
 
 //Application ID,indentify profle app context
 #define    BTIF_APP_INVALID_ID              (0x00000000)
@@ -164,6 +165,9 @@ void btif_pts_av_create_media_channel(void);
 void btif_pts_l2c_disc_channel(void);
 void btif_pts_l2c_send_data(void);
 void btif_update_name_and_uuid(btif_eir_raw_data_t *eir_raw_data);
+void Hfp_pts_enable_voice_recognition(APP_KEY_STATUS *status, void *param);//add by cai
+void Hfp_pts_disable_voice_recognition(APP_KEY_STATUS *status, void *param);
+
 
 #ifdef __cplusplus
 }

@@ -429,7 +429,7 @@ int app_hfp_siri_report()
 extern int open_siri_flag ;
 int app_hfp_siri_voice(bool en)
 {
-#if 0 //m by cai
+#if 1 //m by cai
     static enum BT_DEVICE_ID_T hf_id = BT_DEVICE_NUM;
     bt_status_t res = BT_STS_LAST_CODE;
 

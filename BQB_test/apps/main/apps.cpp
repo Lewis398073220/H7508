@@ -1466,6 +1466,7 @@ const APP_KEY_HANDLE  app_key_handle_cfg[] = {
 	{{HAL_KEY_CODE_FN6,APP_KEY_EVENT_UP_AFTER_LONGPRESS},"bt quick monitor",app_bt_key, NULL},
 	{{HAL_KEY_CODE_FN6,APP_KEY_EVENT_DOUBLECLICK},"cover key double click",app_bt_key, NULL},
 	{{HAL_KEY_CODE_FN5,APP_KEY_EVENT_LONGLONGPRESS},"siri",app_bt_key, NULL},//m by cai
+	{{HAL_KEY_CODE_FN5,APP_KEY_EVENT_TRIPLECLICK},"siri",app_bt_key, NULL},//m by cai
 	//{{HAL_KEY_CODE_FN6,APP_KEY_EVENT_ULTRACLICK},"siri",app_bt_key, NULL},
 
 	{{HAL_KEY_CODE_FN5|APP_KEY_CODE_PWR,APP_KEY_EVENT_LONGLONGLONGLONGPRESS},"factory reset",app_bt_key, NULL},

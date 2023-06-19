@@ -232,7 +232,7 @@ void pts_cmgr_callback(btif_cmgr_handler_t *cHandler,
     {
         if (Status == BT_STS_SUCCESS)
         {
-            TRACE(2,"connect ok cHandler %p remDev=%x",cHandler, remDev);
+            //TRACE(2,"connect ok cHandler %p remDev=%x",cHandler, remDev);//m by cai
             btif_spp_open(spp_test_dev, remDev, spp_test_client_callback);
         }
         else

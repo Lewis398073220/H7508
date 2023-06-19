@@ -76,6 +76,7 @@ extern struct BT_DEVICE_T  app_bt_device;
 #include "philips_ble_api.h"
 #include "app_media_player.h"
 #include "../../../tests/anc_usb/usb_audio_app.h"//add by cai
+#include "bt_if.h"//add by cai
 
 #ifdef BT_USB_AUDIO_DUAL_MODE
 extern "C" int hal_usb_configured(void);//add by cai
@@ -275,12 +276,12 @@ void bt_key_handle_siri_key(enum APP_KEY_EVENT_T event)
 	
 			if(open_siri_flag == 1){
 				TRACE(0,"close siri");
-				app_hfp_siri_voice(false);//m by cai
+				app_hfp_siri_voice(true);//m by cai
 				//open_siri_flag = 0;//m by cai
 			} 
 			else{
 				TRACE(0,"open siri");
-				app_hfp_siri_voice(true);//m by cai
+				app_hfp_siri_voice(false);//m by cai
 				//open_siri_flag = 1;//m by cai
 			}
 		}
@@ -1683,18 +1684,18 @@ void bt_key_handle_ANC_key(enum APP_KEY_EVENT_T event)
 	HFCALL_MACHINE_ENUM hfcall_machine = app_get_hfcall_machine();
 		
 #ifdef SUPPORT_SIRI
-	if(is_siri_active() == true) open_siri_flag=1;//add by cai
-	else open_siri_flag=0;
+	//if(is_siri_active() == true) open_siri_flag=1;//add by cai
+	//else open_siri_flag=0;
 #endif
 	
 	switch(event)
     {
     	case APP_KEY_EVENT_CLICK:
-			if(open_siri_flag==1)
-			{
-				bt_key_handle_siri_key(APP_KEY_EVENT_CLICK);
-				break;
-			}
+			//if(open_siri_flag==1)
+			//{
+				//bt_key_handle_siri_key(APP_KEY_EVENT_CLICK);
+				//break;
+			//}
 		
 			switch(hfcall_machine)
     		{
@@ -1738,28 +1739,21 @@ void bt_key_handle_ANC_key(enum APP_KEY_EVENT_T event)
 			break;
 
 		case APP_KEY_EVENT_DOUBLECLICK:
-#ifdef MEDIA_PLAYER_SUPPORT
-			if(!app_bt_is_connected())
-			{
-				if(app_play_audio_get_lang() == MEDIA_DEFAULT_LANGUAGE){
-					app_voice_report(APP_STATUS_INDICATION_BEEP_22, 0);
-					app_nvrecord_language_set(1);
-				} else{
-					app_voice_report(APP_STATUS_INDICATION_BEEP_22, 0);
-					app_nvrecord_language_set(MEDIA_DEFAULT_LANGUAGE);
-				}
-			}	
-#endif
+			Hfp_pts_enable_voice_recognition(NULL, NULL);
+
 			break;
 			
 		case APP_KEY_EVENT_LONGLONGPRESS:
 #ifdef SUPPORT_SIRI
-			open_siri_flag=0;//add by cai for longpress to trigger VA only
+			//open_siri_flag=0;//add by cai for longpress to trigger VA only
 #endif
 
 			bt_key_handle_siri_key(APP_KEY_EVENT_LONGLONGPRESS);
 			break;
-		
+
+		case APP_KEY_EVENT_TRIPLECLICK:
+			Hfp_pts_disable_voice_recognition(NULL, NULL);
+			break;
 		default:
 			TRACE(1,"unregister down key event=%x",event);
 			break;
