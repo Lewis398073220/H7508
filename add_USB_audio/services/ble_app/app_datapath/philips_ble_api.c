@@ -990,7 +990,7 @@ void Get_Chipset_Solution(void)
 
 void Get_Chipset_Version(void)
 {
-	unsigned char Version[] = "V0.1.9";
+	unsigned char Version[] = "V0.2.0";
 	uint8_t FW_Version[10]= {0};
     uint8_t i =0;
     uint8_t head[7] = {0xff,0x01,0x00,0x04,0x71,0x80,0x12};
@@ -3446,7 +3446,7 @@ void Notification_Playback_Status_Change(uint8_t playstatus)
 
 void Notification_Media_Info_Change(uint8_t media_info)
 {
-	TRACE(1,"********%s!: \r\n", __func__);
+	TRACE(2,"********%s!: %d\r\n", __func__, media_info);
 
     uint8_t valueLen = 9;
     uint8_t valuePtr[18] = {0};
@@ -3492,7 +3492,7 @@ void NowPlaying2_Notification_Media_Title_Artist_Album(uint8_t type,char* media_
 	for (i = 7 ; i < (7 + valueLen) ; i++){
 		Title_Artist_Album[i] = (uint8_t)media_buffer[i - 7];
 	}    
-	TRACE(3,"********%s: valueLen=%d %s\r\n", __func__, valueLen, &Title_Artist_Album[7]);
+	TRACE(2,"********%s: valueLen=%d\r\n", __func__, valueLen);
 	
 	//Do checksum
 	Title_Artist_Album[commandsize - 1]=Do_CheckSum(Title_Artist_Album, commandsize);

@@ -68,6 +68,7 @@ extern u8 title[150], title_len;
 extern u8 artist[150], artist_len;
 extern u8 album[150], album_len;
 u8 get_song_total_time = 0;  //Philips BLE
+u8 title_change_flag = 0;//add by cai
 u8 time_buf[10] = {0};
 #endif
 /** end add **/
@@ -1201,7 +1202,7 @@ extern "C" void avrcp_callback_CT(btif_avrcp_chnl_handle_t chnl, const avrcp_cal
                 {
                     if(btif_get_avrcp_adv_rsp(parms)->element.txt[i].length>0)
                     {
-                        //TRACE(2,"Philips Id=%d,%s\n",i,btif_get_avrcp_adv_rsp(parms)->element.txt[i].string);
+                        TRACE(2,"********Philips Id=%d,%s\n",i,btif_get_avrcp_adv_rsp(parms)->element.txt[i].string);
 /** add by pang  for Philips BLE - start  **/
 #if defined(BLE_ENABLE)
 						 if (i == 0){  //Title
@@ -1210,7 +1211,10 @@ extern "C" void avrcp_callback_CT(btif_avrcp_chnl_handle_t chnl, const avrcp_cal
 									title_len = btif_get_avrcp_adv_rsp(parms)->element.txt[i].length;
 									memcpy(title, btif_get_avrcp_adv_rsp(parms)->element.txt[i].string, title_len);
 									get_song_total_time = 1;
-									Notification_Media_Info_Change(0x01);//add by cai
+									//add by cai
+									title_change_flag = 1;
+									Notification_Media_Info_Change(0x01);
+									//end add
 									osDelay(20);//50 m by pang
 								}	 	
 						    }	 				 
@@ -1219,6 +1223,7 @@ extern "C" void avrcp_callback_CT(btif_avrcp_chnl_handle_t chnl, const avrcp_cal
 								if(memcmp(artist, btif_get_avrcp_adv_rsp(parms)->element.txt[i].string, btif_get_avrcp_adv_rsp(parms)->element.txt[i].length) != 0){			     
 									artist_len = btif_get_avrcp_adv_rsp(parms)->element.txt[i].length;
 									memcpy(artist, btif_get_avrcp_adv_rsp(parms)->element.txt[i].string, artist_len);			
+									title_change_flag = 2;//add by cai
 									osDelay(20);//50 m by pang	
 								}	 	
 						    }					  
@@ -1227,6 +1232,7 @@ extern "C" void avrcp_callback_CT(btif_avrcp_chnl_handle_t chnl, const avrcp_cal
 								if(memcmp(album, btif_get_avrcp_adv_rsp(parms)->element.txt[i].string, btif_get_avrcp_adv_rsp(parms)->element.txt[i].length) != 0){		
 									album_len = btif_get_avrcp_adv_rsp(parms)->element.txt[i].length;
 									memcpy(album, btif_get_avrcp_adv_rsp(parms)->element.txt[i].string, album_len);
+									title_change_flag = 3;//add by cai
 									osDelay(20);//50 m by pang
 								}	 	
 						    }	
@@ -1241,7 +1247,10 @@ extern "C" void avrcp_callback_CT(btif_avrcp_chnl_handle_t chnl, const avrcp_cal
 								    memcpy(time_buf, btif_get_avrcp_adv_rsp(parms)->element.txt[i].string , len);
 									//Send notify to update UI 
 									//Notification_Media_Change();//m by cai
+								}
+								if(title_change_flag == 2 || title_change_flag == 3) {
 									Notification_Media_Info_Change(0x00);//add by cai
+									title_change_flag = 0;
 								}
 							}
 						 }
