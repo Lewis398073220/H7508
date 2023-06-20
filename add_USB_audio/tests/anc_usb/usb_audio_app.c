@@ -3353,6 +3353,8 @@ static int usb_audio_stop_usb_stream(enum AUD_STREAM_T stream)
 
 static void usb_audio_set_codec_volume(enum AUD_STREAM_T stream, uint8_t vol)
 {
+	TRACE(3,"%s: stream=%d, vol=%d", __FUNCTION__, stream,vol);
+
     struct AF_STREAM_CONFIG_T *cfg;
     uint8_t POSSIBLY_UNUSED old_vol;
     uint32_t ret;
@@ -4572,6 +4574,8 @@ static void usb_audio_reset_usb_stream_state(bool init)
 
 static void usb_audio_reset_codec_stream_state(bool init)
 {
+	TRACE(2,"********[%s]playback_vol = %d", __func__, playback_vol);
+
     playback_state = AUDIO_ITF_STATE_STOPPED;
     capture_state = AUDIO_ITF_STATE_STOPPED;
 
