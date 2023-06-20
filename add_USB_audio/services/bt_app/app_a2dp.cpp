@@ -1081,7 +1081,7 @@ extern "C" void avrcp_callback_CT(btif_avrcp_chnl_handle_t chnl, const avrcp_cal
 						/**  add by pang   **/
 						#if defined(BLE_ENABLE)
 						//Notification_Media_Change();//m by cai
-						Notification_Media_Info_Change(0x00);//add by cai
+						//Notification_Media_Info_Change(0x00);//add by cai
 						#endif
 						/** end add **/
 #if defined(__BT_ONE_BRING_TWO__)

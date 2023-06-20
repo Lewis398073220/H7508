@@ -3421,7 +3421,7 @@ void Set_Nowplaying2_Playback_Previous(void)
 
 void Notification_Playback_Status_Change(uint8_t playstatus)
 {
-	TRACE(0,"********Philips : Notification_Playback_Status_Change!\r\n");
+	TRACE(1,"********Philips: Notification_Playback_Status_Change: %d\r\n", playstatus);
 
     uint8_t valueLen = 9;
     uint8_t valuePtr[18] = {0};
