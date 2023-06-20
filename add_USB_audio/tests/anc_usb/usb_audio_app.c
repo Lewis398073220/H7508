@@ -196,8 +196,8 @@ extern const IIR_CFG_T * const audio_eq_hw_iir_cfg_list[];
 
 #define MAX_TARGET_RATIO                0.000020f
 
-#define MIN_VOLUME_VAL                  (TGT_VOLUME_LEVEL_MUTE)
-#define MAX_VOLUME_VAL                  (TGT_VOLUME_LEVEL_QTY - 1)
+#define MIN_VOLUME_VAL                  (TGT_VOLUME_LEVEL_MUTE + 17)//m by cai for volume indepent
+#define MAX_VOLUME_VAL                  (TGT_VOLUME_LEVEL_QTY - 1 + 17)//m by cai for volume indepent
 
 #define MIN_CAP_VOLUME_VAL              (TGT_ADC_VOL_LEVEL_0)
 #define MAX_CAP_VOLUME_VAL              (TGT_ADC_VOL_LEVEL_QTY - 1)
@@ -3627,7 +3627,7 @@ static void usb_audio_vol_control(uint32_t percent)
     TRACE(2,"VOL CTRL: percent=%u new_playback_vol=%u", percent, new_playback_vol);
 
 #ifdef USB_AUDIO_MULTIFUNC
-    new_playback_coef = playback_gain_to_float(new_playback_vol+17);//m by cai for Volume independent
+    new_playback_coef = playback_gain_to_float(new_playback_vol);//m by cai for Volume independent
 #else
     usb_audio_enqueue_cmd(AUDIO_CMD_SET_VOLUME);
 #endif
@@ -4517,7 +4517,7 @@ static void usb_audio_reset_usb_stream_state(bool init)
         new_mute_state = 0;
         new_cap_mute_state = 0;
 
-        new_playback_vol = AUDIO_OUTPUT_VOLUME_DEFAULT;
+        new_playback_vol = AUDIO_OUTPUT_VOLUME_DEFAULT + 17;//m by cai for volume indepent
         if (new_playback_vol > MAX_VOLUME_VAL) {
             new_playback_vol = MAX_VOLUME_VAL;
         } else if (new_playback_vol < MIN_VOLUME_VAL) {
@@ -5604,7 +5604,7 @@ static void usb_audio_cmd_set_volume(void)
     playback_vol = new_playback_vol;
 #endif
 
-    usb_audio_set_codec_volume(AUD_STREAM_PLAYBACK, playback_vol+17);//m by cai for Volume independent
+    usb_audio_set_codec_volume(AUD_STREAM_PLAYBACK, playback_vol);//m by cai for Volume independent
 
 #ifdef UNMUTE_WHEN_SET_VOL
     // Unmute if muted before
@@ -5618,7 +5618,7 @@ static void usb_audio_cmd_set_volume(void)
 void usb_audio_set_volume_for_quick_awareness(uint8_t quick_awareness_on, uint8_t vol)
 {
 	if(quick_awareness_on){
-		usb_audio_set_codec_volume(AUD_STREAM_PLAYBACK, vol+17);//m by cai for Volume independent
+		usb_audio_set_codec_volume(AUD_STREAM_PLAYBACK, vol);//m by cai for Volume independent
 	
 #ifdef UNMUTE_WHEN_SET_VOL
 		// Unmute if muted before

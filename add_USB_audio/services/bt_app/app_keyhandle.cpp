@@ -201,7 +201,7 @@ static void quick_awareness_swtimer_handler(void const *param)
 {
 #ifdef BT_USB_AUDIO_DUAL_MODE
 	if(hal_usb_configured()) {
-		usb_audio_set_volume_for_quick_awareness(false, 3);
+		usb_audio_set_volume_for_quick_awareness(false, 3 + 17);//m by cai for volume indepent
 		app_monitor_moment(false);
 	} else{
 		HFCALL_MACHINE_ENUM hfcall_machine = app_get_hfcall_machine();
@@ -1659,7 +1659,7 @@ void app_usb_key_pro(APP_KEY_STATUS *status, void *param)//add by cai
 			switch(status->event)
 			{
 				case APP_KEY_EVENT_LONGLONGPRESS:
-					usb_audio_set_volume_for_quick_awareness(true, 3);
+					usb_audio_set_volume_for_quick_awareness(true, 3 + 17);//m by cai for volume indepent
 					app_monitor_moment(true);
 					app_quick_awareness_swtimer_start();//add by cai for exit quick Awareness after 15s	
 				break;
@@ -1667,7 +1667,7 @@ void app_usb_key_pro(APP_KEY_STATUS *status, void *param)//add by cai
 				case  APP_KEY_EVENT_UP_AFTER_LONGPRESS:
 					app_quick_awareness_swtimer_stop();//add by cai for exit quick Awareness after 15s
 					app_monitor_moment(false);
-					usb_audio_set_volume_for_quick_awareness(false, 3);
+					usb_audio_set_volume_for_quick_awareness(false, 3 + 17);//m by cai for volume indepent
 				break;
 				
 				default:
