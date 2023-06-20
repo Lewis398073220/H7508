@@ -258,6 +258,7 @@ void anc_usb_open(void)
     hal_sysfreq_req(HAL_SYSFREQ_USER_INIT, HAL_CMU_FREQ_32K);
 
     while (1) {
+		TRACE(0,"*********%s", __func__);
 #ifdef USB_AUDIO_APP
         usb_audio_app_loop();
 #endif

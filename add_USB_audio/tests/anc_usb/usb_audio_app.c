@@ -36,6 +36,9 @@
 #include "resample_coef.h"
 #include "app_utils.h"
 #include "audio_prompt_sbc.h"
+#include "../../apps/anc/inc/app_anc.h"//add by cai
+#include "../../apps/userapps/app_user.h"//add by cai
+
 
 #ifdef _VENDOR_MSG_SUPPT_
 #include "usb_vendor_msg.h"
@@ -1076,14 +1079,18 @@ uint8_t usb_audio_get_eq_index(AUDIO_EQ_TYPE_T audio_eq_type,uint8_t anc_status)
 #if defined(__SW_IIR_EQ_PROCESS__)
         case AUDIO_EQ_TYPE_SW_IIR:
         {
-            if(anc_status)
-            {
-                index_eq=audio_eq_sw_iir_index+1;
-            }
-            else
-            {
-                index_eq=audio_eq_sw_iir_index;
-            }
+#if 0
+			if(anc_status)
+			{
+				index_eq=audio_eq_sw_iir_index+1;
+			}
+			else
+			{
+				index_eq=audio_eq_sw_iir_index;
+			}
+#else //modify by pang
+			index_eq=audio_eq_sw_iir_index+anc_status;
+#endif
 
         }
         break;
@@ -1168,13 +1175,26 @@ uint32_t usb_audio_set_eq(AUDIO_EQ_TYPE_T audio_eq_type,uint8_t index)
 #if defined(__SW_IIR_EQ_PROCESS__)
         case AUDIO_EQ_TYPE_SW_IIR:
         {
+#if 0
             if(index >= EQ_SW_IIR_LIST_NUM)
             {
-                TRACE(2,"[%s] index[%d] > EQ_SW_IIR_LIST_NUM", __func__, index);
+                TRACE(2,"[%s] index %u > EQ_SW_IIR_LIST_NUM", __func__, index);
                 return 1;
             }
 
             iir_cfg=audio_eq_sw_iir_cfg_list[index];
+#else //m by pang
+			uint8_t eq_index=0;
+		    eq_index=app_eq_index_get();	
+			if(eq_index < 5){
+				iir_cfg=audio_eq_sw_iir_cfg_list[index+eq_index*3];	
+			}
+			else if(eq_index == 0x3f){//m by cai to 0x3f
+				iir_cfg= &eq_custom_para;
+			}
+			else
+				return 1;	
+#endif
         }
         break;
 #endif
@@ -3089,7 +3109,7 @@ static int usb_audio_open_eq(void)
     //TRACE(1,"audio_process_open: %d", ret);
 
 #ifdef __SW_IIR_EQ_PROCESS__
-    usb_audio_set_eq(AUDIO_EQ_TYPE_SW_IIR,usb_audio_get_eq_index(AUDIO_EQ_TYPE_SW_IIR,0));
+    usb_audio_set_eq(AUDIO_EQ_TYPE_SW_IIR,usb_audio_get_eq_index(AUDIO_EQ_TYPE_SW_IIR,app_get_anc_mode()));//m by cai
 #endif
 
 #ifdef __HW_FIR_EQ_PROCESS__
@@ -6363,12 +6383,17 @@ void usb_audio_eq_loop(void)
 {
 #ifdef ANC_APP
     anc_status = anc_usb_app_get_status();
-    if(anc_status_record != anc_status&&eq_opened == 1)
+    //anc_status = app_get_anc_mode();//m by cai
+	static uint8_t ANC_status = 0xff;//add by cai
+	ANC_status = app_get_anc_mode();//add by cai
+	TRACE(4,"*********%s: ANC_status=%d, anc_status_record=%d, eq_opened=%d", __func__, ANC_status, anc_status_record,eq_opened);
+	
+    if(anc_status_record != ANC_status&&eq_opened == 1)
     {
-        anc_status_record = anc_status;
-        TRACE(2,"[%s]anc_status = %d", __func__, anc_status);
+        anc_status_record = ANC_status;
+        TRACE(2,"[%s]anc_status = %d", __func__, ANC_status);
 #ifdef __SW_IIR_EQ_PROCESS__
-        usb_audio_set_eq(AUDIO_EQ_TYPE_SW_IIR,usb_audio_get_eq_index(AUDIO_EQ_TYPE_SW_IIR,anc_status));
+        usb_audio_set_eq(AUDIO_EQ_TYPE_SW_IIR,usb_audio_get_eq_index(AUDIO_EQ_TYPE_SW_IIR,app_get_anc_mode()));
 #endif
 
 #ifdef __HW_FIR_EQ_PROCESS__
@@ -6388,6 +6413,7 @@ void usb_audio_eq_loop(void)
 
 void usb_audio_app_loop(void)
 {
+	TRACE(0,"*********%s", __func__);
     usb_audio_cmd_handler(NULL);
 
     usb_audio_eq_loop();

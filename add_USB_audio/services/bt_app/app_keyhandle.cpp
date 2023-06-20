@@ -1678,6 +1678,7 @@ void app_usb_key_pro(APP_KEY_STATUS *status, void *param)//add by cai
 
 		case BTAPP_ANC_KEY:
 			app_anc_Key_Pro();
+			usb_audio_eq_loop();//add by cai
 		break;
 		
 		default:

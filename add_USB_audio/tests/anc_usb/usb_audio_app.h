@@ -61,6 +61,7 @@ void usb_audio_set_enqueue_cmd_callback(USB_AUDIO_ENQUEUE_CMD_CALLBACK cb);
 
 void usb_audio_start_audio_prompt(uint16_t prompt_id);
 void usb_audio_set_volume_for_quick_awareness(uint8_t quick_awareness_on, uint8_t vol);//add by cai
+void usb_audio_eq_loop(void);
 
 #ifdef __cplusplus
 }

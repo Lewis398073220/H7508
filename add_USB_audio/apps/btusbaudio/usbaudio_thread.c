@@ -99,6 +99,7 @@ static void usb_thread(void const *argument)
             USBAUDIO_DEBUG(1,"usb_thread: id = 0x%x, ptr = 0x%x,param0 = 0x%x,param1 = 0x%x.",
                 msg_p->id,msg_p->ptr,msg_p->param0,msg_p->param1);
             usb_mailbox_free(msg_p);
+			TRACE(0,"*********%s", __func__);
             usb_audio_app_loop();
 
 		}
