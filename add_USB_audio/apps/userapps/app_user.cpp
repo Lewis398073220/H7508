@@ -1088,6 +1088,11 @@ uint8_t app_eq_index_get(void)
 	return (eq_set_index);
 }
 
+void app_eq_index_set_nosave(uint8_t eq_index)
+{   
+	eq_set_index = eq_index;
+}
+
 void app_nvrecord_eq_set(uint8_t eq_index)
 {
     eq_set_index=eq_index;

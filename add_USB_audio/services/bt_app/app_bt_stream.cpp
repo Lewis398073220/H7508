@@ -1539,6 +1539,7 @@ uint8_t bt_audio_updata_eq_for_anc(uint8_t anc_status)
 /** add by pang **/
 void change_eq_from_ble_api(uint8_t index)
 {   
+	app_eq_index_set_nosave(index);//add by cai
 #ifdef __SW_IIR_EQ_PROCESS__
  	bt_audio_set_eq(AUDIO_EQ_TYPE_SW_IIR, app_get_anc_mode());
 #endif  	

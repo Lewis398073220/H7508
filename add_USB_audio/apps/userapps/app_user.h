@@ -127,6 +127,7 @@ void apps_audio_fadein_event_process(void);
 
 #if defined(__EVRCORD_USER_DEFINE__)
 uint8_t app_eq_index_get(void);
+void app_eq_index_set_nosave(uint8_t eq_index);
 void app_nvrecord_eq_set(uint8_t eq_index);
 //void app_eq_para_get(uint8_t *p);
 void app_eq_custom_para_get(uint8_t customization_eq_value[6]);
