@@ -4517,7 +4517,8 @@ static void usb_audio_reset_usb_stream_state(bool init)
         new_mute_state = 0;
         new_cap_mute_state = 0;
 
-        new_playback_vol = AUDIO_OUTPUT_VOLUME_DEFAULT + 17;//m by cai for volume indepent
+        //new_playback_vol = AUDIO_OUTPUT_VOLUME_DEFAULT + 17;//m by cai for volume indepent
+        new_playback_vol = 17 + 17;//m by cai for volume indepent
         if (new_playback_vol > MAX_VOLUME_VAL) {
             new_playback_vol = MAX_VOLUME_VAL;
         } else if (new_playback_vol < MIN_VOLUME_VAL) {
