@@ -101,7 +101,9 @@ uint32_t hal_codec_get_all_input_path_cfg(void)
 }
 const struct CODEC_DAC_VOL_T *hal_codec_get_dac_volume(uint32_t index)
 {
-    uint32_t _array_sizeof_vol = ARRAY_SIZE(codec_dac_vol);
+    uint32_t _array_sizeof_vol = 35;//ARRAY_SIZE(codec_dac_vol);//m by pang for volume independent
+    TRACE(2,"***%s: index=%d", __func__, index);//add by pang
+    
     if (index < _array_sizeof_vol) {
         return &codec_dac_vol[index];
     } else {

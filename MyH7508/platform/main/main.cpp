@@ -140,6 +140,37 @@ int tgt_hardware_setup(void)
         hal_iomux_init((struct HAL_IOMUX_PIN_FUNCTION_MAP *)&app_battery_ext_charger_indicator_cfg, 1);
         hal_gpio_pin_set_dir((enum HAL_GPIO_PIN_T)app_battery_ext_charger_indicator_cfg.pin, HAL_GPIO_DIR_IN, 1);
     }
+
+/** add by pang **/
+#if defined(__CHARGE_CURRRENT__)
+	if (cfg_charge_current_control.pin != HAL_IOMUX_PIN_NUM){
+		hal_iomux_init((struct HAL_IOMUX_PIN_FUNCTION_MAP *)&cfg_charge_current_control, 1);
+		hal_gpio_pin_set_dir((enum HAL_GPIO_PIN_T)cfg_charge_current_control.pin, HAL_GPIO_DIR_OUT, 0);//add by cai
+	}
+#endif
+
+#if defined(__LDO_3V3_CTR__) 
+		if (cfg_hw_ldo_3_3v_control.pin != HAL_IOMUX_PIN_NUM){
+			hal_iomux_init((struct HAL_IOMUX_PIN_FUNCTION_MAP *)&cfg_hw_ldo_3_3v_control, 1);
+			hal_gpio_pin_set_dir((enum HAL_GPIO_PIN_T)cfg_hw_ldo_3_3v_control.pin, HAL_GPIO_DIR_OUT, 1);
+		}
+#endif
+
+#if defined(__USE_3_5JACK_CTR__)
+	if (cfg_hw_pio_3p5_jack_detecter.pin != HAL_IOMUX_PIN_NUM){
+		hal_iomux_init((struct HAL_IOMUX_PIN_FUNCTION_MAP *)&cfg_hw_pio_3p5_jack_detecter, 1);
+		hal_gpio_pin_set_dir((enum HAL_GPIO_PIN_T)cfg_hw_pio_3p5_jack_detecter.pin, HAL_GPIO_DIR_IN, 0);
+	}
+#endif
+
+#if defined(__NTC_DETECT__)
+	if (Cfg_ntc_volt_ctr.pin != HAL_IOMUX_PIN_NUM){
+		hal_iomux_init((struct HAL_IOMUX_PIN_FUNCTION_MAP *)&Cfg_ntc_volt_ctr, 1);
+		hal_gpio_pin_set_dir((enum HAL_GPIO_PIN_T)Cfg_ntc_volt_ctr.pin, HAL_GPIO_DIR_OUT, 0);
+	}
+#endif
+/** end add **/
+
     return 0;
 }
 

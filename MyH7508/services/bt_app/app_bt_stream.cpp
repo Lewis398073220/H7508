@@ -5675,7 +5675,7 @@ int bt_sco_player(bool on, enum APP_SYSFREQ_FREQ_T freq)
 #if defined(SCO_CP_ACCEL)
         freq = APP_SYSFREQ_52M;
 #endif
-
+		freq = APP_SYSFREQ_208M;//add by pang for call voice distortion
         app_sysfreq_req(APP_SYSFREQ_USER_BT_SCO, freq);
         TRACE(1,"bt_sco_player: app_sysfreq_req %d", freq);
         TRACE(1,"sys freq calc : %d\n", hal_sys_timer_calc_cpu_freq(5, 0));
@@ -6930,7 +6930,7 @@ void app_bt_stream_volumeup(void)
             current_btdevice_volume.a2dp_vol=updatedVol;
             if (updatedVol < TGT_VOLUME_LEVEL_15)
             {
-                app_bt_stream_volumeset(updatedVol);
+                app_bt_stream_volumeset(updatedVol+17);//m by pang for volume independent
             }
             if (btdevice_volume_p->a2dp_vol == TGT_VOLUME_LEVEL_15)
             {
@@ -7039,7 +7039,7 @@ void app_bt_stream_volumedown(void)
             btdevice_volume_p->a2dp_vol = updatedVol;
             nv_record_post_write_operation(lock);
             current_btdevice_volume.a2dp_vol=updatedVol;
-            app_bt_stream_volumeset(updatedVol);
+            app_bt_stream_volumeset(updatedVol+17);//m by pang for volume independent
             if (btdevice_volume_p->a2dp_vol == TGT_VOLUME_LEVEL_MUTE)
             {
 #ifdef MEDIA_PLAYER_SUPPORT
@@ -7078,12 +7078,22 @@ int app_bt_stream_volumeset(int8_t vol)
 {
     TRACE(1,"app_bt_stream_volumeset vol=%d", vol);
 
-    if (vol > TGT_VOLUME_LEVEL_15)
-        vol = TGT_VOLUME_LEVEL_15;
-    if (vol < TGT_VOLUME_LEVEL_MUTE)
-        vol = TGT_VOLUME_LEVEL_MUTE;
+#if 0
+	if (vol > TGT_VOLUME_LEVEL_15)
+		vol = TGT_VOLUME_LEVEL_15;
+	if (vol < TGT_VOLUME_LEVEL_MUTE)
+		vol = TGT_VOLUME_LEVEL_MUTE;
 
-    stream_local_volume = vol;
+	stream_local_volume = vol;
+#else //m by pang for volume independent
+	if(vol > 17)
+		stream_local_volume = vol-17;
+	else if(vol < TGT_VOLUME_LEVEL_MUTE)
+		stream_local_volume = TGT_VOLUME_LEVEL_MUTE;
+	else
+		stream_local_volume = vol;
+#endif
+
 #ifdef MIX_AUDIO_PROMPT_WITH_A2DP_MEDIA_ENABLED
     if ((!app_bt_stream_isrun(APP_PLAY_BACK_AUDIO)) &&
         (audio_prompt_is_allow_update_volume()))
