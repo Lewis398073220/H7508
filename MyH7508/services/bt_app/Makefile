@@ -104,7 +104,9 @@ ccflags-y += \
 	-Iservices/bt_app/a2dp_codecs/include \
 	-Ithirdparty/tile/tile_target \
 	-Iservices/osif \
-    -Iservices/app_tws/inc
+    -Iservices/app_tws/inc \
+	-Iapps/userapps \
+	-Iservices/ble_app/app_datapath
 
 ifeq ($(GATT_OVER_BR_EDR),1)
 ccflags-y += -Iservices/ble_stack/hl/src/l2c/l2cm

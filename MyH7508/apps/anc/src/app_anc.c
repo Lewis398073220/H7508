@@ -31,6 +31,13 @@
 #include "app_anc.h"
 #include "anc_wnr.h"
 
+/** add by pang **/
+#include "philips_ble_api.h"
+#include "apps.h"
+#if (defined(__PWM_LED_CTL__)||defined(__EVRCORD_USER_DEFINE__))
+#include "app_user.h"
+#endif
+/** end add **/
 #include "app_status_ind.h"
 #ifdef __SIMPLE_INTERNAL_PLAYER_SUPPORT__
 #include "simple_internal_player.h"
@@ -165,6 +172,137 @@ bool anc_set_dac_pa_delay = false;
 static enum ANC_INDEX anc_coef_idx = 0;
 
 extern void analog_aud_enable_dac_pa(uint8_t dac);
+/** add by pang **/
+#include "app_bt_stream.h"
+enum
+{
+	anc_high = 0,
+	anc_low,
+	anc_wind,
+};
+enum
+{
+	monitor1 = 3,
+	monitor2,
+	monitor3,
+	monitor4,
+	monitor5,
+	clearvoice1,
+	clearvoice2,
+	clearvoice3,
+	clearvoice4,
+	clearvoice5,
+};
+enum//add by cai
+{
+	AncOn_AncOff_Awareness = 0x00,
+	AncOn_Awareness,
+	AncOn_AncOff,
+	Awareness_AncOff,
+};
+static uint8_t anc_current_mode=anc_on;
+static uint8_t anc_on_mode=anc_high;//add by pang
+static uint8_t monitor_mode=monitor1;//add by pang
+static uint8_t anc_toggle_method=AncOn_AncOff_Awareness;
+uint8_t app_get_anc_mode(void)
+{
+	return (anc_current_mode);
+}
+void poweron_set_anc(void)
+{
+	uint8_t anc_mode_poweron;
+	anc_mode_poweron=app_nvrecord_anc_get();
+	if(anc_mode_poweron==0){
+		anc_current_mode=anc_off;
+		anc_on_mode=anc_high;
+	}
+	else if(anc_mode_poweron==1){
+		anc_current_mode=anc_on;
+		anc_on_mode=anc_high;
+	}
+	else if(anc_mode_poweron==2){
+		anc_current_mode=anc_on;
+		anc_on_mode=anc_low;
+	}
+	else if(anc_mode_poweron==3){
+		anc_current_mode=anc_on;
+		anc_on_mode=anc_wind;
+	}
+	else if(anc_mode_poweron==4){
+		anc_current_mode=monitor;
+		anc_on_mode=anc_high;
+	}
+	app_set_monitor_mode(app_get_monitor_level());
+	set_anc_mode(anc_current_mode);	
+}
+uint8_t app_get_anc_on_mode(void)
+{
+	return (anc_on_mode);
+}
+void app_set_anc_on_mode(uint8_t anc_on_new_mode)
+{
+    if(anc_on_new_mode==ANC_HIGH)
+	   anc_on_mode=anc_high;
+	else if(anc_on_new_mode==ANC_LOW)
+	   anc_on_mode=anc_low;
+	else //if(anc_on_new_mode==3)
+	   anc_on_mode=anc_wind;
+}
+uint8_t app_get_monitor_mode(void)
+{
+	return (monitor_mode);
+}
+void app_set_monitor_mode(uint8_t monitor_new_level)
+{
+   if(monitor_new_level<=4)
+		monitor_mode=monitor1;
+	else if(monitor_new_level<=8)
+		monitor_mode=monitor2;
+	else if(monitor_new_level<=12)
+		monitor_mode=monitor3;
+	else if(monitor_new_level<=16)
+		monitor_mode=monitor4;
+	else
+		monitor_mode=monitor5;
+    if(app_get_focus()){
+		monitor_mode+=5;
+    }
+}
+void app_set_clearvoice_mode(uint8_t clear_mode)
+{
+   if(clear_mode){
+   	 if(monitor_mode>clearvoice1)
+		monitor_mode+=5;
+   }
+   else{
+		if(monitor_mode>monitor5)
+			monitor_mode-=5;
+   }
+}
+uint8_t api_get_anc_mode(void)
+{
+    uint8_t ancmode=0;
+	if(anc_current_mode==anc_off){
+		ancmode=NC_OFF;
+	}
+	else if(anc_current_mode==anc_on){
+		if(anc_on_mode==anc_high)
+		  ancmode=ANC_HIGH;
+		else if(anc_on_mode==anc_low)
+		  ancmode=ANC_LOW;
+		else //(anc_on_mode==anc_wind)
+		  ancmode=ANC_WIND;
+	}
+	else{
+		ancmode=MONITOR_ON;
+	}
+	return (ancmode);
+}
+uint8_t app_get_anc_toggle_method(void)
+{
+	anc_toggle_method = app_nvrecord_anc_toggle_mode_get();
+	return (anc_toggle_method);
+}
 
 bool app_anc_is_on(void)
 {

@@ -23,6 +23,33 @@
 extern "C" {
 #endif
 
+enum
+{
+	NC_OFF = 0,
+	ANC_HIGH,
+	ANC_LOW,
+	ANC_ADAPTIVE,
+	ANC_WIND,
+	MONITOR_ON,
+	NC_INVALID
+};
+enum
+{
+	anc_off = 0,
+	anc_on,
+	monitor,
+};
+uint8_t app_get_anc_mode(void);
+uint8_t app_get_anc_on_mode(void);
+void app_set_anc_on_mode(uint8_t anc_on_new_mode);
+uint8_t app_get_monitor_mode(void);
+void app_set_monitor_mode(uint8_t monitor_new_level);
+void app_set_clearvoice_mode(uint8_t clear_mode);
+void set_anc_mode(uint8_t anc_new_mode);
+void app_monitor_moment(bool on);
+void app_anc_power_off(void);
+void poweron_set_anc(void);
+uint8_t api_get_anc_mode(void);
 void app_anc_set_coef(uint8_t index);
 uint8_t app_anc_get_coef(void);
 void app_anc_set_playback_samplerate(enum AUD_SAMPRATE_T sample_rate);

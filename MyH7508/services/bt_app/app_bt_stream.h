@@ -234,6 +234,9 @@ int app_bt_stream_local_volume_get(void);
 
 bool bt_is_playback_triggered(void);
 
+void app_gaming_mode(uint8_t game_on);//add by pang
+uint8_t get_app_gaming_mode(void);
+void change_eq_from_ble_api(uint8_t index);
 #ifdef __cplusplus
 }
 #endif

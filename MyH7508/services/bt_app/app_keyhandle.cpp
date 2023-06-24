@@ -1348,9 +1348,13 @@ void bt_key_handle_up_key(enum APP_KEY_EVENT_T event)
         case  APP_KEY_EVENT_CLICK:
             app_bt_volumeup();
             break;
-        case  APP_KEY_EVENT_LONGPRESS:
-            a2dp_handleKey(AVRCP_KEY_FORWARD);
+		
+        case  APP_KEY_EVENT_LONGLONGPRESS:
+		case  APP_KEY_EVENT_REPEAT://add by pang
+            //a2dp_handleKey(AVRCP_KEY_FORWARD);
+            app_bt_volumedown();//c by pang
             break;
+		
 #if defined(APP_LINEIN_A2DP_SOURCE)||defined(APP_I2S_A2DP_SOURCE)
 		case  APP_KEY_EVENT_DOUBLECLICK:
 			//debug switch src mode
