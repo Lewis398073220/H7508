@@ -24,6 +24,8 @@
 #include "app_ble_custom_cmd.h"
 #include "rwapp_config.h"
 
+#include "philips_ble_api.h"  //add by pang
+
 
 #ifdef BTIF_BLE_APP_DATAPATH_SERVER
 
@@ -353,6 +355,18 @@ BLE_CUSTOM_CMD_RET_STATUS_E BLE_custom_command_receive_data(uint8_t* ptrData, ui
 {
 	TRACE(1,"Receive length %d data: ", dataLength);
 	DUMP8("0x%02x ", ptrData, dataLength);
+
+/** add by pang **/
+	//Philips BLE API -start
+    if ((ptrData[0] == (uint8_t) 0xff) &&(ptrData[1] ==  (uint8_t)0x01))
+		Philips_Api_protocol_port(1);
+
+	if (Philips_Headphone_Api_Entry(ptrData, dataLength)){		
+	   return NO_ERROR;	
+	}
+	//Philips BLE API -end
+/** end add **/
+	
 	BLE_CUSTOM_CMD_PAYLOAD_T* pPayload = (BLE_CUSTOM_CMD_PAYLOAD_T *)ptrData;
 	
 	if ((OP_START_RAW_DATA_XFER == pPayload->cmdCode) || 
