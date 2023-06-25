@@ -6930,7 +6930,7 @@ void app_bt_stream_volumeup(void)
             current_btdevice_volume.a2dp_vol=updatedVol;
             if (updatedVol < TGT_VOLUME_LEVEL_15)
             {
-                app_bt_stream_volumeset(updatedVol);
+                app_bt_stream_volumeset(updatedVol+17);//m by pang for volume independent
             }
             if (btdevice_volume_p->a2dp_vol == TGT_VOLUME_LEVEL_15)
             {
@@ -7008,10 +7008,13 @@ void app_bt_stream_volumedown(void)
             TRACE(1,"%s set hfp volume", __func__);
 
             int8_t updatedVol = btdevice_volume_p->hfp_vol;
-            updatedVol--;
-            if (updatedVol < TGT_VOLUME_LEVEL_MUTE)
+            //updatedVol--;
+			updatedVol -= 2;//c by pang
+            //if (updatedVol < TGT_VOLUME_LEVEL_MUTE)
+			if (updatedVol < TGT_VOLUME_LEVEL_0)
             {
-                updatedVol = TGT_VOLUME_LEVEL_MUTE;
+                //updatedVol = TGT_VOLUME_LEVEL_MUTE;
+				updatedVol = TGT_VOLUME_LEVEL_0;
             }
 
             uint32_t lock = nv_record_pre_write_operation();
@@ -7029,7 +7032,8 @@ void app_bt_stream_volumedown(void)
             (app_bt_stream_isrun(APP_BT_STREAM_A2DP_SBC))) {
             TRACE(1,"%s set a2dp volume", __func__);
             int8_t updatedVol = btdevice_volume_p->a2dp_vol;
-            updatedVol--;
+            //updatedVol--;
+			updatedVol -= 2;//m by pang
             if (updatedVol < TGT_VOLUME_LEVEL_MUTE)
             {
                 updatedVol = TGT_VOLUME_LEVEL_MUTE;
@@ -7039,7 +7043,7 @@ void app_bt_stream_volumedown(void)
             btdevice_volume_p->a2dp_vol = updatedVol;
             nv_record_post_write_operation(lock);
             current_btdevice_volume.a2dp_vol=updatedVol;
-            app_bt_stream_volumeset(updatedVol);
+            app_bt_stream_volumeset(updatedVol+17);//m by pang for volume independent
             if (btdevice_volume_p->a2dp_vol == TGT_VOLUME_LEVEL_MUTE)
             {
 #ifdef MEDIA_PLAYER_SUPPORT
@@ -7078,12 +7082,22 @@ int app_bt_stream_volumeset(int8_t vol)
 {
     TRACE(1,"app_bt_stream_volumeset vol=%d", vol);
 
-    if (vol > TGT_VOLUME_LEVEL_15)
-        vol = TGT_VOLUME_LEVEL_15;
-    if (vol < TGT_VOLUME_LEVEL_MUTE)
-        vol = TGT_VOLUME_LEVEL_MUTE;
+#if 0
+	if (vol > TGT_VOLUME_LEVEL_15)
+		vol = TGT_VOLUME_LEVEL_15;
+	if (vol < TGT_VOLUME_LEVEL_MUTE)
+		vol = TGT_VOLUME_LEVEL_MUTE;
 
-    stream_local_volume = vol;
+	stream_local_volume = vol;
+#else //m by pang for volume independent
+	if(vol > 17)
+		stream_local_volume = vol-17;
+	else if(vol < TGT_VOLUME_LEVEL_MUTE)
+		stream_local_volume = TGT_VOLUME_LEVEL_MUTE;
+	else
+		stream_local_volume = vol;
+#endif
+
 #ifdef MIX_AUDIO_PROMPT_WITH_A2DP_MEDIA_ENABLED
     if ((!app_bt_stream_isrun(APP_PLAY_BACK_AUDIO)) &&
         (audio_prompt_is_allow_update_volume()))

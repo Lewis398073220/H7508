@@ -2353,7 +2353,7 @@ void app_bt_profile_connect_manager_opening_reconnect(void)
 #endif
 
         }
-#if 0//def __BT_ONE_BRING_TWO__
+#ifdef __BT_ONE_BRING_TWO__ //open by cai
         if(ret > 1){
             TRACE(0,"!!!need reconnect second device\n");
             bt_profile_manager[BT_DEVICE_ID_2].reconnect_mode = bt_profile_reconnect_openreconnecting;

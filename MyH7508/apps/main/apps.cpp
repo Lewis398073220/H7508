@@ -1732,6 +1732,16 @@ extern int rpc_service_setup(void);
     app_sysfreq_req(APP_SYSFREQ_USER_APP_INIT, APP_SYSFREQ_52M);
     TRACE(1,"\n\n\nbt_stack_init_done:%d\n\n\n", pwron_case);
 
+	/** add by pang **/
+#if defined(__LDO_3V3_CTR__) 
+	hal_gpio_pin_set((enum HAL_GPIO_PIN_T)cfg_hw_pio_3_3v_control.pin);
+#endif
+
+#ifdef  __IAG_BLE_INCLUDE__
+	app_ble_force_switch_adv(BLE_SWITCH_USER_BT_CONNECT, false);
+#endif	
+	/** end add **/
+
     if (pwron_case == APP_POWERON_CASE_REBOOT){
 
         app_status_indication_set(APP_STATUS_INDICATION_POWERON);

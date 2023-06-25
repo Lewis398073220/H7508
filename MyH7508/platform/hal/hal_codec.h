@@ -38,7 +38,7 @@ struct HAL_CODEC_CONFIG_T {
     enum AUD_CHANNEL_MAP_T channel_map;
 
     uint32_t use_dma:1;
-    uint32_t vol:5;
+    uint32_t vol:6;//5   m by pang for volume independent
 
     enum AUD_IO_PATH_T io_path;
 

@@ -1107,6 +1107,12 @@ static void hfp_current_call_state_handler(hf_chan_handle_t chan, struct hfp_con
 }
 void app_hfp_mute_upstream(uint8_t devId, bool isMute);
 
+/** add by pang**/
+#ifdef __BT_ONE_BRING_TWO__
+void hfp_suspend_another_device_a2dp(void);
+#endif
+/** end add **/
+
 static void hfp_audio_connected_handler(hf_chan_handle_t chan, struct hfp_context *ctx)
 {
 
@@ -1589,7 +1595,8 @@ void hfp_multipoint_audio_manage_a2dp_callback()
         return;
 
     btif_remote_device_t* activeA2dpRem =
-            A2DP_GetRemoteDevice(app_bt_device.a2dp_connected_stream[i]);
+            //A2DP_GetRemoteDevice(app_bt_device.a2dp_connected_stream[i]);
+	        btif_a2dp_get_stream_conn_remDev(app_bt_device.a2dp_connected_stream[i]);//m by pang
 
     btif_remote_device_t* activeHfpRem =
         (btif_remote_device_t *)btif_hf_cmgr_get_remote_device(app_bt_device.hf_channel[j]);
