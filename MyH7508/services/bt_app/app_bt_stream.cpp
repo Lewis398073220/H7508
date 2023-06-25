@@ -114,6 +114,10 @@
 #undef MUSIC_DELAY_CONTROL
 #endif
 
+/** add by cai **/
+#include "apps.h"
+/** end add **/
+
 // NOTE: Modify parameters for your project.
 // #define A2DP_STREAM_AUDIO_DUMP
 
@@ -6909,7 +6913,8 @@ void app_bt_stream_volumeup(void)
             if (btdevice_volume_p->hfp_vol == TGT_VOLUME_LEVEL_15)
             {
 #ifdef MEDIA_PLAYER_SUPPORT
-                media_PlayAudio(AUD_ID_BT_WARNING,0);
+                //media_PlayAudio(AUD_ID_BT_WARNING,0);
+                app_voice_report(APP_STATUS_INDICATION_VOLMINMAX,0);//m by cai
 #endif
             }
 
@@ -6935,7 +6940,8 @@ void app_bt_stream_volumeup(void)
             if (btdevice_volume_p->a2dp_vol == TGT_VOLUME_LEVEL_15)
             {
 #ifdef MEDIA_PLAYER_SUPPORT
-                media_PlayAudio(AUD_ID_BT_WARNING,0);
+                //media_PlayAudio(AUD_ID_BT_WARNING,0);
+				app_voice_report(APP_STATUS_INDICATION_VOLMINMAX,0);//m by cai
 #endif
             }
         }
@@ -7025,7 +7031,7 @@ void app_bt_stream_volumedown(void)
             if (btdevice_volume_p->hfp_vol == TGT_VOLUME_LEVEL_0)
             {
 #ifdef MEDIA_PLAYER_SUPPORT
-                media_PlayAudio(AUD_ID_BT_WARNING,0);
+                //media_PlayAudio(AUD_ID_BT_WARNING,0);//m by cai
 #endif
             }
         } else if ((app_bt_stream_isrun(APP_BT_STREAM_INVALID)) ||
@@ -7047,7 +7053,7 @@ void app_bt_stream_volumedown(void)
             if (btdevice_volume_p->a2dp_vol == TGT_VOLUME_LEVEL_MUTE)
             {
 #ifdef MEDIA_PLAYER_SUPPORT
-                media_PlayAudio(AUD_ID_BT_WARNING,0);
+                //media_PlayAudio(AUD_ID_BT_WARNING,0);//m by cai
 #endif
             }
         }

@@ -61,6 +61,20 @@ const char *app_status_indication_str[] =
     "[FINDME]",
 #endif	
     "[TILE_FIND]",
+/** add by pang **/
+	"[FACTORYRESET]",
+	"[BEEP_21]",
+	"[BEEP_22]",
+	"[ANC_OFF]",
+	"[ANC_ON]",
+	"[AWARENESS_ON]",
+	"[POWEROFF_LOWBATTERY]",
+	"[DEMO_MODE]",
+	"[VOL_MINMAX]",
+	"[A2DP]",
+	"[CALLING_MUTE]",
+	"[CALLING_UNMUTE]",
+/** end add **/
 };
 
 

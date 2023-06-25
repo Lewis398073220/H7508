@@ -415,6 +415,9 @@ int app_voice_report_handler(APP_STATUS_INDICATION_T status, uint8_t device_id, 
             case APP_STATUS_INDICATION_POWEROFF:
                 id = AUD_ID_POWER_OFF;
                 break;
+			case APP_STATUS_INDICATION_POWEROFF_LOWBATTERY:
+                id = AUD_ID_POWEROFF_LOWBATTERY;
+                break;
             default:
                 return 0;
                 break;
@@ -509,6 +512,44 @@ int app_voice_report_handler(APP_STATUS_INDICATION_T status, uint8_t device_id, 
             case APP_STATUS_INDICATION_TILE_FIND:
                 id = AUDIO_ID_BT_ALEXA_START;
                 break;
+/** add by pang **/
+			case APP_STATUS_INDICATION_BEEP_21:
+                id = AUD_ID_BEEP_21;
+                break;
+
+			case APP_STATUS_INDICATION_BEEP_22:
+                id = AUD_ID_BEEP_22;
+                break;
+
+			case APP_STATUS_INDICATION_ANC_OFF:
+                id = AUD_ID_ANC_OFF;
+                break;
+
+			case APP_STATUS_INDICATION_ANC_ON:
+                id = AUD_ID_ANC_ON;
+                break;
+
+			case APP_STATUS_INDICATION_AWARENESS_ON:
+                id = AUD_ID_AWARENESS_ON;
+                break;
+
+			case APP_STATUS_INDICATION_DEMO_MODE:
+                id = AUD_ID_DEMO_MODE;
+                break;
+			
+			case APP_STATUS_INDICATION_VOLMINMAX:
+                id = AUD_ID_VOLMINMAX;
+                break;
+				
+			case APP_STATUS_INDICATION_CALLING_MUTE:
+				id = AUD_ID_CALLING_MUTE;
+                break;
+			
+			case APP_STATUS_INDICATION_CALLING_UNMUTE:
+				id = AUD_ID_CALLING_UNMUTE;
+				break;		
+/** end add **/
+
             default:
                 break;
         }

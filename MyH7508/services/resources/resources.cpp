@@ -366,6 +366,18 @@ const char *aud_id_str[] =
 #ifdef __INTERACTION__
     "[BT_FINDME]",
 #endif
+/** add by pang **/
+	"[BEEP_21]",
+	"[BEEP_22]",
+	"[ANC_OFF]",
+	"[ANC_ON]",
+	"[AWARENESS_ON]",
+	"[POWEROFF_LOWBATTERY]",
+	"[DEMO_MODE]",
+	"[VOL_MINMAX]",
+	"[CALLING_MUTE]",
+	"[CALLING_UNMUTE]",
+/** end add **/
 };
 
 const char *aud_id2str(UINT16 aud_id)
