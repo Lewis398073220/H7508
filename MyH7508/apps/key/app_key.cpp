@@ -53,6 +53,9 @@ static const char *_evt2str(uint8_t event)
         CASES(UP_AFTER_LONGPRESS);
         CASES(LONGPRESS);
         CASES(LONGLONGPRESS);
+		CASES(LONGLONGLONGPRESS);//add by cai
+		CASES(LONGLONGLONGLONGPRESS);//add by cai
+		CASES(LONGLONGLONGLONGLONGPRESS);//add by cai
         CASES(CLICK);
         CASES(DOUBLECLICK);
         CASES(TRIPLECLICK);
@@ -65,6 +68,7 @@ static const char *_evt2str(uint8_t event)
         CASES(INITUP);
         CASES(INITLONGPRESS);
         CASES(INITLONGLONGPRESS);
+		CASES(INITLLLONGPRESS);//add by cai
         CASES(INITFINISHED);
 
     default:
