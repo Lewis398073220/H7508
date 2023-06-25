@@ -825,7 +825,8 @@ void bt_key_handle_func_doubleclick(void)
 #ifdef BTIF_HID_DEVICE
             app_bt_hid_send_capture(app_bt_device.hid_channel[BT_DEVICE_ID_1]);
 #else
-            hfp_handle_key(HFP_KEY_REDIAL_LAST_CALL);
+            //hfp_handle_key(HFP_KEY_REDIAL_LAST_CALL);
+			a2dp_handleKey(AVRCP_KEY_FORWARD);
 #endif
         break;           
         case HFCALL_MACHINE_CURRENT_INCOMMING_ANOTHER_IDLE:
@@ -833,14 +834,16 @@ void bt_key_handle_func_doubleclick(void)
         case HFCALL_MACHINE_CURRENT_OUTGOING_ANOTHER_IDLE:
         break;            
         case HFCALL_MACHINE_CURRENT_CALLING_ANOTHER_IDLE:
+		    #if 0
             if(app_bt_device.hf_mute_flag == 0){
                 hfp_handle_key(HFP_KEY_MUTE);
             }else{
                 hfp_handle_key(HFP_KEY_CLEAR_MUTE);
             }
+			#endif
         break;           
         case HFCALL_MACHINE_CURRENT_3WAY_INCOMMING_ANOTHER_IDLE:
-            hfp_handle_key(HFP_KEY_THREEWAY_HOLD_REL_INCOMING);
+            //hfp_handle_key(HFP_KEY_THREEWAY_HOLD_REL_INCOMING);
         break;      
         case HFCALL_MACHINE_CURRENT_3WAY_HOLD_CALLING_ANOTHER_IDLE:
         break;
@@ -849,7 +852,7 @@ void bt_key_handle_func_doubleclick(void)
         case HFCALL_MACHINE_CURRENT_OUTGOING_ANOTHER_INCOMMING:
         break;
         case HFCALL_MACHINE_CURRENT_CALLING_ANOTHER_INCOMMING:
-            hfp_handle_key(HFP_KEY_DUAL_HF_HANGUP_ANOTHER);
+            //hfp_handle_key(HFP_KEY_DUAL_HF_HANGUP_ANOTHER);
         break;      
         case HFCALL_MACHINE_CURRENT_CALLING_ANOTHER_CHANGETOPHONE:
         break;
@@ -860,6 +863,63 @@ void bt_key_handle_func_doubleclick(void)
         break;
     }
 }
+
+void bt_key_handle_func_tripleclick(void)//add by pang
+{
+    TRACE(0,"%s enter",__func__);
+
+    HFCALL_MACHINE_ENUM hfcall_machine = app_get_hfcall_machine();
+    
+#ifdef SUPPORT_SIRI
+    open_siri_flag=0;
+#endif
+
+    switch(hfcall_machine)
+    {
+        case HFCALL_MACHINE_CURRENT_IDLE:
+            hfp_handle_key(HFP_KEY_REDIAL_LAST_CALL);
+        break;                          
+        case HFCALL_MACHINE_CURRENT_INCOMMING:
+        break;                    
+        case HFCALL_MACHINE_CURRENT_OUTGOING:
+        break;                    
+        case HFCALL_MACHINE_CURRENT_CALLING:
+        break;                      
+        case HFCALL_MACHINE_CURRENT_3WAY_INCOMMING:
+        break;                  
+        case HFCALL_MACHINE_CURRENT_3WAY_HOLD_CALLING:
+        break;         
+#ifdef __BT_ONE_BRING_TWO__      
+        case HFCALL_MACHINE_CURRENT_IDLE_ANOTHER_IDLE:
+            //hfp_handle_key(HFP_KEY_REDIAL_LAST_CALL);
+            a2dp_handleKey(AVRCP_KEY_BACKWARD);//m by cai
+        break;           
+        case HFCALL_MACHINE_CURRENT_INCOMMING_ANOTHER_IDLE:
+        break;           
+        case HFCALL_MACHINE_CURRENT_OUTGOING_ANOTHER_IDLE:
+        break;            
+        case HFCALL_MACHINE_CURRENT_CALLING_ANOTHER_IDLE:
+        break;           
+        case HFCALL_MACHINE_CURRENT_3WAY_INCOMMING_ANOTHER_IDLE:
+        break;      
+        case HFCALL_MACHINE_CURRENT_3WAY_HOLD_CALLING_ANOTHER_IDLE:			
+        break;
+        case HFCALL_MACHINE_CURRENT_INCOMMING_ANOTHER_INCOMMING:
+        break;
+        case HFCALL_MACHINE_CURRENT_OUTGOING_ANOTHER_INCOMMING:
+        break;
+        case HFCALL_MACHINE_CURRENT_CALLING_ANOTHER_INCOMMING:
+        break;      
+        case HFCALL_MACHINE_CURRENT_CALLING_ANOTHER_CHANGETOPHONE:
+        break;
+        case HFCALL_MACHINE_CURRENT_CALLING_ANOTHER_HOLD:
+        break;
+#endif
+        default:
+        break;
+    }
+}
+
 void bt_key_handle_func_longpress(void)
 {
     TRACE(0,"%s enter",__func__);
@@ -867,7 +927,7 @@ void bt_key_handle_func_longpress(void)
 #ifdef SUPPORT_SIRI
     open_siri_flag=0;
 #endif
-    app_voice_report(APP_STATUS_INDICATION_WARNING, 0);
+    //app_voice_report(APP_STATUS_INDICATION_WARNING, 0);
 
     switch(hfcall_machine)
     {
@@ -879,7 +939,7 @@ void bt_key_handle_func_longpress(void)
 #if HF_CUSTOM_FEATURE_SUPPORT & HF_CUSTOM_FEATURE_SIRI_REPORT
             if(open_siri_flag == 0 )
             {
-                app_voice_report(APP_STATUS_INDICATION_WARNING, 0);
+                //app_voice_report(APP_STATUS_INDICATION_WARNING, 0);
                 open_siri_flag = 1;
             }
 #endif
@@ -973,11 +1033,14 @@ void bt_key_handle_func_key(enum APP_KEY_EVENT_T event)
     switch (event) {
         case  APP_KEY_EVENT_UP:
         case  APP_KEY_EVENT_CLICK:
-            bt_key_handle_func_click();
+            //bt_key_handle_func_click();//m by cai
             break;
         case  APP_KEY_EVENT_DOUBLECLICK:
             bt_key_handle_func_doubleclick();
             break;
+		case  APP_KEY_EVENT_TRIPLECLICK: //add by pang
+			bt_key_handle_func_tripleclick();
+			break;
         case  APP_KEY_EVENT_LONGPRESS:
             bt_key_handle_func_longpress();
             break;
@@ -986,6 +1049,250 @@ void bt_key_handle_func_key(enum APP_KEY_EVENT_T event)
             break;
     }
 }
+
+/** add by cai **/
+void bt_key_handle_cover_doubleclick(void)
+{
+    TRACE(0,"%s enter",__func__);
+    HFCALL_MACHINE_ENUM hfcall_machine = app_get_hfcall_machine();
+	
+    switch(hfcall_machine)
+    {
+        case HFCALL_MACHINE_CURRENT_IDLE:
+        {
+            if(app_bt_device.a2dp_play_pause_flag == 0){
+                a2dp_handleKey(AVRCP_KEY_PLAY);
+            }else{
+                a2dp_handleKey(AVRCP_KEY_PAUSE);
+            }
+        }
+        break;
+		
+        case HFCALL_MACHINE_CURRENT_INCOMMING:
+           hfp_handle_key(HFP_KEY_ANSWER_CALL);
+        break;
+		
+        case HFCALL_MACHINE_CURRENT_OUTGOING:
+            //hfp_handle_key(HFP_KEY_HANGUP_CALL);
+        break;
+			
+        case HFCALL_MACHINE_CURRENT_CALLING:
+            //hfp_handle_key(HFP_KEY_HANGUP_CALL);
+        break;
+			
+        case HFCALL_MACHINE_CURRENT_3WAY_INCOMMING:
+            hfp_handle_key(HFP_KEY_THREEWAY_HANGUP_AND_ANSWER);
+        break;
+		
+        case HFCALL_MACHINE_CURRENT_3WAY_HOLD_CALLING:
+            //hfp_handle_key(HFP_KEY_THREEWAY_HOLD_AND_ANSWER);
+        break;   
+#ifdef __BT_ONE_BRING_TWO__              
+        case HFCALL_MACHINE_CURRENT_IDLE_ANOTHER_IDLE:
+        {
+            if(app_bt_device.a2dp_play_pause_flag == 0){
+                a2dp_handleKey(AVRCP_KEY_PLAY);
+            }else{
+                a2dp_handleKey(AVRCP_KEY_PAUSE);
+            }
+        }
+        break;
+		
+        case HFCALL_MACHINE_CURRENT_INCOMMING_ANOTHER_IDLE:
+			app_voice_report(APP_STATUS_INDICATION_BEEP_21, 0);//add by pang
+            hfp_handle_key(HFP_KEY_ANSWER_CALL);
+        break;
+		
+        case HFCALL_MACHINE_CURRENT_OUTGOING_ANOTHER_IDLE:
+			#if 0//c by cai
+			app_voice_report(APP_STATUS_INDICATION_BEEP_22, 0);//add by pang
+            hfp_handle_key(HFP_KEY_HANGUP_CALL);
+			#endif
+        break;
+			
+        case HFCALL_MACHINE_CURRENT_CALLING_ANOTHER_IDLE:
+			#if 0//c by cai
+			app_voice_report(APP_STATUS_INDICATION_BEEP_22, 0);//add by pang
+            hfp_handle_key(HFP_KEY_HANGUP_CALL);
+			#endif
+        break;
+			
+        case HFCALL_MACHINE_CURRENT_3WAY_INCOMMING_ANOTHER_IDLE:
+			#if 0//c by cai
+            hfp_handle_key(HFP_KEY_THREEWAY_HANGUP_AND_ANSWER);
+			#else //m by pang
+			app_voice_report(APP_STATUS_INDICATION_BEEP_21, 0);//add by pang
+			hfp_handle_key(HFP_KEY_THREEWAY_HOLD_AND_ANSWER);
+			#endif
+        break;
+			
+        case HFCALL_MACHINE_CURRENT_3WAY_HOLD_CALLING_ANOTHER_IDLE:
+			app_voice_report(APP_STATUS_INDICATION_BEEP_21, 0);//add by pang
+            hfp_handle_key(HFP_KEY_THREEWAY_HOLD_AND_ANSWER);
+        break;
+		
+        case HFCALL_MACHINE_CURRENT_INCOMMING_ANOTHER_INCOMMING:
+        break;
+        case HFCALL_MACHINE_CURRENT_OUTGOING_ANOTHER_INCOMMING:
+        break;
+        case HFCALL_MACHINE_CURRENT_CALLING_ANOTHER_INCOMMING:
+			//app_voice_report(APP_STATUS_INDICATION_BEEP_21, 0);//add by pang
+            //hfp_handle_key(HFP_KEY_DUAL_HF_HANGUP_CURR_ANSWER_ANOTHER);
+        break;      
+        case HFCALL_MACHINE_CURRENT_CALLING_ANOTHER_CHANGETOPHONE:
+			//app_voice_report(APP_STATUS_INDICATION_BEEP_21, 0);//add by pang
+            //hfp_handle_key(HFP_KEY_DUAL_HF_HANGUP_ANOTHER_ADDTOEARPHONE);
+        break;
+        case HFCALL_MACHINE_CURRENT_CALLING_ANOTHER_HOLD:
+			//app_voice_report(APP_STATUS_INDICATION_BEEP_21, 0);//add by pang
+            //hfp_handle_key(HFP_KEY_DUAL_HF_HANGUP_CURR_ANSWER_ANOTHER);
+        break;
+#endif
+        default:
+        break;
+    }
+#if defined (__HSP_ENABLE__)
+    //now we know it is HSP active !
+    if(app_bt_device.hs_conn_flag[app_bt_device.curr_hs_channel_id]  == 1){         
+            hsp_handle_key(HSP_KEY_CKPD_CONTROL);
+    }
+#endif
+#if HF_CUSTOM_FEATURE_SUPPORT & HF_CUSTOM_FEATURE_SIRI_REPORT
+    open_siri_flag = 0;
+#endif
+    return;
+}
+
+void bt_key_handle_cover_longlongpress(void)
+{
+    TRACE(0,"%s enter",__func__);
+    HFCALL_MACHINE_ENUM hfcall_machine = app_get_hfcall_machine();
+#ifdef SUPPORT_SIRI
+    open_siri_flag=0;
+#endif
+
+    switch(hfcall_machine)
+    {
+        case HFCALL_MACHINE_CURRENT_IDLE:
+        
+        break;
+		
+        case HFCALL_MACHINE_CURRENT_INCOMMING:
+            hfp_handle_key(HFP_KEY_HANGUP_CALL);
+        break;
+		
+        case HFCALL_MACHINE_CURRENT_OUTGOING:
+			hfp_handle_key(HFP_KEY_HANGUP_CALL);//add by cai
+        break;
+		
+        case HFCALL_MACHINE_CURRENT_CALLING:
+        {
+            hfp_handle_key(HFP_KEY_HANGUP_CALL);//add by cai
+        }
+        break;
+		
+        case HFCALL_MACHINE_CURRENT_3WAY_INCOMMING:
+        {
+            //app_voice_report(APP_STATUS_INDICATION_WARNING, 0);
+            hfp_handle_key(HFP_KEY_THREEWAY_HOLD_AND_ANSWER);
+        }
+        break;
+		
+        case HFCALL_MACHINE_CURRENT_3WAY_HOLD_CALLING:
+            hfp_handle_key(HFP_KEY_THREEWAY_HANGUP_AND_ANSWER);
+        break;
+#ifdef __BT_ONE_BRING_TWO__
+        case HFCALL_MACHINE_CURRENT_IDLE_ANOTHER_IDLE: 
+			
+        break;
+		
+        case HFCALL_MACHINE_CURRENT_INCOMMING_ANOTHER_IDLE:
+			#if 1//c by pang
+			app_voice_report(APP_STATUS_INDICATION_BEEP_22, 0);//add by pang
+			hfp_handle_key(HFP_KEY_HANGUP_CALL);
+			#endif
+        break;
+			
+        case HFCALL_MACHINE_CURRENT_OUTGOING_ANOTHER_IDLE:
+			app_voice_report(APP_STATUS_INDICATION_BEEP_22, 0);//add by cai
+			hfp_handle_key(HFP_KEY_HANGUP_CALL);//add by cai
+        break;
+		
+        case HFCALL_MACHINE_CURRENT_CALLING_ANOTHER_IDLE:
+	        app_voice_report(APP_STATUS_INDICATION_BEEP_22, 0);//add by cai
+	        hfp_handle_key(HFP_KEY_HANGUP_CALL);//add by cai
+        break;
+		
+        case HFCALL_MACHINE_CURRENT_3WAY_INCOMMING_ANOTHER_IDLE:
+			#if 1//c by pang
+            app_voice_report(APP_STATUS_INDICATION_BEEP_22, 0);//add by pang
+            hfp_handle_key(HFP_KEY_THREEWAY_HOLD_REL_INCOMING);
+			#endif
+        break;
+			
+        case HFCALL_MACHINE_CURRENT_3WAY_HOLD_CALLING_ANOTHER_IDLE:
+			#if 1//c by cai
+			app_voice_report(APP_STATUS_INDICATION_BEEP_22, 0);//add by cai
+            hfp_handle_key(HFP_KEY_THREEWAY_HANGUP_AND_ANSWER);
+			#endif
+        break;
+			
+        case HFCALL_MACHINE_CURRENT_INCOMMING_ANOTHER_INCOMMING:
+        break;
+        case HFCALL_MACHINE_CURRENT_OUTGOING_ANOTHER_INCOMMING:
+        break;
+		
+        case HFCALL_MACHINE_CURRENT_CALLING_ANOTHER_INCOMMING:
+			app_voice_report(APP_STATUS_INDICATION_BEEP_22, 0);//add by cai
+			hfp_handle_key(HFP_KEY_DUAL_HF_HANGUP_ANOTHER);//add by cai
+            //hfp_handle_key(HFP_KEY_DUAL_HF_CHANGETOPHONE_ANSWER_ANOTHER); 
+            //hfp_handle_key(HFP_KEY_DUAL_HF_HOLD_CURR_ANSWER_ANOTHER); 
+        break;
+			
+        case HFCALL_MACHINE_CURRENT_CALLING_ANOTHER_CHANGETOPHONE:
+            //hfp_handle_key(HFP_KEY_DUAL_HF_CHANGETOPHONE_ANOTHER_ADDTOEARPHONE); 
+        break;
+        case HFCALL_MACHINE_CURRENT_CALLING_ANOTHER_HOLD:
+            //hfp_handle_key(HFP_KEY_DUAL_HF_HANGUP_CURR_ANSWER_ANOTHER);
+        break;
+#endif
+        default:
+        break;
+    }
+#if defined (__HSP_ENABLE__)
+    if(hfcall_machine == HFCALL_MACHINE_NUM){
+        if(app_bt_device.hs_conn_flag[app_bt_device.curr_hs_channel_id]  == 1){         //now we know it is HSP active !
+            if(app_bt_device.phone_earphone_mark == 0){
+                //call is active, switch from earphone to phone
+                hsp_handle_key(HSP_KEY_CHANGE_TO_PHONE);
+            }else if(app_bt_device.phone_earphone_mark == 1){
+                //call is active, switch from phone to earphone
+                hsp_handle_key(HSP_KEY_ADD_TO_EARPHONE);
+            }
+        }
+    }
+#endif
+}
+
+void bt_key_handle_cover_key(enum APP_KEY_EVENT_T event)
+{
+    switch(event)
+    {
+  		case  APP_KEY_EVENT_DOUBLECLICK:
+			//bt_key_handle_game_key();
+			bt_key_handle_cover_doubleclick();
+			break;
+		
+		case  APP_KEY_EVENT_LONGLONGPRESS:
+			bt_key_handle_cover_longlongpress();
+			break;
+			
+        default:
+            TRACE(1,"unregister down key event=%x",event);
+            break;
+    }
+}
+/** end add **/
 
 #if 0
 void bt_key_handle_func_key(enum APP_KEY_EVENT_T event)
@@ -1526,9 +1833,16 @@ void bt_key_handle(void)
                 break;
 #ifdef SUPPORT_SIRI
             case BTAPP_RELEASE_KEY:
-                bt_key_handle_siri_key((enum APP_KEY_EVENT_T)bt_key.event);
+                //bt_key_handle_siri_key((enum APP_KEY_EVENT_T)bt_key.event);
                 break;
 #endif
+
+/** add by pang **/
+			case BTAPP_QUICK_MONIORT_KEY:
+				bt_key_handle_cover_key((enum APP_KEY_EVENT_T)bt_key.event);
+				break;
+/** end add **/
+			
             default:
                 TRACE(0,"bt_key_handle  undefined key");
                 break;

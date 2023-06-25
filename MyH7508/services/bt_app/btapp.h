@@ -366,6 +366,11 @@ void btapp_a2dp_report_speak_gain(void);
 #define   BTAPP_FUNC_KEY			APP_KEY_CODE_PWR
 #define   BTAPP_VOLUME_UP_KEY		APP_KEY_CODE_FN1
 #define   BTAPP_VOLUME_DOWN_KEY		APP_KEY_CODE_FN2
+/** add by pang **/
+#define   BTAPP_ANC_KEY             APP_KEY_CODE_FN5
+#define   BTAPP_QUICK_MONIORT_KEY	APP_KEY_CODE_FN6
+/** end add **/ 
+
 #ifdef SUPPORT_SIRI
 #define   BTAPP_RELEASE_KEY			APP_KEY_CODE_NONE
 #endif

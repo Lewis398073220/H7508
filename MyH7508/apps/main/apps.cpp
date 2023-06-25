@@ -892,6 +892,7 @@ extern "C" void app_bt_key(APP_KEY_STATUS *status, void *param)
 			break;
         case APP_KEY_EVENT_TRIPLECLICK:
             TRACE(0,"triple kill");
+/* //c by pang
             if (status->code == APP_KEY_CODE_PWR)
             {
             
@@ -913,6 +914,7 @@ extern "C" void app_bt_key(APP_KEY_STATUS *status, void *param)
             	}
                 return;
             }
+*/
             break;
         case APP_KEY_EVENT_ULTRACLICK:
             TRACE(0,"ultra kill");
@@ -925,7 +927,8 @@ extern "C" void app_bt_key(APP_KEY_STATUS *status, void *param)
             break;
     }
 #ifdef __FACTORY_MODE_SUPPORT__
-    if (app_status_indication_get() == APP_STATUS_INDICATION_BOTHSCAN && (status->event == APP_KEY_EVENT_DOUBLECLICK)){
+	if(0){//m by cai
+    //if (app_status_indication_get() == APP_STATUS_INDICATION_BOTHSCAN && (status->event == APP_KEY_EVENT_DOUBLECLICK)){
         app_factorymode_languageswitch_proc();
     }else
 #endif
