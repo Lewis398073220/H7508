@@ -699,6 +699,8 @@ void audio_prompt_stop_playing(void)
         TRACE(4,"%s next id: 0x%x%s, aud_id %d", __func__, status_next.id, player2str(status_next.id), status_next.aud_id);
 #if defined(IBRT)
         app_ibrt_if_voice_report_handler(status_next.aud_id, true);
+#else //add by cai for play prompt by mix
+		trigger_media_play((AUD_ID_ENUM)status_next.aud_id, 0, true);
 #endif
     }
 
