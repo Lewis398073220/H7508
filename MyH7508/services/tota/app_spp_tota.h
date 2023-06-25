@@ -25,6 +25,10 @@
 
 #define APP_TOTA_DATA_CMD_TIME_OUT_IN_MS	5000
 
+#ifdef __cplusplus //add by pang
+extern "C" {
+#endif
+
 typedef void(*app_spp_tota_tx_done_t)(void);
 void app_spp_tota_register_tx_done(app_spp_tota_tx_done_t callback);
 void app_spp_tota_init(void);
@@ -34,6 +38,10 @@ void app_tota_send_data_via_spp(uint8_t* ptrData, uint32_t length);
 uint16_t app_spp_tota_tx_buf_size(void);
 void app_spp_tota_init_tx_buf(uint8_t* ptr);
 uint8_t* app_spp_tota_fill_data_into_tx_buf(uint8_t* ptrData, uint32_t dataLen);
+
+#ifdef __cplusplus
+	}//extern "C" { //add by pang
+#endif
 
 #endif
 

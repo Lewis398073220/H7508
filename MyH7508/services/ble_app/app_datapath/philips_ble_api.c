@@ -638,6 +638,15 @@ uint8_t Do_CheckSum(uint8_t *data, uint8_t size)
 	return checksum;
 }
 
+void Philips_Send_Notify(uint8_t *data, uint32_t size)
+{
+    //app_control_app_server_send_data_via_notification(data,size);
+    if(protocol_port==1)
+		app_datapath_server_send_data_via_notification(data,size);
+	else if(protocol_port==2)
+		app_tota_send_data_via_spp(data, size);
+}
+
 bool Philips_Functions_Call(uint8_t *data, uint8_t size)
 {
 	return false;

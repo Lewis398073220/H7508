@@ -423,6 +423,7 @@ bool CheckCommandID(uint8_t *data);
 bool Command_CheckSum(uint8_t *data, uint8_t size);
 uint8_t Do_CheckSum(uint8_t *data, uint8_t size);
 bool Philips_Functions_Call(uint8_t *data, uint8_t size);
+void Philips_Send_Notify(uint8_t *data, uint32_t size);
 
 #ifdef __cplusplus
 }
