@@ -20,7 +20,6 @@
 #include "bluetooth.h"
 #include "me_api.h"
 #include "btif_sys_config.h"
-#include "../../multimedia/audio/process/filters/include/iir_process.h"//add by pang
 
 // increase by 1 if the nvrecord's whole data structure is changed and the content needs to be rebuilt
 #define NV_EXTENSION_MAJOR_VERSION 3

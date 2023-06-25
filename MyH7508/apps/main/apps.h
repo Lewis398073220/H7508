@@ -49,9 +49,7 @@ void app_status_set_num(const char* p);
 
 #define APP_PAIR_TIMER_ID       0
 #define APP_POWEROFF_TIMER_ID   1
-#define APP_BTOFF_POWEROFF_TIMER_ID   2 //add by pang
-#define APP_AUTO_PWOFF_TIMER_ID  3
-#define APP_FASTPAIR_LASTING_TIMER_ID   4//2
+#define APP_FASTPAIR_LASTING_TIMER_ID   2
 
 void app_stop_10_second_timer(uint8_t timer_id);
 void app_start_10_second_timer(uint8_t timer_id);

@@ -73,6 +73,4 @@ subdir-ccflags-y += \
 	$(BT_IF_INCLUDES) \
 	-Iservices/app_ibrt/inc \
 	-Iservices/ble_stack/common/api \
-	-Iservices/ble_stack/ble_ip \
-	-Iservices/ble_appapp_datapath \
-	-Iapps/userapps
+	-Iservices/ble_stack/ble_ip

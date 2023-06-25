@@ -34,10 +34,6 @@ enum APP_BT_GOLBAL_HANDLE_HOOK_USER_T {
     APP_BT_GOLBAL_HANDLE_HOOK_USER_1,
     APP_BT_GOLBAL_HANDLE_HOOK_USER_QTY
 };
-	
-/** add by pang **/
-void app_get_curr_remDev_Mac(unsigned char* mobile_addr);
-/** end add **/
 
 typedef void (*APP_BT_REQ_CONNECT_PROFILE_FN_T)(void *, void *);
 typedef bt_status_t  (*APP_BT_REQ_HF_OP_FN_T)(void *);

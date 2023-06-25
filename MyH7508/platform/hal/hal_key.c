@@ -58,23 +58,14 @@ typedef uint32_t                            GPIO_MAP_T;
 #define CFG_HW_ADCKEY_NUMBER                0
 #endif
 
-#ifndef CFG_SW_KEY_LLLLLPRESS_THRESH_MS
-#define CFG_SW_KEY_LLLLLPRESS_THRESH_MS     4000//add by cai
-#endif
-#ifndef CFG_SW_KEY_LLLLPRESS_THRESH_MS
-#define CFG_SW_KEY_LLLLPRESS_THRESH_MS      3000//4000//add by cai
-#endif
-#ifndef CFG_SW_KEY_LLLPRESS_THRESH_MS
-#define CFG_SW_KEY_LLLPRESS_THRESH_MS       2000//3000//m by cai
-#endif
 #ifndef CFG_SW_KEY_LLPRESS_THRESH_MS
-#define CFG_SW_KEY_LLPRESS_THRESH_MS        1000//3000
+#define CFG_SW_KEY_LLPRESS_THRESH_MS        5000
 #endif
 #ifndef CFG_SW_KEY_LPRESS_THRESH_MS
-#define CFG_SW_KEY_LPRESS_THRESH_MS         500//1000
+#define CFG_SW_KEY_LPRESS_THRESH_MS         1500
 #endif
 #ifndef CFG_SW_KEY_REPEAT_THRESH_MS
-#define CFG_SW_KEY_REPEAT_THRESH_MS         1000//500
+#define CFG_SW_KEY_REPEAT_THRESH_MS         500
 #endif
 #ifndef CFG_SW_KEY_DBLCLICK_THRESH_MS
 #define CFG_SW_KEY_DBLCLICK_THRESH_MS       400
@@ -83,37 +74,31 @@ typedef uint32_t                            GPIO_MAP_T;
 #define CFG_SW_KEY_INIT_DOWN_THRESH_MS      200
 #endif
 #ifndef CFG_SW_KEY_INIT_LPRESS_THRESH_MS
-#define CFG_SW_KEY_INIT_LPRESS_THRESH_MS    2000//1000 //m by cai
+#define CFG_SW_KEY_INIT_LPRESS_THRESH_MS    3000
 #endif
 #ifndef CFG_SW_KEY_INIT_LLPRESS_THRESH_MS
-#define CFG_SW_KEY_INIT_LLPRESS_THRESH_MS   5000
-#endif
-#ifndef CFG_SW_KEY_INIT_LLLPRESS_THRESH_MS //add by pang
-#define CFG_SW_KEY_INIT_LLLPRESS_THRESH_MS   10000
+#define CFG_SW_KEY_INIT_LLPRESS_THRESH_MS   10000
 #endif
 #ifndef CFG_SW_KEY_CHECK_INTERVAL_MS
 #define CFG_SW_KEY_CHECK_INTERVAL_MS        40
 #endif
 
 //common key define
-#define KEY_LONGLONGLONGLONGLONGPRESS_THRESHOLD     MS_TO_TICKS(CFG_SW_KEY_LLLLLPRESS_THRESH_MS)//add by cai
-#define KEY_LONGLONGLONGLONGPRESS_THRESHOLD 		MS_TO_TICKS(CFG_SW_KEY_LLLLPRESS_THRESH_MS)//add by cai
-#define KEY_LONGLONGLONGPRESS_THRESHOLD    		    MS_TO_TICKS(CFG_SW_KEY_LLLPRESS_THRESH_MS)//add by pang
-#define KEY_LONGLONGPRESS_THRESHOLD        		    MS_TO_TICKS(CFG_SW_KEY_LLPRESS_THRESH_MS)
-#define KEY_LONGPRESS_THRESHOLD          		    MS_TO_TICKS(CFG_SW_KEY_LPRESS_THRESH_MS)
-#define KEY_DOUBLECLICK_THRESHOLD         		    MS_TO_TICKS(CFG_SW_KEY_DBLCLICK_THRESH_MS)
-#define KEY_LONGPRESS_REPEAT_THRESHOLD    		    MS_TO_TICKS(CFG_SW_KEY_REPEAT_THRESH_MS)
+#define KEY_LONGLONGPRESS_THRESHOLD         MS_TO_TICKS(CFG_SW_KEY_LLPRESS_THRESH_MS)
+#define KEY_LONGPRESS_THRESHOLD             MS_TO_TICKS(CFG_SW_KEY_LPRESS_THRESH_MS)
+#define KEY_DOUBLECLICK_THRESHOLD           MS_TO_TICKS(CFG_SW_KEY_DBLCLICK_THRESH_MS)
+#define KEY_LONGPRESS_REPEAT_THRESHOLD      MS_TO_TICKS(CFG_SW_KEY_REPEAT_THRESH_MS)
 
-#define KEY_INIT_DOWN_THRESHOLD           		    MS_TO_TICKS(CFG_SW_KEY_INIT_DOWN_THRESH_MS)
-#define KEY_INIT_LONGPRESS_THRESHOLD      		    MS_TO_TICKS(CFG_SW_KEY_INIT_LPRESS_THRESH_MS)
-#define KEY_INIT_LONGLONGPRESS_THRESHOLD  		    MS_TO_TICKS(CFG_SW_KEY_INIT_LLPRESS_THRESH_MS)
-#define KEY_INIT_LLLONGPRESS_THRESHOLD     		    MS_TO_TICKS(CFG_SW_KEY_INIT_LLLPRESS_THRESH_MS)//add by pang
-#define KEY_CHECKER_INTERVAL               		    MS_TO_TICKS(CFG_SW_KEY_CHECK_INTERVAL_MS)
+#define KEY_INIT_DOWN_THRESHOLD             MS_TO_TICKS(CFG_SW_KEY_INIT_DOWN_THRESH_MS)
+#define KEY_INIT_LONGPRESS_THRESHOLD        MS_TO_TICKS(CFG_SW_KEY_INIT_LPRESS_THRESH_MS)
+#define KEY_INIT_LONGLONGPRESS_THRESHOLD    MS_TO_TICKS(CFG_SW_KEY_INIT_LLPRESS_THRESH_MS)
 
-#define KEY_DEBOUNCE_INTERVAL               	   (KEY_CHECKER_INTERVAL * 2)
-#define KEY_DITHER_INTERVAL                		   (KEY_CHECKER_INTERVAL * 1)
+#define KEY_CHECKER_INTERVAL                MS_TO_TICKS(CFG_SW_KEY_CHECK_INTERVAL_MS)
 
-#define MAX_KEY_CLICK_COUNT                		   (HAL_KEY_EVENT_RAMPAGECLICK - HAL_KEY_EVENT_CLICK)
+#define KEY_DEBOUNCE_INTERVAL               (KEY_CHECKER_INTERVAL * 2)
+#define KEY_DITHER_INTERVAL                 (KEY_CHECKER_INTERVAL * 1)
+
+#define MAX_KEY_CLICK_COUNT                 (HAL_KEY_EVENT_RAMPAGECLICK - HAL_KEY_EVENT_CLICK)
 
 struct HAL_KEY_ADCKEY_T {
     bool debounce;
@@ -923,12 +908,9 @@ static void hal_key_debounce_handler(void *param)
     while (map) {
         if (map & (1 << index)) {
             map &= ~(1 << index);
-            //send_key_event((1 << index), HAL_KEY_EVENT_UP);//m by cai
-			if (key_status.event == HAL_KEY_EVENT_LONGPRESS || key_status.event == HAL_KEY_EVENT_LONGLONGPRESS || key_status.event == HAL_KEY_EVENT_LONGLONGLONGPRESS || key_status.event == HAL_KEY_EVENT_LONGLONGLONGLONGPRESS || key_status.event == HAL_KEY_EVENT_LONGLONGLONGLONGLONGPRESS) {//m by cai
+            send_key_event((1 << index), HAL_KEY_EVENT_UP);
+            if (key_status.event == HAL_KEY_EVENT_LONGPRESS || key_status.event == HAL_KEY_EVENT_LONGLONGPRESS) {
                 send_key_event((1 << index), HAL_KEY_EVENT_UP_AFTER_LONGPRESS);
-            }else if(key_status.event == HAL_KEY_EVENT_DOWN){//add by cai
-				TRACE(0,"***release after click\n");
-				send_key_event((1 << index), HAL_KEY_EVENT_UP);//add by cai
             }
             key_status.time_updown = time;
         }
@@ -936,7 +918,7 @@ static void hal_key_debounce_handler(void *param)
     }
 
     if (up_new) {
-		if (key_status.event == HAL_KEY_EVENT_LONGPRESS || key_status.event == HAL_KEY_EVENT_LONGLONGPRESS || key_status.event == HAL_KEY_EVENT_LONGLONGLONGPRESS || key_status.event ==HAL_KEY_EVENT_LONGLONGLONGLONGPRESS || key_status.event == HAL_KEY_EVENT_LONGLONGLONGLONGLONGPRESS) {//m by cai
+        if (key_status.event == HAL_KEY_EVENT_LONGPRESS || key_status.event == HAL_KEY_EVENT_LONGLONGPRESS) {
             // LongPress is finished when all of the LongPress keys are released
             if ((code_down & key_status.code_ready) == 0) {
                 key_status.event = HAL_KEY_EVENT_NONE;
@@ -1008,7 +990,7 @@ static void hal_key_debounce_handler(void *param)
                 key_status.event = HAL_KEY_EVENT_LONGPRESS;
                 send_key_event(key_status.code_ready, key_status.event);
             }
-        } else if (key_status.event == HAL_KEY_EVENT_LONGPRESS || key_status.event == HAL_KEY_EVENT_LONGLONGPRESS || key_status.event == HAL_KEY_EVENT_LONGLONGLONGPRESS || key_status.event ==HAL_KEY_EVENT_LONGLONGLONGLONGPRESS || key_status.event == HAL_KEY_EVENT_LONGLONGLONGLONGLONGPRESS) {//m by cai
+        } else if (key_status.event == HAL_KEY_EVENT_LONGPRESS || key_status.event == HAL_KEY_EVENT_LONGLONGPRESS) {
             key_status.cnt_repeat++;
             if (key_status.cnt_repeat == KEY_LONGPRESS_REPEAT_THRESHOLD / KEY_CHECKER_INTERVAL) {
                 key_status.cnt_repeat = 0;
@@ -1017,24 +999,6 @@ static void hal_key_debounce_handler(void *param)
             if (key_status.event == HAL_KEY_EVENT_LONGPRESS) {
                 if (time - key_status.time_updown >= KEY_LONGLONGPRESS_THRESHOLD) {
                     key_status.event = HAL_KEY_EVENT_LONGLONGPRESS;
-                    send_key_event(key_status.code_ready, key_status.event);
-                }
-            }
-			if (key_status.event == HAL_KEY_EVENT_LONGLONGPRESS) {//add by pang
-                if (time - key_status.time_updown >= KEY_LONGLONGLONGPRESS_THRESHOLD) {
-                    key_status.event = HAL_KEY_EVENT_LONGLONGLONGPRESS;
-                    send_key_event(key_status.code_ready, key_status.event);
-                }
-            }
-			if (key_status.event == HAL_KEY_EVENT_LONGLONGLONGPRESS) {//add by cai
-                if (time - key_status.time_updown >= KEY_LONGLONGLONGLONGPRESS_THRESHOLD) {
-                    key_status.event = HAL_KEY_EVENT_LONGLONGLONGLONGPRESS;
-                    send_key_event(key_status.code_ready, key_status.event);
-                }
-            }
-			if (key_status.event == HAL_KEY_EVENT_LONGLONGLONGLONGPRESS) {//add by cai
-                if (time - key_status.time_updown >= KEY_LONGLONGLONGLONGLONGPRESS_THRESHOLD) {
-                    key_status.event = HAL_KEY_EVENT_LONGLONGLONGLONGLONGPRESS;
                     send_key_event(key_status.code_ready, key_status.event);
                 }
             }
@@ -1107,11 +1071,6 @@ static void hal_key_boot_handler(void *param)
             } else if (key_status.event == HAL_KEY_EVENT_INITLONGPRESS) {
                 if (time - key_status.time_updown >= KEY_INIT_LONGLONGPRESS_THRESHOLD) {
                     key_status.event = HAL_KEY_EVENT_INITLONGLONGPRESS;
-                    send_key_event(HAL_KEY_CODE_PWR, key_status.event);
-                }
-            }else if (key_status.event == HAL_KEY_EVENT_INITLONGLONGPRESS) { //add by pang
-                if (time - key_status.time_updown >= KEY_INIT_LLLONGPRESS_THRESHOLD) {
-                    key_status.event = HAL_KEY_EVENT_INITLLLONGPRESS;
                     send_key_event(HAL_KEY_CODE_PWR, key_status.event);
                 }
             }

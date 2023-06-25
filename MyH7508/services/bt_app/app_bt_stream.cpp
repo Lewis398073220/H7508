@@ -114,11 +114,6 @@
 #undef MUSIC_DELAY_CONTROL
 #endif
 
-#include "app_user.h"//add by pang
-#include "apps.h"
-#include "philips_ble_api.h"
-#include "bt_sco_chain.h"//for spp test
-static uint8_t game_mode_on=0;
 // NOTE: Modify parameters for your project.
 // #define A2DP_STREAM_AUDIO_DUMP
 
@@ -1534,15 +1529,6 @@ uint8_t bt_audio_updata_eq_for_anc(uint8_t anc_status)
 }
 #endif
 
-/** add by pang **/
-void change_eq_from_ble_api(uint8_t index)
-{   
-	app_eq_index_set_nosave(index);//add by cai
-#ifdef __SW_IIR_EQ_PROCESS__
- 	bt_audio_set_eq(AUDIO_EQ_TYPE_SW_IIR, app_get_anc_mode());
-#endif  	
-}
-/** end add **/
 uint8_t bt_audio_get_eq_index(AUDIO_EQ_TYPE_T audio_eq_type,uint8_t anc_status)
 {
     uint8_t index_eq=0;
@@ -1745,7 +1731,7 @@ uint32_t bt_audio_set_eq(AUDIO_EQ_TYPE_T audio_eq_type, uint8_t index)
 #define A2DP_PLAYER_PLAYBACK_DELAY_AAC_MTU (6)
 #endif
 #define A2DP_PLAYER_PLAYBACK_DELAY_AAC_BASE (23000)
-//#define A2DP_PLAYER_PLAYBACK_DELAY_AAC_US (A2DP_PLAYER_PLAYBACK_DELAY_AAC_BASE*A2DP_PLAYER_PLAYBACK_DELAY_AAC_MTU)//c by pang
+#define A2DP_PLAYER_PLAYBACK_DELAY_AAC_US (A2DP_PLAYER_PLAYBACK_DELAY_AAC_BASE*A2DP_PLAYER_PLAYBACK_DELAY_AAC_MTU)
 
 /********************************
     AUD_BITS_16
@@ -1762,7 +1748,7 @@ uint32_t bt_audio_set_eq(AUDIO_EQ_TYPE_T audio_eq_type, uint8_t index)
 #define A2DP_PLAYER_PLAYBACK_DELAY_SBC_MTU (50)
 #endif
 #define A2DP_PLAYER_PLAYBACK_DELAY_SBC_BASE (2800)
-//#define A2DP_PLAYER_PLAYBACK_DELAY_SBC_US (A2DP_PLAYER_PLAYBACK_DELAY_SBC_BASE*A2DP_PLAYER_PLAYBACK_DELAY_SBC_MTU)//c by pang
+#define A2DP_PLAYER_PLAYBACK_DELAY_SBC_US (A2DP_PLAYER_PLAYBACK_DELAY_SBC_BASE*A2DP_PLAYER_PLAYBACK_DELAY_SBC_MTU)
 
 #if defined(A2DP_LHDC_ON)
 /********************************
@@ -1870,41 +1856,6 @@ uint32_t bt_audio_set_eq(AUDIO_EQ_TYPE_T audio_eq_type, uint8_t index)
 #define A2DP_PLAYER_PLAYBACK_DELAY_LDAC_US (A2DP_PLAYER_PLAYBACK_DELAY_LDAC_BASE*A2DP_PLAYER_PLAYBACK_DELAY_LDAC_MTU)
 #endif
 
-/** add by pang for low latency gaming mode **/
-#define A2DP_PLAYER_PLAYBACK_DELAY_SBC_MTU_LOW_LATENCY 20 //20=85.83ms
-#define A2DP_PLAYER_PLAYBACK_DELAY_AAC_MTU_LOW_LATENCY 3  //
-static uint16_t SET_A2DP_PLAYER_PLAYBACK_DELAY_SBC_MTU=A2DP_PLAYER_PLAYBACK_DELAY_SBC_MTU; //50  50=168.7ms
-static uint16_t SET_A2DP_PLAYER_PLAYBACK_DELAY_AAC_MTU=A2DP_PLAYER_PLAYBACK_DELAY_AAC_MTU; //6   138ms
-#define A2DP_PLAYER_PLAYBACK_DELAY_SBC_US (A2DP_PLAYER_PLAYBACK_DELAY_SBC_BASE*SET_A2DP_PLAYER_PLAYBACK_DELAY_SBC_MTU)
-#define A2DP_PLAYER_PLAYBACK_DELAY_AAC_US (A2DP_PLAYER_PLAYBACK_DELAY_AAC_BASE*SET_A2DP_PLAYER_PLAYBACK_DELAY_AAC_MTU)
-static void gaming_mode_set(bool game_enable)
-{
-	if(game_enable){
-		SET_A2DP_PLAYER_PLAYBACK_DELAY_SBC_MTU=A2DP_PLAYER_PLAYBACK_DELAY_SBC_MTU_LOW_LATENCY;
-		SET_A2DP_PLAYER_PLAYBACK_DELAY_AAC_MTU=A2DP_PLAYER_PLAYBACK_DELAY_AAC_MTU_LOW_LATENCY;
-	}
-	else{
-		SET_A2DP_PLAYER_PLAYBACK_DELAY_SBC_MTU=A2DP_PLAYER_PLAYBACK_DELAY_SBC_MTU;
-		SET_A2DP_PLAYER_PLAYBACK_DELAY_AAC_MTU=A2DP_PLAYER_PLAYBACK_DELAY_AAC_MTU;
-	}
-}
-int app_force_audio_retrigger(void)
-{
-    a2dp_audio_detect_next_packet_callback_register(NULL);
-    a2dp_audio_detect_store_packet_callback_register(NULL);
-	trigger_media_play((AUD_ID_ENUM)AUDIO_ID_BT_MUTE, 0, false);
-    return 0;
-}
-void app_gaming_mode(uint8_t game_on)
-{
-    game_mode_on=game_on;
-	gaming_mode_set(game_on);
-	app_force_audio_retrigger();	
-}
-uint8_t get_app_gaming_mode(void)
-{
-    return game_mode_on;	
-}
 enum BT_STREAM_TRIGGER_STATUS_T {
     BT_STREAM_TRIGGER_STATUS_NULL = 0,
     BT_STREAM_TRIGGER_STATUS_INIT,
@@ -5724,7 +5675,7 @@ int bt_sco_player(bool on, enum APP_SYSFREQ_FREQ_T freq)
 #if defined(SCO_CP_ACCEL)
         freq = APP_SYSFREQ_52M;
 #endif
-		freq = APP_SYSFREQ_208M;//add by pang for call voice distortion
+
         app_sysfreq_req(APP_SYSFREQ_USER_BT_SCO, freq);
         TRACE(1,"bt_sco_player: app_sysfreq_req %d", freq);
         TRACE(1,"sys freq calc : %d\n", hal_sys_timer_calc_cpu_freq(5, 0));
@@ -6979,7 +6930,7 @@ void app_bt_stream_volumeup(void)
             current_btdevice_volume.a2dp_vol=updatedVol;
             if (updatedVol < TGT_VOLUME_LEVEL_15)
             {
-                app_bt_stream_volumeset(updatedVol+17);//m by pang for volume independent
+                app_bt_stream_volumeset(updatedVol);
             }
             if (btdevice_volume_p->a2dp_vol == TGT_VOLUME_LEVEL_15)
             {
@@ -7057,13 +7008,10 @@ void app_bt_stream_volumedown(void)
             TRACE(1,"%s set hfp volume", __func__);
 
             int8_t updatedVol = btdevice_volume_p->hfp_vol;
-            //updatedVol--;
-			updatedVol -= 2;//c by pang
-            //if (updatedVol < TGT_VOLUME_LEVEL_MUTE)
-			if (updatedVol < TGT_VOLUME_LEVEL_0)
+            updatedVol--;
+            if (updatedVol < TGT_VOLUME_LEVEL_MUTE)
             {
-                //updatedVol = TGT_VOLUME_LEVEL_MUTE;
-				updatedVol = TGT_VOLUME_LEVEL_0;
+                updatedVol = TGT_VOLUME_LEVEL_MUTE;
             }
 
             uint32_t lock = nv_record_pre_write_operation();
@@ -7081,8 +7029,7 @@ void app_bt_stream_volumedown(void)
             (app_bt_stream_isrun(APP_BT_STREAM_A2DP_SBC))) {
             TRACE(1,"%s set a2dp volume", __func__);
             int8_t updatedVol = btdevice_volume_p->a2dp_vol;
-            //updatedVol--;
-			updatedVol -= 2;
+            updatedVol--;
             if (updatedVol < TGT_VOLUME_LEVEL_MUTE)
             {
                 updatedVol = TGT_VOLUME_LEVEL_MUTE;
@@ -7092,7 +7039,7 @@ void app_bt_stream_volumedown(void)
             btdevice_volume_p->a2dp_vol = updatedVol;
             nv_record_post_write_operation(lock);
             current_btdevice_volume.a2dp_vol=updatedVol;
-            app_bt_stream_volumeset(updatedVol+17);//m by pang for volume independent
+            app_bt_stream_volumeset(updatedVol);
             if (btdevice_volume_p->a2dp_vol == TGT_VOLUME_LEVEL_MUTE)
             {
 #ifdef MEDIA_PLAYER_SUPPORT
@@ -7131,22 +7078,12 @@ int app_bt_stream_volumeset(int8_t vol)
 {
     TRACE(1,"app_bt_stream_volumeset vol=%d", vol);
 
-#if 0
-	if (vol > TGT_VOLUME_LEVEL_15)
-		vol = TGT_VOLUME_LEVEL_15;
-	if (vol < TGT_VOLUME_LEVEL_MUTE)
-		vol = TGT_VOLUME_LEVEL_MUTE;
+    if (vol > TGT_VOLUME_LEVEL_15)
+        vol = TGT_VOLUME_LEVEL_15;
+    if (vol < TGT_VOLUME_LEVEL_MUTE)
+        vol = TGT_VOLUME_LEVEL_MUTE;
 
-	stream_local_volume = vol;
-#else //m by pang for volume independent
-	if(vol > 17)
-		stream_local_volume = vol-17;
-	else if(vol < TGT_VOLUME_LEVEL_MUTE)
-		stream_local_volume = TGT_VOLUME_LEVEL_MUTE;
-	else
-		stream_local_volume = vol;
-#endif
-
+    stream_local_volume = vol;
 #ifdef MIX_AUDIO_PROMPT_WITH_A2DP_MEDIA_ENABLED
     if ((!app_bt_stream_isrun(APP_PLAY_BACK_AUDIO)) &&
         (audio_prompt_is_allow_update_volume()))
