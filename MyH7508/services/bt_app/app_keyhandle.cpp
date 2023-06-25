@@ -64,6 +64,11 @@ extern struct BT_DEVICE_T  app_bt_device;
 #include "app_pbap.h"
 #endif
 
+/** add by pang **/
+#include "app_anc.h"
+#include "app_media_player.h"
+#include "app_bt.h"
+/** end add **/
 #ifdef SUPPORT_SIRI
 extern int app_hfp_siri_report();
 extern int app_hfp_siri_voice(bool en);
@@ -1292,6 +1297,35 @@ void bt_key_handle_cover_key(enum APP_KEY_EVENT_T event)
             break;
     }
 }
+
+void bt_key_handle_ANC_key(enum APP_KEY_EVENT_T event)
+{
+	switch(event)
+    {
+    	case APP_KEY_EVENT_CLICK:
+			app_anc_Key_Pro();
+			break;
+
+		case APP_KEY_EVENT_DOUBLECLICK:
+#ifdef MEDIA_PLAYER_SUPPORT
+			if(!app_bt_is_connected())
+			{
+				if(app_play_audio_get_lang() == MEDIA_DEFAULT_LANGUAGE){
+					app_voice_report(APP_STATUS_INDICATION_BEEP_22, 0);
+					//app_nvrecord_language_set(1);
+				} else{
+					app_voice_report(APP_STATUS_INDICATION_BEEP_22, 0);
+					//app_nvrecord_language_set(MEDIA_DEFAULT_LANGUAGE);
+				}
+			}	
+#endif
+			break;
+		
+		default:
+			TRACE(1,"unregister down key event=%x",event);
+			break;
+	}
+}
 /** end add **/
 
 #if 0
@@ -1840,6 +1874,10 @@ void bt_key_handle(void)
 /** add by pang **/
 			case BTAPP_QUICK_MONIORT_KEY:
 				bt_key_handle_cover_key((enum APP_KEY_EVENT_T)bt_key.event);
+				break;
+			
+			case BTAPP_ANC_KEY:
+				bt_key_handle_ANC_key((enum APP_KEY_EVENT_T)bt_key.event);
 				break;
 /** end add **/
 			

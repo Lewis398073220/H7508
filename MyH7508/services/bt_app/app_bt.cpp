@@ -220,7 +220,7 @@ btif_accessible_mode_t app_bt_get_current_access_mode(void)
     return g_bt_access_mode;
 }
 
-#if defined(__INTERCONNECTION__)
+#if 1//oen by pang   #if defined(__INTERCONNECTION__)
 bool app_bt_is_connected()
 {
     uint8_t i=0;

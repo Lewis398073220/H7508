@@ -31,6 +31,9 @@
 #include "app_anc.h"
 #include "anc_wnr.h"
 
+/** add by pang **/
+#include "apps.h"
+/** end add **/
 #include "app_status_ind.h"
 #ifdef __SIMPLE_INTERNAL_PLAYER_SUPPORT__
 #include "simple_internal_player.h"
@@ -144,7 +147,7 @@ static HWTIMER_ID anc_timerid = NULL;
 #define anc_init_switch_off_time (MS_TO_TICKS(1000 * 60 * 2))
 #define anc_auto_power_off_time (MS_TO_TICKS(1000 * 60 * 60))
 #define anc_switch_on_time (MS_TO_TICKS(600))
-#define anc_close_delay_time (MS_TO_TICKS(1000 * 20))
+#define anc_close_delay_time (MS_TO_TICKS(1000 * 1)) //(1000 * 20)  m by pang
 #define anc_pwr_key_monitor_time (MS_TO_TICKS(1500))
 #define anc_switch_key_debonce_time (MS_TO_TICKS(40))
 
@@ -165,6 +168,38 @@ bool anc_set_dac_pa_delay = false;
 static enum ANC_INDEX anc_coef_idx = 0;
 
 extern void analog_aud_enable_dac_pa(uint8_t dac);
+
+/** add by pang **/
+static enum ANC_STATUS anc_current_status = anc_on;
+static enum ANC_ON_MODE anc_on_mode = anc_high;//add by pang
+static enum MONITOR_ON_MODE monitor_mode = monitor1;//add by pang
+static enum ANC_TOGGLE_MODE anc_toggle_method = AncOn_AncOff_Awareness;
+
+enum ANC_STATUS app_get_anc_status(void)
+{
+	return (anc_current_status);
+}
+
+enum ANC_ON_MODE app_get_anc_on_mode(void)
+{
+	return (anc_on_mode);
+}
+
+enum MONITOR_ON_MODE app_get_monitor_mode(void)
+{
+	return (monitor_mode);
+}
+
+enum ANC_TOGGLE_MODE app_get_anc_toggle_mode(void)
+{
+	return (anc_toggle_method);
+}
+
+void app_set_anc_toggle_mode(enum ANC_TOGGLE_MODE anc_new_toggle_mode)
+{
+	anc_toggle_method = anc_new_toggle_mode;
+}
+/** end add **/
 
 bool app_anc_is_on(void)
 {
@@ -1631,6 +1666,256 @@ void app_anc_key(APP_KEY_STATUS *status, void *param)
     app_anc_status_post(!temp);
 }
 
+/** add by pang **/
+void app_anc_Key_Pro(void)
+{
+    static bool power_anc_init=0;
+	bool anc_open_flag=0;
+	//TRACE(2," %s anc_current_status: %d", __func__, anc_current_status);
+
+	if(app_get_anc_toggle_mode()==AncOn_AncOff_Awareness) {//m by cai for ANC toggle method define function
+		if(anc_current_status == monitor)
+		{	
+			anc_current_status = anc_on; 
+			anc_coef_idx = anc_on_mode;
+			
+			anc_open_flag=1;
+
+			if(power_anc_init){
+				//power_anc_init=0;
+			}
+			else{
+#ifdef ANC_LED_PIN
+			app_anc_switch_turnled(true);
+			app_monitor_switch_turnled(false);
+#endif
+#ifdef MEDIA_PLAYER_SUPPORT		
+			app_voice_report(APP_STATUS_INDICATION_ANC_ON, 0);
+#endif
+			}
+		}
+		else if(anc_current_status == anc_off)
+		{
+			anc_current_status = monitor;
+			anc_coef_idx = monitor_mode;
+			anc_open_flag=1;
+#ifdef ANC_LED_PIN
+			app_monitor_switch_turnled(true);
+			app_anc_switch_turnled(false);
+#endif
+#ifdef MEDIA_PLAYER_SUPPORT
+			app_voice_report(APP_STATUS_INDICATION_AWARENESS_ON, 0);
+#endif
+		}
+		else
+		{
+			anc_current_status = anc_off;
+#ifdef ANC_LED_PIN
+			app_anc_switch_turnled(false);
+#endif		
+#ifdef MEDIA_PLAYER_SUPPORT
+			app_voice_report(APP_STATUS_INDICATION_ANC_OFF, 0);
+#endif
+		}
+	}else if(app_get_anc_toggle_mode()==AncOn_Awareness) {
+		if(anc_current_status == monitor)
+		{	
+			anc_current_status = anc_on; 
+			anc_coef_idx = anc_on_mode;
+			
+			anc_open_flag=1;
+
+			if(power_anc_init){
+				//power_anc_init=0;
+			}
+			else{
+#ifdef ANC_LED_PIN
+			app_anc_switch_turnled(true);
+			app_monitor_switch_turnled(false);
+#endif
+#ifdef MEDIA_PLAYER_SUPPORT		
+			app_voice_report(APP_STATUS_INDICATION_ANC_ON, 0);
+#endif
+			}
+		}
+		else if(anc_current_status == anc_off)
+		{
+			anc_current_status = monitor;
+			anc_coef_idx = monitor_mode;
+			anc_open_flag=1;
+#ifdef ANC_LED_PIN
+			app_monitor_switch_turnled(true);
+			app_anc_switch_turnled(false);
+#endif
+#ifdef MEDIA_PLAYER_SUPPORT
+			app_voice_report(APP_STATUS_INDICATION_AWARENESS_ON, 0);
+#endif
+		}
+		else
+		{
+			anc_current_status = monitor;
+			anc_coef_idx = monitor_mode;
+			anc_open_flag=1;
+#ifdef ANC_LED_PIN
+			app_monitor_switch_turnled(true);
+			app_anc_switch_turnled(false);
+#endif
+#ifdef MEDIA_PLAYER_SUPPORT
+			app_voice_report(APP_STATUS_INDICATION_AWARENESS_ON, 0);
+#endif
+		}
+	}else if(app_get_anc_toggle_mode()==AncOn_AncOff) {
+		if(anc_current_status == monitor)
+		{	
+			anc_current_status = anc_on; 
+			anc_coef_idx = anc_on_mode;
+			
+			anc_open_flag=1;
+
+			if(power_anc_init){
+				//power_anc_init=0;
+			}
+			else{
+#ifdef ANC_LED_PIN
+			app_anc_switch_turnled(true);
+			app_monitor_switch_turnled(false);
+#endif
+#ifdef MEDIA_PLAYER_SUPPORT		
+			app_voice_report(APP_STATUS_INDICATION_ANC_ON, 0);
+#endif
+			}
+		}
+		else if(anc_current_status == anc_off)
+		{
+			anc_current_status = anc_on; 
+			anc_coef_idx = anc_on_mode;
+			
+			anc_open_flag=1;
+
+			if(power_anc_init){
+				//power_anc_init=0;
+			}
+			else{
+#ifdef ANC_LED_PIN
+			app_anc_switch_turnled(true);
+			app_monitor_switch_turnled(false);
+#endif
+#ifdef MEDIA_PLAYER_SUPPORT		
+			app_voice_report(APP_STATUS_INDICATION_ANC_ON, 0);
+#endif
+			}
+
+		}
+		else
+		{
+			anc_current_status = anc_off;
+#ifdef ANC_LED_PIN
+			app_anc_switch_turnled(false);
+#endif		
+#ifdef MEDIA_PLAYER_SUPPORT
+			app_voice_report(APP_STATUS_INDICATION_ANC_OFF, 0);
+#endif
+		}
+	}else if(app_get_anc_toggle_mode()==Awareness_AncOff){
+		if(anc_current_status == monitor)
+		{	
+			anc_current_status = anc_off;
+#ifdef ANC_LED_PIN
+			app_anc_switch_turnled(false);
+#endif		
+#ifdef MEDIA_PLAYER_SUPPORT
+			app_voice_report(APP_STATUS_INDICATION_ANC_OFF, 0);
+#endif
+		}
+		else if(anc_current_status == anc_off)
+		{
+			anc_current_status = monitor;
+			anc_coef_idx = monitor_mode;
+			anc_open_flag=1;
+#ifdef ANC_LED_PIN
+			app_monitor_switch_turnled(true);
+			app_anc_switch_turnled(false);
+#endif
+#ifdef MEDIA_PLAYER_SUPPORT
+			app_voice_report(APP_STATUS_INDICATION_AWARENESS_ON, 0);
+#endif
+		}
+		else
+		{
+			anc_current_status = anc_off;
+#ifdef ANC_LED_PIN
+			app_anc_switch_turnled(false);
+#endif		
+#ifdef MEDIA_PLAYER_SUPPORT
+			app_voice_report(APP_STATUS_INDICATION_ANC_OFF, 0);
+#endif
+		}
+	}
+
+	switch (anc_work_status)
+    {
+        case ANC_STATUS_OFF:
+			if(anc_open_flag){				
+				TRACE(1," %s ANC_STATUS_OFF--ON", __func__);
+				
+				if(power_anc_init){
+            		anc_work_status = ANC_STATUS_WAITING_ON;
+            		app_anc_timer_set(ANC_EVENT_OPEN, MS_TO_TICKS(4000));
+				}
+				else{
+					anc_work_status = ANC_STATUS_WAITING_ON;
+            	    app_anc_timer_set(ANC_EVENT_OPEN, anc_switch_on_time);
+				}
+            	app_anc_open_anc();
+			}
+            break;
+        case ANC_STATUS_ON: 
+		case ANC_STATUS_WAITING_ON:
+			if(anc_open_flag){			
+				TRACE(2," %s ANC_STATUS_ON:--set coef idx: %d ", __func__, anc_coef_idx);
+#ifdef ANC_MODE_SWITCH_WITHOUT_FADE
+
+#ifdef ANC_FF_ENABLED
+                anc_select_coef(anc_sample_rate[AUD_STREAM_PLAYBACK],anc_coef_idx,ANC_FEEDFORWARD,ANC_GAIN_NO_DELAY);
+#endif
+#ifdef ANC_FB_ENABLED
+                anc_select_coef(anc_sample_rate[AUD_STREAM_PLAYBACK],anc_coef_idx,ANC_FEEDBACK,ANC_GAIN_NO_DELAY);
+#endif
+#ifdef AUDIO_ANC_FB_MC_HW
+                anc_select_coef(anc_sample_rate[AUD_STREAM_PLAYBACK],anc_coef_idx,ANC_MUSICCANCLE,ANC_GAIN_NO_DELAY);
+#endif
+#else
+                osSignalSet(anc_fade_thread_tid,CHANGE_FROM_ANC_TO_TT_DIRECTLY);
+#endif
+            }
+            else
+            {    
+				TRACE(1," %s ANC_STATUS_ON:--fadout", __func__);
+                app_anc_timer_set(ANC_EVENT_CLOSE, anc_close_delay_time);
+                app_anc_gain_fadeout();
+                anc_work_status = ANC_STATUS_WAITING_OFF;
+            }
+            break;
+        case ANC_STATUS_INIT_ON:
+		case ANC_STATUS_WAITING_OFF:
+			if(anc_open_flag){		
+				TRACE(1," %s ANC_STATUS_INIT_ON:--fadin", __func__);
+            	app_anc_select_coef();
+            	app_anc_gain_fadein();
+            	anc_work_status = ANC_STATUS_WAITING_ON;
+            	app_anc_timer_close();
+			}
+            break;
+        default:
+            break;
+    };
+	if(power_anc_init){
+		power_anc_init=0;
+	}
+	//#if defined(__TPV_APP__)
+	//Notification_Nosie_Cancelling_Change();
+	//#endif
+}
 void app_anc_ios_init(void)
 {
 #ifdef __ANC_STICK_SWITCH_USE_GPIO__

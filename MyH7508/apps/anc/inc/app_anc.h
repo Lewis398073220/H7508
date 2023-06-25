@@ -23,6 +23,52 @@
 extern "C" {
 #endif
 
+/** add by pang **/
+enum ANC_STATUS
+{
+	anc_off = 0,
+	anc_on,
+	monitor,
+};
+
+enum ANC_ON_MODE
+{
+	anc_high = 0,
+	anc_low,
+	anc_wind,
+};
+
+enum MONITOR_ON_MODE
+{
+	monitor1 = 3,
+	monitor2,
+	monitor3,
+	monitor4,
+	monitor5,
+
+	clearvoice1,
+	clearvoice2,
+	clearvoice3,
+	clearvoice4,
+	clearvoice5,
+};
+
+enum ANC_TOGGLE_MODE//add by cai
+{
+	AncOn_AncOff_Awareness = 0x00,
+	AncOn_Awareness,
+	AncOn_AncOff,
+	Awareness_AncOff,
+};
+
+enum ANC_STATUS app_get_anc_status(void);
+enum ANC_ON_MODE app_get_anc_on_mode(void);
+enum MONITOR_ON_MODE app_get_monitor_mode(void);
+enum ANC_TOGGLE_MODE app_get_anc_toggle_mode(void);
+void app_set_anc_toggle_mode(enum ANC_TOGGLE_MODE anc_new_toggle_mode);
+void app_anc_Key_Pro(void);
+/** end add **/
+
 void app_anc_set_coef(uint8_t index);
 uint8_t app_anc_get_coef(void);
 void app_anc_set_playback_samplerate(enum AUD_SAMPRATE_T sample_rate);

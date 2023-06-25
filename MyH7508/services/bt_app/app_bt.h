@@ -203,8 +203,9 @@ void app_a2dp_unhold_mute();
 #if defined(__INTERCONNECTION__)
 btif_accessible_mode_t app_bt_get_current_access_mode(void);
 
-bool app_bt_is_connected();
+//bool app_bt_is_connected();
 #endif
+bool app_bt_is_connected();
 
 bool app_bt_is_hfp_audio_on(void);
 

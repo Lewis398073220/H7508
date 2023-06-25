@@ -171,6 +171,7 @@ int audio_section_load_cfg(uint32_t device, uint8_t *cfg, uint32_t len)
     return 0;
 }
 
+#if 0
 int anccfg_loadfrom_audsec(const struct_anc_cfg *list[], const struct_anc_cfg *list_44p1k[], uint32_t count)
 {
 #ifdef PROGRAMMER
@@ -212,4 +213,47 @@ int anccfg_loadfrom_audsec(const struct_anc_cfg *list[], const struct_anc_cfg *l
 
 #endif // !PROGRAMMER
 }
+#else//m by pang
+#define ANC_COEF_LIST_LOAD_NUM 1//2 //m by cai
+int anccfg_loadfrom_audsec(const struct_anc_cfg *list[], const struct_anc_cfg *list_44p1k[], uint32_t count)
+{
+#ifdef PROGRAMMER
 
+    return 1;
+
+#else // !PROGRAMMER
+
+#ifdef CHIP_BEST1000
+    ASSERT(0, "[%s] Can not support anc load in this branch!!!", __func__);
+#else
+    unsigned int re_calc_crc,i;
+    const pctool_aud_section *audsec_ptr;
+
+    audsec_ptr = (pctool_aud_section *)__aud_start;
+    TRACE(3,"0x%x,0x%x,0x%x",audsec_ptr->sec_head.magic,audsec_ptr->sec_head.version,audsec_ptr->sec_head.crc);
+    if (audsec_ptr->sec_head.magic != aud_section_magic) {
+        TRACE(0,"Invalid aud section - magic");
+        return 1;
+    }
+    re_calc_crc = crc32(0,(unsigned char *)&(audsec_ptr->sec_body),sizeof(audsec_body)-4);
+    if (re_calc_crc != audsec_ptr->sec_head.crc){
+        TRACE(0,"crc verify failure, invalid aud section.");
+        return 1;
+    }
+    TRACE(0,"Valid aud section.");
+    for(i=0;i<ANC_COEF_LIST_LOAD_NUM;i++)
+        list[i] = (struct_anc_cfg *)&(audsec_ptr->sec_body.anc_config.anc_config_arr[i].anc_cfg[PCTOOL_SAMPLERATE_48X8K]);
+#if (AUD_SECTION_STRUCT_VERSION == 3)
+    for(i=0;i<ANC_COEF_LIST_LOAD_NUM;i++)
+        list_44p1k[i] = (struct_anc_cfg *)&(audsec_ptr->sec_body.anc_config.anc_config_arr[i].anc_cfg[PCTOOL_SAMPLERATE_48X8K]);
+#else
+    for(i=0;i<ANC_COEF_LIST_LOAD_NUM;i++)
+        list_44p1k[i] = (struct_anc_cfg *)&(audsec_ptr->sec_body.anc_config.anc_config_arr[i].anc_cfg[PCTOOL_SAMPLERATE_44_1X8K]);
+#endif
+#endif
+
+    return 0;
+
+#endif // !PROGRAMMER
+}
+#endif
