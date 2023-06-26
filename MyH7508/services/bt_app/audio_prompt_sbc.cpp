@@ -539,7 +539,8 @@ bool audio_prompt_start_playing(uint16_t promptId, uint32_t targetSampleRate)
 
     TRACE(1,"start audio prompt. target sample rate %d", targetSampleRate);
 
-    app_sysfreq_req(APP_SYSFREQ_USER_PROMPT_MIXER, APP_SYSFREQ_104M);
+    //app_sysfreq_req(APP_SYSFREQ_USER_PROMPT_MIXER, APP_SYSFREQ_104M);
+	app_sysfreq_req(APP_SYSFREQ_USER_PROMPT_MIXER, APP_SYSFREQ_208M);//m by cai for 96000k sample prompt play
 
 #ifdef TWS_PROMPT_SYNC
     if (!isPlayingLocally)
