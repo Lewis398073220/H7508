@@ -1667,7 +1667,7 @@ void app_anc_key(APP_KEY_STATUS *status, void *param)
 }
 
 /** add by pang **/
-void app_anc_Key_Pro(void)
+void app_anc_Key_Pro(APP_KEY_STATUS *status, void *param)
 {
     static bool power_anc_init=0;
 	bool anc_open_flag=0;

@@ -66,7 +66,7 @@ enum ANC_ON_MODE app_get_anc_on_mode(void);
 enum MONITOR_ON_MODE app_get_monitor_mode(void);
 enum ANC_TOGGLE_MODE app_get_anc_toggle_mode(void);
 void app_set_anc_toggle_mode(enum ANC_TOGGLE_MODE anc_new_toggle_mode);
-void app_anc_Key_Pro(void);
+void app_anc_Key_Pro(APP_KEY_STATUS *status, void *param);
 /** end add **/
 
 void app_anc_set_coef(uint8_t index);
