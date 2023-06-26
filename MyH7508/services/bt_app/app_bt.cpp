@@ -4981,5 +4981,29 @@ int8_t app_tile_get_ble_rssi(void)
 }
 #endif
 
-
-
+/** add by pang **/
+void app_get_curr_remDev_Mac(unsigned char* mobile_addr)
+{
+    uint8_t num_of_connected_dev=0;
+	num_of_connected_dev=app_bt_get_num_of_connected_dev();
+#ifdef __BT_ONE_BRING_TWO__	
+	app_audio_manager_a2dp_is_active(BT_DEVICE_ID_1);
+	app_audio_manager_a2dp_is_active(BT_DEVICE_ID_2);
+    if(num_of_connected_dev==0) 
+		mobile_addr=0;
+	else if(num_of_connected_dev==1)
+		memcpy(mobile_addr,bt_profile_manager[0].rmt_addr.address, 6);
+	else{
+	    if(app_audio_manager_a2dp_is_active(BT_DEVICE_ID_1))
+			memcpy(mobile_addr,bt_profile_manager[0].rmt_addr.address, 6);	
+		else
+			memcpy(mobile_addr,bt_profile_manager[1].rmt_addr.address, 6);
+	}
+#else
+	if(num_of_connected_dev==0) 
+		mobile_addr=0;
+	else
+		memcpy(mobile_addr,bt_profile_manager[0].rmt_addr.address, 6);
+#endif
+}
+/** end add **/

@@ -650,26 +650,358 @@ void Philips_Send_Notify(uint8_t *data, uint32_t size)
 void Get_Connect_Phone_Mac(void)
 {
     uint8_t phoneAddr[6] ={0};
-    app_get_curr_remDev(phoneAddr);
-    g_valueLen = 14;
-    uint8_t i =0;
+    app_get_curr_remDev_Mac(phoneAddr);
+	
+    uint8_t valueLen = 14, i =0;
     uint8_t data[14] = {0xff,0x01,0x00,0x04,0x71,0x80,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00};
-     //Data length
-     data[2] = 0x0e;
-     //Phone Mac address 6 byte
-     for (i = 0 ; i < 6 ; i++){
-	      data[7 + i ] = phoneAddr[i];
-     } 	
-	 
-     //Do checksum
-     data[g_valueLen - 1]=Do_CheckSum(data,g_valueLen);
-	 
-     for (i =0;i <  g_valueLen; i++){
-	      g_valuePtr[i] = data[i];
-    }	   
-	 
-    Philips_Send_Notify(g_valuePtr, (uint32_t)g_valueLen);
+	
+	//Data length
+	data[2] = 0x0e;
+	//Phone Mac address 6 byte
+	for (i = 0 ; i < 6 ; i++){
+	  data[7 + i ] = phoneAddr[i];
+	} 	
+	//Do checksum
+	data[valueLen - 1]=Do_CheckSum(data,valueLen);	   
+
+	Philips_Send_Notify(data, (uint32_t)valueLen);
+}
+
+void Get_Device_Feature_Config(void)
+{
+	uint8_t device_feature[3] = {0};
+	device_feature[0] = FOTA_SUPPORT | ANC_MODE_SUPPORT | EQUALIZER_SUPPORT | CUSTOMIZATION_EQ_SUPPORT; //| NOWPLAYING_SUPPORT; //| EAR_DETECTION_SUPPORT;//  | HEART_RATE_SUPPORT;
+    device_feature[1] = BATTERY_STATUS_SUPPORT  | SPECIAL_FUNCTION1_SUPPORT; //|SPECIAL_FUNCTION2_SUPPORT;//| MULTI_LANGAUAGE_VOICE_PROMPT_SUPPORT
+    device_feature[2] = NOWPLAYING2_0_SUPPORT | KEY_DEFINE_CHANGE_SUPPORT;
     
+    uint8_t valueLen = 11;
+    uint8_t data[11] = {0xff,0x01,0x00,0x04,0x71,0x80,0x01,0x00,0x00,0x00,0x00};
+	
+	//Data length
+	data[2] = 0x0b;
+	//Device features list 2 byte
+	data[7] = device_feature[0];
+	data[8] = device_feature[1];
+	data[9] = device_feature[2];	
+	//Do checksum
+	data[valueLen - 1]=Do_CheckSum(data,valueLen);
+
+    Philips_Send_Notify(data, (uint32_t)valueLen);
+}
+
+unsigned char Version[] = "API V5.0";
+void Get_Api_Version()
+{
+	uint8_t valueLen = 0, i =0;
+	uint8_t head[7] = {0xff,0x01,0x00,0x04,0x71,0x80,0x02};
+	uint8_t charsize = sizeof(Version);
+
+	//TRACE(1,"charsize %d : ", charsize);
+	valueLen = 8 + charsize;
+
+	uint8_t version[valueLen];	 
+
+	for (i = 0 ; i < 7 ; i++){
+		version[i] = head[i];
+	}
+
+	//Data length
+	version[2] = valueLen;
+
+	for (i = 7 ; i < (7 + charsize) ; i++){
+		version[i] = (uint8_t) Version[i - 7];
+	}    
+	//Do checksum
+	version[valueLen - 1]=Do_CheckSum(version,valueLen); 
+
+	Philips_Send_Notify(version, (uint32_t)valueLen);
+}
+
+void Get_Sound_Quality(void)
+{
+	uint8_t sound_quality[]= {0x00}; //0 is SBC ,1 is AAC
+	uint8_t valueLen = 0;
+	uint8_t head[9] = {0xff,0x01,0x00,0x04,0x71,0x80,0x03,0x00,0x00};
+
+	if(0x02==bt_sbc_player_get_codec_type())
+		sound_quality[0]=0x01;
+	else
+		sound_quality[0]=0x00;
+
+	TRACE(2,"***%s: sound_quality=%d",__func__,sound_quality[0]);
+
+	valueLen = 9;
+
+	//Data length
+	head[2] = 0x09;
+	//sound quality Item status 1 byte  
+	head[7] = sound_quality[0];
+	//Do checksum
+	head[valueLen - 1]=Do_CheckSum(head,valueLen);   
+	
+    Philips_Send_Notify(head, (uint32_t)valueLen);	
+}
+
+void Get_Right_Ear_MAC_Address(void)
+{
+	uint8_t MacAddr[6] ={0};
+	uint8_t valueLen = 0, i = 0;
+	uint8_t data[14] = {0xff,0x01,0x00,0x04,0x71,0x80,0x04,0x00,0x00,0x00,0x00,0x00,0x00,0x00};
+	
+	memcpy(MacAddr, bt_addr, 6);
+	
+    valueLen = 14;
+    
+	//Data length
+	data[2] = 0x0e;
+	//Mac address 6 byte
+	for (i = 0 ; i < 6 ; i++){
+		data[7 + i ] = MacAddr[i];  //Need fill it.
+	} 	
+
+	//Do checksum
+	data[valueLen - 1]=Do_CheckSum(data,valueLen);   
+	 
+    Philips_Send_Notify(data, (uint32_t)valueLen);	
+}
+
+void Get_Left_Ear_MAC_Address(void)
+{
+	uint8_t MacAddr[6] ={0};
+	uint8_t valueLen = 0, i = 0;
+	uint8_t data[14] = {0xff,0x01,0x00,0x04,0x71,0x80,0x05,0x00,0x00,0x00,0x00,0x00,0x00,0x00};
+	
+	memcpy(MacAddr, bt_addr, 6);
+	
+    valueLen = 14;
+    
+	//Data length
+	data[2] = 0x0e;
+	//Mac address 6 byte
+	for (i = 0 ; i < 6 ; i++){
+		data[7 + i ] = MacAddr[i];  //Need fill it.
+	} 	
+
+	//Do checksum
+	data[valueLen - 1]=Do_CheckSum(data,valueLen);   
+	 
+    Philips_Send_Notify(data, (uint32_t)valueLen);	
+}
+
+void Notification_Sound_Quality_Change(void)
+{
+	TRACE(0,"********%s",__func__);
+
+    uint8_t valueLen = 9;
+    uint8_t head[9] = {0xff,0x01,0x00,0x04,0x71,0x80,0x06,0x00,0x00};
+	
+	//Data length
+	head[2] = 0x09;
+	//Notification_EQ_Change 1 byte  
+	head[7] = 0x01; 
+	//Do checksum
+	head[valueLen - 1]=Do_CheckSum(head,valueLen);
+   
+    Philips_Send_Notify(head, (uint32_t)valueLen);    
+}
+
+void Get_BLE_MAC_Address(void)
+{
+	uint8_t MacAddr[6] ={3};
+	uint8_t valueLen = 14, i =0;
+	uint8_t data[14] = {0xff,0x01,0x00,0x04,0x71,0x80,0x07,0x00,0x00,0x00,0x00,0x00,0x00,0x00};
+	
+	memcpy(MacAddr, ble_addr, 6);
+
+
+	//Data length
+	data[2] = 0x0e;
+	//Mac address 6 byte
+	for (i = 0 ; i < 6 ; i++){
+		data[7 + i ] = MacAddr[i];  //Need fill it.
+	} 	
+
+	//Do checksum
+	data[valueLen - 1]=Do_CheckSum(data,valueLen);
+	
+	Philips_Send_Notify(data, (uint32_t)valueLen);
+}
+
+void Get_Sales_Region(void)
+{
+	uint8_t sales_region[]= {0x01}; //00 is Global region , /93 is China
+	uint8_t valueLen = 9;
+	uint8_t head[9] = {0xff,0x01,0x00,0x04,0x71,0x80,0x08,0x00,0x00};
+
+	//Data length
+	head[2] = 0x09;
+	//sound quality Item status 1 byte  
+	head[7] = sales_region[0];
+	//Do checksum
+	head[valueLen - 1]=Do_CheckSum(head,valueLen);
+
+	Philips_Send_Notify(head, (uint32_t)valueLen);	
+}
+
+unsigned char Vendor[] = "BES";
+void Get_Chipset_Vendor(void)
+{
+	uint8_t i =0;
+	uint8_t head[7] = {0xff,0x01,0x00,0x04,0x71,0x80,0x10};
+	uint8_t charsize = sizeof(Vendor);
+	uint8_t valueLen = 0;
+
+	//TRACE(1,"charsize %d : ", charsize);
+
+	valueLen = 8 + charsize;
+
+	uint8_t vendor[valueLen];	 
+
+	for (i = 0 ; i < 7 ; i++){
+		vendor[i] = head[i];
+	}
+
+	//Data length
+	vendor[2] = valueLen;
+
+	for (i = 7 ; i < (7 + charsize) ; i++){
+		vendor[i] = (uint8_t) Vendor[i - 7];
+	}    
+	//Do checksum
+	vendor[valueLen - 1]=Do_CheckSum(vendor,valueLen);
+
+	Philips_Send_Notify(vendor, (uint32_t)valueLen);
+}
+
+unsigned char Solution[] = "BES2500HP";
+void Get_Chipset_Solution(void)
+{
+	uint8_t i =0;
+	uint8_t head[7] = {0xff,0x01,0x00,0x04,0x71,0x80,0x11};
+	uint8_t charsize = sizeof(Solution);
+	uint8_t valueLen = 0;
+
+	//TRACE(1,"charsize %d : ", charsize);
+
+	valueLen = 8 + charsize;
+
+	uint8_t solution[valueLen];	 
+
+	for (i = 0 ; i < 7 ; i++){
+		solution[i] = head[i];
+	}
+
+	//Data length
+	solution[2] = valueLen;
+
+	for (i = 7 ; i < (7 + charsize) ; i++){
+		solution[i] = (uint8_t) Solution[i - 7];
+	}    
+	//Do checksum
+	solution[valueLen - 1]=Do_CheckSum(solution,valueLen);
+	
+	Philips_Send_Notify(solution, (uint32_t)valueLen);
+}
+
+unsigned char Chipset_Version[] = "V0.2.0.0";
+void Get_Chipset_Version(void)
+{	
+	uint8_t i =0;
+	uint8_t head[7] = {0xff,0x01,0x00,0x04,0x71,0x80,0x12};
+	uint8_t valueLen = 0;
+	uint8_t charsize = sizeof(Chipset_Version);
+
+	//TRACE(1,"charsize %d : ", charsize);
+	
+	valueLen = 8 + charsize;
+
+	uint8_t version[valueLen];	 
+
+	for (i = 0 ; i < 7 ; i++){
+		version[i] = head[i];
+	}
+
+	//Data length
+	version[2] = valueLen;
+
+	for (i = 7 ; i < (7 + charsize) ; i++){
+		version[i] = (uint8_t) Chipset_Version[i - 7];
+	}    
+
+	//Do checksum
+	version[valueLen - 1]=Do_CheckSum(version,valueLen);
+	
+	Philips_Send_Notify(version, (uint32_t)valueLen);
+}
+
+void Get_Device_Type(void)
+{
+	uint8_t device_type[]= {0x00}; //0 is Headset 1 is TWS
+	uint8_t valueLen = 9;
+	uint8_t head[9] = {0xff,0x01,0x00,0x04,0x71,0x80,0x13,0x00,0x00};
+	
+	//Data length
+	head[2] = 0x09;
+	//device type Item status 1 byte  
+	head[7] = device_type[0];
+	//Do checksum
+	head[valueLen - 1]=Do_CheckSum(head,valueLen);
+
+	Philips_Send_Notify(head, (uint32_t)valueLen);
+}
+
+static uint8_t g_FOTA_Flage[]= {0x00};
+void Get_FOTA_Finish_Flag(void)
+{
+	uint8_t valueLen = 9;
+	uint8_t head[9] = {0xff,0x01,0x00,0x04,0x71,0x80,0x14,0x00,0x00};
+	
+	//Data length
+	head[2] = 0x09;
+	//device type Item status 1 byte 
+	g_FOTA_Flage[0]=app_get_fota_flag();
+	head[7] = g_FOTA_Flage[0];
+	//Do checksum
+	head[valueLen - 1]=Do_CheckSum(head,valueLen);
+	
+	Philips_Send_Notify(head, (uint32_t)valueLen);
+}
+
+void  Set_FOTA_Finish_Flag(uint8_t *valuePtr)
+{
+	g_FOTA_Flage[0] =  valuePtr[0] & 0x01;
+	app_nvrecord_fotaflag_set(g_FOTA_Flage[0]); 
+}
+
+unsigned char PCBA_Version[] = "V1.0";
+void Get_PCBA_Version(void)
+{
+	uint8_t valueLen = 0;
+	uint8_t i =0;
+	uint8_t head[7] = {0xff,0x01,0x00,0x04,0x71,0x80,0x16};
+	uint8_t charsize = sizeof(PCBA_Version);
+
+	//TRACE(1,"charsize %d : ", charsize);
+
+	valueLen = 8 + charsize;
+
+	uint8_t version[valueLen];	 
+
+	for (i = 0 ; i < 7 ; i++){
+		version[i] = head[i];
+	}
+
+	//Data length
+	version[2] = valueLen;
+
+	for (i = 7 ; i < (7 + charsize) ; i++){
+		version[i] = (uint8_t) PCBA_Version[i - 7];
+	}    
+
+	//Do checksum
+	version[valueLen - 1]=Do_CheckSum(version,valueLen);
+
+	Philips_Send_Notify(version, (uint32_t)valueLen);
 }
 
 bool Philips_Functions_Call(uint8_t *data, uint8_t size)
@@ -684,6 +1016,85 @@ bool Philips_Functions_Call(uint8_t *data, uint8_t size)
 			Get_Connect_Phone_Mac();
 		return true;
 
+		case GET_DEVICE_FEATURE_CONFIG:		
+			//TRACE(0,"Philips : Philips_Functions_Call GET_DEVICE_FEATURE_CONFIG!\r\n");
+			Get_Device_Feature_Config();
+		return true;
+		
+		case GET_API_VERSION:
+			//TRACE(0,"Philips : Philips_Functions_Call GET_API_VERSION!\r\n");
+			Get_Api_Version();
+		return true;	
+				
+		case GET_SOUND_QUALITY:
+			//TRACE(0,"Philips : Philips_Functions_Call GET_SOUND_QUALITY!\r\n");
+			Get_Sound_Quality();
+		return true;		
+			
+		case GET_RIGHT_EAR_MAC_ADDRESS:
+			//TRACE(0,"Philips : Philips_Functions_Call GET_RIGHT_EAR_MAC_ADDRESS!\r\n");
+			Get_Right_Ear_MAC_Address();
+		return true;
+			
+		case GET_LEFT_EAR_MAC_ADDRESS:
+			//TRACE(0,"Philips : Philips_Functions_Call GET_LEFT_EAR_MAC_ADDRESS!\r\n");
+			Get_Left_Ear_MAC_Address();
+		return true;	
+				
+		case NOTIFICATION_SOUND_QUALITY_CHANGE:
+			//TRACE(0,"Philips : Philips_Functions_Call NOTIFICATION_SOUND_QUALITY_CHANGE!\r\n");
+		return true;		
+			
+		case GET_BLE_MAC_ADDRESS:
+			//TRACE(0,"Philips : Philips_Functions_Call GET_BLE_MAC_ADDRESS!\r\n");
+			Get_BLE_MAC_Address();
+		return true;			
+			
+		case GET_SALES_REGION:
+			//TRACE(0,"Philips : Philips_Functions_Call GET_SALES_REGION!\r\n");
+			Get_Sales_Region();
+		return true;		
+										
+		case GET_CHIPSET_VENDOR:		
+			//TRACE(0,"Philips : Philips_Functions_Call GET_CHIPSET_VENDOR!\r\n");
+			Get_Chipset_Vendor();
+		return true;
+			
+		case GET_CHIPSET_SOLUTION:		
+			//TRACE(0,"Philips : Philips_Functions_Call GET_CHIPSET_SOLUTION!\r\n");
+			Get_Chipset_Solution();
+		return true;
+			
+		case GET_FW_VERSION:		
+			//TRACE(0,"Philips : Philips_Functions_Call GET_FW_VERSION!\r\n");
+			Get_Chipset_Version();
+		return true;	
+			
+		case GET_DEVICE_TYPE:		
+			//TRACE(0,"Philips : Philips_Functions_Call GET_DEVICE_TYPE!\r\n");
+			Get_Device_Type();			
+		return true;			
+			
+		case GET_FOTA_FINISH_FLAG:		
+			//TRACE(0,"Philips : Philips_Functions_Call GET_FOTA_FINISH_FLAG!\r\n");
+			Get_FOTA_Finish_Flag();
+		return true;
+		
+		case SET_FOTA_FINISH_FLAG:		
+			//TRACE(0,"Philips : Philips_Functions_Call SET_FOTA_FINISH_FLAG!\r\n");
+			if (size != 9){
+				return false;
+			}			
+			uint8_t fota_flag[1] = {0};
+			fota_flag[0] = data[7];		
+			Set_FOTA_Finish_Flag(fota_flag);			
+		return true;
+			
+		case GET_PCBA_VERSION:		
+			//TRACE(0,"Philips : Philips_Functions_Call GET_PCBA_VERSION!\r\n");
+			Get_PCBA_Version();
+		return true;	
+			
 		default:
 			TRACE(0,"Philips : Philips_Functions_Call Command error!\r\n");
 		break;
