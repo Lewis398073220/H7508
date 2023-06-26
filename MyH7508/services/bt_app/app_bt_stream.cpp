@@ -6073,7 +6073,17 @@ int bt_sco_player(bool on, enum APP_SYSFREQ_FREQ_T freq)
         */
 
 #ifdef SPEECH_SIDETONE
-        hal_codec_sidetone_enable();
+#if 0
+		hal_codec_sidetone_enable();
+#else //m by pang
+		if(app_get_sidetone()){
+			hal_codec_dac_mute(1);
+			osDelay(60);	
+			hal_codec_sidetone_enable();
+			osDelay(60);
+			hal_codec_dac_mute(0);
+		}
+#endif
 #endif
 
 #ifdef _SCO_BTPCM_CHANNEL_

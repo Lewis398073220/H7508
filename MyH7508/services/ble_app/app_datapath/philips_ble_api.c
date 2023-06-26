@@ -1254,6 +1254,350 @@ void Get_Equalizer_Status_D4_Value(void)
 	Philips_Send_Notify(head, (uint32_t)valueLen);  
 }
 
+void Get_Customization_Eq_Support_List(void)
+{
+	uint8_t valueLen = 9;
+	uint8_t head[9] = {0xff,0x01,0x00,0x04,0x71,0x80,0xa0,0x00,0x00};
+
+	//Data length
+	head[2] = 0x09;
+	//Customization Eq List 1 byte  
+	head[7] = NOT_SUPPORT | BRAND0_SUPPORT | BRAND1_SUPPORT | BRAND2_SUPPORT | BRAND3_SUPPORT | BRAND4_SUPPORT| BRAND5_SUPPORT;
+	//Do checksum
+	head[valueLen - 1]=Do_CheckSum(head,valueLen);
+   
+	Philips_Send_Notify(head, (uint32_t)valueLen); 
+}
+
+static uint8_t g_set_custeq_brand_item_value[6]= {0};
+void Get_Customization_Eq_Brand_Current_Value(void)
+{	
+	uint8_t valueLen = 14;
+	uint8_t head[14] = {0xff,0x01,0x00,0x04,0x71,0x80,0xa1,0x00,0x00,0x00,0x00,0x00,0x00,0x00};
+
+	app_eq_custom_para_get(g_set_custeq_brand_item_value);
+
+	//Data length
+	head[2] = 0x0e;
+	//Customization Eq List 5 byte  
+	head[7] =  g_set_custeq_brand_item_value[0]; 
+	head[8] =  g_set_custeq_brand_item_value[1]; 
+	head[9] =  g_set_custeq_brand_item_value[2]; 
+	head[10] = g_set_custeq_brand_item_value[3]; 
+	head[11] = g_set_custeq_brand_item_value[4]; 
+	head[12] = g_set_custeq_brand_item_value[5]; 
+
+	TRACE(1,"***g_set_custeq_brand_item_value[0]=%x",g_set_custeq_brand_item_value[0]);	
+	TRACE(1,"***g_set_custeq_brand_item_value[1]=%x",g_set_custeq_brand_item_value[1]);
+	TRACE(1,"***g_set_custeq_brand_item_value[2]=%x",g_set_custeq_brand_item_value[2]);
+	TRACE(1,"***g_set_custeq_brand_item_value[3]=%x",g_set_custeq_brand_item_value[3]);
+	TRACE(1,"***g_set_custeq_brand_item_value[4]=%x",g_set_custeq_brand_item_value[4]);
+	TRACE(1,"***g_set_custeq_brand_item_value[5]=%x",g_set_custeq_brand_item_value[5]);
+
+	//Do checksum
+	head[valueLen - 1]=Do_CheckSum(head,valueLen);
+
+	Philips_Send_Notify(head, (uint32_t)valueLen);  
+}
+
+void Set_Customization_Eq_Brand_Current_Value(uint8_t set_customization_eq_value[6])
+{
+	g_set_custeq_brand_item_value[0] = set_customization_eq_value[0];
+	g_set_custeq_brand_item_value[1] = set_customization_eq_value[1];
+	g_set_custeq_brand_item_value[2] = set_customization_eq_value[2];
+	g_set_custeq_brand_item_value[3] = set_customization_eq_value[3];
+	g_set_custeq_brand_item_value[4] = set_customization_eq_value[4]; 
+	g_set_custeq_brand_item_value[5] = set_customization_eq_value[5];
+
+	app_nvrecord_eq_param_set(set_customization_eq_value);
+	change_eq_from_ble_api(0x3f);   
+}
+
+void Get_Customization_Eq_Brand_Range_Value(void)
+{
+
+	uint8_t valueLen = 9;
+	uint8_t head[9] = {0xff,0x01,0x00,0x04,0x71,0x80,0xa3,0x00,0x00};
+	
+	//Data length
+	head[2] = 0x09;
+	//Customization Eq Range 1 byte  
+	head[7] = 0x0a;  //support 10 level
+	//Do checksum
+	head[valueLen - 1]=Do_CheckSum(head,valueLen);
+
+	Philips_Send_Notify(head, (uint32_t)valueLen);   
+}
+
+void Get_Customization_Eq_With_Lib(void)
+{
+	uint8_t valueLen = 9;
+	uint8_t head[9] = {0xff,0x01,0x00,0x04,0x71,0x80,0xa4,0x00,0x00};
+	
+	//Data length
+	head[2] = 0x09;
+	//Customization Eq Range 1 byte  
+	head[7] = 0x00;  //not using lib
+	//Do checksum
+	head[valueLen - 1]=Do_CheckSum(head,valueLen);
+
+	Philips_Send_Notify(head, (uint32_t)valueLen);  
+}
+
+void Get_Battery_Charge_Status(void)
+{
+	uint8_t valueLen = 9;
+	uint8_t head[9] = {0xff,0x01,0x00,0x04,0x71,0x80,0xe0,0x00,0x00};
+	
+	//Data length
+	head[2] = 0x09;
+	//Battery Charge Status 1 byte  
+
+	head[7] = 0xff; //not support charge function.
+	//Do checksum
+	head[valueLen - 1]=Do_CheckSum(head,valueLen);
+  
+	Philips_Send_Notify(head, (uint32_t)valueLen);	
+}
+
+void Get_Right_Battery_Level_Value(void)
+{
+	uint8_t Right_Battery_Level_Value[]= {0x0a};
+	Right_Battery_Level_Value[0]=app_battery_current_level();  
+	uint8_t valueLen = 9;
+	uint8_t head[9] = {0xff,0x01,0x00,0x04,0x71,0x80,0xe1,0x00,0x00};
+	
+	//Data length
+	head[2] = 0x09;
+	//Battery Level Status 1 byte  
+	//g_Battery_Level_Value[0] = DRV_BAT_GetLevelInPercent();
+	head[7] = Right_Battery_Level_Value[0]; 
+	//Do checksum
+	head[valueLen - 1]=Do_CheckSum(head,valueLen); 
+
+	Philips_Send_Notify(head, (uint32_t)valueLen);
+}
+
+void Get_Left_Battery_Level_Value(void)
+{
+	uint8_t Left_Battery_Level_Value[]= {0x0a};
+	Left_Battery_Level_Value[0]=app_battery_current_level();  
+	uint8_t valueLen = 9;
+	uint8_t head[9] = {0xff,0x01,0x00,0x04,0x71,0x80,0xe2,0x00,0x00};
+	
+	//Data length
+	head[2] = 0x09;
+	//Battery Level Status 1 byte  
+	//g_Battery_Level_Value[0] = DRV_BAT_GetLevelInPercent();
+	head[7] = Left_Battery_Level_Value[0]; 
+	//Do checksum
+	head[valueLen - 1]=Do_CheckSum(head,valueLen);
+
+	Philips_Send_Notify(head, (uint32_t)valueLen);	
+}
+
+void Get_ChargeBox_Battery_Level_Value(void)
+{
+	uint8_t ChargeBox_Battery_Level_Value[]= {0xff};  //not support
+	uint8_t valueLen = 9;
+	uint8_t head[9] = {0xff,0x01,0x00,0x04,0x71,0x80,0xe3,0x00,0x00};
+	
+	//Data length
+	head[2] = 0x09;
+	//Battery Level Status 1 byte  
+	//g_Battery_Level_Value[0] = DRV_BAT_GetLevelInPercent();
+	head[7] = ChargeBox_Battery_Level_Value[0]; 
+	//Do checksum
+	head[valueLen - 1]=Do_CheckSum(head,valueLen);
+   
+	Philips_Send_Notify(head, (uint32_t)valueLen);
+}
+
+void Notification_Battery_Level_Change()
+{
+	uint8_t valueLen = 9;
+	uint8_t head[9] = {0xff,0x01,0x00,0x04,0x71,0x80,0xe4,0x00,0x00};
+	
+	//Data length
+	head[2] = 0x09;
+	//Notification_Media_Change 1 byte  
+	head[7] = 0x01; 
+	//Do checksum
+	head[valueLen - 1]=Do_CheckSum(head,valueLen);
+
+	Philips_Send_Notify(head, (uint32_t)valueLen);
+}
+
+static uint8_t g_set_sleep_timer_value[]= {0x00};
+void Set_Sleep_Mode_Timer(uint8_t set_sleep_timer_value[1])
+{
+	g_set_sleep_timer_value[0] =  set_sleep_timer_value[0];
+	if(g_set_sleep_timer_value[0] > 0x03)
+		return;
+
+	app_nvrecord_sleep_time_set(g_set_sleep_timer_value[0]);
+}
+
+void Get_Sleep_Mode_Timer(void)
+{
+	g_set_sleep_timer_value[0]=app_get_sleep_time();
+	uint8_t valueLen = 9;
+	uint8_t head[9] = {0xff,0x01,0x00,0x04,0x71,0x80,0xe9,0x00,0x00};
+	
+	//Data length
+	head[2] = 0x09;
+	//Equalizer Status 1 byte  
+	head[7] = g_set_sleep_timer_value[0];    
+
+	//Do checksum
+	head[valueLen - 1]=Do_CheckSum(head,valueLen);
+
+	Philips_Send_Notify(head, (uint32_t)valueLen); 
+}
+
+void Get_Smart_ChargeBox_support(void)
+{
+	uint8_t valueLen = 9;
+	uint8_t head[9] = {0xff,0x01,0x00,0x04,0x71,0x80,0xea,0x00,0x00};
+	
+	//Data length
+	head[2] = 0x09;
+	//Equalizer Status 1 byte  
+	head[7] = 0x00;  //not support    
+
+	//Do checksum
+	head[valueLen - 1]=Do_CheckSum(head,valueLen);   
+
+	Philips_Send_Notify(head, (uint32_t)valueLen); 
+}
+
+void Get_Auto_Power_Off_Support(void)
+{
+	uint8_t valueLen = 9;
+	uint8_t head[9] = {0xff,0x01,0x00,0x04,0x71,0x80,0xeb,0x00,0x00};
+	
+	//Data length
+	head[2] = 0x09;
+	//Auto_Power 1 byte  
+	head[7] =  0x01;  //support    
+
+	//Do checksum
+	head[valueLen - 1]=Do_CheckSum(head,valueLen);
+
+	Philips_Send_Notify(head, (uint32_t)valueLen); 
+}
+
+static uint8_t g_auto_power_off_timer_value[]= {0x00};
+void Get_Auto_Power_Off_Timer(void)
+{
+	uint8_t valueLen = 9;
+	uint8_t head[9] = {0xff,0x01,0x00,0x04,0x71,0x80,0xec,0x00,0x00};
+	
+	//Data length
+	head[2] = 0x09;
+	//Auto_Power_Off 1 byte  
+	//head[7] =  g_auto_power_off_timer_value[0];    
+	head[7] = app_get_auto_poweroff();
+
+	//Do checksum
+	head[valueLen - 1]=Do_CheckSum(head,valueLen);
+
+	Philips_Send_Notify(head, (uint32_t)valueLen); 
+}
+
+void Set_Auto_Power_Off_Timer(uint8_t auto_power_off_timer_value[1])
+{
+	g_auto_power_off_timer_value[0] = auto_power_off_timer_value[0];
+	if(g_auto_power_off_timer_value[0]>0x05)//add by cai
+		return;
+	app_auto_poweroff_set(g_auto_power_off_timer_value[0]);  
+	app_start_10_second_timer(APP_AUTO_PWOFF_TIMER_ID);//add by cai to fresh timer
+}
+
+void Get_Special_Function1_Support_List(void)
+{
+	uint8_t valueLen = 9;
+	uint8_t head[9] = {0xff,0x01,0x00,0x04,0x71,0x81,0x10,0x00,0x00};
+	
+	//Data length
+	head[2] = 0x09;
+	//Special Function1 Support List 1 byte  
+	head[7] = TOUCH_LOCK_SUPPORT | SIDE_TONE_SUPPORT | LOW_LATENCY_SUPPORT | DEVICE_COLOUR_SUPPORT;//| VIBRATION_SUPPORT;  
+
+	//Do checksum
+	head[valueLen - 1]=Do_CheckSum(head,valueLen);
+
+	Philips_Send_Notify(head, (uint32_t)valueLen);  
+}
+
+uint8_t g_set_touch_status_value[] = {0x00};
+void Get_Touch_Status(void)
+{
+	uint8_t valueLen = 9;
+	uint8_t head[9] = {0xff,0x01,0x00,0x04,0x71,0x81,0x11,0x00,0x00};
+	
+	//Data length
+	head[2] = 0x09;
+	//Get_Touch_Status 1 byte  
+	g_set_touch_status_value[0]=app_get_touchlock();
+	head[7] = g_set_touch_status_value[0];
+
+	//Do checksum
+	head[valueLen - 1]=Do_CheckSum(head,valueLen);
+	
+	Philips_Send_Notify(head, (uint32_t)valueLen);    
+}
+
+void Set_Touch_Status(uint8_t set_touch_status_value[1])
+{
+
+	g_set_touch_status_value[0] = set_touch_status_value[0];
+
+	app_nvrecord_touchlock_set(g_set_touch_status_value[0]);   	
+}
+	
+uint8_t g_set_side_tone_value[]= {0x00};
+void Get_Side_Tone_Status(void)
+{
+	uint8_t valueLen = 9;
+	uint8_t head[9] = {0xff,0x01,0x00,0x04,0x71,0x81,0x15,0x00,0x00};
+	
+	//Data length
+	head[2] = 0x09;
+	//Get_Side_Tone_Status 1 byte  
+	g_set_side_tone_value[0]=app_get_sidetone();
+	head[7] = g_set_side_tone_value[0];
+
+	//Do checksum
+	head[valueLen - 1]=Do_CheckSum(head,valueLen);
+
+	Philips_Send_Notify(head, (uint32_t)valueLen);   
+}
+
+void Set_Side_Tone_Status(uint8_t set_side_tone_value[1])
+{
+	g_set_side_tone_value[0] =  set_side_tone_value[0];
+	app_nvrecord_sidetone_set(g_set_side_tone_value[0]);
+
+	//add by cai
+	if(btapp_hfp_is_call_active())
+	{
+		if(app_get_sidetone()){
+			hal_codec_dac_mute(1);
+			osDelay(60);	
+			hal_codec_sidetone_enable();
+			osDelay(60);
+			hal_codec_dac_mute(0);
+		} else{
+			hal_codec_dac_mute(1);
+			osDelay(60);	
+			hal_codec_sidetone_disable();
+			osDelay(60);
+			hal_codec_dac_mute(0);
+		}
+	}
+}
+
 bool Philips_Functions_Call(uint8_t *data, uint8_t size)
 {
 	uint16_t command_id = ((uint16_t)data[5] << 8) | ((uint16_t)data[6]);
@@ -1433,7 +1777,141 @@ bool Philips_Functions_Call(uint8_t *data, uint8_t size)
 			//TRACE(0,"Philips : Philips_Functions_Call GET_EQUALIZER_STATUS_D4_VALUE!\r\n");
 		    Get_Equalizer_Status_D4_Value();			
 		return true;	
+
+		case GET_CUSTOMIZATION_EQ_SUPPORT_LIST:		
+			//TRACE(0,"Philips : Philips_Functions_Call GET_CUSTOMIZATION_EQ_SUPPORT_LIST!\r\n");
+			Get_Customization_Eq_Support_List();			
+		return true;	
+			
+		case GET_CUSTOMIZATION_EQ_BAND_VALUE:		
+			//TRACE(0,"Philips : Philips_Functions_Call GET_CUSTOMIZATION_EQ_BAND_STATUS!\r\n");
+			Get_Customization_Eq_Brand_Current_Value();			
+		return true;	
+			
+		case SET_CUSTOMIZATION_EQ_BAND_VALUE:		
+			//TRACE(0,"Philips : Philips_Functions_Call SET_CUSTOMIZATION_EQ_BAND_VALUE!\r\n");
+			if (size != 14){
+			    return false;
+			}
+			uint8_t set_customization_eq_value[6] = {0};
+	        set_customization_eq_value[0] = data[7];		
+			set_customization_eq_value[1] = data[8];
+			set_customization_eq_value[2] = data[9];
+			set_customization_eq_value[3] = data[10];
+			set_customization_eq_value[4] = data[11];
+			set_customization_eq_value[5] = data[12];
+			Set_Customization_Eq_Brand_Current_Value(set_customization_eq_value);			
+		return true;				
+			
+		case GET_CUSTOMIZATION_EQ_BAND_RANGE_VALUE:		
+			//TRACE(0,"Philips : Philips_Functions_Call GET_CUSTOMIZATION_EQ_BAND_RANGE_VALUE!\r\n");
+			Get_Customization_Eq_Brand_Range_Value();			
+		return true;
 		
+		case GET_CUSTOMIZATION_EQ_WITH_LIB:		
+			//TRACE(0,"Philips : Philips_Functions_Call GET_CUSTOMIZATION_EQ_WITH_LIB!\r\n");
+			Get_Customization_Eq_With_Lib();
+		return true;
+
+		case GET_BATTERY_CHARGE_STATUS:		
+			//TRACE(0,"Philips : Philips_Functions_Call GET_BATTERY_CHARGE_STATUS!\r\n");
+			Get_Battery_Charge_Status();
+		return true;	
+
+		case GET_RIGHT_EAR_BATTERY_LEVEL_VALUE:		
+			//TRACE(0,"Philips : Philips_Functions_Call SET_BATTERY_AUTO_RELTURN_LEVEL_VALUE!\r\n");
+			Get_Right_Battery_Level_Value();
+		return true;	
+			
+		case GET_LEFT_EAR_BATTERY_LEVEL_VALUE:		
+			//TRACE(0,"Philips : Philips_Functions_Call SET_BATTERY_AUTO_RELTURN_LEVEL_VALUE!\r\n");
+			Get_Left_Battery_Level_Value();
+		return true;	
+			
+		case GET_CHARGE_BOX_BATTERY_LEVEL_VALUE:		
+			//TRACE(0,"Philips : Philips_Functions_Call SET_BATTERY_AUTO_RELTURN_LEVEL_VALUE!\r\n");
+			Get_ChargeBox_Battery_Level_Value();
+		return true;	
+		
+		case NOTIFICATION_BATTERY_LEVEL_CHANGE:		
+			//Notification_Battery_Level_Change();			
+		return true;
+
+		case SET_SLEEP_MODE_TIMER:		
+			//TRACE(0,"Philips : Philips_Functions_Call SET_SLEEP_MODE_TIMER!\r\n");
+			if (size != 9){
+			    return false;
+			 }
+			uint8_t set_sleep_timer_value[1] = {0};
+	        set_sleep_timer_value[0] = data[7];						
+			Set_Sleep_Mode_Timer(set_sleep_timer_value);
+		return true;
+			
+		case GET_SLEEP_MODE_TIMER:		
+			//TRACE(0,"Philips : Philips_Functions_Call GET_SLEEP_MODE_TIMER!\r\n");
+			Get_Sleep_Mode_Timer();
+		return true;
+
+		case GET_SMART_CHARGEBOX_SUPPORT:		
+			//TRACE(0,"Philips : Philips_Functions_Call GET_SMART_CHARGEBOX_SUPPORT!\r\n");
+            Get_Smart_ChargeBox_support();
+		return true;
+
+		case GET_AUTO_POWER_OFF_SUPPORT:		
+			//TRACE(0,"Philips : GET_AUTO_POWER_OFF_SUPPORT!\r\n");
+			Get_Auto_Power_Off_Support();
+		return true;	
+		
+		case GET_AUTO_POWER_OFF_TIMER:		
+			//TRACE(0,"Philips : GET_AUTO_POWER_OFF_TIMER!\r\n");
+			Get_Auto_Power_Off_Timer();
+		return true;
+		
+		case SET_AUTO_POWER_OFF_TIMER:		
+			//TRACE(0,"Philips : SET_AUTO_POWER_OFF_TIMER!\r\n");
+			if (size != 9){
+			    return false;
+			}
+			uint8_t set_auto_power_off_value[1] = {0};
+	        set_auto_power_off_value[0] = data[7];		
+			Set_Auto_Power_Off_Timer(set_auto_power_off_value);
+		return true;	
+
+		case GET_SPECIAL_FUNCTION1_SUPPORT_LIST:
+			//TRACE(0,"Philips : Philips_Functions_Call GET_SPECIAL_FUNCTION1_SUPPORT_LIST!\r\n");
+			Get_Special_Function1_Support_List();
+		return true;
+			  
+		case GET_TOUCH_STATUS:		
+			//TRACE(0,"Philips : Philips_Functions_Call GET_TOUCH_STATUS!\r\n");
+			Get_Touch_Status();
+		return true;
+		
+		case SET_TOUCH_STATUS:		
+			//TRACE(0,"Philips : Philips_Functions_Call SET_TOUCH_STATUS!\r\n");
+			if (size != 9){
+			    return false;
+			}		
+			uint8_t set_touch_status_value[1] = {0};
+	        set_touch_status_value[0] = data[7];		
+			Set_Touch_Status(set_touch_status_value);
+		return true;	
+
+		case GET_SIDE_TONE_CONTROL_STATUS:		
+			//TRACE(0,"Philips :Philips_Functions_Call GET_SIDE_TONE_CONTROL_STATUS!\r\n");
+			Get_Side_Tone_Status();
+		return true;	
+		
+		case SET_SIDE_TONE_CONTROL_STATUS:		
+			//TRACE(0,"Philips : Philips_Functions_Call SET_SIDE_TONE_CONTROL_STATUS!\r\n");
+			if (size != 9){
+			    return false;
+			 }		
+			uint8_t set_side_tone_value[1] = {0};
+	        set_side_tone_value[0] = data[7];		
+			Set_Side_Tone_Status(set_side_tone_value);			
+		return true;
+			
 		default:
 			TRACE(0,"Philips : Philips_Functions_Call Command error!\r\n");
 		break;

@@ -225,8 +225,10 @@ typedef struct
 {
     uint8_t timer_id;
     uint8_t timer_en;
-    uint8_t timer_count;
-    uint8_t timer_period;
+    //uint8_t timer_count;
+	uint16_t timer_count;
+    //uint8_t timer_period;
+	uint16_t timer_period;
     APP_10_SECOND_TIMER_CB_T cb;
 }APP_10_SECOND_TIMER_STRUCT;
 
@@ -243,6 +245,7 @@ APP_10_SECOND_TIMER_STRUCT app_10_second_array[] =
 {
     INIT_APP_TIMER(APP_PAIR_TIMER_ID, 0, 0, 6, PairingTransferToConnectable),
     INIT_APP_TIMER(APP_POWEROFF_TIMER_ID, 0, 0, 90, CloseEarphone),
+    INIT_APP_TIMER(APP_AUTO_PWOFF_TIMER_ID, 0, 0, 4095, CloseEarphone),//add by cai
 #ifdef GFPS_ENABLED
     INIT_APP_TIMER(APP_FASTPAIR_LASTING_TIMER_ID, 0, 0, APP_FAST_PAIRING_TIMEOUT_IN_SECOND/10,
         app_fast_pairing_timeout_timehandler),
@@ -251,6 +254,8 @@ APP_10_SECOND_TIMER_STRUCT app_10_second_array[] =
 
 void app_stop_10_second_timer(uint8_t timer_id)
 {
+	TRACE(2,"***%s: %d",__func__,timer_id);
+
     APP_10_SECOND_TIMER_STRUCT *timer = &app_10_second_array[timer_id];
 
     timer->timer_en = 0;
@@ -259,6 +264,8 @@ void app_stop_10_second_timer(uint8_t timer_id)
 
 void app_start_10_second_timer(uint8_t timer_id)
 {
+	TRACE(2,"***%s: %d",__func__,timer_id);
+
     APP_10_SECOND_TIMER_STRUCT *timer = &app_10_second_array[timer_id];
 
     timer->timer_en = 1;
@@ -267,6 +274,8 @@ void app_start_10_second_timer(uint8_t timer_id)
 
 void app_set_10_second_timer(uint8_t timer_id, uint8_t enable, uint8_t period)
 {
+	TRACE(2,"***%s: %d",__func__,timer_id);
+
     APP_10_SECOND_TIMER_STRUCT *timer = &app_10_second_array[timer_id];
 
     timer->timer_en = enable;
