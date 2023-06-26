@@ -1303,7 +1303,7 @@ void bt_key_handle_ANC_key(enum APP_KEY_EVENT_T event)
 	switch(event)
     {
     	case APP_KEY_EVENT_CLICK:
-			app_anc_Key_Pro();
+			app_anc_Key_Pro(NULL, NULL);
 			break;
 
 		case APP_KEY_EVENT_DOUBLECLICK:

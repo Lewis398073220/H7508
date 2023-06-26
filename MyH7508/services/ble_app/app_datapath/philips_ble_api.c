@@ -647,8 +647,48 @@ void Philips_Send_Notify(uint8_t *data, uint32_t size)
 		app_tota_send_data_via_spp(data, size);
 }
 
+void Get_Connect_Phone_Mac(void)
+{
+    uint8_t phoneAddr[6] ={0};
+    app_get_curr_remDev(phoneAddr);
+    g_valueLen = 14;
+    uint8_t i =0;
+    uint8_t data[14] = {0xff,0x01,0x00,0x04,0x71,0x80,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00};
+     //Data length
+     data[2] = 0x0e;
+     //Phone Mac address 6 byte
+     for (i = 0 ; i < 6 ; i++){
+	      data[7 + i ] = phoneAddr[i];
+     } 	
+	 
+     //Do checksum
+     data[g_valueLen - 1]=Do_CheckSum(data,g_valueLen);
+	 
+     for (i =0;i <  g_valueLen; i++){
+	      g_valuePtr[i] = data[i];
+    }	   
+	 
+    Philips_Send_Notify(g_valuePtr, (uint32_t)g_valueLen);
+    
+}
+
 bool Philips_Functions_Call(uint8_t *data, uint8_t size)
 {
+	uint16_t command_id = ((uint16_t)data[5] << 8) | ((uint16_t)data[6]);
+	TRACE(3,"***%s: %d %d",__func__,command_id,size);
+
+	switch(command_id)
+	{
+		case GET_CONNECT_PHONE_MAC:
+			//TRACE(0,"Philips : Philips_Functions_Call GET_CONNECT_PHONE_MAC!\r\n");
+			Get_Connect_Phone_Mac();
+		return true;
+
+		default:
+			TRACE(0,"Philips : Philips_Functions_Call Command error!\r\n");
+		break;
+	}
+	
 	return false;
 }
 
