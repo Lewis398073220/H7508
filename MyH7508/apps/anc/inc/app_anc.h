@@ -80,7 +80,7 @@ void app_set_monitor_mode(uint8_t monitor_new_level);
 enum APP_ANC_MODE_STATUS app_get_anc_mode_status(void);
 enum ANC_TOGGLE_MODE app_get_anc_toggle_mode(void);
 void app_set_anc_toggle_mode(enum ANC_TOGGLE_MODE anc_new_toggle_mode);
-void app_anc_Key_Pro(APP_KEY_STATUS *status, void *param);
+void app_anc_Key_Pro(void);
 void set_anc_mode(enum ANC_STATUS anc_new_mode, uint8_t prompt_on);
 /** end add **/
 

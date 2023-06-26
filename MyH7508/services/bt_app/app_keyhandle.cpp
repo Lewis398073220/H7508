@@ -1298,12 +1298,12 @@ void bt_key_handle_cover_key(enum APP_KEY_EVENT_T event)
     }
 }
 
-void bt_key_handle_ANC_key(enum APP_KEY_EVENT_T event)
+void bt_key_handle_ANC_key(APP_KEY_STATUS *status, void *param)
 {
-	switch(event)
+	switch(status->event)
     {
     	case APP_KEY_EVENT_CLICK:
-			app_anc_Key_Pro(NULL, NULL);
+			app_anc_Key_Pro();
 			break;
 
 		case APP_KEY_EVENT_DOUBLECLICK:
@@ -1322,7 +1322,7 @@ void bt_key_handle_ANC_key(enum APP_KEY_EVENT_T event)
 			break;
 		
 		default:
-			TRACE(1,"unregister down key event=%x",event);
+			TRACE(1,"unregister down key event=%x",status->event);
 			break;
 	}
 }
@@ -1877,7 +1877,7 @@ void bt_key_handle(void)
 				break;
 			
 			case BTAPP_ANC_KEY:
-				bt_key_handle_ANC_key((enum APP_KEY_EVENT_T)bt_key.event);
+				bt_key_handle_ANC_key(NULL, NULL);
 				break;
 /** end add **/
 			
