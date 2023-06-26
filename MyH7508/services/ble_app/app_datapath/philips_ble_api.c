@@ -1004,6 +1004,256 @@ void Get_PCBA_Version(void)
 	Philips_Send_Notify(version, (uint32_t)valueLen);
 }
 
+void Notification_Nosie_Cancelling_Change(void)
+{
+	TRACE(0,"***%s",__func__);
+
+	uint8_t valueLen = 9;
+	uint8_t head[9] = {0xff,0x01,0x00,0x04,0x71,0x80,0x59,0x00,0x00};
+
+	//Data length
+	head[2] = 0x09;
+	//Notification_Nosie_Cancelling_Change 1 byte  
+	head[7] = 0x01; 
+	//LOG_MSGID_I(AIR, "Philips : anc_change_status = %x\r\n", 1, (uint8_t) anc_change_status);
+	//Do checksum
+	head[valueLen - 1]=Do_CheckSum(head,valueLen);
+
+	Philips_Send_Notify(head, (uint32_t)valueLen);   
+}
+
+void Get_ANC_Mode_Support_List(void)
+{
+	uint8_t valueLen = 9;
+	uint8_t head[9] = {0xff,0x01,0x00,0x04,0x71,0x80,0x20,0x00,0x00};
+
+	//Data length
+	head[2] = 0x09;
+	//ANC_Mode Support List 1 byte  
+	head[7] = ANC_OFF_SUPPORT | ANC_MODE1_SUPPORT | ANC_MODE2_SUPPORT | ANC_MODE4_SUPPORT | AWARENESS_SUPPORT | ENHANCE_VOICE_SUPPORT |AWARENESS_SLIDE_SUPPORT;
+	//Do checksum
+	head[valueLen - 1]=Do_CheckSum(head,valueLen);
+  
+	Philips_Send_Notify(head, (uint32_t)valueLen);   
+}
+
+static enum APP_ANC_MODE_STATUS g_set_anc_mode_value[]= {0x00};
+void Get_ANC_Mode_Status(void)
+{
+	uint8_t valueLen = 9;
+	uint8_t head[9] = {0xff,0x01,0x00,0x04,0x71,0x80,0x21,0x00,0x00};
+	
+	//Data length
+	head[2] = 0x09;
+	//ANC mode Status 1 byte  
+	g_set_anc_mode_value[0]=app_get_anc_mode_status();
+	head[7] =  (uint8_t)g_set_anc_mode_value[0];    
+
+	//Do checksum
+	head[valueLen - 1]=Do_CheckSum(head,valueLen);   
+
+	Philips_Send_Notify(head, (uint32_t)valueLen); 
+}
+
+void Set_ANC_Mode_Status(uint8_t set_anc_mode_status_value[1])
+{
+	uint8_t anc_mode_status_value;
+
+	g_set_anc_mode_value[0] = (enum APP_ANC_MODE_STATUS)set_anc_mode_status_value[0];
+
+	if(g_set_anc_mode_value[0] == NC_OFF){
+			anc_mode_status_value = NC_OFF;
+	}
+	else if(g_set_anc_mode_value[0] == ANC_HIGH){
+	 	anc_mode_status_value = ANC_HIGH;
+	}
+	else if(g_set_anc_mode_value[0] == ANC_LOW){
+		 anc_mode_status_value = ANC_LOW;
+	}
+	else if(g_set_anc_mode_value[0] == ANC_WIND){
+		 anc_mode_status_value = ANC_WIND;
+	}
+	else 
+		 return;
+
+	app_nvrecord_anc_set(anc_mode_status_value);
+	if(anc_mode_status_value == NC_OFF){
+		set_anc_mode(anc_off, 0);
+	}
+	else{
+	 	app_set_anc_on_mode(anc_mode_status_value);
+	 	set_anc_mode(anc_on, 0);
+	}
+}
+
+static uint8_t g_set_awareness_value[2]= {0x00};
+static uint8_t g_set_enhance_voice_value[2]= {0x00};
+void Get_Awareness_Value(void)
+{
+	uint8_t valueLen = 9;
+	uint8_t head[9] = {0xff,0x01,0x00,0x04,0x71,0x80,0x23,0x00,0x00};
+
+	//Data length
+	head[2] = 0x09;
+	//Awareness value 1 byte
+	if(g_set_awareness_value[1]==0x00)//add by cai
+		g_set_awareness_value[0] = app_get_monitor_level();
+	
+	head[7] =  g_set_awareness_value[0];  
+
+	//Do checksum
+	head[valueLen - 1]=Do_CheckSum(head,valueLen);
+
+	Philips_Send_Notify(head, (uint32_t)valueLen); 
+}
+
+void Set_Awareness_Value(uint8_t set_awareness_value[2])
+{
+	TRACE(1, "***%s", __func__);
+	TRACE(1,"set_awareness_value[0]=%x",set_awareness_value[0]);
+	TRACE(1,"set_awareness_value[1]=%x",set_awareness_value[1]);	
+
+	g_set_awareness_value[0] =  set_awareness_value[0];
+	if (set_awareness_value[1] == 0x00){  //save
+		g_set_anc_mode_value[0] = MONITOR_ON;  //ANC mode status is Awareness on
+		app_nvrecord_monitor_level_set(set_awareness_value[0]);
+		app_nvrecord_anc_set(MONITOR_ON);
+	}else{   //no save
+		g_set_anc_mode_value[0] = MONITOR_ON;  //ANC mode status is Awareness on
+	}
+
+	TRACE(1,"g_set_awareness_value[0]=%x",g_set_awareness_value[0]);
+	TRACE(1,"g_set_anc_mode_value[0]=%x",g_set_anc_mode_value[0]);
+
+	//Go to Set awareness function.
+	if(g_set_awareness_value[0]==0){
+		set_anc_mode(anc_on, 0);
+	}
+	else{
+		app_set_monitor_mode(g_set_awareness_value[0]);
+		set_anc_mode(monitor, 0);
+	}   
+}
+
+void Get_Enhance_Voice_Value(void)
+{
+	uint8_t valueLen = 9;
+	uint8_t head[9] = {0xff,0x01,0x00,0x04,0x71,0x80,0x25,0x00,0x00};
+	
+	//Data length
+	head[2] = 0x09;
+	//Awareness value 1 byte  
+	g_set_enhance_voice_value[0] = app_get_focus();
+	head[7] = g_set_enhance_voice_value[0];    
+
+	//Do checksum
+	head[valueLen - 1]=Do_CheckSum(head,valueLen);
+
+	Philips_Send_Notify(head, (uint32_t)valueLen); 
+}
+
+void Set_Enhance_Voice_Value(uint8_t set_enhance_voice_value[2])
+{
+	if ((set_enhance_voice_value[0] > 0x01) || (set_enhance_voice_value[1] > 0x01))
+		return;
+
+	g_set_enhance_voice_value[0] = set_enhance_voice_value[0];
+	if (set_enhance_voice_value[1] == 0x00){  //save	  	
+		g_set_anc_mode_value[0] = MONITOR_ON;  //ANC mode status is Awareness on
+		app_nvrecord_focus_set(g_set_enhance_voice_value[0]);
+		app_nvrecord_anc_set(MONITOR_ON);
+	}else{   //no save
+		g_set_anc_mode_value[0] = MONITOR_ON;  //ANC mode status is Awareness on
+		app_focus_set_no_save(g_set_enhance_voice_value[0]);//add by cai
+	}
+
+	//app_set_clearvoice_mode(g_set_awareness_value[0]);//m by cai
+	app_set_monitor_mode(g_set_awareness_value[0]);//add by cai
+	set_anc_mode(monitor, 0);//m by cai 
+}
+ 
+void Get_ANC_Table_Value(void)
+{
+	uint8_t valueLen = 9;
+	uint8_t head[9] = {0xff,0x01,0x00,0x04,0x71,0x80,0x27,0x00,0x00};
+	
+	//Data length
+	head[2] = 0x09;
+
+	uint8_t anctable = app_nvrecord_anc_table_get();
+	if(anctable > 0)
+		anctable -= 1;
+
+	head[7] = anctable;    
+
+	//Do checksum
+	head[valueLen - 1]=Do_CheckSum(head,valueLen);
+
+	Philips_Send_Notify(head, (uint32_t)valueLen); 
+}
+
+void Get_Equalizer_Support_List(void)
+{
+	uint8_t valueLen = 11;
+	uint8_t head[11] = {0xff,0x01,0x00,0x04,0x71,0x80,0x90,0x00,0x00,0x00,0x00};
+	
+	//Data length
+	head[2] = 0x0b;
+	//Equalizer Support List 3 byte  
+	head[7] = EQUALIZER_CLASSICAL | EQUALIZER_BASS_BOOSTER | EQUALIZER_JAZZ | EQUALIZER_HIP_HOP;
+	head[8] = EQUALIZER_DISABLE;
+	head[9] = EQUALIZER_DISABLE;
+	//Do checksum
+	head[valueLen - 1]=Do_CheckSum(head,valueLen);
+
+	Philips_Send_Notify(head, (uint32_t)valueLen);   
+}
+
+static uint8_t g_set_eq_item_value[]= {0x00};
+void Get_Equalizer_Status(void)
+{
+	uint8_t valueLen = 9;
+	uint8_t head[9] = {0xff,0x01,0x00,0x04,0x71,0x80,0x91,0x00,0x00};
+
+	g_set_eq_item_value[0]=app_eq_index_get();
+	
+	//Data length
+	head[2] = 0x09;
+	//Equalizer Status 1 byte  
+	head[7] = g_set_eq_item_value[0];    
+
+	//Do checksum
+	head[valueLen - 1]=Do_CheckSum(head,valueLen);
+
+	Philips_Send_Notify(head, (uint32_t)valueLen); 
+}
+
+void Set_Equalizer_Status_Value(uint8_t set_equalizer_status_value[1])
+{
+	g_set_eq_item_value[0] =  set_equalizer_status_value[0];
+
+	if((g_set_eq_item_value[0] > 0x04) && (g_set_eq_item_value[0] != 0x3f))
+		return;
+
+	change_eq_from_ble_api(g_set_eq_item_value[0]);
+	app_nvrecord_eq_set(g_set_eq_item_value[0]);
+}
+
+void Get_Equalizer_Status_D4_Value(void)
+{
+	uint8_t valueLen = 9;
+	uint8_t head[9] = {0xff,0x01,0x00,0x04,0x71,0x80,0x93,0x00,0x00};
+	
+	//Data length
+	head[2] = 0x09;
+	//Equalizer Status D4 Value 1 byte  
+	head[7] = 0x00;   //D4 is Off
+	//Do checksum
+	head[valueLen - 1]=Do_CheckSum(head,valueLen);
+
+	Philips_Send_Notify(head, (uint32_t)valueLen);  
+}
+
 bool Philips_Functions_Call(uint8_t *data, uint8_t size)
 {
 	uint16_t command_id = ((uint16_t)data[5] << 8) | ((uint16_t)data[6]);
@@ -1093,8 +1343,97 @@ bool Philips_Functions_Call(uint8_t *data, uint8_t size)
 		case GET_PCBA_VERSION:		
 			//TRACE(0,"Philips : Philips_Functions_Call GET_PCBA_VERSION!\r\n");
 			Get_PCBA_Version();
-		return true;	
+		return true;
+		
+		case GET_ANC_MODE_SUPPORT_LIST:		
+			//TRACE(0,"Philips : GET_ANC_MODE_SUPPORT_LIST!\r\n");
+			Get_ANC_Mode_Support_List();
+		return true;
+		
+		case GET_ANC_MODE_STATUS:		
+			//TRACE(0,"Philips : GET_ANC_MODE_STATUS!\r\n");
+			Get_ANC_Mode_Status();
+		return true;
+		
+		case SET_ANC_MODE_VALUE:		
+			//TRACE(0,"Philips : SET_ANC_MODE_VALUE!\r\n");
+			if (size != 9){
+			    return false;
+			 }		
+			uint8_t set_anc_mode_status_value[1] = {0};
+	        set_anc_mode_status_value[0] = data[7];
+			Set_ANC_Mode_Status(set_anc_mode_status_value);		
+		return true;
+
+		case GET_AWARENESS_VALUE:		
+			//TRACE(0,"Philips : GET_AWARENESS_VALUE!\r\n");
+			Get_Awareness_Value();
+		return true;
+		
+		case SET_AWARENESS_VALUE:		
+			TRACE(0,"Philips : SET_AWARENESS_VALUE!\r\n");
+			if (size != 10){
+			    return false;
+			 }		
+				 
+			uint8_t set_awareness_value[2] = {0};
+	        set_awareness_value[0] = data[7];
+			set_awareness_value[1] = data[8];	 
+			Set_Awareness_Value(set_awareness_value);			
+		return true;
 			
+		case GET_ENHANCE_VOICE_STATUS:		
+			//TRACE(0,"Philips : GET_ENHANCE_VOICE_STATUS!\r\n");
+			Get_Enhance_Voice_Value();
+		return true;
+		
+		case SET_ENHANCE_VOICE_STATUS:		
+			//TRACE(0,"Philips : SET_ENHANCE_VOICE_STATUS!\r\n");
+			if (size != 10){
+			    return false;
+			 }		
+			
+			uint8_t set_enhance_voice_value[2] = {0};
+	             set_enhance_voice_value[0] = data[7];
+			set_enhance_voice_value[1] = data[8];	 
+			Set_Enhance_Voice_Value(set_enhance_voice_value);				
+		return true;
+
+		case GET_ANC_TABLE_VALUE:		
+			//TRACE(0,"Philips : GET_ANC_TABLE_VALUE!\r\n");
+			Get_ANC_Table_Value();
+		return true;
+
+		case NOTIFICATIION_NOSIE_CANCELLING_CHANGE:		
+			//TRACE(0,"Philips : Philips_Functions_Call NOTIFICATIION_NOSIE_CANCELLING_CHANGE!\r\n");
+            //Notification_Nosie_Cancelling_Change();			
+		return true;	
+					
+		case GET_EQUALIZER_SUPPORT_LIST:		
+			//TRACE(0,"Philips : Philips_Functions_Call GET_EQUALIZER_SUPPORT_LIST!\r\n");
+			Get_Equalizer_Support_List();
+		return true;	
+					
+		case GET_EQUALIZER_STATUS:		
+			//TRACE(0,"Philips : Philips_Functions_Call GET_EQUALIZER_STATUS!\r\n");
+			Get_Equalizer_Status();
+		return true;	
+
+		case SET_EQUALIZER_STATUS_VALUE:		
+			//TRACE(0,"Philips : Philips_Functions_Call SET_EQUALIZER_STATUS_VALUE!\r\n");
+			if (size != 9){
+			    return false;
+			 }		
+			uint8_t set_equalizer_status_value[1] = {0};
+	        set_equalizer_status_value[0] = data[7];
+			Set_Equalizer_Status_Value(set_equalizer_status_value);			
+		return true;	
+
+		case GET_EQUALIZER_STATUS_D4_VALUE:
+			//TRACE(0,"Philips : Philips_Functions_Call GET_EQUALIZER_STATUS_D4_VALUE!\r\n");
+		    Get_Equalizer_Status_D4_Value();			
+		return true;	
+		
 		default:
 			TRACE(0,"Philips : Philips_Functions_Call Command error!\r\n");
 		break;

@@ -234,6 +234,10 @@ int app_bt_stream_local_volume_get(void);
 
 bool bt_is_playback_triggered(void);
 
+/** add by pang **/
+void change_eq_from_ble_api(uint8_t index);
+/** end add **/
+
 #ifdef __cplusplus
 }
 #endif

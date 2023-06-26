@@ -115,6 +115,7 @@
 #endif
 
 /** add by cai **/
+#include "app_user.h"
 #include "apps.h"
 /** end add **/
 
@@ -1514,7 +1515,8 @@ uint8_t bt_audio_updata_eq_for_anc(uint8_t anc_status)
         anc_status_record = anc_status;
         TRACE(2,"[%s]anc_status = %d", __func__, anc_status);
 #ifdef __SW_IIR_EQ_PROCESS__
-        bt_audio_set_eq(AUDIO_EQ_TYPE_SW_IIR,bt_audio_get_eq_index(AUDIO_EQ_TYPE_SW_IIR,anc_status));
+        //bt_audio_set_eq(AUDIO_EQ_TYPE_SW_IIR,bt_audio_get_eq_index(AUDIO_EQ_TYPE_SW_IIR,anc_status));
+		bt_audio_set_eq(AUDIO_EQ_TYPE_SW_IIR,bt_audio_get_eq_index(AUDIO_EQ_TYPE_SW_IIR,app_get_anc_status()));//m by pang
 #endif
 
 #ifdef __HW_FIR_EQ_PROCESS__
@@ -1533,6 +1535,16 @@ uint8_t bt_audio_updata_eq_for_anc(uint8_t anc_status)
 }
 #endif
 
+/** add by pang **/
+void change_eq_from_ble_api(uint8_t index)
+{   
+	app_eq_index_set_nosave(index);//add by cai
+#ifdef __SW_IIR_EQ_PROCESS__
+ 	bt_audio_set_eq(AUDIO_EQ_TYPE_SW_IIR, app_get_anc_status());
+#endif  	
+}
+/** end add **/
+
 uint8_t bt_audio_get_eq_index(AUDIO_EQ_TYPE_T audio_eq_type,uint8_t anc_status)
 {
     uint8_t index_eq=0;
@@ -1543,6 +1555,7 @@ uint8_t bt_audio_get_eq_index(AUDIO_EQ_TYPE_T audio_eq_type,uint8_t anc_status)
 #if defined(__SW_IIR_EQ_PROCESS__)
         case AUDIO_EQ_TYPE_SW_IIR:
         {
+#if 0
             if(anc_status)
             {
                 index_eq=audio_eq_sw_iir_index+1;
@@ -1551,7 +1564,9 @@ uint8_t bt_audio_get_eq_index(AUDIO_EQ_TYPE_T audio_eq_type,uint8_t anc_status)
             {
                 index_eq=audio_eq_sw_iir_index;
             }
-
+#else //modify by pang
+			index_eq=audio_eq_sw_iir_index+anc_status;
+#endif
         }
         break;
 #endif
@@ -1630,6 +1645,7 @@ uint32_t bt_audio_set_eq(AUDIO_EQ_TYPE_T audio_eq_type, uint8_t index)
 #if defined(__SW_IIR_EQ_PROCESS__)
         case AUDIO_EQ_TYPE_SW_IIR:
         {
+#if 0
             if(index >= EQ_SW_IIR_LIST_NUM)
             {
                 TRACE(2,"[%s] index %u > EQ_SW_IIR_LIST_NUM", __func__, index);
@@ -1637,6 +1653,20 @@ uint32_t bt_audio_set_eq(AUDIO_EQ_TYPE_T audio_eq_type, uint8_t index)
             }
 
             iir_cfg=audio_eq_sw_iir_cfg_list[index];
+#else //m by pang
+			uint8_t eq_index=0;
+		    eq_index=app_eq_index_get();
+			TRACE(2,"***%s: eq_index=%d", __func__, eq_index);
+			
+			if(eq_index < 5){
+				iir_cfg = audio_eq_sw_iir_cfg_list[index + eq_index*3];	
+			}
+			else if(eq_index == 0x3f){//m by cai to 0x3f
+				iir_cfg= &eq_custom_para;
+			}
+			else
+				return 1;	
+#endif
         }
         break;
 #endif
@@ -3802,7 +3832,8 @@ int bt_sbc_player(enum PLAYER_OPER_T on, enum APP_SYSFREQ_FREQ_T freq)
 // disable audio eq config on a2dp start for audio tuning tools
 #ifndef __PC_CMD_UART__
 #ifdef __SW_IIR_EQ_PROCESS__
-        bt_audio_set_eq(AUDIO_EQ_TYPE_SW_IIR,bt_audio_get_eq_index(AUDIO_EQ_TYPE_SW_IIR,0));
+        //bt_audio_set_eq(AUDIO_EQ_TYPE_SW_IIR,bt_audio_get_eq_index(AUDIO_EQ_TYPE_SW_IIR,0));
+		bt_audio_set_eq(AUDIO_EQ_TYPE_SW_IIR,bt_audio_get_eq_index(AUDIO_EQ_TYPE_SW_IIR,app_get_anc_status()));//m by pang
 #endif
 
 #ifdef __HW_FIR_EQ_PROCESS__

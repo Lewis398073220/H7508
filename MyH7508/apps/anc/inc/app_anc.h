@@ -53,6 +53,17 @@ enum MONITOR_ON_MODE
 	clearvoice5,
 };
 
+enum APP_ANC_MODE_STATUS
+{
+	NC_OFF = 0,
+	ANC_HIGH,
+	ANC_LOW,
+	ANC_ADAPTIVE,
+	ANC_WIND,
+	MONITOR_ON,
+	NC_INVALID
+};
+
 enum ANC_TOGGLE_MODE//add by cai
 {
 	AncOn_AncOff_Awareness = 0x00,
@@ -63,10 +74,14 @@ enum ANC_TOGGLE_MODE//add by cai
 
 enum ANC_STATUS app_get_anc_status(void);
 enum ANC_ON_MODE app_get_anc_on_mode(void);
+void app_set_anc_on_mode(enum APP_ANC_MODE_STATUS anc_on_new_mode);
 enum MONITOR_ON_MODE app_get_monitor_mode(void);
+void app_set_monitor_mode(uint8_t monitor_new_level);
+enum APP_ANC_MODE_STATUS app_get_anc_mode_status(void);
 enum ANC_TOGGLE_MODE app_get_anc_toggle_mode(void);
 void app_set_anc_toggle_mode(enum ANC_TOGGLE_MODE anc_new_toggle_mode);
 void app_anc_Key_Pro(APP_KEY_STATUS *status, void *param);
+void set_anc_mode(enum ANC_STATUS anc_new_mode, uint8_t prompt_on);
 /** end add **/
 
 void app_anc_set_coef(uint8_t index);

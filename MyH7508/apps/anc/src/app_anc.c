@@ -33,7 +33,11 @@
 
 /** add by pang **/
 #include "apps.h"
+#ifdef __USER_DEFINE_CTR__
+#include "app_user.h"
+#endif
 /** end add **/
+
 #include "app_status_ind.h"
 #ifdef __SIMPLE_INTERNAL_PLAYER_SUPPORT__
 #include "simple_internal_player.h"
@@ -185,9 +189,58 @@ enum ANC_ON_MODE app_get_anc_on_mode(void)
 	return (anc_on_mode);
 }
 
+void app_set_anc_on_mode(enum APP_ANC_MODE_STATUS anc_on_new_mode)
+{
+    if(anc_on_new_mode == ANC_HIGH)
+	   anc_on_mode = anc_high;
+	else if(anc_on_new_mode == ANC_LOW)
+	   anc_on_mode = anc_low;
+	else //if(anc_on_new_mode==3)
+	   anc_on_mode = anc_wind;
+}
+
 enum MONITOR_ON_MODE app_get_monitor_mode(void)
 {
 	return (monitor_mode);
+}
+
+void app_set_monitor_mode(uint8_t monitor_new_level)
+{
+   if(monitor_new_level <= 4)
+		monitor_mode = monitor1;
+	else if(monitor_new_level <= 8)
+		monitor_mode = monitor2;
+	else if(monitor_new_level <= 12)
+		monitor_mode = monitor3;
+	else if(monitor_new_level <= 16)
+		monitor_mode = monitor4;
+	else
+		monitor_mode = monitor5;
+
+    if(app_get_focus()){
+		monitor_mode += 5;
+    }
+}
+
+enum APP_ANC_MODE_STATUS app_get_anc_mode_status(void)
+{
+    enum APP_ANC_MODE_STATUS anc_status = NC_INVALID;
+	
+	if(anc_current_status==anc_off){
+		anc_status = NC_OFF;
+	}
+	else if(anc_current_status==anc_on){
+		if(anc_on_mode==anc_high)
+			anc_status=ANC_HIGH;
+		else if(anc_on_mode==anc_low)
+			anc_status=ANC_LOW;
+		else //(anc_on_mode==anc_wind)
+			anc_status=ANC_WIND;
+	}
+	else{
+		anc_status=MONITOR_ON;
+	}
+	return (anc_status);
 }
 
 enum ANC_TOGGLE_MODE app_get_anc_toggle_mode(void)
@@ -1916,6 +1969,108 @@ void app_anc_Key_Pro(APP_KEY_STATUS *status, void *param)
 	//Notification_Nosie_Cancelling_Change();
 	//#endif
 }
+
+void set_anc_mode(enum ANC_STATUS anc_new_mode, uint8_t prompt_on)
+{
+	static bool power_anc_init=1;
+	bool anc_open_flag=0;
+
+	if(power_anc_init==0){
+		//if(anc_current_mode==anc_new_mode)
+			//return;
+	}
+
+	if(anc_new_mode == anc_on)
+	{	
+		anc_current_status = anc_on; 
+		anc_coef_idx = anc_on_mode;
+	    anc_open_flag=1;
+
+#ifdef MEDIA_PLAYER_SUPPORT		
+		if(prompt_on) app_voice_report(APP_STATUS_INDICATION_ANC_ON, 0);
+#endif
+	}
+	else if(anc_new_mode == monitor)
+	{
+		anc_current_status = monitor;
+		anc_coef_idx = monitor_mode;
+		anc_open_flag=1;	
+
+#ifdef MEDIA_PLAYER_SUPPORT
+		if(prompt_on) app_voice_report(APP_STATUS_INDICATION_AWARENESS_ON, 0);
+#endif
+	}
+	else
+	{
+		anc_current_status = anc_off;
+		
+#ifdef MEDIA_PLAYER_SUPPORT
+		if(prompt_on) app_voice_report(APP_STATUS_INDICATION_ANC_OFF, 0);
+#endif
+
+	}
+
+	switch (anc_work_status)
+    {
+        case ANC_STATUS_OFF:
+			if(anc_open_flag){				
+				TRACE(1," %s ANC_STATUS_OFF--ON", __func__);
+				
+				anc_work_status = ANC_STATUS_WAITING_ON;
+				if(power_anc_init){
+            		app_anc_timer_set(ANC_EVENT_OPEN, MS_TO_TICKS(6000));
+				}
+				else{
+            		app_anc_timer_set(ANC_EVENT_OPEN, anc_switch_on_time);
+				}
+            	app_anc_open_anc();
+			}
+            break;
+        case ANC_STATUS_ON: 
+		case ANC_STATUS_WAITING_ON:
+			if(anc_open_flag){			
+				TRACE(2," %s ANC_STATUS_ON:--set coef idx: %d ", __func__, anc_coef_idx);
+#ifdef ANC_MODE_SWITCH_WITHOUT_FADE
+
+#ifdef ANC_FF_ENABLED
+                anc_select_coef(anc_sample_rate[AUD_STREAM_PLAYBACK],anc_coef_idx,ANC_FEEDFORWARD,ANC_GAIN_NO_DELAY);
+#endif
+#ifdef ANC_FB_ENABLED
+                anc_select_coef(anc_sample_rate[AUD_STREAM_PLAYBACK],anc_coef_idx,ANC_FEEDBACK,ANC_GAIN_NO_DELAY);
+#endif
+#ifdef AUDIO_ANC_FB_MC_HW
+                anc_select_coef(anc_sample_rate[AUD_STREAM_PLAYBACK],anc_coef_idx,ANC_MUSICCANCLE,ANC_GAIN_NO_DELAY);
+#endif
+#else
+                osSignalSet(anc_fade_thread_tid,CHANGE_FROM_ANC_TO_TT_DIRECTLY);
+#endif
+            }
+            else
+            {    
+				TRACE(1," %s ANC_STATUS_ON:--fadout", __func__);
+                app_anc_timer_set(ANC_EVENT_CLOSE, anc_close_delay_time);
+                app_anc_gain_fadeout();
+                anc_work_status = ANC_STATUS_WAITING_OFF;
+            }
+            break;
+        case ANC_STATUS_INIT_ON:
+		case ANC_STATUS_WAITING_OFF:
+			if(anc_open_flag){		
+				TRACE(1," %s ANC_STATUS_INIT_ON:--fadin", __func__);
+            	app_anc_select_coef();
+            	app_anc_gain_fadein();
+            	anc_work_status = ANC_STATUS_WAITING_ON;
+            	app_anc_timer_close();
+			}
+            break;
+        default:
+            break;
+    }
+	if(power_anc_init)
+		power_anc_init=0;	
+}
+/** end add **/
+
 void app_anc_ios_init(void)
 {
 #ifdef __ANC_STICK_SWITCH_USE_GPIO__
