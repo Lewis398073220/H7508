@@ -1509,7 +1509,9 @@ void bt_audio_updata_eq(uint8_t index)
 #ifdef ANC_APP
 uint8_t bt_audio_updata_eq_for_anc(uint8_t anc_status)
 {
-    anc_status = app_anc_work_status();
+    //anc_status = app_anc_work_status();
+	anc_status = app_get_anc_status();//m by cai
+	
     if(anc_status_record != anc_status)
     {
         anc_status_record = anc_status;

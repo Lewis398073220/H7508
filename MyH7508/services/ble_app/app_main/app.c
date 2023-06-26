@@ -1044,7 +1044,7 @@ bool app_is_arrive_at_max_ble_connections(void)
 #if defined(GFPS_ENABLED) && (BLE_APP_GFPS_VER==FAST_PAIR_REV_2_0)
     return (app_env.conn_cnt >= BLE_CONNECTION_MAX);
 #else
-    return (app_env.conn_cnt >= 1);
+    return (app_env.conn_cnt >= 2);  //(app_env.conn_cnt >= 1); m by pang for TPV BLE
 #endif
 }
 

@@ -2490,7 +2490,7 @@ void app_ibrt_sync_mix_prompt_req_handler(uint8_t* ptrParam, uint16_t paramLen)
 void app_audio_decode_err_force_trigger(void)
 {
 #ifndef IBRT
-    trigger_media_play((AUD_ID_ENUM)AUDIO_ID_BT_MUTE, 0, false);
+    //trigger_media_play((AUD_ID_ENUM)AUDIO_ID_BT_MUTE, 0, false);//m by cai for switch EQ pop noise
 #endif
 }
 

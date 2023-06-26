@@ -87,7 +87,8 @@ static void app_ota_ble_data_fill_handler(void *param)
     // normally we won't allow OTA owned adv when there is already
     // an existing BLE connection. For special requirement, you can
     // disable this limitation
-    if (app_ble_connection_count() > 0)
+    //if (app_ble_connection_count() > 0)
+	if (app_ble_connection_count() > 1)//m by pang for TPV BLE
     {
         app_ble_data_fill_enable(USER_OTA, false);
         return;

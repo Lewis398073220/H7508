@@ -29,7 +29,7 @@ extern "C" {
 #define BLE_ADV_DATA_STRUCT_HEADER_LEN (2)
 
 #ifndef BLE_CONNECTION_MAX
-#define BLE_CONNECTION_MAX (1)
+#define BLE_CONNECTION_MAX (2)//1 m by pang for TPV BLE
 #endif
 
 // the default interval is 160ms, note that for Bisto user case, to
