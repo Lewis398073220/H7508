@@ -178,11 +178,11 @@ const SpeechConfig WEAK speech_cfg_default = {
     .tx_aec2float = {
         .bypass         = 0,
         .hpf_enabled    = false,
-        .af_enabled     = false,
+        .af_enabled     = true,//false,
         .nlp_enabled    = true,
         .clip_enabled   = false,
         .stsupp_enabled = false,
-        .ns_enabled     = true,
+        .ns_enabled     = false,//m by cai
         .cng_enabled    = false,
         .blocks         = 1,
         .delay          = 70,
@@ -569,13 +569,13 @@ const SpeechConfig WEAK speech_cfg_default = {
 ****************************************************************************************************/
     .tx_compexp = {
         .bypass             = 0,
-        .comp_threshold     = -10.f,
+        .comp_threshold     = -13.f,
         .comp_ratio         = 2.f,
         .expand_threshold   = -45.f,
         .expand_ratio       = 0.5556f,
         .attack_time        = 0.001f,
         .release_time       = 0.6f,
-        .makeup_gain        = 6,
+        .makeup_gain        = 0,//6 by cai
         .delay              = 128,
     },
 #endif
@@ -623,9 +623,19 @@ const SpeechConfig WEAK speech_cfg_default = {
     .tx_eq = {
         .bypass     = 0,
         .gain       = 0.f,
-        .num        = 1,
+        .num        = 5,
         .params = {
-            {IIR_BIQUARD_HPF, {{60, 0, 0.707f}}},
+        	{IIR_BIQUARD_LOWSHELF,  {{ 100,-3, 0.7}}},
+        	{IIR_BIQUARD_PEAKINGEQ, {{1000, 2, 2.0}}},
+			{IIR_BIQUARD_PEAKINGEQ, {{1250, 3, 0.8}}},
+            {IIR_BIQUARD_PEAKINGEQ, {{3000, 4, 1.0}}},
+            {IIR_BIQUARD_PEAKINGEQ, {{6000, 3, 1.0}}},
+        	/*
+			{IIR_BIQUARD_LOWSHELF,  {{ 100, -3, 0.7}}},
+			{IIR_BIQUARD_PEAKINGEQ, {{1500, 3, 1.0}}},
+            {IIR_BIQUARD_PEAKINGEQ, {{2360, 3, 1.0}}},
+            */
+           // {IIR_BIQUARD_PEAKINGEQ, {{6000, 3, 0.8}}},
         },
     },
 #endif
@@ -645,7 +655,7 @@ const SpeechConfig WEAK speech_cfg_default = {
 ****************************************************************************************************/
     .tx_post_gain = {
         .bypass     = 0,
-        .gain_dB    = 6.0f,
+        .gain_dB    = 3.0f,
     },
 #endif
 
@@ -798,9 +808,11 @@ const SpeechConfig WEAK speech_cfg_default = {
     .rx_eq = {
         .bypass = 0,
         .gain   = 0.f,
-        .num    = 1,
+        .num    = 3,
         .params = {
-            {IIR_BIQUARD_HPF, {{60, 0, 0.707f}}},
+            {IIR_BIQUARD_PEAKINGEQ, {{1000,-7, 1.3}}},
+            {IIR_BIQUARD_PEAKINGEQ, {{2000,3, 1.0}}},
+            {IIR_BIQUARD_PEAKINGEQ, {{5000,-3, 1.0}}},
         },
     },
 #endif
@@ -816,7 +828,7 @@ const SpeechConfig WEAK speech_cfg_default = {
 ****************************************************************************************************/
     .rx_post_gain = {
         .bypass     = 0,
-        .gain_dB    = 6.0f,
+        .gain_dB    = -3.0f,
     },
 #endif
 

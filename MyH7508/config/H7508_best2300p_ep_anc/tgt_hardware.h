@@ -106,8 +106,8 @@ extern const struct AUD_IO_PATH_CFG_T cfg_audio_input_path_cfg[CFG_HW_AUD_INPUT_
 
 #define CFG_HW_AUD_OUTPUT_PATH_SPEAKER_DEV  (AUD_CHANNEL_MAP_CH0 | AUD_CHANNEL_MAP_CH1)
 
-#define CFG_HW_AUD_SIDETONE_MIC_DEV         (AUD_CHANNEL_MAP_CH0)
-#define CFG_HW_AUD_SIDETONE_GAIN_DBVAL      (10)//(-20)//m by cai
+#define CFG_HW_AUD_SIDETONE_MIC_DEV         (AUD_CHANNEL_MAP_CH4)//m by cai for use call mic as sidetone mic
+#define CFG_HW_AUD_SIDETONE_GAIN_DBVAL      (-30)//m by cai
 
 //bt config
 extern const char *BT_LOCAL_NAME;
