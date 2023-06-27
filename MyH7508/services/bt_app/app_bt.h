@@ -36,6 +36,7 @@ enum APP_BT_GOLBAL_HANDLE_HOOK_USER_T {
 };
 	
 /** add by pang **/
+void app_multipoint_api_set_on(void);
 void app_get_curr_remDev_Mac(unsigned char* mobile_addr);
 /** end add **/
 

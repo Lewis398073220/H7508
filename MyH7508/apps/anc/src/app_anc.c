@@ -245,6 +245,8 @@ enum APP_ANC_MODE_STATUS app_get_anc_mode_status(void)
 
 enum ANC_TOGGLE_MODE app_get_anc_toggle_mode(void)
 {
+	anc_toggle_method = app_nvrecord_anc_toggle_mode_get();
+
 	return (anc_toggle_method);
 }
 

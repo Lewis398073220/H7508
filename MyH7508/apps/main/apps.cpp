@@ -1553,6 +1553,9 @@ extern uint32_t __custom_parameter_start[];
 extern uint32_t __aud_start[];
 extern uint32_t __userdata_start[];
 extern uint32_t __factory_start[];
+#if defined(CUSTOM_BIN_CONFIG)
+extern uint32_t __custom_bin_start[];//add by pang
+#endif
 
 int app_init(void)
 {

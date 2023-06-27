@@ -5006,4 +5006,9 @@ void app_get_curr_remDev_Mac(unsigned char* mobile_addr)
 		memcpy(mobile_addr,bt_profile_manager[0].rmt_addr.address, 6);
 #endif
 }
+
+void app_multipoint_api_set_on(void)
+{
+	app_bt_update_connectable_mode_after_connection_management();
+}
 /** end add **/

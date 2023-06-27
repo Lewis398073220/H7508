@@ -117,6 +117,8 @@
 /** add by cai **/
 #include "app_user.h"
 #include "apps.h"
+#include "bt_sco_chain.h"//for spp test
+static uint8_t game_mode_on=0;
 /** end add **/
 
 // NOTE: Modify parameters for your project.
@@ -1767,7 +1769,7 @@ uint32_t bt_audio_set_eq(AUDIO_EQ_TYPE_T audio_eq_type, uint8_t index)
 #define A2DP_PLAYER_PLAYBACK_DELAY_AAC_MTU (6)
 #endif
 #define A2DP_PLAYER_PLAYBACK_DELAY_AAC_BASE (23000)
-#define A2DP_PLAYER_PLAYBACK_DELAY_AAC_US (A2DP_PLAYER_PLAYBACK_DELAY_AAC_BASE*A2DP_PLAYER_PLAYBACK_DELAY_AAC_MTU)
+//#define A2DP_PLAYER_PLAYBACK_DELAY_AAC_US (A2DP_PLAYER_PLAYBACK_DELAY_AAC_BASE*A2DP_PLAYER_PLAYBACK_DELAY_AAC_MTU)//c by pang
 
 /********************************
     AUD_BITS_16
@@ -1784,7 +1786,7 @@ uint32_t bt_audio_set_eq(AUDIO_EQ_TYPE_T audio_eq_type, uint8_t index)
 #define A2DP_PLAYER_PLAYBACK_DELAY_SBC_MTU (50)
 #endif
 #define A2DP_PLAYER_PLAYBACK_DELAY_SBC_BASE (2800)
-#define A2DP_PLAYER_PLAYBACK_DELAY_SBC_US (A2DP_PLAYER_PLAYBACK_DELAY_SBC_BASE*A2DP_PLAYER_PLAYBACK_DELAY_SBC_MTU)
+//#define A2DP_PLAYER_PLAYBACK_DELAY_SBC_US (A2DP_PLAYER_PLAYBACK_DELAY_SBC_BASE*A2DP_PLAYER_PLAYBACK_DELAY_SBC_MTU)//c by pang
 
 #if defined(A2DP_LHDC_ON)
 /********************************
@@ -1891,6 +1893,49 @@ uint32_t bt_audio_set_eq(AUDIO_EQ_TYPE_T audio_eq_type, uint8_t index)
 #define A2DP_PLAYER_PLAYBACK_DELAY_LDAC_BASE (2667)
 #define A2DP_PLAYER_PLAYBACK_DELAY_LDAC_US (A2DP_PLAYER_PLAYBACK_DELAY_LDAC_BASE*A2DP_PLAYER_PLAYBACK_DELAY_LDAC_MTU)
 #endif
+
+/** add by pang for low latency gaming mode **/
+#define A2DP_PLAYER_PLAYBACK_DELAY_SBC_MTU_LOW_LATENCY 20 //20=85.83ms
+#define A2DP_PLAYER_PLAYBACK_DELAY_AAC_MTU_LOW_LATENCY 3  //
+
+static uint16_t SET_A2DP_PLAYER_PLAYBACK_DELAY_SBC_MTU=A2DP_PLAYER_PLAYBACK_DELAY_SBC_MTU; //50  50=168.7ms
+static uint16_t SET_A2DP_PLAYER_PLAYBACK_DELAY_AAC_MTU=A2DP_PLAYER_PLAYBACK_DELAY_AAC_MTU; //6   138ms
+
+#define A2DP_PLAYER_PLAYBACK_DELAY_SBC_US (A2DP_PLAYER_PLAYBACK_DELAY_SBC_BASE*SET_A2DP_PLAYER_PLAYBACK_DELAY_SBC_MTU)
+#define A2DP_PLAYER_PLAYBACK_DELAY_AAC_US (A2DP_PLAYER_PLAYBACK_DELAY_AAC_BASE*SET_A2DP_PLAYER_PLAYBACK_DELAY_AAC_MTU)
+
+static void gaming_mode_set(bool game_enable)
+{
+	if(game_enable){
+		SET_A2DP_PLAYER_PLAYBACK_DELAY_SBC_MTU=A2DP_PLAYER_PLAYBACK_DELAY_SBC_MTU_LOW_LATENCY;
+		SET_A2DP_PLAYER_PLAYBACK_DELAY_AAC_MTU=A2DP_PLAYER_PLAYBACK_DELAY_AAC_MTU_LOW_LATENCY;
+	}
+	else{
+		SET_A2DP_PLAYER_PLAYBACK_DELAY_SBC_MTU=A2DP_PLAYER_PLAYBACK_DELAY_SBC_MTU;
+		SET_A2DP_PLAYER_PLAYBACK_DELAY_AAC_MTU=A2DP_PLAYER_PLAYBACK_DELAY_AAC_MTU;
+	}
+}
+
+int app_force_audio_retrigger(void)
+{
+    a2dp_audio_detect_next_packet_callback_register(NULL);
+    a2dp_audio_detect_store_packet_callback_register(NULL);
+	trigger_media_play((AUD_ID_ENUM)AUDIO_ID_BT_MUTE, 0, false);
+    return 0;
+}
+
+void app_gaming_mode(uint8_t game_on)
+{
+    game_mode_on=game_on;
+	gaming_mode_set(game_on);
+	app_force_audio_retrigger();	
+}
+
+uint8_t get_app_gaming_mode(void)
+{
+    return game_mode_on;	
+}
+/** end add **/
 
 enum BT_STREAM_TRIGGER_STATUS_T {
     BT_STREAM_TRIGGER_STATUS_NULL = 0,
@@ -3535,6 +3580,7 @@ int bt_sbc_player(enum PLAYER_OPER_T on, enum APP_SYSFREQ_FREQ_T freq)
 #endif
 #endif
 
+		freq = APP_SYSFREQ_104M;//add by pang
         app_sysfreq_req(APP_SYSFREQ_USER_BT_A2DP, freq);
         TRACE(1,"bt_sbc_player: app_sysfreq_req %d", freq);
         TRACE(1,"sys freq calc : %d\n", hal_sys_timer_calc_cpu_freq(5, 0));
@@ -3966,11 +4012,11 @@ int bt_sbc_player(enum PLAYER_OPER_T on, enum APP_SYSFREQ_FREQ_T freq)
             {
                 case BTIF_AVDTP_CODEC_TYPE_SBC:
                     a2dp_audio_codec_type = A2DP_AUDIO_CODEC_TYPE_SBC;
-                    dest_packet_mut = A2DP_PLAYER_PLAYBACK_DELAY_SBC_MTU;
+                    dest_packet_mut = SET_A2DP_PLAYER_PLAYBACK_DELAY_SBC_MTU;//A2DP_PLAYER_PLAYBACK_DELAY_SBC_MTU;//m by pang
                     break;
                 case BTIF_AVDTP_CODEC_TYPE_MPEG2_4_AAC:
                     a2dp_audio_codec_type = A2DP_AUDIO_CODEC_TYPE_MPEG2_4_AAC;
-                    dest_packet_mut = A2DP_PLAYER_PLAYBACK_DELAY_AAC_MTU;
+                    dest_packet_mut = SET_A2DP_PLAYER_PLAYBACK_DELAY_AAC_MTU;//A2DP_PLAYER_PLAYBACK_DELAY_AAC_MTU;//m by pang
                     break;
                 case BTIF_AVDTP_CODEC_TYPE_NON_A2DP:
 #if defined(A2DP_LHDC_ON)
@@ -6902,7 +6948,7 @@ int app_bt_stream_restart(APP_AUDIO_STATUS* status)
 #endif
                 app_sysfreq_req(APP_SYSFREQ_USER_BT_A2DP, sysfreq);
                 bt_media_volume_ptr_update_by_mediatype(BT_STREAM_SBC);
-                app_bt_stream_volumeset(btdevice_volume_p->a2dp_vol);
+                app_bt_stream_volumeset(btdevice_volume_p->a2dp_vol+17);//m by pang  (btdevice_volume_p->a2dp_vol); for volume independent
             }
 #endif
             break;

@@ -43,6 +43,9 @@
 #include "app_hfp.h"//add by cai
 
 static uint8_t protocol_port=0;
+uint8_t title[150], title_len;
+uint8_t artist[150], artist_len;
+uint8_t album[150], album_len;
 
 void Philips_Api_protocol_port(uint8_t port)
 {
@@ -1598,6 +1601,292 @@ void Set_Side_Tone_Status(uint8_t set_side_tone_value[1])
 	}
 }
 
+uint8_t g_set_low_latency_value[]= {0x00};
+void Get_Low_Latency_Status(void)
+{
+    uint8_t valueLen = 9;
+	uint8_t head[9] = {0xff,0x01,0x00,0x04,0x71,0x81,0x17,0x00,0x00};
+	
+	//Data length
+	head[2] = 0x09;
+	//Get_Side_Tone_Status 1 byte
+	g_set_low_latency_value[0] = app_get_low_latency_status();
+	head[7] =  g_set_low_latency_value[0];
+
+	//Do checksum
+	head[valueLen - 1]=Do_CheckSum(head,valueLen);
+
+	Philips_Send_Notify(head, (uint32_t)valueLen);   
+}
+
+void Set_Low_Latency_Status(uint8_t set_low_latency_value[1])
+{
+    g_set_low_latency_value[0] =  set_low_latency_value[0]; 
+   	app_low_latency_set(g_set_low_latency_value[0]);
+	TRACE(2,"***%s: low_latency_status=%d",__func__,app_get_low_latency_status());
+	app_gaming_mode(app_get_low_latency_status());
+}
+
+static uint8_t g_set_multipoint_status_value[]= {0x00};
+void Get_Multipoint_Status(void)
+{
+	uint8_t valueLen = 9;
+	uint8_t head[9] = {0xff,0x01,0x00,0x04,0x71,0x81,0x70,0x00,0x00};
+	
+	//Data length
+	head[2] = 0x09;
+
+	g_set_multipoint_status_value[0]=app_get_new_multipoint_flag();
+	head[7] = g_set_multipoint_status_value[0];
+
+	//Do checksum
+	head[valueLen - 1]=Do_CheckSum(head,valueLen);
+
+	Philips_Send_Notify(head, (uint32_t)valueLen);      
+}
+
+void Set_Multipoint_Status(uint8_t set_multipoint_status_value[1])
+{
+    g_set_multipoint_status_value[0] =  set_multipoint_status_value[0]; 
+
+	if(g_set_multipoint_status_value[0]>0x01)
+		return;
+	
+	app_nvrecord_multipoint_set(g_set_multipoint_status_value[0]);
+}
+
+static uint8_t g_set_device_colour_value[]= {0x00};
+void Get_Device_Colour(void)
+{
+	uint8_t valueLen = 9;
+	uint8_t head[9] = {0xff,0x01,0x00,0x04,0x71,0x81,0x1B,0x00,0x00};
+	
+	//Data length
+	head[2] = 0x09;
+
+	g_set_device_colour_value[0]=get_custom_bin_config(0);
+	head[7] = g_set_device_colour_value[0];
+	TRACE(2,"***%s: colour_value=%d",__func__,head[7]);
+	//Do checksum
+	head[valueLen - 1]=Do_CheckSum(head,valueLen);
+
+	Philips_Send_Notify(head, (uint32_t)valueLen);      
+}
+
+//add by cai
+void Set_Device_Colour(uint8_t set_device_colour_value[1])
+{
+    g_set_device_colour_value[0] = set_device_colour_value[0]; 
+
+	if(g_set_device_colour_value[0] > 0x08)
+		return;
+	
+	TRACE(2,"***%s: colour_value=%d",__func__,g_set_device_colour_value[0]);
+	set_custom_bin_config(0, g_set_device_colour_value[0]);
+}
+
+void Get_Key_Define_Support_List(void)
+{
+	uint8_t valueLen = 11;
+	uint8_t head[11] = {0xff,0x01,0x00,0x04,0x71,0x81,0xB0,0x00,0x00,0x00,0x00};
+	
+	//Data length
+	head[2] = 0x0B;
+	//UX ANC Toggle support 1 byte  
+	head[7] = UX_ANC_TOGGLE_SUPPORT;
+	head[8] = NOT_SUPPORT;
+	head[9] = NOT_SUPPORT;
+	//Do checksum
+	head[valueLen - 1]=Do_CheckSum(head,valueLen);
+ 
+	Philips_Send_Notify(head, (uint32_t)valueLen);      
+}
+
+static uint8_t g_set_anc_toggle_mode_value[]= {0x00};
+void Get_UX_ANC_Toggle_Status(void)
+{
+	uint8_t valueLen = 9;
+	uint8_t head[9] = {0xff,0x01,0x00,0x04,0x71,0x81,0xB1,0x00,0x00};
+	
+	//Data length
+	head[2] = 0x09;
+	//ANC toggle mode Status 1 byte  
+	g_set_anc_toggle_mode_value[0]=app_nvrecord_anc_toggle_mode_get();
+	head[7] =  g_set_anc_toggle_mode_value[0];    
+
+	//Do checksum
+	head[valueLen - 1]=Do_CheckSum(head,valueLen); 
+
+	Philips_Send_Notify(head, (uint32_t)valueLen); 
+}
+
+void Set_UX_ANC_Toggle_Status(uint8_t set_anc_toggle_mode_status_value[1])
+{
+	uint8_t anc_toggle_mode_status_value;
+
+	anc_toggle_mode_status_value = set_anc_toggle_mode_status_value[0];
+
+	if(anc_toggle_mode_status_value>=0x00 && anc_toggle_mode_status_value<0x04)
+		app_nvrecord_anc_toggle_mode_set(anc_toggle_mode_status_value);
+	else{
+		TRACE(1,"***%s: error_value %d",__func__,anc_toggle_mode_status_value);
+		return;
+	} 
+}
+
+void Get_Nowplaying2_Support_List(void)
+{
+	uint8_t valueLen = 9;
+	uint8_t head[9] = {0xff,0x01,0x00,0x04,0x71,0x81,0x80,0x00,0x00};
+	
+	//Data length
+	head[2] = 0x09;
+	//Customization Eq Range 1 byte  
+	head[7] = 0x01;  //support media title
+	//Do checksum
+	head[valueLen - 1]=Do_CheckSum(head,valueLen);
+   
+	Philips_Send_Notify(head, (uint32_t)valueLen); 
+}
+
+static uint8_t g_Nowplay2_Playback_Status[]= {0x00};
+void Get_Nowplaying2_Playback_Status(void)
+{
+	uint8_t valueLen = 9;
+	uint8_t head[9] = {0xff,0x01,0x00,0x04,0x71,0x81,0x81,0x00,0x00};
+	
+	//Data length
+	head[2] = 0x09;
+	//Nowplaying Playback Status 1 byte  
+	g_Nowplay2_Playback_Status[0] = app_bt_device.a2dp_play_pause_flag;
+	TRACE(2,"***%s: %d\r\n",__func__, g_Nowplay2_Playback_Status[0]);
+	head[7] = g_Nowplay2_Playback_Status[0]; 
+	//Do checksum
+	head[valueLen - 1]=Do_CheckSum(head,valueLen);
+  
+	Philips_Send_Notify(head, (uint32_t)valueLen);   
+}
+
+void Set_Nowplaying2_Playback_Status(uint8_t set_nowplaying2_palyback_status_value[1])
+{
+    uint8_t playstatus = set_nowplaying2_palyback_status_value[0];
+
+    if (playstatus == 0x00){	
+		a2dp_handleKey(AVRCP_KEY_PAUSE); 
+		//Notification_Media_Change();
+    }	
+	else if(playstatus == 0x01){  
+		a2dp_handleKey(AVRCP_KEY_PLAY);  
+	}
+}
+
+void Set_Nowplaying2_Playback_Next(void)
+{
+	TRACE(0,"***%s\r\n", __func__);
+	a2dp_handleKey(AVRCP_KEY_FORWARD);
+}
+
+void Set_Nowplaying2_Playback_Previous(void)
+{
+	TRACE(0,"***%s\r\n", __func__);
+	a2dp_handleKey(AVRCP_KEY_BACKWARD);
+}
+
+void Notification_Playback_Status_Change(uint8_t playstatus)
+{
+	TRACE(2,"***%s: %d\r\n", __func__, playstatus);
+
+	uint8_t valueLen = 9;
+	uint8_t head[9] = {0xff,0x01,0x00,0x04,0x71,0x81,0x89,0x00,0x00};
+	
+	//Data length
+	head[2] = 0x09;
+	//Notification_Media_Change 1 byte
+	head[7] = playstatus;
+	//Do checksum
+	head[valueLen - 1]=Do_CheckSum(head,valueLen);
+
+	Philips_Send_Notify(head, (uint32_t)valueLen);
+}
+
+void Notification_Media_Info_Change(uint8_t media_info)
+{
+	TRACE(2,"***%s!: %d\r\n", __func__, media_info);
+
+	uint8_t valueLen = 9;
+	uint8_t head[9] = {0xff,0x01,0x00,0x04,0x71,0x81,0x88,0x00,0x00};
+	
+	//Data length
+	head[2] = 0x09;
+	//Notification_Media_Change 1 byte
+	head[7] = media_info;
+	//Do checksum
+	head[valueLen - 1]=Do_CheckSum(head,valueLen);
+
+	Philips_Send_Notify(head, (uint32_t)valueLen);
+}
+
+void NowPlaying2_Notification_Media_Title_Artist_Album(uint8_t type,char* media_buffer, uint8_t valueLen)
+{
+	uint8_t i =0;
+	uint8_t head[7] = {0xff,0x02,0x00,0x04,0x71,0x81,0x85};//Title
+    if (type == (uint8_t) 0x02){
+		head[6] = (uint8_t) 0x86; 	//Artist
+    }
+    else if (type == (uint8_t) 0x03){
+		head[6] = (uint8_t) 0x87; 		 //Album
+    }
+	
+	uint8_t datasize = valueLen + 8;
+	//TRACE(1,"datasize %d : ", datasize);
+	uint8_t Title_Artist_Album[datasize];
+
+	memset(Title_Artist_Album, 0, datasize);
+	memcpy(Title_Artist_Album, head, 7);
+	Title_Artist_Album[2] = datasize;
+		
+	for (i = 7 ; i < (7 + valueLen) ; i++){
+		Title_Artist_Album[i] = (uint8_t)media_buffer[i - 7];
+	}    
+	TRACE(2,"***%s: valueLen=%d\r\n", __func__, valueLen);
+	
+	//Do checksum
+	Title_Artist_Album[datasize - 1]=Do_CheckSum(Title_Artist_Album, datasize);
+
+    Philips_Send_Notify(Title_Artist_Album, (uint32_t)datasize);
+}
+
+void Get_NowPlaying2_Media_Title(void)
+{
+	NowPlaying2_Notification_Media_Title_Artist_Album(0x01,(char*)title,title_len);
+}
+
+void Get_NowPlaying2_Media_Artist(void)
+{
+	NowPlaying2_Notification_Media_Title_Artist_Album(0x02,(char*)artist,artist_len);
+}
+
+void Get_NowPlaying2_Media_Album(void)
+{
+	NowPlaying2_Notification_Media_Title_Artist_Album(0x03,(char*)album,album_len);
+}
+
+void Get_Special_Function2_Support_List(void)
+{
+	uint8_t valueLen = 9;
+	uint8_t head[9] = {0xff,0x01,0x00,0x04,0x71,0x81,0x60,0x00,0x00};
+	
+	//Data length
+	head[2] = 0x09;
+	//Special Function1 Support List 1 byte  
+	head[7] = TALK_MIC_LED_CONTROL_SUPPORT;// | LOW_LATENCY_SUPPORT| VIBRATION_SUPPORT;  
+
+	//Do checksum
+	head[valueLen - 1]=Do_CheckSum(head,valueLen);
+
+	Philips_Send_Notify(head, (uint32_t)valueLen);  
+}
+
 bool Philips_Functions_Call(uint8_t *data, uint8_t size)
 {
 	uint16_t command_id = ((uint16_t)data[5] << 8) | ((uint16_t)data[6]);
@@ -1911,7 +2200,113 @@ bool Philips_Functions_Call(uint8_t *data, uint8_t size)
 	        set_side_tone_value[0] = data[7];		
 			Set_Side_Tone_Status(set_side_tone_value);			
 		return true;
-			
+
+		case GET_LOW_LATENCY_STATUS:		
+			//TRACE(0,"Philips :Philips_Functions_Call GET_LOW_LATENCY_STATUS!\r\n");
+			Get_Low_Latency_Status();
+		return true;
+		
+		case SET_LOW_LATENCY_STATUS:		
+			//TRACE(0,"Philips : Philips_Functions_Call SET_LOW_LATENCY_STATUS!\r\n");
+			if (size != 9){
+			    return false;
+			 }		
+			uint8_t set_low_latency_value[1] = {0};
+	        set_low_latency_value[0] = data[7];		
+			Set_Low_Latency_Status(set_low_latency_value);			
+		return true;	
+
+		case GET_MULTIPOINT_STATUS:
+			Get_Multipoint_Status();
+		return true;
+
+		case SET_MULTIPOINT_STATUS:
+			if (size != 9){
+				return false;
+			}		
+			uint8_t set_multipoint_value[1] = {0};
+			set_multipoint_value[0] = data[7]; 	
+			Set_Multipoint_Status(set_multipoint_value);
+		return true;
+
+		case GET_DEVICE_COLOUR_STATUS:
+			Get_Device_Colour();
+		return true;
+		
+		//add by cai
+		case SET_DEVICE_COLOUR_STATUS:
+			if (size != 9){
+				return false;
+			}
+			uint8_t set_device_colour_value[1] = {0};
+			set_device_colour_value[0] = data[7];		
+			Set_Device_Colour(set_device_colour_value);
+		return true;
+
+		case GET_KEY_DEFINE_SUPPORT_LIST:
+			Get_Key_Define_Support_List();
+		return true;
+
+		case GET_UX_ANC_TOGGLE_STATUS:
+			Get_UX_ANC_Toggle_Status();
+		return true;
+
+		case SET_UX_ANC_TOGGLE_STATUS:
+			if (size != 9){
+				return false;
+			}
+			uint8_t set_anc_toggle_mode_value[1] = {0};
+			set_anc_toggle_mode_value[0] = data[7];
+			Set_UX_ANC_Toggle_Status(set_anc_toggle_mode_value);
+		return true;
+		
+		case GET_NOWPLAYING2_SUPPORT_LIST:
+			Get_Nowplaying2_Support_List();
+		return true;
+
+		case GET_NOWPLAYING2_PLAYBACK_STATUS:
+			Get_Nowplaying2_Playback_Status();
+		return true;
+
+		case SET_NOWPLAYING2_PLAYBACK_STATUS:
+		    TRACE(0,"Philips : Philips_Functions_Call SET_NOWPLAYING_PLAYBACK_STATUS_VALUE!\r\n");
+			if (size != 9){
+				return false;
+			 }
+			uint8_t set_nowplaying2_palyback_status_value[1] = {0};
+			set_nowplaying2_palyback_status_value[0] = data[7]; 
+			Set_Nowplaying2_Playback_Status(set_nowplaying2_palyback_status_value);
+		return true;
+
+		case SET_NOWPLAYING2_PLAYBACK_NEXT:
+			Set_Nowplaying2_Playback_Next();
+		return true;
+
+		case SET_NOWPLAYING2_PLAYBACK_PREVIOUS:
+			Set_Nowplaying2_Playback_Previous();
+		return true;
+
+		case GET_NOWPLAYING2_MEDIA_TITLE:
+			//TRACE(0,"Philips : GET_NOWPLAYING2_MEDIA_TITLE!\r\n");
+			Get_NowPlaying2_Media_Title();
+		return true;
+
+		case GET_NOWPLAYING2_MEDIA_ARTIST:
+			//TRACE(0,"Philips : GET_NOWPLAYING2_MEDIA_ARTIST!\r\n");
+			Get_NowPlaying2_Media_Artist();
+		return true;
+
+		case GET_NOWPLAYING2_MEDIA_ALBUM:
+			//TRACE(0,"Philips : GET_NOWPLAYING2_MEDIA_ALBUM!\r\n");
+			Get_NowPlaying2_Media_Album();
+		return true;
+		//end add
+		
+		case GET_SPECIAL_FUNCTION2_SUPPORT_LIST:
+			//TRACE(0,"Philips : Philips_Functions_Call GET_SPECIAL_FUNCTION1_SUPPORT_LIST!\r\n");
+			Get_Special_Function2_Support_List();
+		return true;
+		
 		default:
 			TRACE(0,"Philips : Philips_Functions_Call Command error!\r\n");
 		break;

@@ -22,13 +22,17 @@
 static uint8_t sleep_time = DEFAULT_SLEEP_TIME;
 static uint16_t auto_poweroff_time = DEFAULT_AUTO_PWOFF_TIME;//add by cai
 static uint8_t eq_set_index = 0;
-static uint8_t fota_flag = 0;
 static enum APP_ANC_MODE_STATUS anc_set_index = ANC_HIGH;
 static uint8_t monitor_level = 20;
 static uint8_t focus_on = 0;
+static enum ANC_TOGGLE_MODE anc_toggle_mode = AncOn_AncOff_Awareness;//add by cai
 static uint8_t touch_lock = 0;
 static uint8_t sidetone = 0;
+static uint8_t low_latency_on = 0;//add by cai
 static enum APP_ANC_MODE_STATUS anc_table_value = ANC_HIGH;
+static uint8_t fota_flag = 0;
+static uint8_t multipoint = 1;
+
 #endif
 
 #if defined(__EVRCORD_USER_DEFINE__)
@@ -337,4 +341,95 @@ void app_nvrecord_sidetone_set(uint8_t on)
 #endif
 }
 
+uint8_t app_get_low_latency_status(void)
+{
+	return (low_latency_on);
+}
+
+void app_low_latency_set(uint8_t on)
+{
+	low_latency_on = on;
+}
+
+static uint8_t new_multipoint=1;
+uint8_t app_get_new_multipoint_flag(void)
+{
+	return (new_multipoint);
+}	
+
+uint8_t app_get_multipoint_flag(void)
+{
+    if(new_multipoint)
+		return 1;
+	else
+		return (multipoint);
+}
+
+void app_nvrecord_multipoint_set(uint8_t on)
+{
+   	new_multipoint=on;
+   
+	struct nvrecord_env_t *nvrecord_env;
+	nv_record_env_get(&nvrecord_env);
+	nvrecord_env->multipoint = on;
+	nv_record_env_set(nvrecord_env);
+	
+#if FPGA==0
+    nv_record_flash_flush();
 #endif
+    if(new_multipoint){
+		app_multipoint_api_set_on();
+    }
+}
+
+enum ANC_TOGGLE_MODE app_nvrecord_anc_toggle_mode_get(void)
+{
+	return(anc_toggle_mode);
+}
+
+void app_nvrecord_anc_toggle_mode_set(enum ANC_TOGGLE_MODE nc_toggle)
+{	
+	struct nvrecord_env_t *nvrecord_env;
+	nv_record_env_get(&nvrecord_env);
+	
+	if(nc_toggle>=0x00 && nc_toggle<0x04){ 
+		nvrecord_env->anc_toggle_mode = nc_toggle;
+		anc_toggle_mode = nc_toggle;
+	}else return;
+	nv_record_env_set(nvrecord_env);
+
+#if FPGA==0
+    nv_record_flash_flush();
+#endif
+}
+
+#endif
+
+#if defined(CUSTOM_BIN_CONFIG)
+extern uint32_t __custom_bin_start[];
+uint8_t binconfig[1]={0x00};
+
+void app_get_custom_bin_config(void)
+{		
+	memcpy(binconfig,(const void *)0x383e9000,1);//color, add by cai
+
+	TRACE(2,"***%s binconfig[0]=%d",__func__, binconfig[0]);
+}
+
+uint8_t get_custom_bin_config(uint8_t config_num)
+{	
+    if(config_num==0)
+		return (binconfig[0]);
+	else
+		return 0xff;//invalid value
+}
+
+void set_custom_bin_config(uint8_t config_num,uint8_t binconfig_value)
+{	
+    if(config_num==0)
+		binconfig[0]=binconfig_value;
+	//else
+		//return (binconfig[1]);
+}
+#endif
+

@@ -51,9 +51,22 @@ uint8_t app_get_touchlock(void);
 void app_nvrecord_touchlock_set(uint8_t on);
 uint8_t app_get_sidetone(void);
 void app_nvrecord_sidetone_set(uint8_t on);
+uint8_t app_get_low_latency_status(void);
+void app_low_latency_set(uint8_t on);
+uint8_t app_get_new_multipoint_flag(void);
+uint8_t app_get_multipoint_flag(void);
+void app_nvrecord_multipoint_set(uint8_t on);
+enum ANC_TOGGLE_MODE app_nvrecord_anc_toggle_mode_get(void);
+void app_nvrecord_anc_toggle_mode_set(enum ANC_TOGGLE_MODE nc_toggle);
 
 
 
+#endif
+
+#if defined(CUSTOM_BIN_CONFIG)
+void app_get_custom_bin_config(void);
+uint8_t get_custom_bin_config(uint8_t config_num);
+void set_custom_bin_config(uint8_t config_num,uint8_t binconfig_value);//add by cai
 #endif
 
 #ifdef __cplusplus
