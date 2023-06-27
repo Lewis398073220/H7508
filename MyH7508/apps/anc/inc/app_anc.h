@@ -78,6 +78,7 @@ void app_set_anc_on_mode(enum APP_ANC_MODE_STATUS anc_on_new_mode);
 enum MONITOR_ON_MODE app_get_monitor_mode(void);
 void app_set_monitor_mode(uint8_t monitor_new_level);
 enum APP_ANC_MODE_STATUS app_get_anc_mode_status(void);
+void poweron_set_anc(void);
 enum ANC_TOGGLE_MODE app_get_anc_toggle_mode(void);
 void app_set_anc_toggle_mode(enum ANC_TOGGLE_MODE anc_new_toggle_mode);
 void app_anc_Key_Pro(void);

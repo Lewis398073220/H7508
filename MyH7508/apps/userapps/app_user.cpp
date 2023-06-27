@@ -74,6 +74,11 @@ void app_nvrecord_fotaflag_set(uint8_t on)
 #endif
 }
 
+enum APP_ANC_MODE_STATUS app_nvrecord_anc_status_get(void)
+{
+	return (anc_set_index);
+}
+
 uint8_t app_nvrecord_anc_table_get(void)
 {
 	return(anc_table_value);

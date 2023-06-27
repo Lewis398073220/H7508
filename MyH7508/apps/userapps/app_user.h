@@ -31,6 +31,7 @@ extern "C" {
 #if defined(__EVRCORD_USER_DEFINE__)
 uint8_t app_get_fota_flag(void);
 void app_nvrecord_fotaflag_set(uint8_t on);
+enum APP_ANC_MODE_STATUS app_nvrecord_anc_status_get(void);
 uint8_t app_nvrecord_anc_table_get(void);
 void app_nvrecord_anc_set(enum APP_ANC_MODE_STATUS nc);
 uint8_t app_get_monitor_level(void);

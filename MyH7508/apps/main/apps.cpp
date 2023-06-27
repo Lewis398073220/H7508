@@ -161,7 +161,7 @@ extern "C" int hal_usb_configured(void);
 #endif
 
 #define APP_BATTERY_LEVEL_LOWPOWERTHRESHOLD (1)
-#define POWERON_PRESSMAXTIME_THRESHOLD_MS  (5000)
+#define POWERON_PRESSMAXTIME_THRESHOLD_MS  (70000)//(5000)   m by cai
 
 #ifdef FPGA
 uint32_t __ota_upgrade_log_start[100];
@@ -647,7 +647,18 @@ static void app_poweron_normal(APP_KEY_STATUS *status, void *param)
     TRACE(3,"%s %d,%d",__func__, status->code, status->event);
     g_pwron_case = APP_POWERON_CASE_NORMAL;
 
+#if 1 //by pang
+	//app_status_indication_recover_set(APP_STATUS_INDICATION_POWERON);
+#ifdef ANC_APP
+	poweron_set_anc();//add by cai for Pairing tone distortion
+#endif
+#ifdef MEDIA_PLAYER_SUPPORT
+	app_voice_report(APP_STATUS_INDICATION_POWERON, 0);
+#endif
+	signal_send_to_main_thread(0x2);
+#else
     signal_send_to_main_thread(0x2);
+#endif
 }
 
 #if !defined(BLE_ONLY_ENABLED)
@@ -656,7 +667,16 @@ static void app_poweron_scan(APP_KEY_STATUS *status, void *param)
     TRACE(3,"%s %d,%d",__func__, status->code, status->event);
     g_pwron_case = APP_POWERON_CASE_BOTHSCAN;
 
+#if 1 //by pang
+	//lostconncection_to_pairing=1;
+	app_status_indication_set(APP_STATUS_INDICATION_BOTHSCAN);
+#ifdef MEDIA_PLAYER_SUPPORT
+    app_voice_report(APP_STATUS_INDICATION_BOTHSCAN,0);
+#endif
+	signal_send_to_main_thread(0x2);
+#else
     signal_send_to_main_thread(0x2);
+#endif
 }
 #endif
 
@@ -718,7 +738,7 @@ void app_factory_reset(void)
 }
 /**  end add **/
 
-#ifdef __ENGINEER_MODE_SUPPORT__
+#if 0// def __ENGINEER_MODE_SUPPORT__ //c by pang
 #if !defined(BLE_ONLY_ENABLED)
 static void app_poweron_factorymode(APP_KEY_STATUS *status, void *param)
 {
@@ -752,10 +772,10 @@ const  APP_KEY_HANDLE  pwron_key_handle_cfg[] = {
 };
 #elif defined(__ENGINEER_MODE_SUPPORT__)
 const  APP_KEY_HANDLE  pwron_key_handle_cfg[] = {
-    {{APP_KEY_CODE_PWR,APP_KEY_EVENT_INITUP},           "power on: normal"     , app_poweron_normal, NULL},
+    {{APP_KEY_CODE_PWR,APP_KEY_EVENT_INITLONGPRESS},    "power on: normal"     , app_poweron_normal, NULL},
 #if !defined(BLE_ONLY_ENABLED)
-    {{APP_KEY_CODE_PWR,APP_KEY_EVENT_INITLONGPRESS},    "power on: both scan"  , app_poweron_scan  , NULL},
-    {{APP_KEY_CODE_PWR,APP_KEY_EVENT_INITLONGLONGPRESS},"power on: factory mode", app_poweron_factorymode  , NULL},
+    {{APP_KEY_CODE_PWR,APP_KEY_EVENT_INITLONGLONGPRESS}, "power on: both scan"  , app_poweron_scan  , NULL},
+    //{{APP_KEY_CODE_PWR,APP_KEY_EVENT_INITLONGLONGPRESS},"power on: factory mode", app_poweron_factorymode  , NULL},
 #endif
     {{APP_KEY_CODE_PWR,APP_KEY_EVENT_INITFINISHED},     "power on: finished"   , app_poweron_finished  , NULL},
 };
@@ -785,6 +805,7 @@ static uint8_t app_poweron_wait_case(void)
 #ifdef __POWERKEY_CTRL_ONOFF_ONLY__
     g_pwron_case = APP_POWERON_CASE_NORMAL;
 #else
+#if 0
     TRACE(1,"poweron_wait_case enter:%d", g_pwron_case);
     if (g_pwron_case == APP_POWERON_CASE_INVALID){
         stime = hal_sys_timer_get();
@@ -792,7 +813,20 @@ static uint8_t app_poweron_wait_case(void)
         etime = hal_sys_timer_get();
     }
     TRACE(2,"powon raw case:%d time:%d", g_pwron_case, TICKS_TO_MS(etime - stime));
+#else //modify by pang
+	TRACE(1,"poweron_wait_case enter:%d", g_pwron_case);
+	if (g_pwron_case == APP_POWERON_CASE_INVALID){
+		stime = hal_sys_timer_get();
+		osSignalWait(0x2, 2000);
+		if((g_pwron_case == APP_POWERON_CASE_NORMAL)&&(g_pwron_finished==false))
+			osSignalWait(0x2, POWERON_PRESSMAXTIME_THRESHOLD_MS);
+			
+		etime = hal_sys_timer_get();
+	}
+	TRACE(2,"powon raw case:%d time:%d", g_pwron_case, TICKS_TO_MS(etime - stime));
 #endif
+#endif
+
     return g_pwron_case;
 
 }
@@ -1678,6 +1712,7 @@ int app_init(void)
     bool is_charging_poweron=false;
 #endif
     TRACE(0,"please check all sections sizes and heads is correct ........");
+	
     TRACE(2,"__coredump_section_start: %p length: 0x%x", __coredump_section_start, CORE_DUMP_SECTION_SIZE);
     TRACE(2,"__ota_upgrade_log_start: %p length: 0x%x", __ota_upgrade_log_start, OTA_UPGRADE_LOG_SIZE);
     TRACE(2,"__log_dump_start: %p length: 0x%x", __log_dump_start, LOG_DUMP_SECTION_SIZE);
@@ -2005,10 +2040,12 @@ extern int rpc_service_setup(void);
     }
 #endif
     else{
+/* //c by pang
         app_status_indication_set(APP_STATUS_INDICATION_POWERON);
 #ifdef MEDIA_PLAYER_SUPPORT
         app_voice_report(APP_STATUS_INDICATION_POWERON, 0);
 #endif
+*/
         if (need_check_key){
             pwron_case = app_poweron_wait_case();
         }

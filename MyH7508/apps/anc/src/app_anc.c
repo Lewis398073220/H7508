@@ -243,6 +243,36 @@ enum APP_ANC_MODE_STATUS app_get_anc_mode_status(void)
 	return (anc_status);
 }
 
+void poweron_set_anc(void)
+{
+	enum APP_ANC_MODE_STATUS anc_mode_poweron;
+	anc_mode_poweron = app_nvrecord_anc_status_get();
+	
+	if(anc_mode_poweron == ANC_HIGH){
+		anc_current_status = anc_on;
+		anc_on_mode = anc_high;
+	}
+	else if(anc_mode_poweron == ANC_LOW){
+		anc_current_status = anc_on;
+		anc_on_mode = anc_low;
+	}
+	else if(anc_mode_poweron == ANC_WIND){
+		anc_current_status = anc_on;
+		anc_on_mode = anc_wind;
+	}
+	else {
+		anc_current_status = anc_on;
+		if(app_nvrecord_anc_table_get() == ANC_HIGH)
+			anc_on_mode = anc_high;
+		else if(app_nvrecord_anc_table_get() == ANC_LOW)
+			anc_on_mode = anc_low;
+		else anc_on_mode = anc_wind;
+	}
+
+	app_set_monitor_mode(app_get_monitor_level());
+	set_anc_mode(anc_current_status, 0);	
+}
+
 enum ANC_TOGGLE_MODE app_get_anc_toggle_mode(void)
 {
 	anc_toggle_method = app_nvrecord_anc_toggle_mode_get();
@@ -2020,7 +2050,7 @@ void set_anc_mode(enum ANC_STATUS anc_new_mode, uint8_t prompt_on)
 				
 				anc_work_status = ANC_STATUS_WAITING_ON;
 				if(power_anc_init){
-            		app_anc_timer_set(ANC_EVENT_OPEN, MS_TO_TICKS(6000));
+            		app_anc_timer_set(ANC_EVENT_OPEN, MS_TO_TICKS(3000));//m by cai 600ms
 				}
 				else{
             		app_anc_timer_set(ANC_EVENT_OPEN, anc_switch_on_time);
