@@ -764,14 +764,21 @@ void bt_drv_tx_pwr_init(void)
         btdrv_write_rf_reg(0x18b, 0x0071); // max tx gain 2019.02.26
 }
 
+static uint16_t reg_18b_read_value=0;//add by pang for reconnect noise
 void bt_drv_tx_pwr_init_for_testmode(void)
 {
     //ble txpower need modify ble tx idx @ bt_drv_config.c
     //modify bit4~7 to change ble tx gain
     btdrv_write_rf_reg(0x189, 0x007a); // min tx gain  2019.02.26
     btdrv_write_rf_reg(0x18a, 0x0076); // mid tx gain  2019.02.26
-    if (0 == check_btpower_efuse_invalid())
-        btdrv_write_rf_reg(0x18b, 0x0071); // max tx gain 2019.02.26
+    //if (0 == check_btpower_efuse_invalid())
+        //btdrv_write_rf_reg(0x18b, 0x0071); // max tx gain 2019.02.26
+
+	//m by pang
+	if(reg_18b_read_value!=0)
+		btdrv_write_rf_reg(0x18b, reg_18b_read_value);
+	else
+    	btdrv_write_rf_reg(0x18b, 0x0071);
 }
 
 void btdrv_txpower_calib(void)
@@ -849,6 +856,35 @@ void btdrv_txpower_calib(void)
     read_value &= 0xff00;                                  //clear [3:0] & [7:4]
     read_value |= (tmp_val | (0x7 << 4));                  //get 0x18b [3:0] & [7:4]
     btdrv_write_rf_reg(0x18b,read_value);
+	reg_18b_read_value=read_value;//add by pang
     BT_DRV_TRACE(1,"write reg 0x18b val=0x%x",read_value);
     //set 0x18b[3:0] end
+
+	bt_drv_tx_pwr_for_page();//add by pang
 }
+
+/** add by pang for reconnect noise **/
+void bt_drv_tx_pwr_for_page(void)
+{	
+    btdrv_write_rf_reg(0x189, 0x0071); 
+    btdrv_write_rf_reg(0x18a, 0x0071); 
+    btdrv_write_rf_reg(0x18b, 0x007D);//0dB
+
+	BT_DRV_TRACE(0,"***bt_drv_tx_pwr_for_page");
+}
+
+void bt_drv_tx_pwr_for_init(void)
+{
+   uint16_t read_value;
+   
+    btdrv_write_rf_reg(0x189, 0x0071); 
+    btdrv_write_rf_reg(0x18a, 0x0071); 
+	if(reg_18b_read_value!=0)
+		btdrv_write_rf_reg(0x18b, reg_18b_read_value);
+	else
+    	btdrv_write_rf_reg(0x18b, 0x0072);
+	
+	btdrv_read_rf_reg(0x18b, &read_value); 
+    BT_DRV_TRACE(1,"***write reg 0x18b val=0x%x",read_value);
+}
+/** end add **/

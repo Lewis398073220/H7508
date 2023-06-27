@@ -292,6 +292,11 @@ uint8_t bt_drv_regop_get_esco_nego_airmode(uint8_t sco_link_id);
 void bt_drv_set_music_ongong_flag();
 void bt_drv_clear_music_ongong_flag();
 
+/** add by pang for reconnect noise */
+void bt_drv_tx_pwr_for_page(void);
+void bt_drv_tx_pwr_for_init(void);
+/** end add **/
+
 #ifdef __cplusplus
 }
 #endif

@@ -108,6 +108,8 @@ extern "C"
 #include "app_bt_stream.h"
 #include "app.h"
 #include "bt_drv_reg_op.h"
+static bool tx_pwr_for_page_flag=1;
+extern uint8_t app_poweroff_flag;
 extern bool factory_reset_flag;
 
 uint8_t *dev_name_user[BT_DEVICE_NUM] = {NULL};
@@ -3061,7 +3063,7 @@ void app_bt_profile_connect_manager_hf(enum BT_DEVICE_ID_T id, hf_chan_handle_t 
                 break;
             case BTIF_HF_EVENT_SERVICE_DISCONNECTED:
                 //TRACE(3,"%s HF_EVENT_SERVICE_DISCONNECTED discReason:%d/%d",__func__, Info->p.remDev->discReason, Info->p.remDev->discReason_saved);
-                TRACE(3,"%s HF_EVENT_SERVICE_DISCONNECTED discReason:0x%x/0x%x %d",__func__, ctx->disc_reason, ctx->disc_reason_saved, bt_profile_manager[id].reconnect_mode);
+                TRACE(3,"***%s HF_EVENT_SERVICE_DISCONNECTED id:%d discReason:0x%x/0x%x %d/%d",__func__,id, ctx->disc_reason, ctx->disc_reason_saved, bt_profile_manager[id].reconnect_mode,bt_profile_manager[id].reconnect_cnt);//m by pang
                 bt_profile_manager[id].hfp_connect = bt_profile_connect_status_failure;
                 if (bt_profile_manager[id].reconnect_mode == bt_profile_reconnect_openreconnecting){
                     if (bt_profile_manager[id].reconnect_cnt++ < APP_BT_PROFILE_OPENNING_RECONNECT_RETRY_LIMIT_CNT){
@@ -3107,6 +3109,13 @@ void app_bt_profile_connect_manager_hf(enum BT_DEVICE_ID_T id, hf_chan_handle_t 
                     {
                         profile_reconnect_enable = true;
                     }
+					/** add by pang **/
+					if(false==app_bt_is_connected()){
+						app_status_indication_set(APP_STATUS_INDICATION_PAGESCAN);	
+					}
+
+				   	app_start_10_second_timer(APP_POWEROFF_TIMER_ID);//add by cai
+					/** end add **/
                 }
 #endif
                 else{
@@ -3264,7 +3273,8 @@ void app_bt_profile_connect_manager_hf(enum BT_DEVICE_ID_T id, hf_chan_handle_t 
 
         nv_record_btdevicerecord_set_last_active(btdevice_plf_p);
 		
-        TRACE(0,"BT connected!!!");
+		TRACE(1,"BT connected!!!: %d",id);//m by cai
+		app_cur_connect_devid_set(id, true);//add by cai
 		
 		if((bt_profile_manager[id].reconnect_mode == bt_profile_reconnect_null))//回连的时候不保存配对记录 
 		{																																	   //按键切换回连成功保存配对记录 ZCL @ 2020/07/24		
@@ -3278,6 +3288,17 @@ void app_bt_profile_connect_manager_hf(enum BT_DEVICE_ID_T id, hf_chan_handle_t 
 #if defined(MEDIA_PLAYER_SUPPORT)&& !defined(IBRT)
         app_voice_report(APP_STATUS_INDICATION_CONNECTED, id);
 #endif
+/** add by pang **/
+		factory_reset_flag=0;
+		app_stop_10_second_timer(APP_POWEROFF_TIMER_ID);
+		app_start_10_second_timer(APP_AUTO_PWOFF_TIMER_ID);//add by cai to fresh timer
+		{
+			if(tx_pwr_for_page_flag){
+				bt_drv_tx_pwr_for_init();
+				tx_pwr_for_page_flag=0;
+			}
+		}
+/** end add **/
         app_bt_Me_SetLinkPolicy(btif_me_enumerate_remote_devices(id), 
             BTIF_BLP_SNIFF_MODE);
     
@@ -3300,7 +3321,8 @@ void app_bt_profile_connect_manager_hf(enum BT_DEVICE_ID_T id, hf_chan_handle_t 
          bt_profile_manager[id].a2dp_connect != bt_profile_connect_status_success)){
 
         bt_profile_manager[id].has_connected = false;
-        TRACE(0,"BT disconnected!!!");
+        TRACE(1,"BT disconnected!!!: %d",id);//m by cai
+		app_cur_connect_devid_set(id, false);//add by cai
 
 #ifdef GFPS_ENABLED
         if (app_gfps_is_last_response_pending())
@@ -3310,8 +3332,34 @@ void app_bt_profile_connect_manager_hf(enum BT_DEVICE_ID_T id, hf_chan_handle_t 
 #endif
 
 #if defined(MEDIA_PLAYER_SUPPORT)&& !defined(IBRT)
-        app_voice_report(APP_STATUS_INDICATION_DISCONNECTED, id);
+		if((factory_reset_flag==0) && (app_poweroff_flag==0))
+			app_voice_report(APP_STATUS_INDICATION_DISCONNECTED, id);
 #endif
+/** add by pang **/
+		TRACE(1,"***multipoint_flag: %d", app_get_multipoint_flag());
+        if(0==app_get_multipoint_flag()){
+			if((false==bt_profile_manager[0].has_connected) && (false==factory_reset_flag) && (app_poweroff_flag==0)){
+				app_status_indication_set(APP_STATUS_INDICATION_PAGESCAN);
+				app_start_10_second_timer(APP_POWEROFF_TIMER_ID);//m by cai
+				app_stop_10_second_timer(APP_AUTO_PWOFF_TIMER_ID);//add by cai to fresh timer
+        	}
+        }
+		else{	
+			if((false==bt_profile_manager[0].has_connected) && (false==bt_profile_manager[1].has_connected) && (false==factory_reset_flag) && (app_poweroff_flag==0)){
+				app_status_indication_set(APP_STATUS_INDICATION_PAGESCAN);
+				app_start_10_second_timer(APP_POWEROFF_TIMER_ID);//m by cai
+				app_stop_10_second_timer(APP_AUTO_PWOFF_TIMER_ID);//add by cai to fresh timer
+			}
+		}
+
+		//if ((bt_profile_manager[0].reconnect_mode != bt_profile_reconnect_null)||(bt_profile_manager[1].reconnect_mode != bt_profile_reconnect_null))
+		{
+			if(tx_pwr_for_page_flag==0){
+				bt_drv_tx_pwr_for_page();
+				tx_pwr_for_page_flag=1;
+			}
+		}
+/** end add **/
 #ifdef __INTERCONNECTION__
         app_interconnection_disconnected_callback();
 #endif
@@ -3355,7 +3403,8 @@ void app_bt_profile_connect_manager_a2dp(enum BT_DEVICE_ID_T id, a2dp_stream_t *
     }
     
 #ifdef __BT_ONE_BRING_TWO__
-    if(remDev){
+    //if(remDev){
+	if(remDev && app_get_multipoint_flag()){//m by pang
         if((bt_profile_manager[id].reconnect_mode == bt_profile_reconnect_reconnecting) && 
             memcmp(bt_profile_manager[id].rmt_addr.address, btif_me_get_remote_device_bdaddr(remDev)->address, 6) != 0){
             uint8_t other_device_id = (id == BT_DEVICE_ID_1) ? BT_DEVICE_ID_2 : BT_DEVICE_ID_1;
@@ -3504,7 +3553,7 @@ void app_bt_profile_connect_manager_a2dp(enum BT_DEVICE_ID_T id, a2dp_stream_t *
                 #endif
                           (btdevice_plf_p->a2dp_act)&&
                           (!btdevice_plf_p->hfp_act) &&
-                          (!btdevice_plf_p->hsp_act)){
+                          (!btdevice_plf_p->hsp_act) && (factory_reset_flag==0)){ //m by pang        &&(factory_reset_flag==0)
                     bt_profile_manager[id].reconnect_mode = bt_profile_reconnect_reconnecting;
                     TRACE(2,"%s try to reconnect cnt:%d",__func__, bt_profile_manager[id].reconnect_cnt);
                     app_bt_accessmode_set(BTIF_BAM_CONNECTABLE_ONLY);
@@ -3512,7 +3561,15 @@ void app_bt_profile_connect_manager_a2dp(enum BT_DEVICE_ID_T id, a2dp_stream_t *
                     {
                         profile_reconnect_enable = true;
                     }
-                }
+					/** add by pang **/
+					if(false==app_bt_is_connected()){
+						app_status_indication_set(APP_STATUS_INDICATION_PAGESCAN);	
+					}
+				   	//reconnect_timeout_stop(); //m by cai
+				   	//reconnect_timeout_set(1); //m by cai
+				   	app_start_10_second_timer(APP_POWEROFF_TIMER_ID);//add by cai
+					/** end add **/
+                }	   
 #endif
                 else{
                     bt_profile_manager[id].a2dp_connect = bt_profile_connect_status_unknow;
@@ -3657,7 +3714,8 @@ void app_bt_profile_connect_manager_a2dp(enum BT_DEVICE_ID_T id, a2dp_stream_t *
         bt_profile_manager[id].has_connected = true;
 
         nv_record_btdevicerecord_set_last_active(btdevice_plf_p);
-        TRACE(0,"BT connected!!!");
+        TRACE(1,"BT connected!!!: %d",id);//m by cai
+		app_cur_connect_devid_set(id, true);//add by cai
 		
 		if((bt_profile_manager[id].reconnect_mode == bt_profile_reconnect_null))//回连的时候不保存配对记录 
 		{																																	   //按键切换回连成功保存配对记录 ZCL @ 2020/07/24		
@@ -3671,6 +3729,17 @@ void app_bt_profile_connect_manager_a2dp(enum BT_DEVICE_ID_T id, a2dp_stream_t *
 #if defined(MEDIA_PLAYER_SUPPORT)&& !defined(IBRT)
         app_voice_report(APP_STATUS_INDICATION_CONNECTED, id);
 #endif
+/** add by pang **/
+		factory_reset_flag=0;
+		app_stop_10_second_timer(APP_POWEROFF_TIMER_ID);
+		app_start_10_second_timer(APP_AUTO_PWOFF_TIMER_ID);//add by cai to fresh timer
+		{
+			if(tx_pwr_for_page_flag){
+				bt_drv_tx_pwr_for_init();
+				tx_pwr_for_page_flag=0;
+			}
+		}
+/** end add **/
 
         app_bt_Me_SetLinkPolicy(btif_me_enumerate_remote_devices(id), 
             BTIF_BLP_SNIFF_MODE);
@@ -3693,7 +3762,8 @@ void app_bt_profile_connect_manager_a2dp(enum BT_DEVICE_ID_T id, a2dp_stream_t *
          bt_profile_manager[id].a2dp_connect != bt_profile_connect_status_success)){
 
         bt_profile_manager[id].has_connected = false;
-        TRACE(0,"BT disconnected!!!");
+		TRACE(1,"BT disconnected!!!: %d",id);
+		app_cur_connect_devid_set(id, false);//add by cai
 
 #ifdef GFPS_ENABLED
         if (app_gfps_is_last_response_pending())
@@ -3703,8 +3773,34 @@ void app_bt_profile_connect_manager_a2dp(enum BT_DEVICE_ID_T id, a2dp_stream_t *
 #endif
 
 #if defined(MEDIA_PLAYER_SUPPORT)&& !defined(IBRT)
-        app_voice_report(APP_STATUS_INDICATION_DISCONNECTED, id);
+		if((factory_reset_flag==0) && (app_poweroff_flag==0))
+			app_voice_report(APP_STATUS_INDICATION_DISCONNECTED, id);
 #endif
+/** add by pang **/
+		TRACE(1,"***multipoint_flag: %d", app_get_multipoint_flag());
+		if(0==app_get_multipoint_flag()){		
+			if((false==bt_profile_manager[0].has_connected) && (false==factory_reset_flag) && (app_poweroff_flag==0)){
+				app_status_indication_set(APP_STATUS_INDICATION_PAGESCAN);
+				app_start_10_second_timer(APP_POWEROFF_TIMER_ID);//m by cai
+				app_stop_10_second_timer(APP_AUTO_PWOFF_TIMER_ID);//add by cai to fresh timer
+			}
+		}
+		else{
+			if((false==bt_profile_manager[0].has_connected) && (false==bt_profile_manager[1].has_connected) && (false==factory_reset_flag) && (app_poweroff_flag==0)){
+				app_status_indication_set(APP_STATUS_INDICATION_PAGESCAN);
+				app_start_10_second_timer(APP_POWEROFF_TIMER_ID);//m by cai
+				app_stop_10_second_timer(APP_AUTO_PWOFF_TIMER_ID);//add by cai to fresh timer
+        	}
+		}
+
+		//if ((bt_profile_manager[0].reconnect_mode != bt_profile_reconnect_null)||(bt_profile_manager[1].reconnect_mode != bt_profile_reconnect_null))
+		{
+			if(tx_pwr_for_page_flag==0){
+				bt_drv_tx_pwr_for_page();
+				tx_pwr_for_page_flag=1;
+			}
+		}
+/** end add **/
 #ifdef __INTERCONNECTION__
         app_interconnection_disconnected_callback();
 #endif
