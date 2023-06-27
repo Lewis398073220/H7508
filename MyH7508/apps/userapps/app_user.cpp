@@ -252,6 +252,11 @@ void app_nvrecord_eq_param_set(uint8_t customization_eq_value[6])
 #endif
 }
 
+uint8_t get_sleep_time(void)
+{
+	return (sleep_time);
+}
+
 void app_nvrecord_sleep_time_set(uint8_t sltime)
 {
 	if(sltime == 0x00)
@@ -300,6 +305,11 @@ uint8_t app_get_auto_poweroff(void)
 	else	
 		return (0x05);
 }	
+
+uint16_t get_auto_pwoff_time(void)
+{
+	return (auto_poweroff_time);
+}
 
 void app_auto_poweroff_set(uint16_t pftime)
 {

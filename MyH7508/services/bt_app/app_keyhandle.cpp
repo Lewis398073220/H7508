@@ -76,6 +76,7 @@ extern int app_hfp_siri_voice(bool en);
 int open_siri_flag = 0;
 void bt_key_handle_siri_key(enum APP_KEY_EVENT_T event)
 {
+#if 0
      switch(event)
      {
         case  APP_KEY_EVENT_NONE:
@@ -97,6 +98,34 @@ void bt_key_handle_siri_key(enum APP_KEY_EVENT_T event)
             TRACE(1,"unregister down key event=%x",event);
             break;
         }
+#else//m by pang
+#ifndef  __BT_ONE_BRING_TWO__
+	if(((app_bt_device.hfchan_callSetup[BT_DEVICE_ID_1] == BTIF_HF_CALL_SETUP_NONE)&&(app_bt_device.hfchan_call[BT_DEVICE_ID_1] == BTIF_HF_CALL_NONE)&&(btif_get_hf_chan_state(app_bt_device.hf_channel[BT_DEVICE_ID_1]) == BTIF_HF_STATE_CLOSED))){
+		if(open_siri_flag == 1){
+			TRACE(0,"open siri");
+			//app_voice_report(APP_STATUS_INDICATION_SHORT_1, 0);
+			app_hfp_siri_voice(true);
+		} 
+	}
+#else
+	if( ((app_bt_device.hfchan_callSetup[BT_DEVICE_ID_1] == BTIF_HF_CALL_SETUP_NONE)&&(app_bt_device.hfchan_call[BT_DEVICE_ID_1] == BTIF_HF_CALL_NONE)&&(btif_get_hf_chan_state(app_bt_device.hf_channel[BT_DEVICE_ID_2]) == BTIF_HF_STATE_CLOSED))||
+	((app_bt_device.hfchan_callSetup[BT_DEVICE_ID_1] == BTIF_HF_CALL_SETUP_NONE)&&(app_bt_device.hfchan_call[BT_DEVICE_ID_1] == BTIF_HF_CALL_NONE)&&(app_bt_device.hfchan_callSetup[BT_DEVICE_ID_2] == BTIF_HF_CALL_SETUP_NONE)&&(app_bt_device.hfchan_call[BT_DEVICE_ID_2] == BTIF_HF_CALL_NONE))){
+		//app_voice_report(APP_STATUS_INDICATION_SHORT_1, 0);
+
+		if(open_siri_flag == 1){
+			TRACE(0,"close siri");
+			app_hfp_siri_voice(false);//m by cai
+			//open_siri_flag = 0;//m by cai
+		} 
+		else{
+			TRACE(0,"open siri");
+			app_hfp_siri_voice(true);//m by cai
+			//open_siri_flag = 1;//m by cai
+		}
+	}
+#endif
+
+#endif
 }
 
 #endif
@@ -1040,6 +1069,7 @@ void bt_key_handle_func_key(enum APP_KEY_EVENT_T event)
         case  APP_KEY_EVENT_UP:
         case  APP_KEY_EVENT_CLICK:
             //bt_key_handle_func_click();//m by cai
+            bt_key_handle_siri_key(APP_KEY_EVENT_CLICK);
             break;
         case  APP_KEY_EVENT_DOUBLECLICK:
             bt_key_handle_func_doubleclick();
@@ -1932,7 +1962,8 @@ void bt_key_handle(void)
 
 /** add by pang **/
 			case BTAPP_QUICK_MONIORT_KEY:
-				bt_key_handle_cover_key((enum APP_KEY_EVENT_T)bt_key.event);
+				if(!app_get_touchlock())
+					bt_key_handle_cover_key((enum APP_KEY_EVENT_T)bt_key.event);
 				break;
 			
 			case BTAPP_ANC_KEY:

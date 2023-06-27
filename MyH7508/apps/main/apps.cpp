@@ -291,6 +291,7 @@ void app_set_10_second_timer(uint8_t timer_id, uint8_t enable, uint8_t period)
     timer->timer_count = period;
 }
 
+#if 0
 void app_10_second_timer_check(void)
 {
     APP_10_SECOND_TIMER_STRUCT *timer = app_10_second_array;
@@ -308,6 +309,45 @@ void app_10_second_timer_check(void)
         timer++;
     }
 }
+#else //m by pang
+void app_10_second_timer_check(void)
+{
+    APP_10_SECOND_TIMER_STRUCT *timer = app_10_second_array;
+	unsigned int i;
+	
+    for(i = 0; i < ARRAY_SIZE(app_10_second_array); i++) {
+        if(i == APP_POWEROFF_TIMER_ID){
+			if ((timer->timer_en) && (get_sleep_time()!=SLEEP_TIME_PERM)) {
+            	timer->timer_count++;
+            	if (timer->timer_count >= get_sleep_time()) {
+                	timer->timer_en = 0;
+                	if (timer->cb)
+                    	timer->cb();
+           	 	}
+   			}
+        } else if(i == APP_AUTO_PWOFF_TIMER_ID){
+			if ((timer->timer_en) && (get_auto_pwoff_time()!=AUTO_PWOFF_TIME_PERM)) {
+				timer->timer_count++;
+				if (timer->timer_count >= get_auto_pwoff_time()) {
+					timer->timer_en = 0;
+					if (timer->cb)
+						timer->cb();
+				}
+			}
+		} else{
+			if (timer->timer_en) {
+				timer->timer_count++;
+					if (timer->timer_count >= timer->timer_period) {
+					timer->timer_en = 0;
+					if (timer->cb)
+						timer->cb();
+				}
+			}
+		}
+		timer++;		
+    }
+}
+#endif
 
 void CloseEarphone(void)
 {
@@ -1184,10 +1224,11 @@ const APP_KEY_HANDLE  app_key_handle_cfg[] = {
 #if defined(__APP_KEY_FN_STYLE_A__)
 //--
 const APP_KEY_HANDLE  app_key_handle_cfg[] = {
-    {{APP_KEY_CODE_PWR,APP_KEY_EVENT_LONGLONGLONGLONGLONGPRESS},"bt function key",app_bt_key_shutdown, NULL},
-	{{APP_KEY_CODE_PWR,APP_KEY_EVENT_LONGLONGLONGPRESS},"bt function key",app_bt_key, NULL},
+    {{APP_KEY_CODE_PWR,APP_KEY_EVENT_LONGLONGLONGPRESS},"bt function key",app_bt_key_shutdown, NULL},
+	//{{APP_KEY_CODE_PWR,APP_KEY_EVENT_LONGLONGLONGPRESS},"bt function key",app_bt_key, NULL},
     {{APP_KEY_CODE_PWR,APP_KEY_EVENT_DOUBLECLICK},"play forward",app_bt_key, NULL},
     {{APP_KEY_CODE_PWR,APP_KEY_EVENT_TRIPLECLICK},"play backward",app_bt_key, NULL},
+    {{APP_KEY_CODE_PWR,APP_KEY_EVENT_CLICK},"play backward",app_bt_key, NULL},
 #if defined(BT_USB_AUDIO_DUAL_MODE_TEST) && defined(BT_USB_AUDIO_DUAL_MODE)
     //{{APP_KEY_CODE_PWR,APP_KEY_EVENT_CLICK},"bt function key",app_bt_key, NULL},
 #ifdef RB_CODEC
@@ -1660,6 +1701,10 @@ extern int rpc_service_setup(void);
 
     nv_record_init();
     factory_section_init();
+
+#if defined(__EVRCORD_USER_DEFINE__)
+	app_nvrecord_para_get();//add by pang
+#endif
 
 #ifdef ANC_APP
     app_anc_ios_init();
