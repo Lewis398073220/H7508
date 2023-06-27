@@ -78,7 +78,8 @@ ccflags-y +=  \
     -Iservices/bt_app/a2dp_codecs/include \
     -Ithirdparty/tile \
     -Iservices/app_tws/inc \
-    -Ithirdparty/tile/tile_target
+    -Ithirdparty/tile/tile_target \
+	-Iapps/userapps
 
 ifeq ($(VOICE_DATAPATH_ENABLED),1)
 ccflags-y += -Iservices/voicepath/$(VOICE_DATAPATH_TYPE)

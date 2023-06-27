@@ -58,9 +58,8 @@ uint8_t app_get_multipoint_flag(void);
 void app_nvrecord_multipoint_set(uint8_t on);
 enum ANC_TOGGLE_MODE app_nvrecord_anc_toggle_mode_get(void);
 void app_nvrecord_anc_toggle_mode_set(enum ANC_TOGGLE_MODE nc_toggle);
-
-
-
+void app_nvrecord_language_set(uint8_t lang);
+void app_nvrecord_para_get(void);
 #endif
 
 #if defined(CUSTOM_BIN_CONFIG)

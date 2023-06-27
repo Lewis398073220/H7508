@@ -15,24 +15,29 @@
 #include "hal_codec.h"
 #include "nvrecord_env.h"
 #include "app_anc.h"
+#ifdef MEDIA_PLAYER_SUPPORT
+#include "app_media_player.h"
+#endif
 #include "iir_process.h"
 
 
 #if defined(__EVRCORD_USER_DEFINE__)
 static uint8_t sleep_time = DEFAULT_SLEEP_TIME;
 static uint16_t auto_poweroff_time = DEFAULT_AUTO_PWOFF_TIME;//add by cai
+static uint8_t vibrate_mode = 1;
 static uint8_t eq_set_index = 0;
 static enum APP_ANC_MODE_STATUS anc_set_index = ANC_HIGH;
 static uint8_t monitor_level = 20;
 static uint8_t focus_on = 0;
 static enum ANC_TOGGLE_MODE anc_toggle_mode = AncOn_AncOff_Awareness;//add by cai
+static uint8_t sensor_enable = 1;
 static uint8_t touch_lock = 0;
 static uint8_t sidetone = 0;
 static uint8_t low_latency_on = 0;//add by cai
 static enum APP_ANC_MODE_STATUS anc_table_value = ANC_HIGH;
 static uint8_t fota_flag = 0;
 static uint8_t multipoint = 1;
-
+static uint8_t talkmic_led = 1;
 #endif
 
 #if defined(__EVRCORD_USER_DEFINE__)
@@ -401,6 +406,95 @@ void app_nvrecord_anc_toggle_mode_set(enum ANC_TOGGLE_MODE nc_toggle)
 #if FPGA==0
     nv_record_flash_flush();
 #endif
+}
+
+void app_nvrecord_language_set(uint8_t lang)
+{
+	struct nvrecord_env_t *nvrecord_env;
+	
+	nv_record_env_get(&nvrecord_env);
+	nvrecord_env->media_language.language = lang;
+	app_play_audio_set_lang(lang);
+	nv_record_env_set(nvrecord_env);
+	
+#if FPGA==0
+    nv_record_flash_flush();
+#endif
+}
+
+void app_nvrecord_para_get(void)
+{
+	struct nvrecord_env_t *nvrecord_env;
+	uint8_t i=0;
+	int8_t temp;
+	uint8_t igain=0;
+	
+	nv_record_env_get(&nvrecord_env);
+
+	sleep_time = nvrecord_env->sleep_time;
+	vibrate_mode = nvrecord_env->vibrate_mode;
+	eq_set_index = nvrecord_env->eq_mode;
+	anc_set_index = (enum APP_ANC_MODE_STATUS)nvrecord_env->anc_mode;
+	monitor_level = nvrecord_env->monitor_level;
+	focus_on = nvrecord_env->focus_on;
+	sensor_enable = nvrecord_env->sensor_enable;
+	touch_lock = nvrecord_env->touch_lock;
+	sidetone = nvrecord_env->sidetone;
+	anc_table_value = (enum APP_ANC_MODE_STATUS)nvrecord_env->anc_table_value;
+	fota_flag = nvrecord_env->fota_flag;
+	multipoint = nvrecord_env->multipoint;
+	new_multipoint = multipoint;
+	talkmic_led = nvrecord_env->talkmic_led;
+	auto_poweroff_time = DEFAULT_AUTO_PWOFF_TIME;//add by cai
+	anc_toggle_mode = (enum ANC_TOGGLE_MODE)nvrecord_env->anc_toggle_mode;//add by cai
+	low_latency_on = 0;//add by cai
+
+	for(i = 0; i < 6; i++){
+		igain=nvrecord_env->iir_gain[i];
+		if(igain > 0x80){
+			temp = (int8_t)(0x0f & igain);
+			temp *= -1;
+			eq_custom_para.param[i].gain = (float)temp;		
+			eq_custom_para.param[i].gain = (eq_custom_para.param[i].gain)/2;
+			if(eq_custom_para.param[i].gain < -5)
+				eq_custom_para.param[i].gain = -5;		
+		}
+		else{
+			temp = (int8_t)igain;
+			eq_custom_para.param[i].gain = (float)temp;
+			eq_custom_para.param[i].gain = (eq_custom_para.param[i].gain)/2;
+			if(eq_custom_para.param[i].gain > 5)
+				eq_custom_para.param[i].gain = 5;
+		}
+		TRACE(3,"***%s: customization_eq_gain[%d]=%x",__func__,i,nvrecord_env->iir_gain[i]);		
+	}
+#if defined(AUDIO_LINEIN)
+	for(i=0;i<6;i++){
+		igain=nvrecord_env->iir_gain[i];
+		if(igain>0x80){
+			temp=(int8_t)(0x0f & igain);
+			temp*=-1;
+			eq_custom_para_linein.param[i].gain=(float)temp/100;		
+			eq_custom_para_linein.param[i].gain=(eq_custom_para_linein.param[i].gain)/2;
+			if(eq_custom_para_linein.param[i].gain<-5)
+				eq_custom_para_linein.param[i].gain=-5;
+		}
+		else{
+			temp=(int8_t)igain;
+			eq_custom_para_linein.param[i].gain=(float)temp/100;		
+			eq_custom_para_linein.param[i].gain=(eq_custom_para_linein.param[i].gain)/2;
+			if(eq_custom_para_linein.param[i].gain>5)
+				eq_custom_para_linein.param[i].gain=5;
+		}
+			TRACE(1,"***get customization_linein_eq_gain [%d]=%x",i,nvrecord_env->iir_gain[i]);		
+	}
+#endif
+
+#if defined(CUSTOM_BIN_CONFIG)
+	app_get_custom_bin_config();//for debug
+#endif
+
+	TRACE(6,"sleep_time=%d, eq_set_index=%d, monitor_level=%d, focus_on=%d, multipoint=%d, auto_poweroff_time=%d",sleep_time,eq_set_index,monitor_level,focus_on,multipoint,auto_poweroff_time);
 }
 
 #endif

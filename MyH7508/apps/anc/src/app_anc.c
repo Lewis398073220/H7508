@@ -2071,6 +2071,86 @@ void set_anc_mode(enum ANC_STATUS anc_new_mode, uint8_t prompt_on)
 	if(power_anc_init)
 		power_anc_init=0;	
 }
+
+void app_monitor_moment(bool on)
+{  	
+    bool anc_open_flag=0;
+	
+	TRACE(2," %s status: %d ", __func__, anc_work_status);
+	
+	if(on){
+		anc_coef_idx=12;
+		anc_open_flag=1;		
+	}
+	else{
+		TRACE(1,"***%s recover", __func__);		
+		if(anc_current_status==anc_on){	
+			anc_coef_idx=anc_on_mode;
+			anc_open_flag=1;
+		}
+		else if(anc_current_status==monitor){
+			anc_coef_idx=monitor_mode;
+			anc_open_flag=1;
+		}	
+		else{
+			anc_open_flag=0;
+		}
+	}
+	
+	switch (anc_work_status)
+    {
+        case ANC_STATUS_OFF:
+			if(anc_open_flag){				
+				TRACE(1," %s ANC_STATUS_OFF--ON", __func__);
+            	anc_work_status = ANC_STATUS_WAITING_ON;
+            	app_anc_timer_set(ANC_EVENT_OPEN, anc_switch_on_time);
+            	app_anc_open_anc();
+			}
+            break;
+        case ANC_STATUS_ON: 
+		case ANC_STATUS_WAITING_ON:
+			if(anc_open_flag){			
+				TRACE(2," %s ANC_STATUS_ON:--set coef idx: %d ", __func__, anc_coef_idx);
+#ifdef ANC_MODE_SWITCH_WITHOUT_FADE
+
+#ifdef ANC_FF_ENABLED
+                anc_select_coef(anc_sample_rate[AUD_STREAM_PLAYBACK],anc_coef_idx,ANC_FEEDFORWARD,ANC_GAIN_NO_DELAY);
+#endif
+#ifdef ANC_FB_ENABLED
+                anc_select_coef(anc_sample_rate[AUD_STREAM_PLAYBACK],anc_coef_idx,ANC_FEEDBACK,ANC_GAIN_NO_DELAY);
+#endif
+#ifdef AUDIO_ANC_FB_MC_HW
+                anc_select_coef(anc_sample_rate[AUD_STREAM_PLAYBACK],anc_coef_idx,ANC_MUSICCANCLE,ANC_GAIN_NO_DELAY);
+#endif
+
+                //recommand to play "ANC SWITCH" prompt here...
+
+#else
+                osSignalSet(anc_fade_thread_tid,CHANGE_FROM_ANC_TO_TT_DIRECTLY);
+#endif
+            }
+            else
+            {    
+				TRACE(1," %s ANC_STATUS_ON:--fadout", __func__);
+                app_anc_timer_set(ANC_EVENT_CLOSE, anc_close_delay_time);
+                app_anc_gain_fadeout();
+                anc_work_status = ANC_STATUS_WAITING_OFF;
+            }
+            break;
+        case ANC_STATUS_INIT_ON:
+		case ANC_STATUS_WAITING_OFF:
+			if(anc_open_flag){		
+				TRACE(1," %s ANC_STATUS_INIT_ON:--fadin", __func__);
+            	app_anc_select_coef();
+            	app_anc_gain_fadein();
+            	anc_work_status = ANC_STATUS_WAITING_ON;
+            	app_anc_timer_close();
+			}
+            break;
+        default:
+            break;
+    };
+}
 /** end add **/
 
 void app_anc_ios_init(void)

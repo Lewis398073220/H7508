@@ -147,6 +147,8 @@ int app_bt_stream_volumeset(int8_t vol);
 
 uint8_t app_bt_stream_a2dpvolume_get(void);
 
+uint8_t app_bt_stream_a2dpvolume_get_user(void);//add by pang
+
 uint8_t app_bt_stream_hfpvolume_get(void);
 
 void app_bt_stream_a2dpvolume_reset(void);

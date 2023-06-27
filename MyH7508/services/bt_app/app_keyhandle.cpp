@@ -66,6 +66,7 @@ extern struct BT_DEVICE_T  app_bt_device;
 
 /** add by pang **/
 #include "app_anc.h"
+#include "app_user.h"
 #include "app_media_player.h"
 #include "app_bt.h"
 /** end add **/
@@ -1168,6 +1169,49 @@ void bt_key_handle_cover_doubleclick(void)
     return;
 }
 
+osTimerId quick_awareness_sw_timer = NULL;
+static void quick_awareness_swtimer_handler(void const *param);
+osTimerDef(QUICK_AWARENESS_TIMER, quick_awareness_swtimer_handler);// define timers
+#define QUICK_AWARENESS_SWTIMER_IN_MS	(17000)
+
+static void quick_awareness_swtimer_handler(void const *param)
+{
+#ifdef BT_USB_AUDIO_DUAL_MODE
+	if(hal_usb_configured()) {
+		usb_audio_set_volume_for_quick_awareness(false, 3 + 17);//m by cai for volume indepent
+		app_monitor_moment(false);
+	} else{
+		HFCALL_MACHINE_ENUM hfcall_machine = app_get_hfcall_machine();
+		if(hfcall_machine == HFCALL_MACHINE_CURRENT_IDLE_ANOTHER_IDLE){ 
+			app_bt_stream_volumeset(app_bt_stream_a2dpvolume_get_user()+17);//for volume independent
+			app_monitor_moment(false);
+		}
+	}
+#else	
+	HFCALL_MACHINE_ENUM hfcall_machine = app_get_hfcall_machine();
+	if(hfcall_machine == HFCALL_MACHINE_CURRENT_IDLE_ANOTHER_IDLE){ 
+		app_bt_stream_volumeset(app_bt_stream_a2dpvolume_get_user()+17);//for volume independent
+		app_monitor_moment(false);			
+	}
+#endif
+}
+
+void app_quick_awareness_swtimer_start(void)
+{
+	if(quick_awareness_sw_timer == NULL)
+		quick_awareness_sw_timer = osTimerCreate(osTimer(QUICK_AWARENESS_TIMER), osTimerOnce, NULL);
+	
+	osTimerStart(quick_awareness_sw_timer,QUICK_AWARENESS_SWTIMER_IN_MS);
+}
+
+void app_quick_awareness_swtimer_stop(void)
+{
+	if(quick_awareness_sw_timer == NULL)
+		return;
+	
+	osTimerStop(quick_awareness_sw_timer);
+}
+
 void bt_key_handle_cover_longlongpress(void)
 {
     TRACE(0,"%s enter",__func__);
@@ -1179,7 +1223,9 @@ void bt_key_handle_cover_longlongpress(void)
     switch(hfcall_machine)
     {
         case HFCALL_MACHINE_CURRENT_IDLE:
-        
+        	app_bt_stream_volumeset(3+17);//m 5 by pang for volume independent
+			app_monitor_moment(true);
+			app_quick_awareness_swtimer_start();//add by cai for exit quick Awareness after 15s
         break;
 		
         case HFCALL_MACHINE_CURRENT_INCOMMING:
@@ -1208,7 +1254,9 @@ void bt_key_handle_cover_longlongpress(void)
         break;
 #ifdef __BT_ONE_BRING_TWO__
         case HFCALL_MACHINE_CURRENT_IDLE_ANOTHER_IDLE: 
-			
+			app_bt_stream_volumeset(3+17);//m 5 by pang for volume independent
+			app_monitor_moment(true);
+			app_quick_awareness_swtimer_start();//add by cai for exit quick Awareness after 15s
         break;
 		
         case HFCALL_MACHINE_CURRENT_INCOMMING_ANOTHER_IDLE:
@@ -1291,6 +1339,17 @@ void bt_key_handle_cover_key(enum APP_KEY_EVENT_T event)
 		case  APP_KEY_EVENT_LONGLONGPRESS:
 			bt_key_handle_cover_longlongpress();
 			break;
+		
+		case  APP_KEY_EVENT_UP_AFTER_LONGPRESS:
+			{
+				HFCALL_MACHINE_ENUM hfcall_machine = app_get_hfcall_machine();
+				if(hfcall_machine == HFCALL_MACHINE_CURRENT_IDLE_ANOTHER_IDLE){	
+					app_quick_awareness_swtimer_stop();//add by cai for exit quick Awareness after 15s
+					app_monitor_moment(false);
+					app_bt_stream_volumeset(app_bt_stream_a2dpvolume_get_user()+17);//for volume independent			
+				}
+			}
+            break;
 			
         default:
             TRACE(1,"unregister down key event=%x",event);
@@ -1312,10 +1371,10 @@ void bt_key_handle_ANC_key(APP_KEY_STATUS *status, void *param)
 			{
 				if(app_play_audio_get_lang() == MEDIA_DEFAULT_LANGUAGE){
 					app_voice_report(APP_STATUS_INDICATION_BEEP_22, 0);
-					//app_nvrecord_language_set(1);
+					app_nvrecord_language_set(1);
 				} else{
 					app_voice_report(APP_STATUS_INDICATION_BEEP_22, 0);
-					//app_nvrecord_language_set(MEDIA_DEFAULT_LANGUAGE);
+					app_nvrecord_language_set(MEDIA_DEFAULT_LANGUAGE);
 				}
 			}	
 #endif
@@ -1877,7 +1936,11 @@ void bt_key_handle(void)
 				break;
 			
 			case BTAPP_ANC_KEY:
-				bt_key_handle_ANC_key(NULL, NULL);
+				//bt_key_handle_ANC_key(NULL, NULL);
+				break;
+				
+			case BTAPP_ANC_KEY|BTAPP_FUNC_KEY:
+				app_factory_reset();
 				break;
 /** end add **/
 			

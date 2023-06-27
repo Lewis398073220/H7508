@@ -49,7 +49,8 @@ ccflags-y := \
     -Iservices/ota \
     -Iutils/cqueue \
     -Iservices/nv_section \
-    -Iutils/aes_cmac
+    -Iutils/aes_cmac \
+    -Iapps/userapps
 
 ccflags-y += -DAUDIO_OUTPUT_VOLUME_DEFAULT=$(AUDIO_OUTPUT_VOLUME_DEFAULT)
 

@@ -135,6 +135,15 @@
 #include "ota_common.h"
 #endif
 
+/** add by pang **/
+#include "analog.h"
+#include "hal_codec.h"
+#include "tgt_hardware.h"
+#include "audio_prompt_sbc.h"//add by cai
+#ifdef __USER_DEFINE_CTR__ 
+#include "app_user.h"
+#endif
+/**end add **/
 #ifdef AUDIO_DEBUG_V0_1_0
 extern "C" int speech_tuning_init(void);
 #endif
@@ -610,6 +619,64 @@ static void app_poweron_scan(APP_KEY_STATUS *status, void *param)
     signal_send_to_main_thread(0x2);
 }
 #endif
+
+/** add by pang **/
+extern bt_status_t LinkDisconnectDirectly(bool PowerOffFlag);
+void app_factory_reset(void)
+{
+	//app_status_indication_recover_set(APP_STATUS_INDICATION_FACTORYRESET);
+
+	app_audio_sendrequest(APP_BT_STREAM_INVALID, (uint8_t)APP_BT_SETTING_CLOSEALL, 0);
+	osDelay(500);
+#ifdef MEDIA_PLAYER_SUPPORT
+	app_voice_report(APP_STATUS_INDICATION_BEEP_22, 0);
+#endif
+
+	//factory_reset_flag=1;
+	//demo_mode_on=0;
+	uint8_t flag=app_get_fota_flag();
+
+	LinkDisconnectDirectly(false);
+	osDelay(500);
+
+#ifdef  __IAG_BLE_INCLUDE__
+	app_ble_force_switch_adv(BLE_SWITCH_USER_BT_CONNECT, false);
+#endif
+
+#if 0
+	struct nvrecord_env_t *nvrecord_env;
+	nv_record_sector_clear();
+	nv_record_env_init();
+	nv_record_env_get(&nvrecord_env);
+	if(nvrecord_env) {
+		nvrecord_env->media_language.language = NVRAM_ENV_MEDIA_LANGUAGE_DEFAULT;        
+        nvrecord_env->factory_tester_status.status = NVRAM_ENV_FACTORY_TESTER_STATUS_DEFAULT;
+    }	
+    nv_record_env_set(nvrecord_env);
+#if FPGA==0	
+    nv_record_flash_flush();
+#endif
+#else
+	nv_record_rebuild();
+#endif
+	
+    app_nvrecord_para_get();
+	app_nvrecord_fotaflag_set(flag);
+	
+	//add by cai for recover default language
+	app_nvrecord_language_set(MEDIA_DEFAULT_LANGUAGE);
+
+	//osDelay(500);
+	//app_bt_reconnect_idle_mode();
+
+	app_bt_accessmode_set_req(BTIF_BT_DEFAULT_ACCESS_MODE_PAIR);
+	//app_start_10_second_timer(APP_PAIR_TIMER_ID);//add by cai
+
+	//add by cai for reset to ANC high mode after facreset.
+	app_set_anc_on_mode(ANC_HIGH);
+	set_anc_mode(anc_on, 0); 
+}
+/**  end add **/
 
 #ifdef __ENGINEER_MODE_SUPPORT__
 #if !defined(BLE_ONLY_ENABLED)

@@ -7216,6 +7216,12 @@ uint8_t app_bt_stream_a2dpvolume_get(void)
    return current_btdevice_volume.a2dp_vol;
 }
 
+uint8_t app_bt_stream_a2dpvolume_get_user(void)//add by pang
+{
+    return btdevice_volume_p->a2dp_vol;
+   //return current_btdevice_volume.a2dp_vol;
+}
+
 uint8_t app_bt_stream_hfpvolume_get(void)
 {
     //return btdevice_volume_p->hfp_vol;

@@ -68,6 +68,11 @@ bool app_is_power_off_in_progress(void);
 void app_disconnect_all_bt_connections(void);
 bool app_is_stack_ready(void);
 
+/** add by pang **/
+extern uint8_t app_poweroff_flag;
+void app_factory_reset(void);
+/** end add **/
+
 ////////////////////
 
 
