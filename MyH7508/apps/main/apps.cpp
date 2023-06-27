@@ -143,6 +143,8 @@
 #ifdef __USER_DEFINE_CTR__ 
 #include "app_user.h"
 #endif
+
+bool factory_reset_flag = 0;
 /**end add **/
 #ifdef AUDIO_DEBUG_V0_1_0
 extern "C" int speech_tuning_init(void);
@@ -692,7 +694,7 @@ void app_factory_reset(void)
 	app_voice_report(APP_STATUS_INDICATION_BEEP_22, 0);
 #endif
 
-	//factory_reset_flag=1;
+	factory_reset_flag = 1;
 	//demo_mode_on=0;
 	uint8_t flag=app_get_fota_flag();
 
@@ -1696,7 +1698,7 @@ extern uint32_t __aud_start[];
 extern uint32_t __userdata_start[];
 extern uint32_t __factory_start[];
 #if defined(CUSTOM_BIN_CONFIG)
-extern uint32_t __custom_bin_start[];//add by pang
+//extern uint32_t __custom_bin_start[];//add by pang
 #endif
 
 int app_init(void)
@@ -2086,10 +2088,12 @@ extern int rpc_service_setup(void);
                 case APP_POWERON_CASE_CALIB:
                     break;
                 case APP_POWERON_CASE_BOTHSCAN:
+/* //c by pang
                     app_status_indication_set(APP_STATUS_INDICATION_BOTHSCAN);
 #ifdef MEDIA_PLAYER_SUPPORT
                     app_voice_report(APP_STATUS_INDICATION_BOTHSCAN,0);
 #endif
+*/
 #if defined( __BTIF_EARPHONE__)
 #if defined(IBRT)
 #ifdef IBRT_SEARCH_UI
@@ -2103,7 +2107,7 @@ extern int rpc_service_setup(void);
                     app_enter_fastpairing_mode();
 #endif
 #if defined(__BTIF_AUTOPOWEROFF__)
-                    app_start_10_second_timer(APP_PAIR_TIMER_ID);
+                    //app_start_10_second_timer(APP_PAIR_TIMER_ID);//m by cai
 #endif
 #endif
 #ifdef __THIRDPARTY
@@ -2140,7 +2144,7 @@ extern int rpc_service_setup(void);
                 case APP_POWERON_CASE_REBOOT:
                 case APP_POWERON_CASE_ALARM:
                 default:
-                    app_status_indication_set(APP_STATUS_INDICATION_PAGESCAN);
+                    //app_status_indication_set(APP_STATUS_INDICATION_PAGESCAN);
 #if defined( __BTIF_EARPHONE__) && defined(__BTIF_BT_RECONNECT__) && !defined(IBRT)
                     app_bt_profile_connect_manager_opening_reconnect();
 #endif
@@ -2170,6 +2174,11 @@ extern int rpc_service_setup(void);
 #ifdef RB_CODEC
             rb_ctl_init();
 #endif
+
+/** add by pang **/
+		app_user_event_open_module();
+/** end add **/
+		
         }else{
             af_close();
             app_key_close();

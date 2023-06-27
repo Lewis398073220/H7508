@@ -40,6 +40,41 @@ static uint8_t multipoint = 1;
 static uint8_t talkmic_led = 1;
 #endif
 
+/*
+static void user_event_post(uint32_t id)
+{
+    APP_MESSAGE_BLOCK msg;
+			
+    msg.mod_id = APP_MODUAL_USERDEF;
+    msg.msg_body.message_id = id;
+    app_mailbox_put(&msg);
+}
+*/
+
+static int app_user_event_handle_process(APP_MESSAGE_BODY *msg_body)
+{   
+    uint32_t evt = msg_body->message_id;
+    //uint32_t arg0 = msg_body->message_Param0;
+
+    //TRACE(3," %s evt: %d, arg0: %d", __func__, evt, arg0);
+
+    switch (evt)
+    {
+		default:
+		break;
+    }
+	
+	return 0;
+}
+
+int app_user_event_open_module(void)
+{       
+    app_set_threadhandle(APP_MODUAL_USERDEF, app_user_event_handle_process);
+	
+
+    return 0;
+}
+
 #if defined(__EVRCORD_USER_DEFINE__)
 IIR_CFG_T eq_custom_para={
     .gain0 = -6,

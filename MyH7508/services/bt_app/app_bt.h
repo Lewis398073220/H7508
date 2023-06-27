@@ -38,6 +38,8 @@ enum APP_BT_GOLBAL_HANDLE_HOOK_USER_T {
 /** add by pang **/
 void app_multipoint_api_set_on(void);
 void app_get_curr_remDev_Mac(unsigned char* mobile_addr);
+void app_cur_connect_devid_set(uint8_t id, uint8_t connect);
+uint8_t * app_dev_name_get(void);
 /** end add **/
 
 typedef void (*APP_BT_REQ_CONNECT_PROFILE_FN_T)(void *, void *);

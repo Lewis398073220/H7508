@@ -28,6 +28,8 @@ extern IIR_CFG_T eq_custom_para;
 extern "C" {
 #endif
 
+int app_user_event_open_module(void);
+
 #if defined(__EVRCORD_USER_DEFINE__)
 uint8_t app_get_fota_flag(void);
 void app_nvrecord_fotaflag_set(uint8_t on);

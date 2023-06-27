@@ -101,6 +101,43 @@ extern "C"
 {
 #include "ddbif.h"
 }
+/** add by pang **/
+#include "app_user.h"
+#include "app_bt_media_manager.h"
+#include "app_audio.h"
+#include "app_bt_stream.h"
+#include "app.h"
+#include "bt_drv_reg_op.h"
+extern bool factory_reset_flag;
+
+uint8_t *dev_name_user[BT_DEVICE_NUM] = {NULL};
+uint8_t cur_device_id=BT_DEVICE_ID_1;
+
+void app_cur_connect_devid_set(uint8_t id, uint8_t connect)
+{
+	if(connect == true) {
+		cur_device_id = id;
+	} else{
+		if(dev_name_user[id] != NULL) {
+			free(dev_name_user[id]);
+			dev_name_user[id] = NULL;
+		}
+		cur_device_id = (id==BT_DEVICE_ID_1? BT_DEVICE_ID_2 : BT_DEVICE_ID_1);
+	}
+}
+
+uint8_t app_cur_connect_devid_get(void)
+{
+	TRACE(2,"***%s: cur_device_id=%d",__func__,cur_device_id);
+	return cur_device_id;
+}
+
+uint8_t * app_dev_name_get(void)
+{
+	return dev_name_user[app_cur_connect_devid_get()];
+}
+/** end add **/
+
 extern struct BT_DEVICE_T  app_bt_device;
 extern "C" bool app_anc_work_status(void);
 extern uint8_t avrcp_get_media_status(void);
@@ -161,8 +198,8 @@ openning reconnect time      = (RECONNECT_RETRY_INTERVAL_MS+PAGETO)*OPENNING_REC
                              = 16s
 ======================================================================================================*/
 #define APP_BT_PROFILE_RECONNECT_RETRY_INTERVAL_MS (3000)
-#define APP_BT_PROFILE_OPENNING_RECONNECT_RETRY_LIMIT_CNT   (2)
-#define APP_BT_PROFILE_RECONNECT_RETRY_LIMIT_CNT (15)
+#define APP_BT_PROFILE_OPENNING_RECONNECT_RETRY_LIMIT_CNT   (8)//(15) //m by cai
+#define APP_BT_PROFILE_RECONNECT_RETRY_LIMIT_CNT (38)//(50) //m by cai
 #define APP_BT_PROFILE_CONNECT_RETRY_MS (10000)
 
 static struct app_bt_profile_manager bt_profile_manager[BT_DEVICE_NUM];
@@ -463,6 +500,7 @@ static void disable_page_scan_check_timer_handler(void const *param);
 osTimerDef (DISABLE_PAGE_SCAN_CHECK_TIMER, (void (*)(void const *))disable_page_scan_check_timer_handler);                      // define timers
 static void disable_page_scan_check_timer_handler(void const *param)
 {
+#if 1
 #ifdef __BT_ONE_BRING_TWO__
     if((btif_me_get_activeCons() > 1) && (initiate_pairing == INITIATE_PAIRING_NONE)){
 #else
@@ -470,6 +508,20 @@ static void disable_page_scan_check_timer_handler(void const *param)
 #endif
         app_bt_accessmode_set_req(BTIF_BAM_NOT_ACCESSIBLE);
     }
+#else //m by pang
+#ifdef __BT_ONE_BRING_TWO__	
+		if(app_get_multipoint_flag()){
+			if((btif_me_get_activeCons() > 1) && (initiate_pairing == INITIATE_PAIRING_NONE))
+				app_bt_accessmode_set_req(BTIF_BAM_NOT_ACCESSIBLE);
+		}else{
+			if((btif_me_get_activeCons() > 0) && (initiate_pairing == INITIATE_PAIRING_NONE))
+				app_bt_accessmode_set_req(BTIF_BAM_NOT_ACCESSIBLE);
+		}
+#else
+		if((btif_me_get_activeCons() > 0) && (initiate_pairing == INITIATE_PAIRING_NONE))
+			app_bt_accessmode_set_req(BTIF_BAM_NOT_ACCESSIBLE);
+#endif
+#endif	
 }
 
 static void disable_page_scan_check_timer_start(void)
@@ -720,11 +772,22 @@ void app_bt_accessible_manager_process(const btif_event_t *Event)
 #else
                 app_bt_accessmode_set_req(BTIF_BAM_CONNECTABLE_ONLY);
 #endif
+         #if 1
             }else if(btif_me_get_activeCons() == 1){
                 app_bt_accessmode_set_req(BTIF_BAM_CONNECTABLE_ONLY);
             }else if(btif_me_get_activeCons() >= 2){
                 app_bt_accessmode_set_req(BTIF_BAM_NOT_ACCESSIBLE);
             }
+		#else //m by pang
+			}else if(btif_me_get_activeCons() == 1){
+			  if(app_get_multipoint_flag())
+                app_bt_accessmode_set_req(BTIF_BAM_CONNECTABLE_ONLY);
+			  else
+			  	app_bt_accessmode_set_req(BTIF_BAM_NOT_ACCESSIBLE);
+            }else if(btif_me_get_activeCons() >= 2){
+                app_bt_accessmode_set_req(BTIF_BAM_NOT_ACCESSIBLE);
+            }
+		#endif
 #else
             if(btif_me_get_activeCons() == 0){
 #ifdef __EARPHONE_STAY_BOTH_SCAN__
@@ -752,7 +815,17 @@ void app_bt_accessible_manager_process(const btif_event_t *Event)
             app_bt_accessmode_set_req(BTIF_BT_DEFAULT_ACCESS_MODE_PAIR);
 #endif
 #else
+			#if 0            
             app_bt_accessmode_set_req(BTIF_BAM_CONNECTABLE_ONLY);
+			#else //m by pang
+			if(factory_reset_flag && (btif_me_get_activeCons() == 0)){
+				app_bt_accessmode_set_req(BTIF_BT_DEFAULT_ACCESS_MODE_PAIR);
+			} else {
+				if(app_bt_get_current_access_mode() == BTIF_BT_DEFAULT_ACCESS_MODE_PAIR) ;
+				else
+					app_bt_accessmode_set_req(BTIF_BAM_CONNECTABLE_ONLY);
+			}
+			#endif			
 #endif
             break;
 #ifdef __BT_ONE_BRING_TWO__
@@ -1566,16 +1639,28 @@ void app_bt_global_handle(const btif_event_t *Event)
 
 #if defined(__BTIF_EARPHONE__) && defined(__BTIF_AUTOPOWEROFF__)  && !defined(FPGA)
             if (btif_me_get_activeCons() == 0){
-                app_start_10_second_timer(APP_POWEROFF_TIMER_ID);
+                //app_start_10_second_timer(APP_POWEROFF_TIMER_ID);//c by pang
             }else{
-                app_stop_10_second_timer(APP_POWEROFF_TIMER_ID);
+                //app_stop_10_second_timer(APP_POWEROFF_TIMER_ID);//c by pang
             }
 #endif
 #if defined(__BT_ONE_BRING_TWO__)||defined(IBRT)
+		#if 0
             if (btif_me_get_activeCons() > 2){
                 TRACE(1,"CONNECT_IND/CNF activeCons:%d so disconnect it", btif_me_get_activeCons());
                 app_bt_MeDisconnectLink(btif_me_get_callback_event_rem_dev( Event));
             }
+		#else //m by pang	
+			TRACE(1,"CONNECT_IND/CNF activeCons:%d so disconnect it", btif_me_get_activeCons());
+			if(app_get_multipoint_flag()){
+			 if (btif_me_get_activeCons() > 2)
+			 	app_bt_MeDisconnectLink(btif_me_get_callback_event_rem_dev( Event));
+			}
+			else{
+			 if (btif_me_get_activeCons() > 1) 
+				app_bt_MeDisconnectLink(btif_me_get_callback_event_rem_dev( Event));
+			}
+		#endif
 #else
             if (btif_me_get_activeCons() > 1){
                 TRACE(1,"CONNECT_IND/CNF activeCons:%d so disconnect it", btif_me_get_activeCons());
@@ -1639,7 +1724,7 @@ void app_bt_global_handle(const btif_event_t *Event)
 
 #if defined(__BTIF_EARPHONE__) && defined(__BTIF_AUTOPOWEROFF__) && !defined(FPGA)
             if (btif_me_get_activeCons() == 0){
-                app_start_10_second_timer(APP_POWEROFF_TIMER_ID);
+                //app_start_10_second_timer(APP_POWEROFF_TIMER_ID);//close by pang
             }
 #endif
 
@@ -1655,7 +1740,7 @@ void app_bt_global_handle(const btif_event_t *Event)
 #endif
 #ifdef  __IAG_BLE_INCLUDE__
             // start BLE adv
-            app_ble_force_switch_adv(BLE_SWITCH_USER_BT_CONNECT, true);
+            //app_ble_force_switch_adv(BLE_SWITCH_USER_BT_CONNECT, true);//c by pang for TAH8506 APP
 #endif
 
 #ifdef BTIF_DIP_DEVICE
@@ -1716,11 +1801,22 @@ void app_bt_global_handle(const btif_event_t *Event)
         {
             uint8_t* ptrName;
             uint8_t nameLen;
+			uint8_t cur_devid = app_cur_connect_devid_get();//add by cai
             nameLen = btif_me_get_callback_event_remote_dev_name(Event, &ptrName);
             TRACE(1,"[BTEVENT] NAME_RESULT name len %d", nameLen);
             if (nameLen > 0)
             {
-                TRACE(1,"remote dev name: %s", ptrName);
+                TRACE(2,"***remote dev name: %s, namelen: %d", ptrName, nameLen);
+				//add by cai
+				if(dev_name_user[cur_devid]!=NULL) free(dev_name_user[cur_devid]);
+				dev_name_user[cur_devid] = (uint8_t*)malloc(nameLen+1);
+				if(dev_name_user[cur_devid] != NULL)
+				{
+					TRACE(1,"**0x%x",(uint32_t)dev_name_user[cur_devid]);
+					memset(dev_name_user[cur_devid], 0, nameLen+1);		
+					memcpy(dev_name_user[cur_devid], ptrName, nameLen);
+					TRACE(2,"***dev_name_user: %s，namelen: %d",dev_name_user[cur_devid],nameLen);
+				}
             }
             //return;
         }
@@ -1869,11 +1965,12 @@ static int app_bt_handle_process(APP_MESSAGE_BODY *msg_body)
 #ifdef MEDIA_PLAYER_SUPPORT
                 app_voice_report(APP_STATUS_INDICATION_BOTHSCAN, 0);
 #endif
-                app_start_10_second_timer(APP_PAIR_TIMER_ID);
+                //app_start_10_second_timer(APP_PAIR_TIMER_ID);
+				app_start_10_second_timer(APP_POWEROFF_TIMER_ID);//add by cai
 #endif
             }else{
 #ifndef FPGA
-                app_status_indication_set(APP_STATUS_INDICATION_PAGESCAN);
+               //app_status_indication_set(APP_STATUS_INDICATION_PAGESCAN);//close by pang
 #endif
             }
             break;
@@ -2226,6 +2323,10 @@ void app_bt_profile_connect_manager_opening_reconnect(void)
     btif_device_record_t record2;
 	btif_device_record_t last_active_recored;
     btdevice_profile *btdevice_plf_p;
+
+	/** add by pang **/
+	uint8_t MAX_BT_DEVICE_COUNT=0;
+	/** end add **/	
 	
     btdevice_profile *btdevice_plf_p2;
     int find_invalid_record_cnt;
@@ -2244,8 +2345,16 @@ void app_bt_profile_connect_manager_opening_reconnect(void)
         return;
     }
 #endif
-
+	MAX_BT_DEVICE_COUNT=9;//add by pang
     do{
+		/** add by pang **/
+		MAX_BT_DEVICE_COUNT--;
+		TRACE(1,"***MAX_BT_DEVICE_COUNT=%d\n",MAX_BT_DEVICE_COUNT);
+		if(MAX_BT_DEVICE_COUNT==0){
+			ret=0;
+			break;
+		}
+		/** end add **/
         find_invalid_record_cnt = 0;
         ret = nv_record_enum_latest_two_paired_dev(&record1,&record2);
 		last_active_recored = record1;
@@ -2386,7 +2495,11 @@ void app_bt_profile_connect_manager_opening_reconnect(void)
 #endif
         }
 #endif
+		/** add by pang **/
+		app_status_indication_set(APP_STATUS_INDICATION_PAGESCAN);
+		/** end add **/
     }
+
 
     else
     {
@@ -2394,7 +2507,8 @@ void app_bt_profile_connect_manager_opening_reconnect(void)
 #ifdef __EARPHONE_STAY_BOTH_SCAN__
         app_bt_accessmode_set_req(BTIF_BT_DEFAULT_ACCESS_MODE_PAIR);
 #else
-        app_bt_accessmode_set_req(BTIF_BAM_CONNECTABLE_ONLY);
+        //app_bt_accessmode_set_req(BTIF_BAM_CONNECTABLE_ONLY);
+		app_bt_accessmode_set_req(BTIF_BT_DEFAULT_ACCESS_MODE_PAIR);//m by pang
 #endif
 
     }
@@ -2509,6 +2623,7 @@ static void app_bt_update_connectable_mode_after_connection_management(void)
 {
     uint8_t deviceId;
     bool isEnterConnetableOnlyState = true;
+	TRACE(3,"***%s %d %d",__func__, bt_profile_manager[0].has_connected, bt_profile_manager[1].has_connected);//m by cai for Debug
     for (deviceId = 0; deviceId < BT_DEVICE_NUM; deviceId++)
     {
         // assure none of the device is in reconnecting mode
@@ -2518,7 +2633,7 @@ static void app_bt_update_connectable_mode_after_connection_management(void)
             break;
         }
     }
-
+#if 0
     if (isEnterConnetableOnlyState)
     {
         for (deviceId = 0; deviceId < BT_DEVICE_NUM; deviceId++)
@@ -2530,6 +2645,52 @@ static void app_bt_update_connectable_mode_after_connection_management(void)
             }
         }
     }
+#else //m by pang				
+	if (isEnterConnetableOnlyState)
+	{	
+		if(app_get_multipoint_flag()){   
+	    	if((bt_profile_manager[0].has_connected) && (bt_profile_manager[1].has_connected)){
+				app_bt_accessmode_set(BTIF_BAM_NOT_ACCESSIBLE);
+				app_status_indication_set(APP_STATUS_INDICATION_CONNECTED);
+	   	 	}
+			else if((bt_profile_manager[0].has_connected) || (bt_profile_manager[1].has_connected)){
+				app_bt_accessmode_set(BTIF_BAM_CONNECTABLE_ONLY);
+				app_status_indication_set(APP_STATUS_INDICATION_CONNECTED);
+        	}
+			else{
+				if(app_bt_get_current_access_mode() == BTIF_BT_DEFAULT_ACCESS_MODE_PAIR) ;
+				else {
+					app_bt_accessmode_set(BTIF_BAM_CONNECTABLE_ONLY);
+					app_status_indication_set(APP_STATUS_INDICATION_PAGESCAN);
+				}		
+			}
+		}
+		else{
+			if(bt_profile_manager[0].has_connected){
+				app_bt_accessmode_set(BTIF_BAM_NOT_ACCESSIBLE);
+				app_status_indication_set(APP_STATUS_INDICATION_CONNECTED);
+	   	 	}
+			else{
+				if(app_bt_get_current_access_mode() == BTIF_BT_DEFAULT_ACCESS_MODE_PAIR) ;
+				else {
+					app_bt_accessmode_set(BTIF_BAM_CONNECTABLE_ONLY);
+					app_status_indication_set(APP_STATUS_INDICATION_PAGESCAN);
+				}	
+			}
+		}
+#ifdef  __IAG_BLE_INCLUDE__
+		// start BLE adv
+		if(!app_is_arrive_at_max_ble_connections() && app_bt_is_connected()){
+			if(!app_ble_is_in_advertising_state())
+			app_ble_force_switch_adv(BLE_SWITCH_USER_BT_CONNECT, true);
+		}
+		else{
+			if(app_ble_is_in_advertising_state())
+			app_ble_force_switch_adv(BLE_SWITCH_USER_BT_CONNECT, false);
+		}
+#endif		
+	}
+#endif
 }
 #endif
 

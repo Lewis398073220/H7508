@@ -59,7 +59,7 @@ extern "C" {
 #define RAMCP_BASE                              (RAMCP_TOP - RAMCP_SIZE)
 
 #ifndef RAMCPX_SIZE
-#define RAMCPX_SIZE                             (RAMXRET_BASE - RAMX6_BASE)
+#define RAMCPX_SIZE                             (RAMXRET_BASE - RAMX6_BASE - 0x7000)
 #endif
 #ifndef RAMCPX_BASE
 #define RAMCPX_BASE                             (RAM_TO_RAMX(RAMCP_BASE) - RAMCPX_SIZE)

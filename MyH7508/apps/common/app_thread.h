@@ -47,6 +47,9 @@ enum APP_MODUAL_ID_T {
     APP_MODUAL_VOICE_DETECTOR,
 #endif
     APP_MODUAL_OHTER,
+	/** add by pang **/
+	APP_MODUAL_USERDEF,
+	/** end add **/
 
     APP_MODUAL_NUM
 };
