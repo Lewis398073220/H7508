@@ -232,6 +232,8 @@ typedef void (*APP_10_SECOND_TIMER_CB_T)(void);
 void app_pair_timerout(void);
 void app_poweroff_timerout(void);
 void CloseEarphone(void);
+void CloseEarphone_auto_poweroff(void);//add by cai
+
 
 typedef struct
 {
@@ -257,7 +259,7 @@ APP_10_SECOND_TIMER_STRUCT app_10_second_array[] =
 {
     INIT_APP_TIMER(APP_PAIR_TIMER_ID, 0, 0, 6, PairingTransferToConnectable),
     INIT_APP_TIMER(APP_POWEROFF_TIMER_ID, 0, 0, 90, CloseEarphone),
-    INIT_APP_TIMER(APP_AUTO_PWOFF_TIMER_ID, 0, 0, 4095, CloseEarphone),//add by cai
+    INIT_APP_TIMER(APP_AUTO_PWOFF_TIMER_ID, 0, 0, 4095, CloseEarphone_auto_poweroff),//add by cai
 #ifdef GFPS_ENABLED
     INIT_APP_TIMER(APP_FASTPAIR_LASTING_TIMER_ID, 0, 0, APP_FAST_PAIRING_TIMEOUT_IN_SECOND/10,
         app_fast_pairing_timeout_timehandler),
@@ -377,6 +379,33 @@ void CloseEarphone(void)
 	
 #endif
 }
+
+void CloseEarphone_auto_poweroff(void)
+{
+    int activeCons;
+    osapi_lock_stack();
+    activeCons = btif_me_get_activeCons();
+    osapi_unlock_stack();
+#if 0
+#ifdef ANC_APP
+    if(app_anc_work_status()) {
+        app_set_10_second_timer(APP_POWEROFF_TIMER_ID, 1, 30);
+        return;
+    }
+#endif /* ANC_APP */
+    if(activeCons == 0) {
+        TRACE(0,"!!!CloseEarphone\n");
+        app_shutdown();
+    }
+#else //m b pang	
+	if((activeCons > 0) || (0 < app_bt_is_connected())) {
+		TRACE(0,"!!!CloseEarphone\n");
+		app_shutdown();
+	}
+	
+#endif
+}
+
 #endif /* #if defined(__BTIF_EARPHONE__) && defined(__BTIF_AUTOPOWEROFF__) */
 
 int signal_send_to_main_thread(uint32_t signals);
