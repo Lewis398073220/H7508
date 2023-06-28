@@ -179,6 +179,7 @@ enum APP_POWERON_CASE_T {
     APP_POWERON_CASE_CHARGING,
     APP_POWERON_CASE_FACTORY,
     APP_POWERON_CASE_TEST,
+    APP_POWERON_CASE_USB_AUDIO,//add by cai
     APP_POWERON_CASE_INVALID,
 
     APP_POWERON_CASE_NUM
@@ -1959,10 +1960,10 @@ extern int rpc_service_setup(void);
 
                 app_key_open(false);
                 app_key_init_on_charging();
-                nRet = 0;
-				#if defined(__LDO_3V3_CTR__) 
-	hal_gpio_pin_set((enum HAL_GPIO_PIN_T)cfg_hw_pio_3_3v_control.pin);
+#if defined(__LDO_3V3_CTR__) 
+				hal_gpio_pin_set((enum HAL_GPIO_PIN_T)cfg_hw_pio_3_3v_control.pin);//add by cai for usb audio
 #endif
+                nRet = 0;
 #if defined(BT_USB_AUDIO_DUAL_MODE)
                 usb_plugin = 1;
 				need_check_key = false;//add by cai	for open usb audio
@@ -2134,7 +2135,7 @@ extern int rpc_service_setup(void);
         app_key_init();
         app_battery_start();
 #if defined(__BTIF_EARPHONE__) && defined(__BTIF_AUTOPOWEROFF__)
-        app_start_10_second_timer(APP_POWEROFF_TIMER_ID);
+        if(pwron_case != APP_POWERON_CASE_USB_AUDIO) app_start_10_second_timer(APP_POWEROFF_TIMER_ID);//m by cai for usb audio
 #endif
 
 #if defined(__IAG_BLE_INCLUDE__) && defined(BTIF_BLE_APP_DATAPATH_SERVER)
@@ -2188,7 +2189,15 @@ extern int rpc_service_setup(void);
         }
         else
         {
-            pwron_case = APP_POWERON_CASE_NORMAL;
+#if 0//m by cai
+			pwron_case = APP_POWERON_CASE_NORMAL;
+#else
+        	if(app_battery_charger_indication_open() == APP_BATTERY_CHARGER_PLUGIN) {
+				pwron_case = APP_POWERON_CASE_USB_AUDIO;
+			} else{
+				pwron_case = APP_POWERON_CASE_NORMAL;
+			} 
+#endif
         }
         if (pwron_case != APP_POWERON_CASE_INVALID && pwron_case != APP_POWERON_CASE_DITHERING){
             AUTO_TEST_TRACE(1,"power on case:%d\n", pwron_case);
@@ -2249,6 +2258,14 @@ extern int rpc_service_setup(void);
                     app_thirdparty_specific_lib_event_handle(THIRDPARTY_FUNC_NO2,THIRDPARTY_BT_DISCOVERABLE);
 #endif
                     break;
+				/** add by cai **/
+				case APP_POWERON_CASE_USB_AUDIO:
+					app_bt_accessmode_set(BTIF_BAM_NOT_ACCESSIBLE);
+#ifdef __THIRDPARTY
+					app_thirdparty_specific_lib_event_handle(THIRDPARTY_FUNC_NO2,THIRDPARTY_BT_DISCOVERABLE);
+#endif
+					break;
+				/** end add **/
                 case APP_POWERON_CASE_NORMAL:
 #if defined( __BTIF_EARPHONE__ ) && !defined(__EARPHONE_STAY_BOTH_SCAN__)
 #if defined(IBRT)
@@ -2281,7 +2298,9 @@ extern int rpc_service_setup(void);
                 default:
                     //app_status_indication_set(APP_STATUS_INDICATION_PAGESCAN);
 #if defined( __BTIF_EARPHONE__) && defined(__BTIF_BT_RECONNECT__) && !defined(IBRT)
-                    //app_bt_profile_connect_manager_opening_reconnect();
+					power_on_open_reconnect_flag=0;//add by pang
+                    app_bt_profile_connect_manager_opening_reconnect();
+
 #endif
 #ifdef __THIRDPARTY
                     app_thirdparty_specific_lib_event_handle(THIRDPARTY_FUNC_NO2,THIRDPARTY_BT_CONNECTABLE);
@@ -2295,10 +2314,10 @@ extern int rpc_service_setup(void);
                 app_poweron_wait_finished();
 #endif
             }
-            app_key_init();
+            if(pwron_case != APP_POWERON_CASE_USB_AUDIO) app_key_init();//m by cai for usb audio
             app_battery_start();
 #if defined(__BTIF_EARPHONE__) && defined(__BTIF_AUTOPOWEROFF__)
-            app_start_10_second_timer(APP_POWEROFF_TIMER_ID);
+            if(pwron_case != APP_POWERON_CASE_USB_AUDIO) app_start_10_second_timer(APP_POWEROFF_TIMER_ID);//m by cai for usb audio
 #endif
 #ifdef __THIRDPARTY
             app_thirdparty_specific_lib_event_handle(THIRDPARTY_FUNC_NO1,THIRDPARTY_INIT);
@@ -2311,7 +2330,7 @@ extern int rpc_service_setup(void);
 #endif
 
 /** add by pang **/
-		app_user_event_open_module();
+			app_user_event_open_module();
 /** end add **/
 		
         }else{

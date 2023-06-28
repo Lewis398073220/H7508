@@ -37,6 +37,7 @@ enum APP_BT_GOLBAL_HANDLE_HOOK_USER_T {
 	
 /** add by pang **/
 extern bool lostconncection_to_pairing;
+extern bool power_on_open_reconnect_flag;
 
 void app_bt_reconnect_idle_mode(void);
 void app_multipoint_api_set_on(void);

@@ -1158,6 +1158,14 @@ int hal_key_open(int checkPwrKey, int (* cb)(uint32_t, uint8_t))
                 nRet = -1;
                 goto _exit;
             }
+/** add by pang **/
+#if defined(__USE_3_5JACK_CTR__) 
+			if(hal_gpio_pin_get_val((enum  HAL_GPIO_PIN_T)cfg_hw_pio_3p5_jack_detecter.pin)){
+				nRet = -1;
+                goto _exit;		
+			}
+#endif
+/** end add **/
         } while (++i < cnt);
     }
 #endif
