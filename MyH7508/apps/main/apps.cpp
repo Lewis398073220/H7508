@@ -1438,6 +1438,7 @@ void app_charging_poweron_key_handler(APP_KEY_STATUS *status, void *param)
 	TRACE(0,"%s ",__func__);
 	if(app_nvrecord_demo_mode_get())//m by cai
 	{
+		hal_sw_bootmode_clear(HAL_SW_BOOTMODE_REBOOT);//add by cai
 		hal_sw_bootmode_set(HAL_SW_BOOTMODE_CHARGING_POWERON);
 		hal_cmu_sys_reboot();
 	}
@@ -1742,6 +1743,7 @@ const APP_KEY_HANDLE  app_usb_handle_cfg[] = {//m by cai
 	{{APP_KEY_CODE_FN1,APP_KEY_EVENT_REPEAT},"USB HID VOLUMEDOWN key",app_usb_key, NULL},
 	{{APP_KEY_CODE_PWR,APP_KEY_EVENT_DOUBLECLICK},"USB HID PWR DOUBLECLICK key",app_usb_key, NULL},
 	{{APP_KEY_CODE_PWR,APP_KEY_EVENT_TRIPLECLICK},"USB HID PWR TRIPLECLICK key",app_usb_key, NULL},
+	{{APP_KEY_CODE_PWR,APP_KEY_EVENT_LONGLONGLONGPRESS},"demo mode power on key",app_charging_poweron_key_handler, NULL},
 	{{HAL_KEY_CODE_FN5,APP_KEY_EVENT_CLICK},"bt anc key",app_usb_ANC_key, NULL},
 	{{HAL_KEY_CODE_FN6,APP_KEY_EVENT_LONGLONGPRESS},"bt quick monitor",app_usb_Cover_key, NULL},
 	{{HAL_KEY_CODE_FN6,APP_KEY_EVENT_UP_AFTER_LONGPRESS},"bt quick monitor",app_usb_Cover_key, NULL},
@@ -2135,10 +2137,27 @@ extern int rpc_service_setup(void);
 	/** end add **/
 
     if (pwron_case == APP_POWERON_CASE_REBOOT){
-
+#if 0//m by cai
         app_status_indication_set(APP_STATUS_INDICATION_POWERON);
 #ifdef MEDIA_PLAYER_SUPPORT
         app_voice_report(APP_STATUS_INDICATION_POWERON, 0);
+#endif
+#else
+/** add by pang **/
+#if defined(__DEFINE_DEMO_MODE__)
+		if(app_demo_mode_poweron_flag_get() || app_battery_charger_indication_open() == APP_BATTERY_CHARGER_PLUGOUT){
+			app_status_indication_recover_set(APP_STATUS_INDICATION_POWERON);//m by cai
+#ifdef ANC_APP
+			poweron_set_anc();//add by cai for Pairing tone distortion
+#endif
+
+#ifdef MEDIA_PLAYER_SUPPORT
+			app_voice_report(APP_STATUS_INDICATION_POWERON, 0);
+#endif
+		}
+#endif
+/** end add **/
+
 #endif
         app_bt_start_custom_function_in_bt_thread((uint32_t)1,
                     0, (uint32_t)btif_me_write_bt_sleep_enable);
@@ -2173,10 +2192,10 @@ extern int rpc_service_setup(void);
         app_bt_accessmode_set(BTIF_BAM_NOT_ACCESSIBLE);
 #endif
 
-        app_key_init();
+        if(app_demo_mode_poweron_flag_get() || app_battery_charger_indication_open() == APP_BATTERY_CHARGER_PLUGOUT) app_key_init();//m by cai
         app_battery_start();
 #if defined(__BTIF_EARPHONE__) && defined(__BTIF_AUTOPOWEROFF__)
-        if(pwron_case != APP_POWERON_CASE_USB_AUDIO) app_start_10_second_timer(APP_POWEROFF_TIMER_ID);//m by cai for usb audio
+        if(app_demo_mode_poweron_flag_get() || app_battery_charger_indication_open() == APP_BATTERY_CHARGER_PLUGOUT) app_start_10_second_timer(APP_POWEROFF_TIMER_ID);//m by cai for usb audio
 #endif
 
 #if defined(__IAG_BLE_INCLUDE__) && defined(BTIF_BLE_APP_DATAPATH_SERVER)
@@ -2190,7 +2209,15 @@ extern int rpc_service_setup(void);
 #endif
 #if defined( __BTIF_EARPHONE__) && defined(__BTIF_BT_RECONNECT__)
 #if !defined(IBRT)
+#if 0//m by cai
         app_bt_profile_connect_manager_opening_reconnect();
+#else
+		if(app_demo_mode_poweron_flag_get() || app_battery_charger_indication_open() == APP_BATTERY_CHARGER_PLUGOUT) {
+			power_on_open_reconnect_flag=0;
+			app_bt_profile_connect_manager_opening_reconnect();
+		}
+#endif
+
 #endif
 #endif
     }
