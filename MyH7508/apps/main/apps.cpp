@@ -929,7 +929,19 @@ void app_bt_key_shutdown(APP_KEY_STATUS *status, void *param)
     hal_sw_bootmode_clear(HAL_SW_BOOTMODE_REBOOT);
     app_reset();
 #else
-    app_shutdown();
+#if defined(__DEFINE_DEMO_MODE__)//add by pang
+	if(PMU_CHARGER_PLUGIN==pmu_charger_get_status() && app_nvrecord_demo_mode_get()){
+		TRACE(0,"power off->charging!!!");
+		hal_sw_bootmode_set(HAL_SW_BOOTMODE_CHARGING_POWEROFF);
+		app_reset();
+	}
+	else{
+		app_shutdown();
+	}
+#else
+	app_shutdown();
+#endif
+
 #endif
 }
 
@@ -1419,14 +1431,31 @@ void app_key_init(void)
     }
 #endif
 }
+/** add by pang **/
+#if defined(__DEFINE_DEMO_MODE__)
+void app_charging_poweron_key_handler(APP_KEY_STATUS *status, void *param)
+{
+	TRACE(0,"%s ",__func__);
+	if(app_nvrecord_demo_mode_get())//m by cai
+	{
+		hal_sw_bootmode_set(HAL_SW_BOOTMODE_CHARGING_POWERON);
+		hal_cmu_sys_reboot();
+	}
+}
+#endif
+/** end add **/
+
 void app_key_init_on_charging(void)
 {
     uint8_t i = 0;
     const APP_KEY_HANDLE  key_cfg[] = {
-        {{APP_KEY_CODE_PWR,APP_KEY_EVENT_REPEAT},"ota function key",app_ota_key_handler, NULL},
-        {{APP_KEY_CODE_PWR,APP_KEY_EVENT_CLICK},"bt function key",app_dfu_key_handler, NULL},
+        //{{APP_KEY_CODE_PWR,APP_KEY_EVENT_REPEAT},"ota function key",app_ota_key_handler, NULL},
+        //{{APP_KEY_CODE_PWR,APP_KEY_EVENT_CLICK},"bt function key",app_dfu_key_handler, NULL},
 #ifdef __USB_COMM__
-        {{APP_KEY_CODE_PWR,APP_KEY_EVENT_LONGPRESS},"usb cdc key",app_usb_cdc_comm_key_handler, NULL},
+        //{{APP_KEY_CODE_PWR,APP_KEY_EVENT_LONGPRESS},"usb cdc key",app_usb_cdc_comm_key_handler, NULL},
+#endif
+#if defined(__DEFINE_DEMO_MODE__)
+		{{APP_KEY_CODE_PWR,APP_KEY_EVENT_LONGLONGLONGPRESS},"power on key",app_charging_poweron_key_handler, NULL},//m by cai
 #endif
     };
 
@@ -1641,14 +1670,17 @@ bool app_usbaudio_mode_on(void)
 void app_usb_key(APP_KEY_STATUS *status, void *param)
 {
     TRACE(3,"%s %d,%d",__func__, status->code, status->event);
-	usb_audio_app_key((HAL_KEY_CODE_T)status->code, (HAL_KEY_EVENT_T)status->event);//add by cai
+	if(hal_usb_configured()) usb_audio_app_key((HAL_KEY_CODE_T)status->code, (HAL_KEY_EVENT_T)status->event);//add by cai
 }
 
 /** add by cai **/
 void app_usb_ANC_key(APP_KEY_STATUS *status, void *param)
 {
-	app_anc_Key_Pro();
-	usb_audio_eq_loop();//add by cai
+	if(hal_usb_configured())
+	{
+		app_anc_Key_Pro();
+		usb_audio_eq_loop();//add by cai
+	}	
 }
 
 osTimerId usb_quick_awareness_sw_timer = NULL;
@@ -1680,23 +1712,26 @@ void usb_app_quick_awareness_swtimer_stop(void)
 
 void app_usb_Cover_key(APP_KEY_STATUS *status, void *param)
 {
-	switch(status->event)
+	if(hal_usb_configured())
 	{
-		case APP_KEY_EVENT_LONGLONGPRESS:
-			usb_audio_set_volume_for_quick_awareness(true, 3 + 17);//m by cai for volume indepent
-			app_monitor_moment(true);
-			usb_app_quick_awareness_swtimer_start();//add by cai for exit quick Awareness after 15s	
-		break;
+		switch(status->event)
+		{
+			case APP_KEY_EVENT_LONGLONGPRESS:
+				usb_audio_set_volume_for_quick_awareness(true, 3 + 17);//m by cai for volume indepent
+				app_monitor_moment(true);
+				usb_app_quick_awareness_swtimer_start();//add by cai for exit quick Awareness after 15s	
+			break;
 
-		case  APP_KEY_EVENT_UP_AFTER_LONGPRESS:
-			usb_app_quick_awareness_swtimer_stop();//add by cai for exit quick Awareness after 15s
-			app_monitor_moment(false);
-			usb_audio_set_volume_for_quick_awareness(false, 3 + 17);//m by cai for volume indepent
-		break;
-		
-		default:
-			TRACE(2,"%s: unregister down key event=%x",__func__,status->event);
-		break;
+			case  APP_KEY_EVENT_UP_AFTER_LONGPRESS:
+				usb_app_quick_awareness_swtimer_stop();//add by cai for exit quick Awareness after 15s
+				app_monitor_moment(false);
+				usb_audio_set_volume_for_quick_awareness(false, 3 + 17);//m by cai for volume indepent
+			break;
+			
+			default:
+				TRACE(2,"%s: unregister down key event=%x",__func__,status->event);
+			break;
+		}
 	}
 }
 /** end add **/
@@ -1952,6 +1987,9 @@ extern int rpc_service_setup(void);
         switch (nRet) {
             case APP_BATTERY_OPEN_MODE_NORMAL:
                 nRet = 0;
+#if defined(__DEFINE_DEMO_MODE__)
+				if(app_nvrecord_demo_mode_get()) app_demo_mode_poweron_flag_set(true);//add by cai
+#endif
                 break;
             case APP_BATTERY_OPEN_MODE_CHARGING:
                 app_status_indication_set(APP_STATUS_INDICATION_CHARGING);
@@ -1980,6 +2018,9 @@ extern int rpc_service_setup(void);
 #endif
                 need_check_key = false;
                 nRet = 0;
+#if defined(__DEFINE_DEMO_MODE__)
+				app_demo_mode_poweron_flag_set(true);//add by pang
+#endif
                 break;
             case APP_BATTERY_OPEN_MODE_INVALID:
             default:
@@ -2192,10 +2233,24 @@ extern int rpc_service_setup(void);
 #if 0//m by cai
 			pwron_case = APP_POWERON_CASE_NORMAL;
 #else
-        	if(app_battery_charger_indication_open() == APP_BATTERY_CHARGER_PLUGIN) {
+        	if(app_battery_charger_indication_open() == APP_BATTERY_CHARGER_PLUGIN && !app_demo_mode_poweron_flag_get()) {
 				pwron_case = APP_POWERON_CASE_USB_AUDIO;
 			} else{
 				pwron_case = APP_POWERON_CASE_NORMAL;
+/** add by pang **/
+#if defined(__DEFINE_DEMO_MODE__)
+				if(app_demo_mode_poweron_flag_get()){
+					app_status_indication_recover_set(APP_STATUS_INDICATION_POWERON);//m by cai
+#ifdef ANC_APP
+					poweron_set_anc();//add by cai for Pairing tone distortion
+#endif
+
+#ifdef MEDIA_PLAYER_SUPPORT
+					app_voice_report(APP_STATUS_INDICATION_POWERON, 0);
+#endif
+				}
+#endif
+/** end add **/
 			} 
 #endif
         }
@@ -2245,6 +2300,7 @@ extern int rpc_service_setup(void);
                         app_ibrt_enter_limited_mode();
 #endif
 #else
+					power_on_open_reconnect_flag=1;//add by pang
                     app_bt_accessmode_set(BTIF_BT_DEFAULT_ACCESS_MODE_PAIR);
 #endif
 #ifdef GFPS_ENABLED
@@ -2353,10 +2409,14 @@ exit:
     app_anc_set_init_done();
 #endif
 #ifdef BT_USB_AUDIO_DUAL_MODE
+#if 0 //m by cai
     if(usb_plugin)
-    {
+#else
+    if(app_battery_charger_indication_open() == APP_BATTERY_CHARGER_PLUGIN && !app_demo_mode_poweron_flag_get())//m by cai
+#endif
+	{
+    	if(usb_plugin) usb_plugin = 1;
         btusb_switch(BTUSB_MODE_USB);
-		app_usb_key_init();//add by cai
     }
     else
     {

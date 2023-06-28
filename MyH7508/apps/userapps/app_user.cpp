@@ -38,6 +38,8 @@ static enum APP_ANC_MODE_STATUS anc_table_value = ANC_HIGH;
 static uint8_t fota_flag = 0;
 static uint8_t multipoint = 1;
 static uint8_t talkmic_led = 1;
+static uint8_t demo_mode_on = 0;
+static uint8_t demo_mode_powron = 0;
 #endif
 
 /*
@@ -478,6 +480,35 @@ void app_nvrecord_language_set(uint8_t lang)
 #endif
 }
 
+void app_nvrecord_demo_mode_set(uint8_t mod)
+{
+	demo_mode_on = mod;
+
+	struct nvrecord_env_t *nvrecord_env;
+	nv_record_env_get(&nvrecord_env);
+	nvrecord_env->demo_mode = mod;
+	nv_record_env_set(nvrecord_env);
+	
+#if FPGA==0
+    nv_record_flash_flush();
+#endif
+}
+
+uint8_t app_nvrecord_demo_mode_get(void)
+{
+	return (demo_mode_on);
+}
+
+void app_demo_mode_poweron_flag_set(uint8_t powron)
+{
+	demo_mode_powron = powron;
+}
+
+uint8_t app_demo_mode_poweron_flag_get(void)
+{
+	return (demo_mode_powron);
+}
+
 void app_nvrecord_para_get(void)
 {
 	struct nvrecord_env_t *nvrecord_env;
@@ -501,9 +532,12 @@ void app_nvrecord_para_get(void)
 	multipoint = nvrecord_env->multipoint;
 	new_multipoint = multipoint;
 	talkmic_led = nvrecord_env->talkmic_led;
-	auto_poweroff_time = DEFAULT_AUTO_PWOFF_TIME;//add by cai
-	anc_toggle_mode = (enum ANC_TOGGLE_MODE)nvrecord_env->anc_toggle_mode;//add by cai
+	/** add by cai **/
+	auto_poweroff_time = DEFAULT_AUTO_PWOFF_TIME;
+	anc_toggle_mode = (enum ANC_TOGGLE_MODE)nvrecord_env->anc_toggle_mode;
 	low_latency_on = 0;//add by cai
+	demo_mode_on = nvrecord_env->demo_mode;
+	/** end add **/
 
 	for(i = 0; i < 6; i++){
 		igain=nvrecord_env->iir_gain[i];

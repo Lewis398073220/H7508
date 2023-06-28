@@ -24,6 +24,14 @@
 #include "btapp.h"
 #include "usb_audio_app.h"
 #include "btusb_audio.h"
+//add by cai
+#include "analog.h"
+#include "hal_usb.h"
+#include "app_anc.h"
+#include "app_battery.h"
+#include "app_bt.h"
+#include "apps.h"
+//end add
 
 extern void btusbaudio_entry(void);
 extern void btusbaudio_exit(void);
@@ -211,6 +219,55 @@ void btusb_btaudio_open(bool is_wait)
     }
 }
 
+/** add by cai **/
+uint8_t usb_configured_flag = 0;
+
+uint8_t get_usb_configured_status(void)
+{
+	return (usb_configured_flag);
+}
+
+osTimerId btusb_sw_timer = NULL;
+static void btusb_swtimer_handler(void const *param);
+osTimerDef(BTUSB_TIMER, btusb_swtimer_handler);// define timers
+#define BTUSB_SWTIMER_IN_MS	(5000)
+
+static void btusb_swtimer_handler(void const *param)
+{
+    if(!hal_usb_configured()) {
+		usb_configured_flag = 0;
+#if defined(__CHARGE_CURRRENT__)
+		hal_gpio_pin_set((enum HAL_GPIO_PIN_T)cfg_charge_current_control.pin);//add by cai for enter nomal charging mode when usb is not configed.
+#endif
+		if(app_battery_charger_indication_open() == APP_BATTERY_CHARGER_PLUGIN) set_anc_mode(anc_off, 0);//add by cai for close ANC when usb is not configed
+	} else{
+		usb_configured_flag = 1;
+#if defined(__CHARGE_CURRRENT__)
+		hal_gpio_pin_clr((enum HAL_GPIO_PIN_T)cfg_charge_current_control.pin);//add by cai for enter usb mode when usb is configed.
+#endif
+	}
+}
+
+void app_btusb_swtimer_start(void)
+{
+	TRACE(0,"%s",__func__);
+	if(btusb_sw_timer == NULL)
+		btusb_sw_timer = osTimerCreate(osTimer(BTUSB_TIMER), osTimerOnce, NULL);
+	
+	osTimerStart(btusb_sw_timer,BTUSB_SWTIMER_IN_MS);
+}
+
+void app_btusb_swtimer_stop(void)
+{
+	TRACE(0,"%s",__func__);
+
+	if(btusb_sw_timer == NULL)
+		return;
+	
+	osTimerStop(btusb_sw_timer);
+}
+/** end add **/
+
 void btusb_switch(enum BTUSB_MODE mode)
 {
     //BT_USB_DEBUG();
@@ -229,19 +286,26 @@ void btusb_switch(enum BTUSB_MODE mode)
         if(mode == BTUSB_MODE_BT) {
             TRACE(1,"%s: switch to BT mode.",__func__);
             btusb_mode = BTUSB_MODE_BT;
+			usb_configured_flag = 0;//add by cai
         }
         else {
             TRACE(1,"%s: switch to USB mode.",__func__);
             //btusb_btaudio_close(true);
+            analog_aud_codec_mute();//add by cai for pop noise when insert USB
             osDelay(500);
             btusb_usbaudio_open();
+			app_btusb_swtimer_start();//add by cai
+			analog_aud_codec_nomute();//add by cai for pop noise when insert USB
             btusb_mode = BTUSB_MODE_USB;
+			app_usb_key_init();//add by cai
         }
     }
     else
     {
         if(mode == BTUSB_MODE_BT) {
             TRACE(1,"%s: switch to BT mode.",__func__);
+			usb_configured_flag = 0;//add by cai
+			app_btusb_swtimer_stop();//add by cai
             if(btusb_usb_is_on)
             {
                 TRACE(1,"%s: btusb_usbaudio_close.",__func__);
@@ -251,6 +315,9 @@ void btusb_switch(enum BTUSB_MODE mode)
             }
             btusb_mode = BTUSB_MODE_BT;
             btusb_btaudio_open(true);
+			app_bt_profile_connect_manager_opening_reconnect();//add by cai
+			app_start_10_second_timer(APP_POWEROFF_TIMER_ID);//add by cai
+			app_key_init();//add by cai
             TRACE(1,"%s: switch to BT mode done.",__func__);
         }
         else {
@@ -264,7 +331,9 @@ void btusb_switch(enum BTUSB_MODE mode)
             TRACE(1,"%s: btusb_btaudio_close done.",__func__);
             osDelay(500);
             btusb_usbaudio_open();
+			app_btusb_swtimer_start();//add by cai
             btusb_mode = BTUSB_MODE_USB;
+			app_usb_key_init();//add by cai
             TRACE(1,"%s: switch to USB mode done.",__func__);
         }
     }

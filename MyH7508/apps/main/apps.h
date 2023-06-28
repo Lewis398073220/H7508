@@ -72,6 +72,8 @@ bool app_is_stack_ready(void);
 /** add by pang **/
 extern uint8_t app_poweroff_flag;
 void app_factory_reset(void);
+void app_usb_key_init(void);//add by cai
+void app_key_init(void);//add by cai
 /** end add **/
 
 ////////////////////

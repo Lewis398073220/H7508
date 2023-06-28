@@ -483,7 +483,19 @@ int app_battery_handle_process_charging(uint32_t status,  union APP_BATTERY_MSG_
             {
 #ifdef BT_USB_AUDIO_DUAL_MODE
                 TRACE(1,"%s:PlUGOUT.", __func__);
+#if 0 //m by cai
                 btusb_switch(BTUSB_MODE_BT);
+#else
+				if(get_usb_configured_status() || hal_usb_configured()) {
+					btusb_switch(BTUSB_MODE_BT);
+					app_battery_measure.status = APP_BATTERY_STATUS_NORMAL;
+				} else{
+					TRACE(0,"CHARGING-->RESET");
+	                osTimerStop(app_battery_timer);
+	                app_shutdown();
+				}
+#endif
+
 #else
 #if CHARGER_PLUGINOUT_RESET
                 TRACE(0,"CHARGING-->RESET");
@@ -498,7 +510,7 @@ int app_battery_handle_process_charging(uint32_t status,  union APP_BATTERY_MSG_
             {
 #ifdef BT_USB_AUDIO_DUAL_MODE
                 TRACE(1,"%s:PLUGIN.", __func__);
-                btusb_switch(BTUSB_MODE_USB);
+                //btusb_switch(BTUSB_MODE_USB); //m by cai for pop noise when insert usb
 #endif
             }
             break;
@@ -525,6 +537,12 @@ int app_battery_handle_process_charging(uint32_t status,  union APP_BATTERY_MSG_
 			if (app_battery_ext_charger_enable_cfg.pin != HAL_IOMUX_PIN_NUM)
 			{
 				hal_gpio_pin_clr((enum HAL_GPIO_PIN_T)app_battery_ext_charger_enable_cfg.pin);
+			}
+			if(get_usb_configured_status() || hal_usb_configured())
+			{
+				TRACE(0,"FULL_CHARGING-->shutdown");
+                osTimerStop(app_battery_timer);
+                app_shutdown();
 			}
         }
 /** end add **/
@@ -685,7 +703,21 @@ int app_battery_open(void)
 #if (CHARGER_PLUGINOUT_RESET == 0)
         nRet = APP_BATTERY_OPEN_MODE_CHARGING_PWRON;
 #else
-        nRet = APP_BATTERY_OPEN_MODE_CHARGING;
+	#if defined(__DEFINE_DEMO_MODE__)
+		if(app_nvrecord_demo_mode_get()){ //add by pang
+			if (hal_sw_bootmode_get() & HAL_SW_BOOTMODE_CHARGING_POWEROFF){//m by cai
+				nRet = APP_BATTERY_OPEN_MODE_CHARGING;
+			}
+			else if (hal_sw_bootmode_get() & HAL_SW_BOOTMODE_CHARGING_POWERON){
+				nRet = APP_BATTERY_OPEN_MODE_NORMAL;
+			}
+			else {
+				nRet = APP_BATTERY_OPEN_MODE_CHARGING_PWRON;
+			}
+		}
+		else
+	#endif
+           nRet = APP_BATTERY_OPEN_MODE_CHARGING;
 #endif
     }
     else
@@ -699,6 +731,10 @@ int app_battery_open(void)
 	//ntc_capture_open();//add by pang
 #endif
 
+#if defined(__DEFINE_DEMO_MODE__)
+	hal_sw_bootmode_clear(HAL_SW_BOOTMODE_CHARGING_POWEROFF);//add by pang
+	hal_sw_bootmode_clear(HAL_SW_BOOTMODE_CHARGING_POWERON);
+#endif
     return nRet;
 }
 

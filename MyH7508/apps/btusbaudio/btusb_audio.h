@@ -33,6 +33,9 @@ void btusb_btaudio_close(bool is_wait);
 void btusb_switch(enum BTUSB_MODE mode);
 bool btusb_is_bt_mode(void);
 bool btusb_is_usb_mode(void);
+uint8_t get_usb_configured_status(void);//add by cai
+
+
 #ifdef __cplusplus
 }
 #endif

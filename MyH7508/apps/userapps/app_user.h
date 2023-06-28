@@ -66,6 +66,10 @@ void app_nvrecord_multipoint_set(uint8_t on);
 enum ANC_TOGGLE_MODE app_nvrecord_anc_toggle_mode_get(void);
 void app_nvrecord_anc_toggle_mode_set(enum ANC_TOGGLE_MODE nc_toggle);
 void app_nvrecord_language_set(uint8_t lang);
+void app_nvrecord_demo_mode_set(uint8_t mod);
+uint8_t app_nvrecord_demo_mode_get(void);
+void app_demo_mode_poweron_flag_set(uint8_t powron);
+uint8_t app_demo_mode_poweron_flag_get(void);
 void app_nvrecord_para_get(void);
 #endif
 

@@ -1920,6 +1920,27 @@ void bt_key_send(APP_KEY_STATUS *status)
     }
 }
 
+/** add by pang **/
+#if defined(__DEFINE_DEMO_MODE__)
+void app_demo_mode_trigle(void)
+{
+    if(!app_nvrecord_demo_mode_get()){
+		app_nvrecord_demo_mode_set(true);
+		app_status_indication_recover_set(APP_STATUS_INDICATION_DEMO_MODE);//add by cai
+#ifdef MEDIA_PLAYER_SUPPORT
+		app_voice_report(APP_STATUS_INDICATION_DEMO_MODE, 0);
+#endif
+    }
+	else{
+		app_nvrecord_demo_mode_set(false);
+#ifdef MEDIA_PLAYER_SUPPORT
+		app_voice_report(APP_STATUS_INDICATION_BEEP_22, 0);
+#endif
+	}
+}
+#endif
+/** end add **/
+
 void bt_key_handle(void)
 {
     osapi_lock_stack();
@@ -1957,13 +1978,13 @@ void bt_key_handle(void)
 				if(!app_get_touchlock())
 					bt_key_handle_cover_key((enum APP_KEY_EVENT_T)bt_key.event);
 				break;
-			
-			case BTAPP_ANC_KEY:
-				//bt_key_handle_ANC_key(NULL, NULL);
-				break;
 				
 			case BTAPP_ANC_KEY|BTAPP_FUNC_KEY:
 				app_factory_reset();
+				break;
+
+			case APP_KEY_CODE_FN1|APP_KEY_CODE_PWR:
+				app_demo_mode_trigle();
 				break;
 /** end add **/
 			
