@@ -35,6 +35,15 @@
 #include "app_ble_mode_switch.h"
 #endif
 
+/** add by pang **/
+#include "app_user.h"
+#include "philips_ble_api.h"
+#include "hal_bootmode.h"
+#include "analog.h"//add by cai
+#include "hal_usb.h"//add by cai
+bool battery_pd_poweroff=0;
+/** end add **/
+
 #if (defined(BTUSB_AUDIO_MODE) || defined(BTUSB_AUDIO_MODE))
 extern "C" bool app_usbaudio_mode_on(void);
 #endif
@@ -325,6 +334,7 @@ int app_battery_handle_process_normal(uint32_t status,  union APP_BATTERY_MSG_PR
         case APP_BATTERY_STATUS_PDVOLT:
 #ifndef BT_USB_AUDIO_DUAL_MODE
             TRACE(1,"PDVOLT-->POWEROFF:%d", prams.volt);
+			battery_pd_poweroff=1;//add by pang
             osTimerStop(app_battery_timer);
             app_shutdown();
 #endif
@@ -827,6 +837,13 @@ int8_t app_battery_is_charging(void)
 {
     return (APP_BATTERY_STATUS_CHARGING == app_battery_measure.status);
 }
+
+/** add by pang **/
+bool app_battery_is_pdvolt(void)
+{
+    return (battery_pd_poweroff);
+}
+/** end add **/
 
 typedef uint16_t NTP_VOLTAGE_MV_T;
 typedef uint16_t NTP_TEMPERATURE_C_T;

@@ -36,6 +36,9 @@ enum APP_BT_GOLBAL_HANDLE_HOOK_USER_T {
 };
 	
 /** add by pang **/
+extern bool lostconncection_to_pairing;
+
+void app_bt_reconnect_idle_mode(void);
 void app_multipoint_api_set_on(void);
 void app_get_curr_remDev_Mac(unsigned char* mobile_addr);
 void app_cur_connect_devid_set(uint8_t id, uint8_t connect);

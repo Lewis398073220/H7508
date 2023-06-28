@@ -163,7 +163,7 @@ extern "C" int hal_usb_configured(void);
 #endif
 
 #define APP_BATTERY_LEVEL_LOWPOWERTHRESHOLD (1)
-#define POWERON_PRESSMAXTIME_THRESHOLD_MS  (70000)//(5000)   m by cai
+#define POWERON_PRESSMAXTIME_THRESHOLD_MS  (7000)//5000   by pang
 
 #ifdef FPGA
 uint32_t __ota_upgrade_log_start[100];
@@ -216,6 +216,7 @@ static uint8_t app_status_indication_init(void)
     struct APP_PWL_CFG_T cfg;
     memset(&cfg, 0, sizeof(struct APP_PWL_CFG_T));
     app_pwl_open();
+	cfg.startlevel=0;//add by pang
     app_pwl_setup(APP_PWL_ID_0, &cfg);
     app_pwl_setup(APP_PWL_ID_1, &cfg);
     return 0;
@@ -357,7 +358,7 @@ void CloseEarphone(void)
     osapi_lock_stack();
     activeCons = btif_me_get_activeCons();
     osapi_unlock_stack();
-
+#if 0
 #ifdef ANC_APP
     if(app_anc_work_status()) {
         app_set_10_second_timer(APP_POWEROFF_TIMER_ID, 1, 30);
@@ -368,6 +369,13 @@ void CloseEarphone(void)
         TRACE(0,"!!!CloseEarphone\n");
         app_shutdown();
     }
+#else //m b pang	
+	if((activeCons == 0) || (0 == app_bt_is_connected())) {
+		TRACE(0,"!!!CloseEarphone\n");
+		app_shutdown();
+	}
+	
+#endif
 }
 #endif /* #if defined(__BTIF_EARPHONE__) && defined(__BTIF_AUTOPOWEROFF__) */
 
@@ -419,6 +427,8 @@ extern void app_hfp_set_battery_level(uint8_t level);
 
 int app_status_battery_report(uint8_t level)
 {
+	TRACE(2,"***%s: %d",__func__, level);//add by cai
+
 #ifdef __SUPPORT_ANC_SINGLE_MODE_WITHOUT_BT__
     if (anc_single_mode_on)  //anc power on,anc only mode
         return 0;
@@ -428,7 +438,7 @@ int app_status_battery_report(uint8_t level)
     {
         app_bt_state_checker();
     }
-    app_10_second_timer_check();
+    //app_10_second_timer_check();//c by pang
 #endif
     if (level <= APP_BATTERY_LEVEL_LOWPOWERTHRESHOLD)
     {
@@ -650,7 +660,8 @@ static void app_poweron_normal(APP_KEY_STATUS *status, void *param)
     g_pwron_case = APP_POWERON_CASE_NORMAL;
 
 #if 1 //by pang
-	//app_status_indication_recover_set(APP_STATUS_INDICATION_POWERON);
+	app_status_indication_recover_set(APP_STATUS_INDICATION_POWERON);
+
 #ifdef ANC_APP
 	poweron_set_anc();//add by cai for Pairing tone distortion
 #endif
@@ -670,7 +681,7 @@ static void app_poweron_scan(APP_KEY_STATUS *status, void *param)
     g_pwron_case = APP_POWERON_CASE_BOTHSCAN;
 
 #if 1 //by pang
-	//lostconncection_to_pairing=1;
+	lostconncection_to_pairing=1;
 	app_status_indication_set(APP_STATUS_INDICATION_BOTHSCAN);
 #ifdef MEDIA_PLAYER_SUPPORT
     app_voice_report(APP_STATUS_INDICATION_BOTHSCAN,0);
@@ -686,7 +697,7 @@ static void app_poweron_scan(APP_KEY_STATUS *status, void *param)
 extern bt_status_t LinkDisconnectDirectly(bool PowerOffFlag);
 void app_factory_reset(void)
 {
-	//app_status_indication_recover_set(APP_STATUS_INDICATION_FACTORYRESET);
+	app_status_indication_recover_set(APP_STATUS_INDICATION_FACTORYRESET);
 
 	app_audio_sendrequest(APP_BT_STREAM_INVALID, (uint8_t)APP_BT_SETTING_CLOSEALL, 0);
 	osDelay(500);
@@ -729,7 +740,7 @@ void app_factory_reset(void)
 	app_nvrecord_language_set(MEDIA_DEFAULT_LANGUAGE);
 
 	//osDelay(500);
-	//app_bt_reconnect_idle_mode();
+	app_bt_reconnect_idle_mode();
 
 	app_bt_accessmode_set_req(BTIF_BT_DEFAULT_ACCESS_MODE_PAIR);
 	//app_start_10_second_timer(APP_PAIR_TIMER_ID);//add by cai
@@ -820,7 +831,7 @@ static uint8_t app_poweron_wait_case(void)
 	if (g_pwron_case == APP_POWERON_CASE_INVALID){
 		stime = hal_sys_timer_get();
 		osSignalWait(0x2, 2000);
-		if((g_pwron_case == APP_POWERON_CASE_NORMAL)&&(g_pwron_finished==false))
+		if((g_pwron_case != APP_POWERON_CASE_INVALID)&&(g_pwron_finished==false))
 			osSignalWait(0x2, POWERON_PRESSMAXTIME_THRESHOLD_MS);
 			
 		etime = hal_sys_timer_get();
@@ -940,7 +951,7 @@ void app_otaMode_enter(APP_KEY_STATUS *status, void *param)
     hal_sw_bootmode_set(HAL_SW_BOOTMODE_ENTER_HIDE_BOOT);
 #ifdef __KMATE106__
     app_status_indication_set(APP_STATUS_INDICATION_OTA);
-    app_voice_report(APP_STATUS_INDICATION_WARNING, 0);
+    //app_voice_report(APP_STATUS_INDICATION_WARNING, 0);
     osDelay(1200);
 #endif
     pmu_reboot();
@@ -1447,6 +1458,11 @@ int app_deinit(int deinit_case)
 #endif
     if (!deinit_case){
         app_poweroff_flag = 1;
+		/** add by pang **/	
+		app_user_event_close_module();
+		app_anc_power_off();
+
+		/** end add **/
 #if defined(APP_LINEIN_A2DP_SOURCE)
         app_audio_sendrequest(APP_A2DP_SOURCE_LINEIN_AUDIO, (uint8_t)APP_BT_SETTING_CLOSE,0);
 #endif
@@ -1458,10 +1474,24 @@ int app_deinit(int deinit_case)
         osDelay(500);
         LinkDisconnectDirectly(true);
         osDelay(500);
-        app_status_indication_set(APP_STATUS_INDICATION_POWEROFF);
+		
+		if(!app_battery_is_charging()){
+			//app_status_indication_set(APP_STATUS_INDICATION_POWEROFF);
+			app_status_indication_recover_set(APP_STATUS_INDICATION_POWEROFF);
+		}
+		if(!app_battery_is_charging()){
 #ifdef MEDIA_PLAYER_SUPPORT
-        app_voice_report(APP_STATUS_INDICATION_POWEROFF, 0);
+        if(app_battery_is_pdvolt()){
+			app_voice_report(APP_STATUS_INDICATION_POWEROFF_LOWBATTERY, 0);//add by pang
+			osDelay(3000);//m by cai
+		}
+		else{
+        	app_voice_report(APP_STATUS_INDICATION_POWEROFF, 0);
+			osDelay(3000);//m by cai
+		}
 #endif
+		}
+		
 #ifdef __THIRDPARTY
         app_thirdparty_specific_lib_event_handle(THIRDPARTY_FUNC_NO1,THIRDPARTY_DEINIT);
 #endif
@@ -1469,7 +1499,7 @@ int app_deinit(int deinit_case)
         nv_record_flash_flush();
         norflash_flush_all_pending_op();
 #endif
-        osDelay(1000);
+        //osDelay(1000);//m by cai
         af_close();
     }
 
@@ -1593,6 +1623,7 @@ void app_usb_key_init(void)
 {
     uint8_t i = 0;
     TRACE(1,"%s",__func__);
+	app_key_handle_clear();//add by cai
     for (i=0; i<(sizeof(app_usb_handle_cfg)/sizeof(APP_KEY_HANDLE)); i++){
         app_key_handle_registration(&app_usb_handle_cfg[i]);
     }
@@ -2059,7 +2090,7 @@ extern int rpc_service_setup(void);
             AUTO_TEST_TRACE(1,"power on case:%d\n", pwron_case);
             nRet = 0;
 #ifndef __POWERKEY_CTRL_ONOFF_ONLY__
-            app_status_indication_set(APP_STATUS_INDICATION_INITIAL);
+            //app_status_indication_set(APP_STATUS_INDICATION_INITIAL);//m by cai
 #endif
             app_bt_start_custom_function_in_bt_thread((uint32_t)1,
                         0, (uint32_t)btif_me_write_bt_sleep_enable);

@@ -29,6 +29,8 @@ extern "C" {
 #endif
 
 int app_user_event_open_module(void);
+void app_user_event_close_module(void);
+
 
 #if defined(__EVRCORD_USER_DEFINE__)
 uint8_t app_get_fota_flag(void);

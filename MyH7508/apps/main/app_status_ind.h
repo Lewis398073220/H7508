@@ -84,6 +84,10 @@ int app_status_indication_filter_set(APP_STATUS_INDICATION_T status);
 APP_STATUS_INDICATION_T app_status_indication_get(void);
 int app_status_indication_set(APP_STATUS_INDICATION_T status);
 
+/** add by pang **/
+void app_status_indication_recover(void);
+void app_status_indication_recover_set(APP_STATUS_INDICATION_T status);
+void app_status_indication_set_next(APP_STATUS_INDICATION_T curr_status,APP_STATUS_INDICATION_T next_status);
 
 #ifdef __cplusplus
 }

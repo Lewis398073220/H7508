@@ -21,6 +21,7 @@
 #include "pmu.h"
 #include "app_pwl.h"
 #include "string.h"
+#include "app_status_ind.h"//add by pang
 
 #define APP_PWL_TRACE(s,...)
 //TRACE(s, ##__VA_ARGS__)
@@ -57,6 +58,7 @@ static void app_pwl_timehandler(void const *param)
         }
     }else{
         if (pwl->partidx >= cfg->parttotal){
+			app_status_indication_recover();//add by pang
             return;
         }
     }

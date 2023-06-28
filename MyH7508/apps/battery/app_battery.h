@@ -113,6 +113,10 @@ int ntc_capture_open(void);
 
 int ntc_capture_start(void);
 
+/** add by pang **/
+bool app_battery_is_pdvolt(void);
+/** end add **/
+
 #ifdef __cplusplus
 }
 #endif

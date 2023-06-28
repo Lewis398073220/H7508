@@ -2181,6 +2181,15 @@ void app_monitor_moment(bool on)
             break;
     };
 }
+
+void app_anc_power_off(void)
+{
+	if((anc_work_status != ANC_STATUS_OFF)&&(anc_work_status != ANC_STATUS_WAITING_OFF)){
+		anc_disable_gain_updated_when_pass0(0);
+		while(__anc_usb_app_fadeout_ff_fb());
+		app_anc_close_anc();
+	}
+}
 /** end add **/
 
 void app_anc_ios_init(void)

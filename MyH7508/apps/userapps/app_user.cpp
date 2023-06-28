@@ -75,6 +75,12 @@ int app_user_event_open_module(void)
     return 0;
 }
 
+void app_user_event_close_module(void)
+{
+	app_set_threadhandle(APP_MODUAL_USERDEF, NULL);
+
+}
+
 #if defined(__EVRCORD_USER_DEFINE__)
 IIR_CFG_T eq_custom_para={
     .gain0 = -6,
