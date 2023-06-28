@@ -4612,7 +4612,15 @@ static void usb_audio_set_recv_rate(enum AUD_SAMPRATE_T rate)
 
     TRACE(3,"%s: Change recv sample rate from %u to %u", __FUNCTION__, sample_rate_recv, rate);
 
+	#if 0 //m by cai for not to access 16k play rate
     new_sample_rate_recv = rate;
+	#else
+	if(rate == AUD_SAMPRATE_16000) {
+		new_sample_rate_recv = sample_rate_recv;
+	} else{
+		new_sample_rate_recv = rate;
+	}
+	#endif
 
 #ifdef KEEP_SAME_LATENCY
     usb_recv_size = calc_usb_recv_size(new_sample_rate_recv, new_sample_size_recv);

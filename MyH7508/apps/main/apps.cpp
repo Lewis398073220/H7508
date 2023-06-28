@@ -656,6 +656,7 @@ int app_voice_report_handler(APP_STATUS_INDICATION_T status, uint8_t device_id, 
 #ifdef BT_USB_AUDIO_DUAL_MODE
     if(btusb_is_usb_mode()) {
         if(hal_usb_configured()){
+			audio_prompt_stop_playing();//add by cai for prompt cutdown to play
             usb_audio_start_audio_prompt(id);
         }
     }

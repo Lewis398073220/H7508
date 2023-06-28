@@ -106,8 +106,9 @@ ccflags-y += \
 	-Iservices/osif \
     -Iservices/app_tws/inc \
 	-Iapps/userapps \
-	-Iservices/ble_app/app_datapath
-
+	-Iservices/ble_app/app_datapath \
+	-Itests/anc_usb
+	
 ifeq ($(GATT_OVER_BR_EDR),1)
 ccflags-y += -Iservices/ble_stack/hl/src/l2c/l2cm
 endif

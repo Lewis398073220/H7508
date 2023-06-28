@@ -19,6 +19,16 @@
 #include "app_audio.h"
 #include "apps.h"
 #include "app_bt.h"
+
+/** add by cai **/
+#include "btusb_audio.h"
+#include "usb_audio_app.h"
+
+#ifdef BT_USB_AUDIO_DUAL_MODE
+extern "C" int hal_usb_configured(void);
+#endif
+/** end add **/
+
 #ifdef MIX_AUDIO_PROMPT_WITH_A2DP_MEDIA_ENABLED
 
 #define AUDIO_PROMPT_RESAMPLE_ITER_NUM               256
@@ -46,9 +56,9 @@ static float audio_prompt_sbc_eq_band_gain[8] = {1, 1, 1, 1, 1, 1, 1, 1};
 // from TGT_VOLUME_LEVEL_T or KEEP_CURRENT_VOLUME_FOR_MIX_PROMPT
 #define DEFAULT_VOLUME_FOR_MIX_PROMPT               KEEP_CURRENT_VOLUME_FOR_MIX_PROMPT
 
-#define DEFAULT_COEFF_FOR_MIX_PROMPT_FOR_MUSIC      1.0
+#define DEFAULT_COEFF_FOR_MIX_PROMPT_FOR_MUSIC      0.05//1.0 //m by pang
 #define DEFAULT_COEFF_FOR_MIX_MUSIC_FOR_MUSIC       0.4
-#define DEFAULT_COEFF_FOR_MIX_PROMPT_FOR_CALL       1.0
+#define DEFAULT_COEFF_FOR_MIX_PROMPT_FOR_CALL       0.05//1.0 //m by cai
 #define DEFAULT_COEFF_FOR_MIX_CALL_FOR_CALL         0.4
 
 #define DEFAULT_OVERLAP_LENGTH 128
@@ -698,11 +708,21 @@ void audio_prompt_stop_playing(void)
     if (app_audio_list_rmv_callback(&aud_status, &status_next,APP_BT_SETTING_Q_POS_HEAD, true))
     {
         TRACE(4,"%s next id: 0x%x%s, aud_id %d", __func__, status_next.id, player2str(status_next.id), status_next.aud_id);
-#if defined(IBRT)
-        app_ibrt_if_voice_report_handler(status_next.aud_id, true);
-#else //add by cai for play prompt by mix
-		trigger_media_play((AUD_ID_ENUM)status_next.aud_id, 0, true);
+#ifdef BT_USB_AUDIO_DUAL_MODE
+		if(btusb_is_usb_mode()) {//add by cai for play prompt by mix
+			if(hal_usb_configured()){
+				usb_audio_start_audio_prompt(status_next.aud_id);
+			}
+		}
+		else
 #endif
+		{
+#if defined(IBRT)
+		    app_ibrt_if_voice_report_handler(status_next.aud_id, true);
+#else //add by cai for play prompt by mix
+			trigger_media_play((AUD_ID_ENUM)status_next.aud_id, 0, true);
+#endif
+		}
     }
 
 }
