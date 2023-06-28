@@ -1889,6 +1889,9 @@ extern int rpc_service_setup(void);
                 app_key_open(false);
                 app_key_init_on_charging();
                 nRet = 0;
+				#if defined(__LDO_3V3_CTR__) 
+	hal_gpio_pin_set((enum HAL_GPIO_PIN_T)cfg_hw_pio_3_3v_control.pin);
+#endif
 #if defined(BT_USB_AUDIO_DUAL_MODE)
                 usb_plugin = 1;
 #elif defined(BTUSB_AUDIO_MODE)

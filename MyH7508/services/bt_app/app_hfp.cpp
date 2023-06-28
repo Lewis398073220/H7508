@@ -175,6 +175,7 @@ void app_hfp_set_battery_level(uint8_t level)
     osapi_lock_stack();
     if (report_battery_level == 0xff) {
         report_battery_level = level;
+		TRACE(2,"***%s: report_battery_level=%d",__func__,report_battery_level);
         osapi_notify_evm();
     }
     osapi_unlock_stack();
@@ -763,7 +764,7 @@ static void hfp_connected_ind_handler(hf_chan_handle_t chan, struct hfp_context 
     uint8_t battery_level;
     app_hfp_battery_report_reset(chan_id_flag.id);
     app_battery_get_info(NULL, &battery_level, NULL);
-    app_hfp_set_battery_level(battery_level);
+    app_hfp_set_battery_level(battery_level-1);//m by cai for battery info report
 #endif
     //        app_bt_stream_hfpvolume_reset();
     btif_hf_report_speaker_volume(chan, hfp_volume_get(chan_id_flag.id));

@@ -98,7 +98,8 @@ int anc_load_cfg(void)
 		TRACE(5,"[%s] L: gain = %d, len = %d, dac = %d, adc = %d", __func__, list[0]->anc_cfg_ff_l.total_gain, list[0]->anc_cfg_ff_l.fir_len, list[0]->anc_cfg_ff_l.dac_gain_offset, list[0]->anc_cfg_ff_l.adc_gain_offset);
 		TRACE(5,"[%s] R: gain = %d, len = %d, dac = %d, adc = %d", __func__, list[0]->anc_cfg_ff_r.total_gain, list[0]->anc_cfg_ff_r.fir_len, list[0]->anc_cfg_ff_r.dac_gain_offset, list[0]->anc_cfg_ff_r.adc_gain_offset);
 #elif  (AUD_SECTION_STRUCT_VERSION == 2)
-		for(int i = 0; i < ANC_COEF_LIST_NUM; i++) {
+		//for(int i = 0; i < ANC_COEF_LIST_NUM; i++) {
+		for(int i = 0; i < 2; i++) { //m by pang
 			TRACE(3,"appmode%d,FEEDFORWARD,L:gain %d,R:gain %d",i, list[i]->anc_cfg_ff_l.total_gain, list[i]->anc_cfg_ff_r.total_gain);
 			for(int j = 0; j <AUD_IIR_NUM; j++)
 			{
@@ -165,7 +166,8 @@ int anc_load_cfg(void)
 		TRACE(5,"[%s] L: gain = %d, len = %d, dac = %d, adc = %d", __func__, list[0]->anc_cfg_ff_l.total_gain, list[0]->anc_cfg_ff_l.fir_len, list[0]->anc_cfg_ff_l.dac_gain_offset, list[0]->anc_cfg_ff_l.adc_gain_offset);
 		TRACE(5,"[%s] R: gain = %d, len = %d, dac = %d, adc = %d", __func__, list[0]->anc_cfg_ff_r.total_gain, list[0]->anc_cfg_ff_r.fir_len, list[0]->anc_cfg_ff_r.dac_gain_offset, list[0]->anc_cfg_ff_r.adc_gain_offset);
 #elif  (AUD_SECTION_STRUCT_VERSION == 2)
-		for(int i = 0; i < ANC_COEF_LIST_NUM; i++) {
+		//for(int i = 0; i < ANC_COEF_LIST_NUM; i++) {
+		for(int i = 0; i < 2; i++) { //m by pang
 			TRACE(3,"appmode%d,FEEDFORWARD,L:gain %d,R:gain %d",i, list[i]->anc_cfg_ff_l.total_gain, list[i]->anc_cfg_ff_r.total_gain);
 			for(int j = 0; j <AUD_IIR_NUM; j++)
 			{
@@ -232,7 +234,8 @@ int anc_load_cfg(void)
 		TRACE(5,"[%s] L: gain = %d, len = %d, dac = %d, adc = %d", __func__, list[0]->anc_cfg_ff_l.total_gain, list[0]->anc_cfg_ff_l.fir_len, list[0]->anc_cfg_ff_l.dac_gain_offset, list[0]->anc_cfg_ff_l.adc_gain_offset);
 		TRACE(5,"[%s] R: gain = %d, len = %d, dac = %d, adc = %d", __func__, list[0]->anc_cfg_ff_r.total_gain, list[0]->anc_cfg_ff_r.fir_len, list[0]->anc_cfg_ff_r.dac_gain_offset, list[0]->anc_cfg_ff_r.adc_gain_offset);
 #elif  (AUD_SECTION_STRUCT_VERSION == 2)
-		for(int i = 0; i < ANC_COEF_LIST_NUM; i++) {
+		//for(int i = 0; i < ANC_COEF_LIST_NUM; i++) {
+		for(int i = 0; i < 2; i++) { //m by pang
 			TRACE(3,"appmode%d,FEEDFORWARD,L:gain %d,R:gain %d",i, list[i]->anc_cfg_ff_l.total_gain, list[i]->anc_cfg_ff_r.total_gain);
 			for(int j = 0; j <AUD_IIR_NUM; j++)
 			{
@@ -351,6 +354,8 @@ int anc_select_coef(enum AUD_SAMPRATE_T rate,enum ANC_INDEX index,enum ANC_TYPE_
 
     cur_coef_idx = index;
     cur_coef_samprate=rate;
+	
+	TRACE(2,"***anc_select_coef cur_coef_samprate=%d, cur_coef_idx=%d",cur_coef_samprate,cur_coef_idx);//add by pang
 
     return 0;
 }

@@ -68,6 +68,11 @@ extern struct BT_DEVICE_T  app_bt_device;
 #include "app_anc.h"
 #include "app_user.h"
 #include "app_media_player.h"
+#include "../../../tests/anc_usb/usb_audio_app.h"//add by cai
+
+#ifdef BT_USB_AUDIO_DUAL_MODE
+extern "C" int hal_usb_configured(void);//add by cai
+#endif
 #include "app_bt.h"
 /** end add **/
 #ifdef SUPPORT_SIRI

@@ -36,6 +36,8 @@
 #include "resample_coef.h"
 #include "app_utils.h"
 #include "audio_prompt_sbc.h"
+#include "../../apps/anc/inc/app_anc.h"//add by cai
+#include "../../apps/userapps/app_user.h"//add by cai
 
 #ifdef _VENDOR_MSG_SUPPT_
 #include "usb_vendor_msg.h"
@@ -95,6 +97,11 @@
 #error "NOISE_REDUCTION conflicts with CODEC_DSD"
 #endif
 #endif
+//add by cai
+uint8_t usb_volume_key_trigger_flag = 0;
+uint8_t old_playback_vol = 1;
+uint8_t max_volume_increase_count = 0;
+//end add
 
 #if defined(__SW_IIR_EQ_PROCESS__)
 static uint8_t audio_eq_sw_iir_index = 0;
@@ -166,8 +173,8 @@ extern const IIR_CFG_T * const audio_eq_hw_iir_cfg_list[];
 
 #define MAX_TARGET_RATIO                0.000020f
 
-#define MIN_VOLUME_VAL                  (TGT_VOLUME_LEVEL_MUTE)
-#define MAX_VOLUME_VAL                  (TGT_VOLUME_LEVEL_QTY - 1)
+#define MIN_VOLUME_VAL                  (TGT_VOLUME_LEVEL_MUTE + 17)//m by cai for volume indepent
+#define MAX_VOLUME_VAL                  (TGT_VOLUME_LEVEL_QTY - 1 + 17)//m by cai for volume indepent
 
 #define MIN_CAP_VOLUME_VAL              (TGT_ADC_VOL_LEVEL_0)
 #define MAX_CAP_VOLUME_VAL              (TGT_ADC_VOL_LEVEL_QTY - 1)
@@ -210,14 +217,23 @@ extern const IIR_CFG_T * const audio_eq_hw_iir_cfg_list[];
     USB_AUDIO_KEY_VOICE_CMD \
 }
 #else
+#if 1
 #define USB_AUDIO_KEY_MAP               { \
-    { USB_AUDIO_HID_PLAY_PAUSE,     HAL_KEY_CODE_FN1,   KEY_EVENT_SET(CLICK),       }, \
-    { USB_AUDIO_HID_SCAN_NEXT,      HAL_KEY_CODE_FN1,   KEY_EVENT_SET(DOUBLECLICK), }, \
-    { USB_AUDIO_HID_SCAN_PREV,      HAL_KEY_CODE_FN1,   KEY_EVENT_SET(TRIPLECLICK), }, \
-    { USB_AUDIO_HID_VOL_UP,         HAL_KEY_CODE_FN2,   KEY_EVENT_SET4(CLICK, DOUBLECLICK, TRIPLECLICK, REPEAT), }, \
-    { USB_AUDIO_HID_VOL_DOWN,       HAL_KEY_CODE_FN3,   KEY_EVENT_SET4(CLICK, DOUBLECLICK, TRIPLECLICK, REPEAT), }, \
-    { USB_AUDIO_HID_HOOK_SWITCH,    HAL_KEY_CODE_FN4,   KEY_EVENT_SET(CLICK),       }, \
+    { USB_AUDIO_HID_PLAY_PAUSE,     HAL_KEY_CODE_FN6,   KEY_EVENT_SET(DOUBLECLICK),       }, \
+    { USB_AUDIO_HID_SCAN_NEXT,      HAL_KEY_CODE_PWR,   KEY_EVENT_SET(DOUBLECLICK), }, \
+    { USB_AUDIO_HID_SCAN_PREV,      HAL_KEY_CODE_PWR,   KEY_EVENT_SET(TRIPLECLICK), }, \
+    { USB_AUDIO_HID_VOL_UP,         HAL_KEY_CODE_FN1,   KEY_EVENT_SET(UP), }, \
+    { USB_AUDIO_HID_VOL_DOWN,       HAL_KEY_CODE_FN1,   KEY_EVENT_SET(REPEAT), }, \
 }
+#else //for demo board debug
+#define USB_AUDIO_KEY_MAP               { \
+	{ USB_AUDIO_HID_PLAY_PAUSE,     HAL_KEY_CODE_PWR,   KEY_EVENT_SET(CLICK),       }, \
+    { USB_AUDIO_HID_SCAN_NEXT,      HAL_KEY_CODE_PWR,   KEY_EVENT_SET(DOUBLECLICK), }, \
+    { USB_AUDIO_HID_SCAN_PREV,      HAL_KEY_CODE_PWR,   KEY_EVENT_SET(TRIPLECLICK), }, \
+    { USB_AUDIO_HID_VOL_UP,         HAL_KEY_CODE_PWR,   KEY_EVENT_SET(UP), }, \
+    { USB_AUDIO_HID_VOL_DOWN,       HAL_KEY_CODE_FN1,   KEY_EVENT_SET(REPEAT), }, \
+}
+#endif
 #endif
 #endif
 
@@ -1040,14 +1056,18 @@ uint8_t usb_audio_get_eq_index(AUDIO_EQ_TYPE_T audio_eq_type,uint8_t anc_status)
 #if defined(__SW_IIR_EQ_PROCESS__)
         case AUDIO_EQ_TYPE_SW_IIR:
         {
-            if(anc_status)
-            {
-                index_eq=audio_eq_sw_iir_index+1;
-            }
-            else
-            {
-                index_eq=audio_eq_sw_iir_index;
-            }
+#if 0
+			if(anc_status)
+			{
+				index_eq=audio_eq_sw_iir_index+1;
+			}
+			else
+			{
+				index_eq=audio_eq_sw_iir_index;
+			}
+#else //modify by pang
+			index_eq=audio_eq_sw_iir_index+anc_status;
+#endif
 
         }
         break;
@@ -1132,6 +1152,7 @@ uint32_t usb_audio_set_eq(AUDIO_EQ_TYPE_T audio_eq_type,uint8_t index)
 #if defined(__SW_IIR_EQ_PROCESS__)
         case AUDIO_EQ_TYPE_SW_IIR:
         {
+#if 0
             if(index >= EQ_SW_IIR_LIST_NUM)
             {
                 TRACE(2,"[%s] index[%d] > EQ_SW_IIR_LIST_NUM", __func__, index);
@@ -1139,6 +1160,18 @@ uint32_t usb_audio_set_eq(AUDIO_EQ_TYPE_T audio_eq_type,uint8_t index)
             }
 
             iir_cfg=audio_eq_sw_iir_cfg_list[index];
+#else //m by pang
+			uint8_t eq_index=0;
+		    eq_index=app_eq_index_get();	
+			if(eq_index < 5){
+				iir_cfg=audio_eq_sw_iir_cfg_list[index+eq_index*3];	
+			}
+			else if(eq_index == 0x3f){//m by cai to 0x3f
+				iir_cfg= &eq_custom_para;
+			}
+			else
+				return 1;	
+#endif
         }
         break;
 #endif
@@ -2987,7 +3020,8 @@ static int usb_audio_open_codec_stream(enum AUD_STREAM_T stream, enum AUDIO_STRE
 #if !defined(USB_AUDIO_SPEECH) && defined(BTUSB_AUDIO_MODE)
             stream_cfg.io_path = AUD_INPUT_PATH_USBAUDIO;
 #else
-            stream_cfg.io_path = AUD_INPUT_PATH_MAINMIC;
+            //stream_cfg.io_path = AUD_INPUT_PATH_MAINMIC;
+            stream_cfg.io_path = AUD_INPUT_PATH_USBAUDIO;//add by cai
 #endif
             stream_cfg.data_ptr = capture_buf;
             stream_cfg.data_size = capture_size;
@@ -3052,7 +3086,7 @@ static int usb_audio_open_eq(void)
     //TRACE(1,"audio_process_open: %d", ret);
 
 #ifdef __SW_IIR_EQ_PROCESS__
-    usb_audio_set_eq(AUDIO_EQ_TYPE_SW_IIR,usb_audio_get_eq_index(AUDIO_EQ_TYPE_SW_IIR,0));
+    usb_audio_set_eq(AUDIO_EQ_TYPE_SW_IIR,usb_audio_get_eq_index(AUDIO_EQ_TYPE_SW_IIR,app_get_anc_status()));//m by cai
 #endif
 
 #ifdef __HW_FIR_EQ_PROCESS__
@@ -3296,6 +3330,8 @@ static int usb_audio_stop_usb_stream(enum AUD_STREAM_T stream)
 
 static void usb_audio_set_codec_volume(enum AUD_STREAM_T stream, uint8_t vol)
 {
+	TRACE(3,"***%s: stream=%d, vol=%d", __FUNCTION__, stream,vol);
+
     struct AF_STREAM_CONFIG_T *cfg;
     uint8_t POSSIBLY_UNUSED old_vol;
     uint32_t ret;
@@ -4458,7 +4494,8 @@ static void usb_audio_reset_usb_stream_state(bool init)
         new_mute_state = 0;
         new_cap_mute_state = 0;
 
-        new_playback_vol = AUDIO_OUTPUT_VOLUME_DEFAULT;
+        //new_playback_vol = AUDIO_OUTPUT_VOLUME_DEFAULT + 17;//m by cai for volume indepent
+        new_playback_vol = 17 + 17;//m by cai for volume indepent
         if (new_playback_vol > MAX_VOLUME_VAL) {
             new_playback_vol = MAX_VOLUME_VAL;
         } else if (new_playback_vol < MIN_VOLUME_VAL) {
@@ -4515,6 +4552,8 @@ static void usb_audio_reset_usb_stream_state(bool init)
 
 static void usb_audio_reset_codec_stream_state(bool init)
 {
+	TRACE(2,"***[%s]playback_vol = %d", __func__, playback_vol);
+
     playback_state = AUDIO_ITF_STATE_STOPPED;
     capture_state = AUDIO_ITF_STATE_STOPPED;
 
@@ -5553,6 +5592,24 @@ static void usb_audio_cmd_set_volume(void)
 #endif
 }
 
+//add by cai
+void usb_audio_set_volume_for_quick_awareness(uint8_t quick_awareness_on, uint8_t vol)
+{
+	if(quick_awareness_on){
+		usb_audio_set_codec_volume(AUD_STREAM_PLAYBACK, vol);//m by cai for Volume independent
+	
+#ifdef UNMUTE_WHEN_SET_VOL
+		// Unmute if muted before
+		if (mute_user_map & (1 << CODEC_MUTE_USER_CMD)) {
+			usb_audio_codec_unmute(CODEC_MUTE_USER_CMD);
+		}
+#endif
+	}else{
+		usb_audio_cmd_set_volume();
+	}
+}
+//end add
+
 static void usb_audio_cmd_set_cap_volume(void)
 {
     capture_vol = new_capture_vol;
@@ -5888,6 +5945,31 @@ static void usb_audio_cmd_handler(void *param)
 
         case AUDIO_CMD_SET_VOLUME:
             usb_audio_cmd_set_volume();
+			//add by cai
+			TRACE(2,"[%s]new_playback_vol = %d", __func__, new_playback_vol);
+			if(usb_volume_key_trigger_flag==1) {
+				if(old_playback_vol != MAX_VOLUME_VAL)
+				{
+					if(old_playback_vol >= new_playback_vol)
+						usb_audio_hid_set_event(USB_AUDIO_HID_VOL_UP, 1);
+					else usb_volume_key_trigger_flag=0;
+				}else{
+					max_volume_increase_count--;
+					if(max_volume_increase_count)usb_audio_hid_set_event(USB_AUDIO_HID_VOL_UP, 1);
+					else{
+						usb_volume_key_trigger_flag=0;
+						max_volume_increase_count=0;
+					}
+				}
+			} else if(usb_volume_key_trigger_flag==2){
+				if(old_playback_vol != MIN_VOLUME_VAL)
+				{
+					if(old_playback_vol <= new_playback_vol)
+						usb_audio_hid_set_event(USB_AUDIO_HID_VOL_DOWN, 1);
+					else usb_volume_key_trigger_flag=0;
+				}else usb_volume_key_trigger_flag=0;
+			}
+			//end add
             break;
 
         case AUDIO_CMD_SET_CAP_VOLUME:
@@ -6251,6 +6333,18 @@ int usb_audio_app_key(enum HAL_KEY_CODE_T code, enum HAL_KEY_EVENT_T event)
 #endif
                 app_key_trace(__LINE__, code, event, uevt, state);
                 usb_audio_hid_set_event(uevt, state);
+				//add by cai
+				if(uevt==USB_AUDIO_HID_VOL_UP) {
+					old_playback_vol = new_playback_vol;
+					usb_volume_key_trigger_flag=1;
+					max_volume_increase_count=4;
+					TRACE(3,"[%s]uevt = %d  old_playback_vol = %d", __func__, uevt, old_playback_vol);
+				} else if(uevt==USB_AUDIO_HID_VOL_DOWN) {
+					old_playback_vol = new_playback_vol;
+					usb_volume_key_trigger_flag=2;
+					TRACE(3,"[%s]uevt = %d  old_playback_vol = %d", __func__, uevt, old_playback_vol);
+				}
+				//end add
                 // The key event has been processed
                 return 0;
             }
@@ -6271,12 +6365,17 @@ void usb_audio_eq_loop(void)
 {
 #ifdef ANC_APP
     anc_status = anc_usb_app_get_status();
-    if(anc_status_record != anc_status&&eq_opened == 1)
+    //anc_status = app_get_anc_mode();//m by cai
+	static uint8_t ANC_status = 0xff;//add by cai
+	ANC_status = app_get_anc_status();//add by cai
+	TRACE(4,"*********%s: ANC_status=%d, anc_status_record=%d, eq_opened=%d", __func__, ANC_status, anc_status_record,eq_opened);
+	
+    if(anc_status_record != ANC_status&&eq_opened == 1)
     {
-        anc_status_record = anc_status;
-        TRACE(2,"[%s]anc_status = %d", __func__, anc_status);
+        anc_status_record = ANC_status;
+        TRACE(2,"[%s]anc_status = %d", __func__, ANC_status);
 #ifdef __SW_IIR_EQ_PROCESS__
-        usb_audio_set_eq(AUDIO_EQ_TYPE_SW_IIR,usb_audio_get_eq_index(AUDIO_EQ_TYPE_SW_IIR,anc_status));
+        usb_audio_set_eq(AUDIO_EQ_TYPE_SW_IIR,usb_audio_get_eq_index(AUDIO_EQ_TYPE_SW_IIR,app_get_anc_status()));
 #endif
 
 #ifdef __HW_FIR_EQ_PROCESS__
@@ -6296,6 +6395,7 @@ void usb_audio_eq_loop(void)
 
 void usb_audio_app_loop(void)
 {
+	TRACE(0,"***%s", __func__);
     usb_audio_cmd_handler(NULL);
 
     usb_audio_eq_loop();

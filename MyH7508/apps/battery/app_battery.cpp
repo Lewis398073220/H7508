@@ -258,6 +258,7 @@ void app_battery_irqhandler(uint16_t irq_val, HAL_GPADC_MV_T volt)
 		if(battery_level_init==0)
 		{
 			app_battery_measure.currlevel = level+1;
+			TRACE(2,"***%s: app_battery_measure.currlevel=%d",__func__,app_battery_measure.currlevel);
 			battery_level_init=1;
 		}
 #endif
@@ -613,6 +614,7 @@ int app_battery_get_info(APP_BATTERY_MV_T *currvolt, uint8_t *currlevel, enum AP
 #else
         *currlevel = app_battery_measure.currlevel;
 #endif
+		TRACE(2,"***%s: *currlevel=%d",__func__,*currlevel);
     }
 
     if (status)
