@@ -1210,25 +1210,12 @@ osTimerDef(QUICK_AWARENESS_TIMER, quick_awareness_swtimer_handler);// define tim
 #define QUICK_AWARENESS_SWTIMER_IN_MS	(17000)
 
 static void quick_awareness_swtimer_handler(void const *param)
-{
-#ifdef BT_USB_AUDIO_DUAL_MODE
-	if(hal_usb_configured()) {
-		usb_audio_set_volume_for_quick_awareness(false, 3 + 17);//m by cai for volume indepent
-		app_monitor_moment(false);
-	} else{
-		HFCALL_MACHINE_ENUM hfcall_machine = app_get_hfcall_machine();
-		if(hfcall_machine == HFCALL_MACHINE_CURRENT_IDLE_ANOTHER_IDLE){ 
-			app_bt_stream_volumeset(app_bt_stream_a2dpvolume_get_user()+17);//for volume independent
-			app_monitor_moment(false);
-		}
-	}
-#else	
+{	
 	HFCALL_MACHINE_ENUM hfcall_machine = app_get_hfcall_machine();
 	if(hfcall_machine == HFCALL_MACHINE_CURRENT_IDLE_ANOTHER_IDLE){ 
 		app_bt_stream_volumeset(app_bt_stream_a2dpvolume_get_user()+17);//for volume independent
 		app_monitor_moment(false);			
 	}
-#endif
 }
 
 void app_quick_awareness_swtimer_start(void)

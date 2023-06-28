@@ -1639,14 +1639,84 @@ bool app_usbaudio_mode_on(void)
 void app_usb_key(APP_KEY_STATUS *status, void *param)
 {
     TRACE(3,"%s %d,%d",__func__, status->code, status->event);
-
+	usb_audio_app_key((HAL_KEY_CODE_T)status->code, (HAL_KEY_EVENT_T)status->event);//add by cai
 }
 
+/** add by cai **/
+void app_usb_ANC_key(APP_KEY_STATUS *status, void *param)
+{
+	app_anc_Key_Pro();
+	usb_audio_eq_loop();//add by cai
+}
+
+osTimerId usb_quick_awareness_sw_timer = NULL;
+static void usb_quick_awareness_swtimer_handler(void const *param);
+osTimerDef(USB_QUICK_AWARENESS_TIMER, usb_quick_awareness_swtimer_handler);// define timers
+#define USB_QUICK_AWARENESS_SWTIMER_IN_MS	(17000)
+
+static void usb_quick_awareness_swtimer_handler(void const *param)
+{
+	usb_audio_set_volume_for_quick_awareness(false, 3 + 17);//m by cai for volume indepent
+	app_monitor_moment(false);
+}
+
+void usb_app_quick_awareness_swtimer_start(void)
+{
+	if(usb_quick_awareness_sw_timer == NULL)
+		usb_quick_awareness_sw_timer = osTimerCreate(osTimer(USB_QUICK_AWARENESS_TIMER), osTimerOnce, NULL);
+	
+	osTimerStart(usb_quick_awareness_sw_timer,USB_QUICK_AWARENESS_SWTIMER_IN_MS);
+}
+
+void usb_app_quick_awareness_swtimer_stop(void)
+{
+	if(usb_quick_awareness_sw_timer == NULL)
+		return;
+	
+	osTimerStop(usb_quick_awareness_sw_timer);
+}
+
+void app_usb_Cover_key(APP_KEY_STATUS *status, void *param)
+{
+	switch(status->event)
+	{
+		case APP_KEY_EVENT_LONGLONGPRESS:
+			usb_audio_set_volume_for_quick_awareness(true, 3 + 17);//m by cai for volume indepent
+			app_monitor_moment(true);
+			usb_app_quick_awareness_swtimer_start();//add by cai for exit quick Awareness after 15s	
+		break;
+
+		case  APP_KEY_EVENT_UP_AFTER_LONGPRESS:
+			usb_app_quick_awareness_swtimer_stop();//add by cai for exit quick Awareness after 15s
+			app_monitor_moment(false);
+			usb_audio_set_volume_for_quick_awareness(false, 3 + 17);//m by cai for volume indepent
+		break;
+		
+		default:
+			TRACE(2,"%s: unregister down key event=%x",__func__,status->event);
+		break;
+	}
+}
+/** end add **/
+
+#if 1
+const APP_KEY_HANDLE  app_usb_handle_cfg[] = {//m by cai
+    {{APP_KEY_CODE_FN1,APP_KEY_EVENT_UP},"USB HID VOLUMEUP key",app_usb_key, NULL},
+	{{APP_KEY_CODE_FN1,APP_KEY_EVENT_REPEAT},"USB HID VOLUMEDOWN key",app_usb_key, NULL},
+	{{APP_KEY_CODE_PWR,APP_KEY_EVENT_DOUBLECLICK},"USB HID PWR DOUBLECLICK key",app_usb_key, NULL},
+	{{APP_KEY_CODE_PWR,APP_KEY_EVENT_TRIPLECLICK},"USB HID PWR TRIPLECLICK key",app_usb_key, NULL},
+	{{HAL_KEY_CODE_FN5,APP_KEY_EVENT_CLICK},"bt anc key",app_usb_ANC_key, NULL},
+	{{HAL_KEY_CODE_FN6,APP_KEY_EVENT_LONGLONGPRESS},"bt quick monitor",app_usb_Cover_key, NULL},
+	{{HAL_KEY_CODE_FN6,APP_KEY_EVENT_UP_AFTER_LONGPRESS},"bt quick monitor",app_usb_Cover_key, NULL},
+	{{HAL_KEY_CODE_FN6,APP_KEY_EVENT_DOUBLECLICK},"USB HID PWR CLICK key",app_usb_key, NULL},
+};
+#else//for debug
 const APP_KEY_HANDLE  app_usb_handle_cfg[] = {
     {{APP_KEY_CODE_FN1,APP_KEY_EVENT_UP},"USB HID FN1 UP key",app_usb_key, NULL},
     {{APP_KEY_CODE_FN2,APP_KEY_EVENT_UP},"USB HID FN2 UP key",app_usb_key, NULL},
     {{APP_KEY_CODE_PWR,APP_KEY_EVENT_UP},"USB HID PWR UP key",app_usb_key, NULL},
 };
+#endif
 
 void app_usb_key_init(void)
 {
@@ -1894,6 +1964,7 @@ extern int rpc_service_setup(void);
 #endif
 #if defined(BT_USB_AUDIO_DUAL_MODE)
                 usb_plugin = 1;
+				need_check_key = false;//add by cai	for open usb audio
 #elif defined(BTUSB_AUDIO_MODE)
                 goto exit;
 #else
@@ -2209,7 +2280,7 @@ extern int rpc_service_setup(void);
                 default:
                     //app_status_indication_set(APP_STATUS_INDICATION_PAGESCAN);
 #if defined( __BTIF_EARPHONE__) && defined(__BTIF_BT_RECONNECT__) && !defined(IBRT)
-                    app_bt_profile_connect_manager_opening_reconnect();
+                    //app_bt_profile_connect_manager_opening_reconnect();
 #endif
 #ifdef __THIRDPARTY
                     app_thirdparty_specific_lib_event_handle(THIRDPARTY_FUNC_NO2,THIRDPARTY_BT_CONNECTABLE);
@@ -2265,6 +2336,7 @@ exit:
     if(usb_plugin)
     {
         btusb_switch(BTUSB_MODE_USB);
+		app_usb_key_init();//add by cai
     }
     else
     {
