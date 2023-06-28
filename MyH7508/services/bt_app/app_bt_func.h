@@ -298,6 +298,8 @@ int app_bt_HF_EnableSniffMode(hf_chan_handle_t Chan, BOOL Enable);
 int app_bt_HF_SetMasterRole(hf_chan_handle_t Chan, BOOL Flag);
 
 void app_bt_accessible_manager_process(const btif_event_t *Event);
+BOOL app_bt_profile_connect_reconnecting(void);//add by pang
+
 void app_bt_role_manager_process(const btif_event_t* Event);
 void app_bt_sniff_manager_process(const btif_event_t *Event);
 //void app_bt_golbal_handle_hook(const btif_event_t *Event);

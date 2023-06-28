@@ -108,7 +108,11 @@ extern "C"
 #include "app_bt_stream.h"
 #include "app.h"
 #include "bt_drv_reg_op.h"
+
+bool lostconncection_to_pairing=0;
 static bool tx_pwr_for_page_flag=1;
+bool power_on_open_reconnect_flag=0;
+
 extern uint8_t app_poweroff_flag;
 extern bool factory_reset_flag;
 
@@ -138,6 +142,8 @@ uint8_t * app_dev_name_get(void)
 {
 	return dev_name_user[app_cur_connect_devid_get()];
 }
+static void reconnect_timeout_set(uint8_t rect);
+static void reconnect_timeout_stop(void);
 /** end add **/
 
 extern struct BT_DEVICE_T  app_bt_device;
@@ -756,11 +762,31 @@ void app_bt_accessible_manager_process(const btif_event_t *Event)
         }
         if (record2_avalible){
             if (opening_reconnect_cnf_cnt<2){
-                return;
+                //return;
             }
-        }
+        } 
+		/** add by pang **/
+		return;
+		/** end add **/
     }
+    /** add by pang **/
+	if(app_bt_profile_connect_reconnecting())
+	    return;
+	/** end add **/
 #endif
+/** add by pang **/
+	switch (etype){
+		case BTIF_BTEVENT_LINK_DISCONNECT:
+		    if((0x08==btif_me_get_remote_device_disc_reason_saved(btif_me_get_callback_event_rem_dev( Event)))&&
+				(0x08==btif_me_get_remote_device_disc_reason(btif_me_get_callback_event_rem_dev( Event)))&&
+				(0==btif_me_get_activeCons())){
+				return;
+			}
+		break;
+		default: 
+		break;
+	}	
+/** end add **/
     switch (etype) {
         case BTIF_BTEVENT_ENCRYPTION_CHANGE:
             TRACE(1,"BTIF_BTEVENT_ENCRYPTION_CHANGE activeCons:%d",btif_me_get_activeCons());
@@ -1962,14 +1988,31 @@ static int app_bt_handle_process(APP_MESSAGE_BODY *msg_body)
             app_bt_accessmode_set(msg_body->message_Param0);
             if (msg_body->message_Param0 == BTIF_BAM_GENERAL_ACCESSIBLE &&
                 old_access_mode != BTIF_BAM_GENERAL_ACCESSIBLE){
+#if 0                	                       
 #ifndef FPGA
                 app_status_indication_set(APP_STATUS_INDICATION_BOTHSCAN);
 #ifdef MEDIA_PLAYER_SUPPORT
                 app_voice_report(APP_STATUS_INDICATION_BOTHSCAN, 0);
 #endif
-                //app_start_10_second_timer(APP_PAIR_TIMER_ID);
-				app_start_10_second_timer(APP_POWEROFF_TIMER_ID);//add by cai
+                app_start_10_second_timer(APP_PAIR_TIMER_ID);
 #endif
+            	}
+#else // m by pang
+				if(app_poweroff_flag)
+					return 0;
+
+				TRACE(5,"***%s lostconncection_to_pairing=%d", __func__,lostconncection_to_pairing);
+			 	if((lostconncection_to_pairing==0) && (APP_STATUS_INDICATION_BOTHSCAN != app_status_indication_get())){					
+					lostconncection_to_pairing=1;								   
+#ifndef FPGA
+					app_status_indication_set(APP_STATUS_INDICATION_BOTHSCAN);
+#ifdef MEDIA_PLAYER_SUPPORT
+					app_voice_report(APP_STATUS_INDICATION_BOTHSCAN, 0);
+#endif
+					app_start_10_second_timer(APP_POWEROFF_TIMER_ID);
+#endif
+				}
+#endif				
             }else{
 #ifndef FPGA
                //app_status_indication_set(APP_STATUS_INDICATION_PAGESCAN);//close by pang
@@ -2135,6 +2178,7 @@ void app_bt_reset_reconnect_timer(bt_bdaddr_t *pBdAddr)
         BTIF_BT_DEFAULT_PAGE_TIMEOUT_IN_MS+APP_BT_PROFILE_RECONNECT_RETRY_INTERVAL_MS);
 }
 
+static void app_bt_update_connectable_mode_after_connection_management(void);//add by pang
 static void app_bt_profile_reconnect_handler(void const *param)
 {
 #if !defined(IBRT)
@@ -2145,7 +2189,7 @@ static void app_bt_profile_reconnect_handler(void const *param)
     {
         if (bt_profile_manager_p->reconnect_cnt < APP_BT_PROFILE_OPENNING_RECONNECT_RETRY_LIMIT_CNT)
         {
-            bt_profile_manager_p->reconnect_cnt++;
+            //bt_profile_manager_p->reconnect_cnt++;//c by pang
         }
         TRACE(1,"Former link is not down yet, reset the timer %s.", __FUNCTION__);
         osTimerStart(bt_profile_manager_p->connect_timer,
@@ -2304,6 +2348,19 @@ BOOL app_bt_profile_connect_openreconnecting(void *ptr)
     return nRet;
 }
 
+/** add by pang **/
+BOOL app_bt_profile_connect_reconnecting(void)
+{
+   uint8_t devId;
+
+    for (devId=0;devId<BT_DEVICE_NUM;devId++){
+        if(bt_profile_manager[devId].reconnect_mode == bt_profile_reconnect_reconnecting)
+        	return true;
+    }
+
+    return false;
+}
+/** end add **/
 bool app_bt_is_in_reconnecting(void)
 {
     uint8_t devId;
@@ -2465,7 +2522,8 @@ void app_bt_profile_connect_manager_opening_reconnect(void)
 
         }
 #ifdef __BT_ONE_BRING_TWO__ //open by cai
-        if(ret > 1){
+        //if(ret > 1){
+		if((ret > 1) && app_get_multipoint_flag()){ //m by pang
             TRACE(0,"!!!need reconnect second device\n");
             bt_profile_manager[BT_DEVICE_ID_2].reconnect_mode = bt_profile_reconnect_openreconnecting;
             bt_profile_manager[BT_DEVICE_ID_2].reconnect_cnt = 0;
@@ -2497,7 +2555,10 @@ void app_bt_profile_connect_manager_opening_reconnect(void)
 #endif
         }
 #endif
-		/** add by pang **/
+/** add by pang **/
+		if(0==power_on_open_reconnect_flag){
+			reconnect_timeout_set(0);
+		}		
 		app_status_indication_set(APP_STATUS_INDICATION_PAGESCAN);
 		/** end add **/
     }
@@ -2514,6 +2575,7 @@ void app_bt_profile_connect_manager_opening_reconnect(void)
 #endif
 
     }
+	power_on_open_reconnect_flag=1;//add by pang
     osapi_unlock_stack();
 }
 
@@ -2650,6 +2712,8 @@ static void app_bt_update_connectable_mode_after_connection_management(void)
 #else //m by pang				
 	if (isEnterConnetableOnlyState)
 	{	
+		if(app_poweroff_flag || factory_reset_flag)
+	   		return;
 		if(app_get_multipoint_flag()){   
 	    	if((bt_profile_manager[0].has_connected) && (bt_profile_manager[1].has_connected)){
 				app_bt_accessmode_set(BTIF_BAM_NOT_ACCESSIBLE);
@@ -3013,6 +3077,7 @@ void app_bt_profile_connect_manager_hf(enum BT_DEVICE_ID_T id, hf_chan_handle_t 
 #ifndef FPGA
                 nv_record_touch_cause_flush();
 #endif
+				lostconncection_to_pairing=0;//add by pang
                 bt_profile_manager[id].hfp_connect = bt_profile_connect_status_success;
                 bt_profile_manager[id].saved_reconnect_mode =bt_profile_reconnect_null;
                 bt_profile_manager[id].reconnect_cnt = 0;
@@ -3076,6 +3141,7 @@ void app_bt_profile_connect_manager_hf(enum BT_DEVICE_ID_T id, hf_chan_handle_t 
                         app_bt_accessmode_set(BTIF_BAM_CONNECTABLE_ONLY);
                         profile_reconnect_enable = true;
                     }else{
+                        reconnect_timeout_stop();//add by pang
                         app_bt_restore_reconnecting_idle_mode(id);
                         // bt_profile_manager[id].reconnect_mode = bt_profile_reconnect_null;
                     }
@@ -3087,12 +3153,12 @@ void app_bt_profile_connect_manager_hf(enum BT_DEVICE_ID_T id, hf_chan_handle_t 
                 }
 #if !defined(IBRT)
 #if defined(ENHANCED_STACK)
-                else if ((ctx->disc_reason == 0x8)||
+                else if (((ctx->disc_reason == 0x8)||
                           (ctx->disc_reason_saved == 0x8) ||
                           (ctx->disc_reason == 0x4)||
                           (ctx->disc_reason_saved == 0x4)||
                           (ctx->disc_reason == 0x22)||
-                          (ctx->disc_reason_saved == 0x22))
+                          (ctx->disc_reason_saved == 0x22))&&(factory_reset_flag==0))//m by pang        &&(factory_reset_flag==0)
 #else
                     else if ((ctx->disc_reason == 0x8)||
                           (ctx->disc_reason_saved == 0x8) ||
@@ -3438,6 +3504,11 @@ void app_bt_profile_connect_manager_a2dp(enum BT_DEVICE_ID_T id, a2dp_stream_t *
                     TRACE(0,"!!!a2dp has opened   force return ");
                     return;
                 }
+				
+				/** add by pang **/ 
+				lostconncection_to_pairing=0;
+				/** end add **/
+			
                 bt_profile_manager[id].a2dp_connect = bt_profile_connect_status_success;
                 bt_profile_manager[id].reconnect_cnt = 0;
                 bt_profile_manager[id].stream = app_bt_device.a2dp_connected_stream[id];
@@ -3535,6 +3606,7 @@ void app_bt_profile_connect_manager_a2dp(enum BT_DEVICE_ID_T id, a2dp_stream_t *
                        app_bt_accessmode_set(BTIF_BAM_CONNECTABLE_ONLY);
                        profile_reconnect_enable = true;
                    }else{
+                   		reconnect_timeout_stop();//add by pang
                        app_bt_restore_reconnecting_idle_mode(id);
                        // bt_profile_manager[id].reconnect_mode = bt_profile_reconnect_null;
                    }
@@ -5239,6 +5311,87 @@ int8_t app_tile_get_ble_rssi(void)
 #endif
 
 /** add by pang **/
+void app_bt_reconnect_idle_mode(void)
+{
+	bt_profile_manager[BT_DEVICE_ID_1].reconnect_mode = bt_profile_reconnect_null;
+	bt_profile_manager[BT_DEVICE_ID_1].reconnect_cnt = 0;
+#ifdef __BT_ONE_BRING_TWO__	
+	bt_profile_manager[BT_DEVICE_ID_2].reconnect_mode = bt_profile_reconnect_null;
+	bt_profile_manager[BT_DEVICE_ID_2].reconnect_cnt = 0;
+#endif
+}
+
+osTimerId reconnect_timeout_timer = NULL;
+static void reconnect_timeout_handler(void const *param);
+osTimerDef(RECONNECT_TIMEOUT_TIMER, reconnect_timeout_handler);// define timers
+uint8_t reconnect_type=0;
+uint8_t reconnect_detect_num=0;
+#define OPENRECONNECT_TIMEOUT_IN_MS	(60000)//(32000) //m by cai
+#define RECONNECT_TIMEOUT_IN_MS	(12000)//10000
+
+static void reconnect_timeout_set(uint8_t rect)
+{
+    if (reconnect_timeout_timer == NULL)
+       reconnect_timeout_timer= osTimerCreate(osTimer(RECONNECT_TIMEOUT_TIMER), osTimerOnce, NULL);
+
+    reconnect_type=rect;
+	
+	if(rect)
+    	osTimerStart(reconnect_timeout_timer,RECONNECT_TIMEOUT_IN_MS);
+	else
+		osTimerStart(reconnect_timeout_timer,OPENRECONNECT_TIMEOUT_IN_MS);
+     
+	//if(!rect)
+		//osTimerStart(reconnect_timeout_timer,OPENRECONNECT_TIMEOUT_IN_MS);
+}
+
+static void reconnect_timeout_stop(void)
+{
+    if (reconnect_timeout_timer == NULL)
+       return;
+	
+	reconnect_detect_num=0;
+	osTimerStop(reconnect_timeout_timer);
+}
+
+static void reconnect_timeout_handler(void const *param)
+{
+#ifdef __BT_ONE_BRING_TWO__
+    static bool oenreconnect_flag=0;
+	TRACE(1,"%s",__func__); 
+	if(reconnect_type){
+		reconnect_detect_num++;
+		if(reconnect_detect_num>1){	
+			if(bt_profile_manager[BT_DEVICE_ID_1].reconnect_mode == bt_profile_reconnect_reconnecting){
+				bt_profile_manager[BT_DEVICE_ID_1].reconnect_mode = bt_profile_reconnect_null;
+			}
+			if(bt_profile_manager[BT_DEVICE_ID_2].reconnect_mode == bt_profile_reconnect_reconnecting){
+				bt_profile_manager[BT_DEVICE_ID_2].reconnect_mode = bt_profile_reconnect_null;
+			}
+			app_bt_update_connectable_mode_after_connection_management();
+		}
+		else{
+			reconnect_timeout_set(1);
+		}
+	}
+	else{
+		if(bt_profile_manager[BT_DEVICE_ID_1].reconnect_mode == bt_profile_reconnect_openreconnecting){
+			bt_profile_manager[BT_DEVICE_ID_1].reconnect_mode = bt_profile_reconnect_null;
+			oenreconnect_flag=1;
+		}
+		if(bt_profile_manager[BT_DEVICE_ID_2].reconnect_mode == bt_profile_reconnect_openreconnecting){
+			bt_profile_manager[BT_DEVICE_ID_2].reconnect_mode = bt_profile_reconnect_null;
+			oenreconnect_flag=1;
+		}
+
+    	if(oenreconnect_flag){
+			app_bt_update_connectable_mode_after_connection_management();			
+    	}	
+	}
+	//osTimerDelete(reconnect_timeout_timer);
+#endif
+}
+
 void app_get_curr_remDev_Mac(unsigned char* mobile_addr)
 {
     uint8_t num_of_connected_dev=0;
