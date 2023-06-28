@@ -1416,8 +1416,10 @@ void Get_ChargeBox_Battery_Level_Value(void)
 	Philips_Send_Notify(head, (uint32_t)valueLen);
 }
 
-void Notification_Battery_Level_Change()
+void Notification_Battery_Level_Change(void)
 {
+	TRACE(1,"***%s", __func__);
+
 	uint8_t valueLen = 9;
 	uint8_t head[9] = {0xff,0x01,0x00,0x04,0x71,0x80,0xe4,0x00,0x00};
 	

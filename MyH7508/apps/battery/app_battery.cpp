@@ -48,8 +48,10 @@ bool battery_pd_poweroff=0;
 extern "C" bool app_usbaudio_mode_on(void);
 #endif
 
-#define APP_BATTERY_TRACE(s,...)
-// TRACE(s, ##__VA_ARGS__)
+#define APP_BATTERY_TRACE(s,...) TRACE(s, ##__VA_ARGS__)
+
+static APP_BATTERY_MV_T batterylevel[]={4030, 3920, 3820, 3740, 3670, 3620, 3570, 3510, 3480};//add by pang
+static bool charge_full_flag = 0;//add by pang
 
 #ifndef APP_BATTERY_MIN_MV
 #define APP_BATTERY_MIN_MV (3200)
@@ -64,11 +66,11 @@ extern "C" bool app_usbaudio_mode_on(void);
 #endif
 
 #ifndef APP_BATTERY_CHARGE_TIMEOUT_MIN
-#define APP_BATTERY_CHARGE_TIMEOUT_MIN (90)
+#define APP_BATTERY_CHARGE_TIMEOUT_MIN (210)
 #endif
 
 #ifndef APP_BATTERY_CHARGE_OFFSET_MV
-#define APP_BATTERY_CHARGE_OFFSET_MV (20)
+#define APP_BATTERY_CHARGE_OFFSET_MV (50)//20
 #endif
 
 #ifndef CHARGER_PLUGINOUT_RESET
@@ -186,6 +188,7 @@ void app_battery_irqhandler(uint16_t irq_val, HAL_GPADC_MV_T volt)
     uint8_t i;
     uint32_t meanBattVolt = 0;
     HAL_GPADC_MV_T vbat = volt;
+	static uint8_t battery_level_init = 0;//add by cai
     APP_BATTERY_TRACE(2,"%s %d",__func__, vbat);
     if (vbat == HAL_GPADC_BAD_VALUE)
     {
@@ -229,7 +232,15 @@ void app_battery_irqhandler(uint16_t irq_val, HAL_GPADC_MV_T volt)
     {
         int8_t level = 0;
         meanBattVolt = vbat<<2;
+#if 0 
         level = (meanBattVolt-APP_BATTERY_PD_MV)/APP_BATTERY_MV_BASE;
+#else
+		for(i=0;i<9;i++){
+			if(meanBattVolt>=batterylevel[i])
+				break;
+		}
+		level=9-i;
+#endif
 
         if (level<APP_BATTERY_LEVEL_MIN)
             level = APP_BATTERY_LEVEL_MIN;
@@ -241,7 +252,15 @@ void app_battery_irqhandler(uint16_t irq_val, HAL_GPADC_MV_T volt)
         APP_BATTERY_INFO_T* pBatteryInfo = (APP_BATTERY_INFO_T*)&app_battery_measure.currentBatteryInfo;
         pBatteryInfo->batteryLevel = level;
 #else
-        app_battery_measure.currlevel = level;
+#if 0//m by cai
+        app_battery_measure.currlevel = level+1;
+#else
+		if(battery_level_init==0)
+		{
+			app_battery_measure.currlevel = level+1;
+			battery_level_init=1;
+		}
+#endif
 #endif
     }
 }
@@ -292,11 +311,29 @@ static void app_battery_event_process(enum APP_BATTERY_STATUS_T status, APP_BATT
 int app_battery_handle_process_normal(uint32_t status,  union APP_BATTERY_MSG_PRAMS prams)
 {
     int8_t level = 0;
-
+/** add by pang **/
+	int8_t i = 0;
+	static uint8_t lowbat_warning_time=0;
+	static int8_t level_count=0;
+/** end add **/
     switch (status)
     {
         case APP_BATTERY_STATUS_UNDERVOLT:
             TRACE(1,"UNDERVOLT:%d", prams.volt);
+			app_status_indication_set(APP_STATUS_INDICATION_CHARGENEED);
+			app_status_indication_recover(); //?????????????¨¢????
+#if 1 //m by pang
+			//5?????¨¢?????????? add by cai
+			TRACE(2,"********batterylow: %d", lowbat_warning_time);
+			if((lowbat_warning_time == 0) || (lowbat_warning_time == 76)){
+#ifdef MEDIA_PLAYER_SUPPORT
+				app_voice_report(APP_STATUS_INDICATION_CHARGENEED, 0);
+#endif
+				lowbat_warning_time = 0;
+			}
+			lowbat_warning_time++;
+			//end add
+#else			
             app_status_indication_set(APP_STATUS_INDICATION_CHARGENEED);
 #ifdef MEDIA_PLAYER_SUPPORT
 #if defined(IBRT)
@@ -305,10 +342,19 @@ int app_battery_handle_process_normal(uint32_t status,  union APP_BATTERY_MSG_PR
             app_voice_report(APP_STATUS_INDICATION_CHARGENEED, 0);
 #endif
 #endif
+#endif
         case APP_BATTERY_STATUS_NORMAL:
         case APP_BATTERY_STATUS_OVERVOLT:
             app_battery_measure.currvolt = prams.volt;
+		#if 0
             level = (prams.volt-APP_BATTERY_PD_MV)/APP_BATTERY_MV_BASE;
+		#else //m by pang
+		    for(i = 0; i < 9; i++){
+			if(app_battery_measure.currvolt >= batterylevel[i])
+				break;
+		    }
+			level=9-i;	
+		#endif
 
             if (level<APP_BATTERY_LEVEL_MIN)
                 level = APP_BATTERY_LEVEL_MIN;
@@ -327,17 +373,37 @@ int app_battery_handle_process_normal(uint32_t status,  union APP_BATTERY_MSG_PR
                 level /= 10;
             }
 #else
-            app_battery_measure.currlevel = level;
+			TRACE(3,"***%s: volt=%d, level=%d", __func__, prams.volt, level);
+			TRACE(1,"***currlevel:%d", app_battery_measure.currlevel);//add by cai
+			//app_battery_measure.currlevel = level;//m by cai
 #endif
+			#if 0
             app_status_battery_report(level);
+			#else //m by pang
+			if(app_battery_measure.currlevel-1 > level)
+				level_count++;
+			else
+				level_count = 0;
+
+			if(level_count > 3){
+				level_count = 0;
+				app_battery_measure.currlevel = level+1;
+				//#if defined(__HAYLOU_APP__)
+				Notification_Battery_Level_Change();//notify app while battery level change
+				//#endif
+			}
+			app_status_battery_report(app_battery_measure.currlevel-1);//m by cai
+			
+			#endif
+			app_10_second_timer_check();
             break;
         case APP_BATTERY_STATUS_PDVOLT:
-#ifndef BT_USB_AUDIO_DUAL_MODE
+//#ifndef BT_USB_AUDIO_DUAL_MODE //m by cai for open usb audio
             TRACE(1,"PDVOLT-->POWEROFF:%d", prams.volt);
 			battery_pd_poweroff=1;//add by pang
             osTimerStop(app_battery_timer);
             app_shutdown();
-#endif
+//#endif
             break;
         case APP_BATTERY_STATUS_CHARGING:
             TRACE(1,"CHARGING-->APP_BATTERY_CHARGER :%d", prams.charger);
@@ -366,13 +432,49 @@ int app_battery_handle_process_normal(uint32_t status,  union APP_BATTERY_MSG_PR
 
 int app_battery_handle_process_charging(uint32_t status,  union APP_BATTERY_MSG_PRAMS prams)
 {
+	//add by cai
+	int8_t level = 0;
+	int8_t i = 0;
+	static int8_t level_count=0;
+	//end add
+	
     switch (status)
     {
         case APP_BATTERY_STATUS_OVERVOLT:
         case APP_BATTERY_STATUS_NORMAL:
         case APP_BATTERY_STATUS_UNDERVOLT:
             app_battery_measure.currvolt = prams.volt;
+#if 0//m by cai
             app_status_battery_report(prams.volt);
+#else
+			for(i = 0;i < 9;i++){
+				if(app_battery_measure.currvolt>=batterylevel[i])
+					break;
+			}
+			level=9-i;
+			
+			if (level<APP_BATTERY_LEVEL_MIN)
+				level = APP_BATTERY_LEVEL_MIN;
+			if (level>APP_BATTERY_LEVEL_MAX)
+				level = APP_BATTERY_LEVEL_MAX;
+
+			TRACE(3,"%s:volt=%d,level=%d",__func__, prams.volt,level);
+			TRACE(1,"***currlevel:%d", app_battery_measure.currlevel);//add by cai
+			
+			if(app_battery_measure.currlevel-1 < level)
+				level_count++;
+			else
+				level_count=0;
+
+			if(level_count>3){
+				level_count=0;
+				app_battery_measure.currlevel = level+1;
+				//#if defined(__HAYLOU_APP__)
+				Notification_Battery_Level_Change();//notify app while battery level change
+				//#endif
+			}
+			app_status_battery_report(app_battery_measure.currlevel-1);
+#endif
             break;
         case APP_BATTERY_STATUS_CHARGING:
             TRACE(1,"CHARGING:%d", prams.charger);
@@ -413,10 +515,18 @@ int app_battery_handle_process_charging(uint32_t status,  union APP_BATTERY_MSG_
 #ifdef MEDIA_PLAYER_SUPPORT
 #if defined(BT_USB_AUDIO_DUAL_MODE) || defined(IBRT)
 #else
-            app_voice_report(APP_STATUS_INDICATION_FULLCHARGE, 0);
+            //app_voice_report(APP_STATUS_INDICATION_FULLCHARGE, 0);
 #endif
 #endif
+/** add by pang **/
+			charge_full_flag=1;
+
+			if (app_battery_ext_charger_enable_cfg.pin != HAL_IOMUX_PIN_NUM)
+			{
+				hal_gpio_pin_clr((enum HAL_GPIO_PIN_T)app_battery_ext_charger_enable_cfg.pin);
+			}
         }
+/** end add **/
     }
 
     app_battery_timer_start(APP_BATTERY_MEASURE_PERIODIC_CHARGING);
@@ -438,6 +548,8 @@ static int app_battery_handle_process(APP_MESSAGE_BODY *msg_body)
         generatedSeed ^= (((uint32_t)(bt_addr[index])) << (hal_sys_timer_get()&0xF));
     }
     srand(generatedSeed);
+
+	APP_BATTERY_TRACE(3,"***%s: %d  %d",__func__, status, app_battery_measure.status);//add by cai
 
     if (status == APP_BATTERY_STATUS_PLUGINOUT){
         app_battery_pluginout_debounce_start();
@@ -554,8 +666,8 @@ int app_battery_open(void)
 
     if (app_battery_ext_charger_enable_cfg.pin != HAL_IOMUX_PIN_NUM)
     {
-        hal_iomux_init((struct HAL_IOMUX_PIN_FUNCTION_MAP *)&app_battery_ext_charger_detecter_cfg, 1);
-        hal_gpio_pin_set_dir((enum HAL_GPIO_PIN_T)app_battery_ext_charger_detecter_cfg.pin, HAL_GPIO_DIR_OUT, 1);
+        hal_iomux_init((struct HAL_IOMUX_PIN_FUNCTION_MAP *)&app_battery_ext_charger_enable_cfg, 1);//m by pang
+        hal_gpio_pin_set_dir((enum HAL_GPIO_PIN_T)app_battery_ext_charger_enable_cfg.pin, HAL_GPIO_DIR_OUT, 0);
     }
 
     if (app_battery_charger_indication_open() == APP_BATTERY_CHARGER_PLUGIN)
@@ -565,7 +677,7 @@ int app_battery_open(void)
         //pmu_charger_plugin_config();
         if (app_battery_ext_charger_enable_cfg.pin != HAL_IOMUX_PIN_NUM)
         {
-            hal_gpio_pin_set_dir((enum HAL_GPIO_PIN_T)app_battery_ext_charger_detecter_cfg.pin, HAL_GPIO_DIR_OUT, 0);
+            hal_gpio_pin_set_dir((enum HAL_GPIO_PIN_T)app_battery_ext_charger_enable_cfg.pin, HAL_GPIO_DIR_OUT, 1);//m by pang
         }
 
 #if (CHARGER_PLUGINOUT_RESET == 0)
@@ -580,6 +692,11 @@ int app_battery_open(void)
         //pmu_charger_plugout_config();
         nRet = APP_BATTERY_OPEN_MODE_NORMAL;
     }
+
+#if defined(__NTC_DETECT__)
+	//ntc_capture_open();//add by pang
+#endif
+
     return nRet;
 }
 
@@ -606,19 +723,19 @@ int app_battery_close(void)
     return 0;
 }
 
-
+#if 0
 static int32_t app_battery_charger_slope_calc(int32_t t1, int32_t v1, int32_t t2, int32_t v2)
 {
     int32_t slope_1000;
     slope_1000 = (v2-v1)*1000/(t2-t1);
     return slope_1000;
 }
-
+#endif
 static int app_battery_charger_handle_process(void)
 {
     int nRet = 1;
-    int8_t i=0,cnt=0;
-    uint32_t slope_1000 = 0;
+    //int8_t i=0,cnt=0;
+    //uint32_t slope_1000 = 0;
     uint32_t charging_min;
     static uint8_t overvolt_full_charge_cnt = 0;
     static uint8_t ext_pin_full_charge_cnt = 0;
@@ -650,17 +767,19 @@ static int app_battery_charger_handle_process(void)
         }
     }
 
-    if ((app_battery_measure.charger_status.cnt++%APP_BATTERY_CHARGING_EXTPIN_MEASURE_CNT) == 0)
+    if ((app_battery_measure.charger_status.cnt%APP_BATTERY_CHARGING_EXTPIN_MEASURE_CNT) == 0)
     {
         if (app_battery_ext_charger_detecter_cfg.pin != HAL_IOMUX_PIN_NUM)
         {
             if (hal_gpio_pin_get_val((enum HAL_GPIO_PIN_T)app_battery_ext_charger_detecter_cfg.pin))
             {
-                ext_pin_full_charge_cnt++;
+				ext_pin_full_charge_cnt = 0;
+				//ext_pin_full_charge_cnt++;
             }
             else
             {
-                ext_pin_full_charge_cnt = 0;
+				ext_pin_full_charge_cnt++;
+				//ext_pin_full_charge_cnt = 0;
             }
             if (ext_pin_full_charge_cnt>=APP_BATTERY_CHARGING_EXTPIN_DEDOUNCE_CNT)
             {
@@ -670,8 +789,8 @@ static int app_battery_charger_handle_process(void)
             }
         }
     }
-
-    if ((app_battery_measure.charger_status.cnt++%APP_BATTERY_CHARGING_SLOPE_MEASURE_CNT) == 0)
+#if 0
+    if ((app_battery_measure.charger_status.cnt%APP_BATTERY_CHARGING_SLOPE_MEASURE_CNT) == 0)
     {
         if (!app_battery_measure.charger_status.prevolt)
         {
@@ -713,6 +832,8 @@ static int app_battery_charger_handle_process(void)
         }
         app_battery_measure.charger_status.slope_1000_index++;
     }
+#endif
+
 exit:
     return nRet;
 }
@@ -774,7 +895,7 @@ static void app_battery_pluginout_debounce_handler(void const *param)
         {
             if (app_battery_ext_charger_enable_cfg.pin != HAL_IOMUX_PIN_NUM)
             {
-                hal_gpio_pin_set_dir((enum HAL_GPIO_PIN_T)app_battery_ext_charger_detecter_cfg.pin, HAL_GPIO_DIR_OUT, 0);
+                hal_gpio_pin_set_dir((enum HAL_GPIO_PIN_T)app_battery_ext_charger_enable_cfg.pin, HAL_GPIO_DIR_OUT, 1);//m by pang
             }
             app_battery_measure.start_time = hal_sys_timer_get();
         }
@@ -782,7 +903,7 @@ static void app_battery_pluginout_debounce_handler(void const *param)
         {
             if (app_battery_ext_charger_enable_cfg.pin != HAL_IOMUX_PIN_NUM)
             {
-                hal_gpio_pin_set_dir((enum HAL_GPIO_PIN_T)app_battery_ext_charger_detecter_cfg.pin, HAL_GPIO_DIR_OUT, 1);
+                hal_gpio_pin_set_dir((enum HAL_GPIO_PIN_T)app_battery_ext_charger_enable_cfg.pin, HAL_GPIO_DIR_OUT, 0);//m by pang
             }
         }
         app_battery_event_process(APP_BATTERY_STATUS_CHARGING, status_charger);
@@ -810,7 +931,7 @@ int app_battery_charger_indication_open(void)
         osDelay(20);
     }
     while(cnt++<5);
-
+/* //close by pang
     if (app_battery_ext_charger_detecter_cfg.pin != HAL_IOMUX_PIN_NUM)
     {
         if (!hal_gpio_pin_get_val((enum HAL_GPIO_PIN_T)app_battery_ext_charger_detecter_cfg.pin))
@@ -818,7 +939,7 @@ int app_battery_charger_indication_open(void)
             status = APP_BATTERY_CHARGER_PLUGIN;
         }
     }
-
+*/
     pmu_charger_set_irq_handler(app_battery_charger_handler);
 
     return status;
@@ -843,6 +964,51 @@ bool app_battery_is_pdvolt(void)
 {
     return (battery_pd_poweroff);
 }
+
+#if defined(__NTC_DETECT__)
+void ntc_capture_irqhandler(uint16_t irq_val, HAL_GPADC_MV_T volt);
+static void app_ntc_timer_handler(void const *param);
+osTimerDef (APP_NTC, app_ntc_timer_handler);
+static osTimerId app_ntc_timer = NULL;
+
+static void app_ntc_timer_handler(void const *param)
+{
+    hal_gpadc_open(HAL_GPADC_CHAN_2, HAL_GPADC_ATP_ONESHOT, ntc_capture_irqhandler);
+}
+#endif
+
+#if 1 //1.97v reference volt ntcç”µé˜»10k
+#define CHARGE_HIGH_TEMPERATURE         590     // 45C
+#define CHARGE_LOW_TEMPERATURE     		1320    // 0C 
+#define CHARGE_HIGH_TEMPERATURE_RECOVER	530		// 43C
+#define CHARGE_LOW_TEMPERATURE_RECOVER  1270    // 2C
+
+#define DISCHARGE_HIGH_TEMPERATURE 		400//380   	//55C// 60C
+#define DISCHARGE_LOW_TEMPERATURE  		1525//1730 	//-15C//-25C
+#else //ntc 30k ok
+//#define CHARGE_HIGH_TEMPERATURE         380     // 45C
+//#define CHARGE_LOW_TEMPERATURE     		1150    // 0C 
+//#define CHARGE_HIGH_TEMPERATURE_RECOVER	420		// 41C
+//#define CHARGE_LOW_TEMPERATURE_RECOVER  1050    // 4C
+
+//#define DISCHARGE_HIGH_TEMPERATURE 		255   	// 50C
+//#define DISCHARGE_LOW_TEMPERATURE  		1185 	//-10C
+
+//3v reference volt
+#define CHARGE_HIGH_TEMPERATURE         320     // 45C
+#define CHARGE_LOW_TEMPERATURE     		1120    // 0C 
+#define CHARGE_HIGH_TEMPERATURE_RECOVER	370		// 41C
+#define CHARGE_LOW_TEMPERATURE_RECOVER  1040    // 4C
+
+#define DISCHARGE_HIGH_TEMPERATURE 		170   	// 60C
+#define DISCHARGE_LOW_TEMPERATURE  		1350 	//-10C
+#endif
+#define TEMPERATURE_ERROT_COUNT 5
+
+int8_t charge_temperature_error_num=0;
+int8_t charge_temperature_valid_num=0;
+bool charge_protection_flag=0;
+int8_t discharge_temperature_error_num=0;
 /** end add **/
 
 typedef uint16_t NTP_VOLTAGE_MV_T;
@@ -869,7 +1035,7 @@ static struct NTC_CAPTURE_MEASURE_T ntc_capture_measure;
 void ntc_capture_irqhandler(uint16_t irq_val, HAL_GPADC_MV_T volt)
 {
     uint32_t meanVolt = 0;
-    TRACE(3,"%s %d irq:0x%04x",__func__, volt, irq_val);
+    //TRACE(3,"%s %d irq:0x%04x",__func__, volt, irq_val);
 
     if (volt == HAL_GPADC_BAD_VALUE)
     {
@@ -894,25 +1060,105 @@ void ntc_capture_irqhandler(uint16_t irq_val, HAL_GPADC_MV_T volt)
     ntc_capture_measure.temperature = ((int32_t)ntc_capture_measure.currvolt - NTC_CAPTURE_VOLTAGE_REF)/NTC_CAPTURE_TEMPERATURE_STEP + NTC_CAPTURE_TEMPERATURE_REF;
     pmu_ntc_capture_disable();
     TRACE(3,"%s ad:%d temperature:%d",__func__, ntc_capture_measure.currvolt, ntc_capture_measure.temperature);
+
+	/** add by pang **/
+#if defined(__NTC_DETECT__)
+	if(app_battery_is_charging()){
+		discharge_temperature_error_num=0;
+		if((ntc_capture_measure.currvolt<CHARGE_HIGH_TEMPERATURE)||(ntc_capture_measure.currvolt>CHARGE_LOW_TEMPERATURE)){
+			charge_temperature_error_num++;	
+			//charge_temperature_valid_num=0;
+		}
+		else{
+			charge_temperature_error_num=0;
+			//charge_temperature_valid_num++;
+		}
+		
+        //charge over-temperature protection
+		if(charge_temperature_error_num>TEMPERATURE_ERROT_COUNT){
+			charge_temperature_error_num=TEMPERATURE_ERROT_COUNT+1;
+			if (app_battery_ext_charger_enable_cfg.pin != HAL_IOMUX_PIN_NUM)
+			{
+				hal_gpio_pin_clr((enum HAL_GPIO_PIN_T)app_battery_ext_charger_enable_cfg.pin);
+				charge_protection_flag=1;
+				//app_pwm_clear();//disable pwm
+				//app_status_indication_set(APP_STATUS_INDICATION_FULLCHARGE);
+			}			
+		}
+
+		//charge recover
+		if(charge_protection_flag){
+			if((ntc_capture_measure.currvolt<CHARGE_HIGH_TEMPERATURE_RECOVER)||(ntc_capture_measure.currvolt>CHARGE_LOW_TEMPERATURE_RECOVER))
+				charge_temperature_valid_num=0;
+			else
+			    charge_temperature_valid_num++;
+		}
+		else{
+			charge_temperature_valid_num=0;
+		}
+		
+		if(charge_temperature_valid_num>30){
+			charge_temperature_valid_num=30+1;
+			if (app_battery_ext_charger_enable_cfg.pin != HAL_IOMUX_PIN_NUM)
+			{
+			    //if(0==charge_full_flag)
+			    {
+					hal_gpio_pin_set((enum HAL_GPIO_PIN_T)app_battery_ext_charger_enable_cfg.pin);
+					charge_protection_flag=0;
+					app_status_indication_set(APP_STATUS_INDICATION_CHARGING);
+					//apps_pwm_set(RED_PWM_LED, 1); //enable pwm	
+			    }
+			}
+		}
+	}
+	else{
+		charge_temperature_error_num=0;
+		charge_temperature_valid_num=0;
+		if((ntc_capture_measure.currvolt<DISCHARGE_HIGH_TEMPERATURE)||(ntc_capture_measure.currvolt>DISCHARGE_LOW_TEMPERATURE))
+			discharge_temperature_error_num++;	
+		else
+			discharge_temperature_error_num=0;
+
+		if(discharge_temperature_error_num>TEMPERATURE_ERROT_COUNT){
+			discharge_temperature_error_num=TEMPERATURE_ERROT_COUNT+1;
+			
+			osTimerStop(app_battery_timer);
+			osTimerStop(app_ntc_timer);
+            app_shutdown();
+		}
+	}
+#endif
+	/** end add **/
 }
 
 int ntc_capture_open(void)
 {
-
     ntc_capture_measure.currvolt = 0;
     ntc_capture_measure.index = 0;
     ntc_capture_measure.temperature = 0;
     ntc_capture_measure.cb = NULL;
 
-    pmu_ntc_capture_enable();
-    hal_gpadc_open(HAL_GPADC_CHAN_0, HAL_GPADC_ATP_ONESHOT, ntc_capture_irqhandler);
+    //pmu_ntc_capture_enable();
+    //hal_gpadc_open(HAL_GPADC_CHAN_2, HAL_GPADC_ATP_ONESHOT, ntc_capture_irqhandler);
+
+/** add by pang **/
+#if defined(__NTC_DETECT__)
+    if (app_ntc_timer == NULL)
+        app_ntc_timer = osTimerCreate (osTimer(APP_NTC), osTimerPeriodic, NULL);
+
+	 osTimerStop(app_ntc_timer);
+     osTimerStart(app_ntc_timer, 2000);
+
+	 hal_gpio_pin_set((enum HAL_GPIO_PIN_T)cfg_ntc_volt_ctr.pin);
+#endif
+/** end add */
     return 0;
 }
 
 int ntc_capture_start(void)
 {
     pmu_ntc_capture_enable();
-    hal_gpadc_open(HAL_GPADC_CHAN_0, HAL_GPADC_ATP_ONESHOT, ntc_capture_irqhandler);
+    hal_gpadc_open(HAL_GPADC_CHAN_2, HAL_GPADC_ATP_ONESHOT, ntc_capture_irqhandler);
     return 0;
 }
 

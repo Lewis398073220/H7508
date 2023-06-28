@@ -36,6 +36,7 @@ int app_shutdown(void);
 int app_reset(void);
 
 int app_status_battery_report(uint8_t level);
+void app_10_second_timer_check(void);//by pang
 
 int app_voice_report( APP_STATUS_INDICATION_T status,uint8_t device_id);
 int app_voice_report_generic(APP_STATUS_INDICATION_T status, uint8_t device_id, uint8_t isMerging);
