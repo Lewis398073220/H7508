@@ -7015,6 +7015,7 @@ void app_bt_stream_volumeup(void)
             }
             if (btdevice_volume_p->hfp_vol == TGT_VOLUME_LEVEL_15)
             {
+           		app_bt_stream_volumeset(updatedVol);//add by cai
 #ifdef MEDIA_PLAYER_SUPPORT
                 //media_PlayAudio(AUD_ID_BT_WARNING,0);
                 app_voice_report(APP_STATUS_INDICATION_VOLMINMAX,0);//m by cai
@@ -7042,6 +7043,7 @@ void app_bt_stream_volumeup(void)
             }
             if (btdevice_volume_p->a2dp_vol == TGT_VOLUME_LEVEL_15)
             {
+            	app_bt_stream_volumeset(updatedVol+17);//add by cai for volume independent
 #ifdef MEDIA_PLAYER_SUPPORT
                 //media_PlayAudio(AUD_ID_BT_WARNING,0);
 				app_voice_report(APP_STATUS_INDICATION_VOLMINMAX,0);//m by cai
