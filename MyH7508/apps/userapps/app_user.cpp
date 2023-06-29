@@ -24,6 +24,7 @@
 #include "app_battery.h"
 #include "pmu.h"
 #include "hal_bootmode.h"
+#include "analog.h"
 
 enum
 {
@@ -241,6 +242,7 @@ void apps_jack_event_process(void)
 			app_shutdown();//shutdown
 		} else{
 			TRACE(0,"power off->charging!!!");
+			hal_codec_dac_mute(1);//add by cai for pop noise when insert USB
 			jack_3p5_plug_in_flag=1;
 			jack_count=0;
 			hal_sw_bootmode_set(HAL_SW_BOOTMODE_CHARGING_POWEROFF);

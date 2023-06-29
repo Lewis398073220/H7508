@@ -705,7 +705,7 @@ int app_battery_open(void)
 #else
 	#if defined(__DEFINE_DEMO_MODE__)
 		if(app_nvrecord_demo_mode_get()){ //add by pang
-			if (hal_sw_bootmode_get() & HAL_SW_BOOTMODE_CHARGING_POWEROFF){//m by cai
+			if (hal_sw_bootmode_get() & HAL_SW_BOOTMODE_CHARGING_POWEROFF || hal_gpio_pin_get_val((enum HAL_GPIO_PIN_T)cfg_hw_pio_3p5_jack_detecter.pin)){//m by cai
 				nRet = APP_BATTERY_OPEN_MODE_CHARGING;
 			}
 			else if (hal_sw_bootmode_get() & HAL_SW_BOOTMODE_CHARGING_POWERON){

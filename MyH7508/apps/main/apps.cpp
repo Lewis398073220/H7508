@@ -1436,7 +1436,7 @@ void app_key_init(void)
 void app_charging_poweron_key_handler(APP_KEY_STATUS *status, void *param)
 {
 	TRACE(0,"%s ",__func__);
-	if(app_nvrecord_demo_mode_get())//m by cai
+	if(app_nvrecord_demo_mode_get() && !hal_gpio_pin_get_val((enum HAL_GPIO_PIN_T)cfg_hw_pio_3p5_jack_detecter.pin))//m by cai
 	{
 		hal_sw_bootmode_clear(HAL_SW_BOOTMODE_REBOOT);//add by cai
 		hal_sw_bootmode_set(HAL_SW_BOOTMODE_CHARGING_POWERON);
@@ -1743,7 +1743,6 @@ const APP_KEY_HANDLE  app_usb_handle_cfg[] = {//m by cai
 	{{APP_KEY_CODE_FN1,APP_KEY_EVENT_REPEAT},"USB HID VOLUMEDOWN key",app_usb_key, NULL},
 	{{APP_KEY_CODE_PWR,APP_KEY_EVENT_DOUBLECLICK},"USB HID PWR DOUBLECLICK key",app_usb_key, NULL},
 	{{APP_KEY_CODE_PWR,APP_KEY_EVENT_TRIPLECLICK},"USB HID PWR TRIPLECLICK key",app_usb_key, NULL},
-	{{APP_KEY_CODE_PWR,APP_KEY_EVENT_LONGLONGLONGPRESS},"demo mode power on key",app_charging_poweron_key_handler, NULL},
 	{{HAL_KEY_CODE_FN5,APP_KEY_EVENT_CLICK},"bt anc key",app_usb_ANC_key, NULL},
 	{{HAL_KEY_CODE_FN6,APP_KEY_EVENT_LONGLONGPRESS},"bt quick monitor",app_usb_Cover_key, NULL},
 	{{HAL_KEY_CODE_FN6,APP_KEY_EVENT_UP_AFTER_LONGPRESS},"bt quick monitor",app_usb_Cover_key, NULL},
@@ -1998,11 +1997,18 @@ extern int rpc_service_setup(void);
                 TRACE(0,"CHARGING!");
                 app_battery_start();
 
+				while(app_nvrecord_demo_mode_get() && hal_pwrkey_startup_pressed());//add by cai for demo mode
                 app_key_open(false);
                 app_key_init_on_charging();
 				nRet = 0;
 #if defined(__USE_3_5JACK_CTR__)
-				if(hal_gpio_pin_get_val((enum HAL_GPIO_PIN_T)cfg_hw_pio_3p5_jack_detecter.pin)) goto exit;//add by cai
+				if(hal_gpio_pin_get_val((enum HAL_GPIO_PIN_T)cfg_hw_pio_3p5_jack_detecter.pin) || app_nvrecord_demo_mode_get()) 
+				{
+#if defined(__CHARGE_CURRRENT__)
+					hal_gpio_pin_set((enum HAL_GPIO_PIN_T)cfg_charge_current_control.pin);//add by cai for enter nomal charging mode when usb is not configed.
+#endif				
+					goto exit;//add by cai
+				}	
 #endif
 			
 #if defined(__LDO_3V3_CTR__) 
@@ -2447,7 +2453,7 @@ exit:
 #if 0 //m by cai
     if(usb_plugin)
 #else
-	if(hal_gpio_pin_get_val((enum HAL_GPIO_PIN_T)cfg_hw_pio_3p5_jack_detecter.pin)) ;
+	if(hal_gpio_pin_get_val((enum HAL_GPIO_PIN_T)cfg_hw_pio_3p5_jack_detecter.pin) || app_nvrecord_demo_mode_get())  ;
     else if(app_battery_charger_indication_open() == APP_BATTERY_CHARGER_PLUGIN && !app_demo_mode_poweron_flag_get())//m by cai
 #endif
 	{
