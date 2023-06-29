@@ -60,6 +60,7 @@
 #include "bt_if.h"
 #include "audio_prompt_sbc.h"
 #include "app_ai_if.h"
+#include "philips_ble_api.h"//add by cai
 
 #ifdef __BT_ONE_BRING_TWO__
 extern "C" uint8_t gHfcallNextSta;
@@ -68,6 +69,11 @@ int bt_sco_player_forcemute(bool mic_mute, bool spk_mute);
 int bt_sco_player_get_codetype(void);
 extern struct BT_DEVICE_T  app_bt_device;
 extern enum AUD_SAMPRATE_T a2dp_sample_rate;
+
+//add by cai
+uint8_t pre_codetype = 0xe0;
+uint8_t cur_codetype = 0xe0;
+//end add
 
 struct bt_media_manager
 {
@@ -2178,6 +2184,20 @@ static int app_audio_manager_handle_process(APP_MESSAGE_BODY *msg_body)
           handleId2str(aud_manager_msg.id),
           aud_manager_msg.stream_type,
           strmtype2str(aud_manager_msg.stream_type));
+	//add by cai
+		if(pre_codetype == 0xe0){
+			pre_codetype=bt_sbc_player_get_codec_type();//第一次获取解码类型
+			cur_codetype=pre_codetype;
+		} else{
+			cur_codetype=bt_sbc_player_get_codec_type();
+			if(pre_codetype!=cur_codetype)
+			{
+				TRACE(3,"%s: pre_codetype=%d, cur_codetype=%d",__func__,pre_codetype,cur_codetype);
+				Notification_Sound_Quality_Change();
+			}
+			pre_codetype=cur_codetype;
+		}
+		//end add
 
     switch (aud_manager_msg.id)
     {
