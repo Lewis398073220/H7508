@@ -2000,10 +2000,15 @@ extern int rpc_service_setup(void);
 
                 app_key_open(false);
                 app_key_init_on_charging();
+				nRet = 0;
+#if defined(__USE_3_5JACK_CTR__)
+				if(hal_gpio_pin_get_val((enum HAL_GPIO_PIN_T)cfg_hw_pio_3p5_jack_detecter.pin)) goto exit;//add by cai
+#endif
+			
 #if defined(__LDO_3V3_CTR__) 
 				hal_gpio_pin_set((enum HAL_GPIO_PIN_T)cfg_hw_pio_3_3v_control.pin);//add by cai for usb audio
 #endif
-                nRet = 0;
+ 
 #if defined(BT_USB_AUDIO_DUAL_MODE)
                 usb_plugin = 1;
 				need_check_key = false;//add by cai	for open usb audio
@@ -2220,6 +2225,9 @@ extern int rpc_service_setup(void);
 
 #endif
 #endif
+	/** add by pang **/
+		app_user_event_open_module();
+	/** end add **/
     }
 #ifdef __ENGINEER_MODE_SUPPORT__
     else if(pwron_case == APP_POWERON_CASE_TEST){
@@ -2439,11 +2447,15 @@ exit:
 #if 0 //m by cai
     if(usb_plugin)
 #else
-    if(app_battery_charger_indication_open() == APP_BATTERY_CHARGER_PLUGIN && !app_demo_mode_poweron_flag_get())//m by cai
+	if(hal_gpio_pin_get_val((enum HAL_GPIO_PIN_T)cfg_hw_pio_3p5_jack_detecter.pin)) ;
+    else if(app_battery_charger_indication_open() == APP_BATTERY_CHARGER_PLUGIN && !app_demo_mode_poweron_flag_get())//m by cai
 #endif
 	{
     	if(usb_plugin) usb_plugin = 1;
         btusb_switch(BTUSB_MODE_USB);
+#ifdef ANC_APP
+		poweron_set_anc();//add by cai for Pairing tone distortion
+#endif
     }
     else
     {

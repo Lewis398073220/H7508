@@ -427,6 +427,7 @@ void Philips_Send_Notify(uint8_t *data, uint32_t size);
 void Notification_Battery_Level_Change(void);
 void Notification_Playback_Status_Change(uint8_t playstatus);
 void Notification_Media_Info_Change(uint8_t media_info);
+void Notification_Sound_Quality_Change(void);
 
 #ifdef __cplusplus
 }

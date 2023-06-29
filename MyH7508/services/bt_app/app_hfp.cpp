@@ -84,6 +84,13 @@
 #include "app_btmap_sms.h"
 #endif
 
+/** add by pang **/
+static bool phone_active=0; 
+
+#if (defined(__USE_MOTOR_CTL__)||defined(__EVRCORD_USER_DEFINE__))
+#include "app_user.h"
+#endif
+#include "app_anc.h"
 
 extern "C" void btdrv_switch_agc_mode(enum BT_AGC_MODE_T hw_mode);
 
@@ -561,6 +568,7 @@ static void hfp_app_status_indication(enum BT_DEVICE_ID_T chan_id, struct hfp_co
 #ifdef __BT_WARNING_TONE_MERGE_INTO_STREAM_SBC__
                 app_voice_report(APP_STATUS_RING_WARNING,chan_id);
 #endif
+				app_status_indication_set(APP_STATUS_INDICATION_INCOMINGCALL);//add by pang 
             }
             break;
         case BTIF_HF_EVENT_CALL_IND:
@@ -573,7 +581,22 @@ static void hfp_app_status_indication(enum BT_DEVICE_ID_T chan_id, struct hfp_co
                 {
                     TRACE(0,"HANGUPCALL PROMPT");
                     //app_voice_report(APP_STATUS_INDICATION_HANGUPCALL,chan_id);
-                }
+
+			/** add by pang   hang up call**/
+					//if(phone_active){
+#if defined(_THREE_WAY_ONE_CALL_COUNT__)
+						if(!app_hfp_cur_chnl_is_on_3_way_calling())
+					  		phone_active=0;
+#else
+							phone_active=0;
+#endif				
+						TRACE(1,"***phone_active:%d\n", phone_active);
+						app_bt_device.hf_mute_flag = 0;
+						//app_status_indication_set(APP_STATUS_INDICATION_INITIAL);
+						//app_status_indication_recover();													
+					//}
+			/** end add **/
+                }	
 #if defined(_THREE_WAY_ONE_CALL_COUNT__)
                 if(app_hfp_get_cur_call_chnl(NULL) == chan_id){
                     app_hfp_clear_cur_call_chnl(chan_id);
@@ -609,10 +632,27 @@ static void hfp_app_status_indication(enum BT_DEVICE_ID_T chan_id, struct hfp_co
                     (app_bt_device.hf_audio_state[chan_id_other] == BTIF_HF_AUDIO_CON)){
                         //app_bt_device.curr_hf_channel_id = chan_id_other;
                 }
+    		/** add by pang **/
+				app_status_indication_set(APP_STATUS_INDICATION_CONNECTED);//replace the incomingcall indicate
+				//app_status_indication_set(APP_STATUS_INDICATION_INITIAL);
+				//app_status_indication_recover();
+			/** end add **/
             }else if(ctx->call_setup == BTIF_HF_CALL_SETUP_NONE &&
                     (app_bt_device.hfchan_callSetup[chan_id] != BTIF_HF_CALL_SETUP_NONE) &&
                     (app_bt_device.hfchan_call[chan_id] == BTIF_HF_CALL_ACTIVE)){
                     TRACE(1,"!!!HF_EVENT_CALLSETUP_IND  APP_STATUS_INDICATION_ANSWERCALL but noneed sco chan_id:%d\n",chan_id);
+
+			/** add by pang **/
+					//if(app_bt_get_audio_up_id()==chan_id){
+						phone_active=1;
+						app_bt_device.hf_mute_flag = 0;
+						TRACE(2,"***audio_up_id %d phone_active:%d\n", app_bt_get_audio_up_id(),phone_active);
+						
+					app_status_indication_set(APP_STATUS_INDICATION_CONNECTED);//replace the incomingcall indicate
+					//app_status_indication_set(APP_STATUS_INDICATION_INITIAL);
+				    //app_status_indication_recover();
+			/** end add **/
+					
 #ifdef _THREE_WAY_ONE_CALL_COUNT__
                 if(app_bt_device.hf_callheld[chan_id] == BTIF_HF_CALL_HELD_NONE) {
                     if(app_hfp_get_cur_call_chnl(NULL) == chan_id) {

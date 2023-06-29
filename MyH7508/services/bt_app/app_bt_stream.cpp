@@ -117,6 +117,7 @@
 /** add by cai **/
 #include "app_user.h"
 #include "apps.h"
+#include "philips_ble_api.h"
 #include "bt_sco_chain.h"//for spp test
 static uint8_t game_mode_on=0;
 /** end add **/
@@ -3319,6 +3320,19 @@ int bt_sbc_player(enum PLAYER_OPER_T on, enum APP_SYSFREQ_FREQ_T freq)
     }
 #if defined(A2DP_LHDC_ON) ||defined(A2DP_AAC_ON) || defined(A2DP_SCALABLE_ON) || defined(A2DP_LDAC_ON) || defined(A2DP_STREAM_PLAY_DEBUG)
     uint8_t codec_type = bt_sbc_player_get_codec_type();
+	/** add by pang **/
+#if 1//defined(BLE)
+		static uint8_t my_codetype=0xe0;
+		if((my_codetype!=codec_type)&&(my_codetype!=0xe0))
+			Notification_Sound_Quality_Change();
+	
+		my_codetype=codec_type;
+		TRACE(3,"%s,codec_type=%d",__func__,codec_type);//add by pang
+		//if (on == PLAYER_OPER_START)
+		  //app_status_indication_set_next(APP_STATUS_INDICATION_A2DP,APP_STATUS_INDICATION_CONNECTED);//m by cai
+#endif
+	/** end add **/
+
 #endif
     if (on == PLAYER_OPER_STOP || on == PLAYER_OPER_RESTART)
     {

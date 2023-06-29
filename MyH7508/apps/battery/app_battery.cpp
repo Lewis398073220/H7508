@@ -538,7 +538,7 @@ int app_battery_handle_process_charging(uint32_t status,  union APP_BATTERY_MSG_
 			{
 				hal_gpio_pin_clr((enum HAL_GPIO_PIN_T)app_battery_ext_charger_enable_cfg.pin);
 			}
-			if(get_usb_configured_status() || hal_usb_configured())
+			if(!(get_usb_configured_status() || hal_usb_configured()) || !app_demo_mode_poweron_flag_get())
 			{
 				TRACE(0,"FULL_CHARGING-->shutdown");
                 osTimerStop(app_battery_timer);

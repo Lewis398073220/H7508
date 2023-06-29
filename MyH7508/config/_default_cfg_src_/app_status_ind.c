@@ -240,7 +240,14 @@ int app_status_indication_set(APP_STATUS_INDICATION_T status)
             break;
 			
         case APP_STATUS_INDICATION_CONNECTED:
+			cfg0.part[0].level = 0;
+            cfg0.part[0].time = (2000); 
+            cfg0.parttotal = 1;
+            cfg0.startlevel = 0;
+            cfg0.periodic = true;
 			
+            app_pwl_setup(APP_PWL_ID_0, &cfg0);
+            app_pwl_start(APP_PWL_ID_0);
             break;
 			
         case APP_STATUS_INDICATION_DISCONNECTED://add by pang

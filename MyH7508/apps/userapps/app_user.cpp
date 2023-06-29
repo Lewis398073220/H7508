@@ -13,13 +13,29 @@
 #include "app_bt_stream.h"
 #include "bt_sco_chain.h"
 #include "hal_codec.h"
+#include "btapp.h"
 #include "nvrecord_env.h"
 #include "app_anc.h"
+#include "app_bt_media_manager.h"
 #ifdef MEDIA_PLAYER_SUPPORT
 #include "app_media_player.h"
 #endif
 #include "iir_process.h"
+#include "app_battery.h"
+#include "pmu.h"
+#include "hal_bootmode.h"
 
+enum
+{
+    USER_EVENT_3P5JACK = 0,
+    USER_EVENT_LINEIN=1,
+    USER_EVENT_IR=2,
+    USER_EVENT_PWM=3,
+    USER_EVENT_MOTOR=4,
+	USER_EVENT_AMPCTR=5,
+	USER_EVENT_AUDIO_FADEIN=6,
+    USER_EVENT_NONE
+};
 
 #if defined(__EVRCORD_USER_DEFINE__)
 static uint8_t sleep_time = DEFAULT_SLEEP_TIME;
@@ -42,7 +58,6 @@ static uint8_t demo_mode_on = 0;
 static uint8_t demo_mode_powron = 0;
 #endif
 
-/*
 static void user_event_post(uint32_t id)
 {
     APP_MESSAGE_BLOCK msg;
@@ -51,7 +66,6 @@ static void user_event_post(uint32_t id)
     msg.msg_body.message_id = id;
     app_mailbox_put(&msg);
 }
-*/
 
 static int app_user_event_handle_process(APP_MESSAGE_BODY *msg_body)
 {   
@@ -62,6 +76,12 @@ static int app_user_event_handle_process(APP_MESSAGE_BODY *msg_body)
 
     switch (evt)
     {
+#if defined(__USE_3_5JACK_CTR__)    
+		case USER_EVENT_LINEIN:
+		   	apps_jack_event_process();
+		break;
+#endif
+
 		default:
 		break;
     }
@@ -69,10 +89,210 @@ static int app_user_event_handle_process(APP_MESSAGE_BODY *msg_body)
 	return 0;
 }
 
+#if defined(__USE_3_5JACK_CTR__)
+bool reconncect_null_by_user=false;
+static bool jack_3p5_plug_in_flag=false;
+static int8_t jack_count=0;
+
+extern int app_play_linein_onoff(bool onoff);
+
+bool apps_3p5_jack_get_val(void)
+{
+	return (bool)hal_gpio_pin_get_val((enum HAL_GPIO_PIN_T)cfg_hw_pio_3p5_jack_detecter.pin);
+}
+
+bool  apps_3p5jack_plugin_check(void)
+{
+	bool checkfg = false;
+	uint8_t plugin_count = 0;
+#if 0	
+	if(false == apps_3p5_jack_get_val())
+	{
+	    if(true==hal_gpio_pin_get_val((enum HAL_GPIO_PIN_T)cfg_hw_pio_3p5_jack_detecter[1].pin)){
+			TRACE(0,"3_5jack is plug in!");
+			return checkfg;
+	    }
+		else{
+			return (false);
+		}
+	}
+	else
+	{
+	    TRACE(0,"3_5jack is plug out!");
+		checkfg = false;
+	}
+	return checkfg;
+#else
+	if(apps_3p5_jack_get_val())
+	{	
+	    plugin_count++;
+		TRACE(0,"3_5jack is plug in!");			
+	}
+	else
+	{
+	    plugin_count=0;
+		TRACE(0,"3_5jack is plug out!");		
+	}
+
+	if( plugin_count>0)
+	   checkfg = true;	
+	
+	return checkfg;
+#endif
+}
+
+bool app_apps_3p5jack_plugin_flag(bool clearcount)
+{
+    if(clearcount)
+		jack_count=0;
+
+	return(jack_3p5_plug_in_flag);
+}
+
+osTimerId jack_3p5_timer = NULL;
+static void app_jack_open_timehandler(void const *param);
+osTimerDef(JACK_SW_TIMER, app_jack_open_timehandler);// define timers
+#define JACK_TIMER_IN_MS (200)
+#define CHECK_3_5JACK_MAX_NUM (3)
+
+static void app_jack_open_timehandler(void const *param)
+{
+	user_event_post(USER_EVENT_LINEIN);
+}
+
+void app_jack_start_timer(void)
+{
+	if(jack_3p5_timer == NULL)
+			jack_3p5_timer = osTimerCreate(osTimer(JACK_SW_TIMER), osTimerPeriodic, NULL);
+	
+	osTimerStart(jack_3p5_timer,JACK_TIMER_IN_MS);
+}
+
+void app_jack_stop_timer(void)
+{	
+	osTimerStop(jack_3p5_timer);
+}
+
+void apps_jack_event_process(void)
+{ 
+#if 0
+	static int8_t in_val = 0, out_val = 0 , mic_val=0;
+	
+	if(false == apps_3p5_jack_get_val()){
+		 if(true==hal_gpio_pin_get_val((enum HAL_GPIO_PIN_T)cfg_hw_pio_3p5_jack_detecter[1].pin)){
+			in_val++;
+			out_val=0;
+		 	mic_val=0;
+		 }
+		 else{
+			mic_val++;
+			in_val=0;
+		    out_val=0;
+			if(mic_val>CHECK_3_5JACK_MAX_NUM)
+				mic_val=CHECK_3_5JACK_MAX_NUM;
+		 }
+	}
+	else{
+		out_val++;
+		in_val=0;
+	    mic_val=0;
+	}
+
+	if(mic_val==CHECK_3_5JACK_MAX_NUM){
+		//TRACE(0,"***detected boom_mic in!");
+		mic_out(1);
+		//boom_mic_enable=1;
+	}
+	else{
+		//TRACE(0,"***detected boom_mic out!");
+	    mic_out(0);
+		//boom_mic_enable=0;
+	}
+#else
+	static int8_t in_val = 0, out_val = 0 ;
+	
+	if(apps_3p5_jack_get_val()){
+		in_val++;
+		out_val=0;		
+	}
+	else{
+		out_val++;
+		in_val=0;
+	}
+#endif
+	
+	if((in_val>=CHECK_3_5JACK_MAX_NUM)&&(jack_3p5_plug_in_flag==0)){
+		TRACE(0,"***detected 3_5jack in!");
+	    reconncect_null_by_user=true;
+		in_val=0;//add by cai
+		//app_disconnect_all_bt_connections();
+	    //app_bt_accessmode_set(BTIF_BAM_NOT_ACCESSIBLE);	
+		//app_status_indication_set(APP_STATUS_INDICATION_CONNECTED);		
+#if defined(__AC107_ADC__)
+		ac107_hw_open();
+		ac107_i2c_init();
+#endif
+		if(PMU_CHARGER_PLUGOUT==pmu_charger_get_status()){
+		   hal_codec_dac_mute(1);
+			jack_3p5_plug_in_flag=1;
+			jack_count=0;
+		
+			//app_poweroff_flag = 1;
+			app_shutdown();//shutdown
+		} else{
+			TRACE(0,"power off->charging!!!");
+			jack_3p5_plug_in_flag=1;
+			jack_count=0;
+			hal_sw_bootmode_set(HAL_SW_BOOTMODE_CHARGING_POWEROFF);
+			app_reset();
+		}
+	}
+	/*
+    if(in_val>(CHECK_3_5JACK_MAX_NUM+1) && (jack_3p5_plug_in_flag==0)){		
+#if defined(__AC107_ADC__)
+		ac107_hw_init();
+#endif
+		jack_3p5_plug_in_flag=1;
+		jack_count=0;
+
+		//app_poweroff_flag = 1;
+		app_shutdown();//shutdown
+	}*/
+/*	
+	if((out_val>CHECK_3_5JACK_MAX_NUM)&&(jack_3p5_plug_in_flag==1)){
+		TRACE(0,"***detected 3_5jack out!");
+		out_val=CHECK_3_5JACK_MAX_NUM;
+		reconncect_null_by_user=false;
+		lostconncection_to_pairing=0;		
+		jack_3p5_plug_in_flag=0;
+#if defined(AUDIO_LINEIN)
+		app_play_linein_onoff(0);
+#endif
+		app_bt_profile_connect_manager_opening_reconnect();
+#if defined(__AC107_ADC__)
+		ac107_hw_close();
+#endif
+	}
+
+	if(++jack_count>2){
+		jack_count=0;
+#if defined(AUDIO_LINEIN)		
+		if(!bt_media_is_media_active()&&jack_3p5_plug_in_flag){
+			app_play_linein_onoff(1);
+		}
+#endif
+	}
+*/
+}
+#endif
+
 int app_user_event_open_module(void)
 {       
     app_set_threadhandle(APP_MODUAL_USERDEF, app_user_event_handle_process);
 	
+#if defined(__USE_3_5JACK_CTR__)    
+	app_jack_start_timer();
+#endif
 
     return 0;
 }
@@ -80,6 +300,10 @@ int app_user_event_open_module(void)
 void app_user_event_close_module(void)
 {
 	app_set_threadhandle(APP_MODUAL_USERDEF, NULL);
+	
+#if defined(__USE_3_5JACK_CTR__)    
+	app_jack_stop_timer();
+#endif
 
 }
 

@@ -31,6 +31,14 @@ extern "C" {
 int app_user_event_open_module(void);
 void app_user_event_close_module(void);
 
+#if defined(__USE_3_5JACK_CTR__)
+bool apps_3p5_jack_get_val(void);
+bool  apps_3p5jack_plugin_check(void);	
+bool app_apps_3p5jack_plugin_flag(bool clearcount);
+void app_jack_start_timer(void);
+void app_jack_stop_timer(void);
+void apps_jack_event_process(void);
+#endif
 
 #if defined(__EVRCORD_USER_DEFINE__)
 uint8_t app_get_fota_flag(void);
