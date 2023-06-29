@@ -69,6 +69,19 @@
 #include "hal_location.h"
 #include "bt_sco_chain_cp.h"
 
+/** add by pang for spp test **/
+uint8_t spp_mic_test=0;
+void spp_test_mic_set(uint8_t set_mic)
+{
+	spp_mic_test=set_mic;
+}
+
+uint8_t spp_test_mic_get(void)
+{
+	return(spp_mic_test);
+}
+/** end add **/
+
 #define SCO_CP_ACCEL_ALGO_START()                                              \
     *_pcm_len = pcm_len;                                                       \
     }                                                                          \

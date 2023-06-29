@@ -104,6 +104,7 @@ typedef enum
     OP_TOTA_ANC_STATUS_REPORT_CMD=0x900F,
     OP_TOTA_ANC_TOTAL_GAIN_WRITE_CMD=0x9020,
 #endif
+	OP_TOTA_MIC_TEST_CMD=0x9021,//add by pang for spp test
     OP_TOTA_COMMAND_COUNT,
     
     OP_TOTA_DATA_XFER = 0xFFFF,	// to mark that it's a data packet

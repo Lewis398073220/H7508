@@ -69,6 +69,9 @@ int speech_rx_process(void *pcm_buf, int *pcm_len);
 
 void *speech_get_ext_buff(int size);
 
+void spp_test_mic_set(uint8_t set_mic);//by pang for spp test
+uint8_t spp_test_mic_get(void);//by pang for spp test
+
 #ifdef __cplusplus
 }
 #endif

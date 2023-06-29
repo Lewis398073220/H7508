@@ -49,6 +49,12 @@
 
 #define SPP_SHARE_BUF            0
 
+/** add by pang **/
+#if defined(APP_ANC_TEST)
+uint8_t app_anc_test_flag=0;
+#endif
+/** end add **/
+
 #if 0
 static void tota_spp_read_thread(const void *arg);
 osThreadDef(tota_spp_read_thread, osPriorityAboveNormal, 1, 3072, "tota_spp_read");
@@ -256,13 +262,19 @@ extern "C" void reset_programmer_state(unsigned char **buf, size_t *len);
 extern unsigned char *g_buf;
 extern size_t g_len;
 
+extern bool spp_test_cmd_received(uint8_t* ptrData, uint32_t dataLength);//add by pang for spp test
+
 int tota_spp_handle_data_event_func(void *pDev, uint8_t process, uint8_t *pData, uint16_t dataLen)
 {
     TOTA_LOG_DBG(2,"[%s]data receive length = %d", __func__, dataLen);
     TOTA_LOG_DUMP("[0x%x]", pData, dataLen);
 #if defined(APP_ANC_TEST)
-    app_anc_tota_cmd_received(pData, (uint32_t)dataLen);
+	if(spp_test_cmd_received(pData, dataLen))
+		app_tota_handle_received_data(pData, dataLen);//add by pang for spp test
+	else
+		app_anc_tota_cmd_received(pData, (uint32_t)dataLen);	
 #else
+
     // the first two bytes of the data packet is the fixed value 0xFFFF
     app_tota_handle_received_data(pData, dataLen);
 #endif
@@ -299,6 +311,30 @@ static void app_synccmd_timehandler(void const *param)
 }
 #endif
 
+/** add by pang for spp test **/
+void app_anc_test_enable(void)
+{
+#if defined(APP_ANC_TEST)
+   app_anc_test_flag=1;
+
+   anc_data_buff_init();
+   //add a send sync timer
+   osTimerStop(app_check_send_synccmd_timer);
+   osTimerStart(app_check_send_synccmd_timer, 2000);
+#endif   
+}
+
+void app_anc_test_disable(void)
+{
+#if defined(APP_ANC_TEST)
+   app_anc_test_flag=0;
+
+   anc_data_buff_deinit();
+   osTimerStop(app_check_send_synccmd_timer);
+#endif
+}
+/** end add **/
+
 static void spp_tota_callback(struct spp_device *locDev, struct spp_callback_parms *Info)
 {
     if (BTIF_SPP_EVENT_REMDEV_CONNECTED == Info->event)
@@ -310,10 +346,12 @@ static void spp_tota_callback(struct spp_device *locDev, struct spp_callback_par
         app_tota_update_datapath(APP_TOTA_VIA_SPP);
         //conn_stop_connecting_mobile_supervising();
 #if defined(APP_ANC_TEST)
-        anc_data_buff_init();
-        //add a send sync timer
-        osTimerStop(app_check_send_synccmd_timer);
-        osTimerStart(app_check_send_synccmd_timer, 2000);
+        if(app_anc_test_flag){//add by pang for spp test
+	        anc_data_buff_init();
+	        //add a send sync timer
+	        osTimerStop(app_check_send_synccmd_timer);
+	        osTimerStart(app_check_send_synccmd_timer, 2000);
+		}
 #endif
     }
     else if (BTIF_SPP_EVENT_REMDEV_DISCONNECTED == Info->event)

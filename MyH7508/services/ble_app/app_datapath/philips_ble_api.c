@@ -906,7 +906,7 @@ void Get_Chipset_Solution(void)
 	Philips_Send_Notify(solution, (uint32_t)valueLen);
 }
 
-unsigned char Chipset_Version[] = "V0.2.0.0";
+unsigned char Chipset_Version[] = "V0.1.2.2";
 void Get_Chipset_Version(void)
 {	
 	uint8_t i =0;
@@ -1313,7 +1313,8 @@ void Set_Customization_Eq_Brand_Current_Value(uint8_t set_customization_eq_value
 	g_set_custeq_brand_item_value[5] = set_customization_eq_value[5];
 
 	app_nvrecord_eq_param_set(set_customization_eq_value);
-	change_eq_from_ble_api(0x3f);   
+	change_eq_from_ble_api(0x3f);
+	app_nvrecord_eq_set(0x3f);//add by cai
 }
 
 void Get_Customization_Eq_Brand_Range_Value(void)
