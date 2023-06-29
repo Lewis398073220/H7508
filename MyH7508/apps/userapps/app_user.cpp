@@ -57,6 +57,8 @@ static uint8_t multipoint = 1;
 static uint8_t talkmic_led = 1;
 static uint8_t demo_mode_on = 0;
 static uint8_t demo_mode_powron = 0;
+static uint8_t app_color_change_flag = 0;
+static uint8_t app_color_value = 0x00;
 #endif
 
 static void user_event_post(uint32_t id)
@@ -735,6 +737,58 @@ uint8_t app_demo_mode_poweron_flag_get(void)
 	return (demo_mode_powron);
 }
 
+uint8_t app_color_change_flag_get(void)
+{
+	return app_color_change_flag;
+}
+
+void app_nvrecord_color_change_flag_set(uint8_t flag)
+{
+	app_color_change_flag = flag;
+
+	struct nvrecord_env_t *nvrecord_env;
+	nv_record_env_get(&nvrecord_env);
+	nvrecord_env->reserved1 = app_color_change_flag;
+	nv_record_env_set(nvrecord_env);
+
+#if FPGA==0
+	nv_record_flash_flush();
+#endif
+}
+
+uint8_t app_color_value_get(void)
+{
+	if(app_color_change_flag == 1) {
+		if(app_color_value > 0x08) {
+			return get_custom_bin_config(0);
+		} else{
+			return app_color_value;
+		}
+	} else{
+		return get_custom_bin_config(0);
+	}
+}
+
+void app_nvrecord_color_value_set(uint8_t color_val)
+{
+	if(color_val > 0x08) {
+		return;
+	} else{
+		app_color_change_flag = 1;
+		app_color_value = color_val;
+
+		struct nvrecord_env_t *nvrecord_env;
+		nv_record_env_get(&nvrecord_env);
+		nvrecord_env->reserved1 = app_color_change_flag;
+		nvrecord_env->reserved2 = app_color_value;
+		nv_record_env_set(nvrecord_env);
+		
+#if FPGA==0
+	    nv_record_flash_flush();
+#endif
+	}
+}
+
 void app_nvrecord_para_get(void)
 {
 	struct nvrecord_env_t *nvrecord_env;
@@ -763,6 +817,8 @@ void app_nvrecord_para_get(void)
 	anc_toggle_mode = (enum ANC_TOGGLE_MODE)nvrecord_env->anc_toggle_mode;
 	low_latency_on = 0;//add by cai
 	demo_mode_on = nvrecord_env->demo_mode;
+	app_color_change_flag = nvrecord_env->reserved1;//add by cai
+	app_color_value = nvrecord_env->reserved2;//add by cai
 	/** end add **/
 
 	for(i = 0; i < 6; i++){
@@ -810,7 +866,8 @@ void app_nvrecord_para_get(void)
 	app_get_custom_bin_config();//for debug
 #endif
 
-	TRACE(6,"sleep_time=%d, eq_set_index=%d, monitor_level=%d, focus_on=%d, multipoint=%d, auto_poweroff_time=%d",sleep_time,eq_set_index,monitor_level,focus_on,multipoint,auto_poweroff_time);
+	TRACE(5,"sleep_time=%d, eq_set_index=%d, monitor_level=%d, focus_on=%d, multipoint=%d",sleep_time,eq_set_index,monitor_level,focus_on,multipoint);
+	TRACE(3,"auto_poweroff_time=%d, app_color_change_flag=%d, app_color_value=%d", auto_poweroff_time,app_color_change_flag,app_color_value);
 }
 
 #endif

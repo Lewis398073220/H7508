@@ -739,7 +739,9 @@ void app_factory_reset(void)
 	factory_reset_flag = 1;
 	//demo_mode_on=0;
 	uint8_t flag=app_get_fota_flag();
-
+	uint8_t color_flag = app_color_change_flag_get();
+	uint8_t color_value = app_color_value_get();
+		
 	LinkDisconnectDirectly(false);
 	osDelay(500);
 
@@ -769,6 +771,8 @@ void app_factory_reset(void)
 	
 	//add by cai for recover default language
 	app_nvrecord_language_set(MEDIA_DEFAULT_LANGUAGE);
+	app_nvrecord_color_change_flag_set(color_flag);
+	app_nvrecord_color_value_set(color_value);
 
 	//osDelay(500);
 	app_bt_reconnect_idle_mode();

@@ -78,6 +78,10 @@ void app_nvrecord_demo_mode_set(uint8_t mod);
 uint8_t app_nvrecord_demo_mode_get(void);
 void app_demo_mode_poweron_flag_set(uint8_t powron);
 uint8_t app_demo_mode_poweron_flag_get(void);
+uint8_t app_color_change_flag_get(void);
+void app_nvrecord_color_change_flag_set(uint8_t flag);
+uint8_t app_color_value_get(void);
+void app_nvrecord_color_value_set(uint8_t color_val);
 void app_nvrecord_para_get(void);
 #endif
 

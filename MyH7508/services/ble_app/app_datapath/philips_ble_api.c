@@ -906,7 +906,7 @@ void Get_Chipset_Solution(void)
 	Philips_Send_Notify(solution, (uint32_t)valueLen);
 }
 
-unsigned char Chipset_Version[] = "V0.1.2.2";
+unsigned char Chipset_Version[] = "V0.1.2.3";
 void Get_Chipset_Version(void)
 {	
 	uint8_t i =0;
@@ -1667,7 +1667,7 @@ void Get_Device_Colour(void)
 	//Data length
 	head[2] = 0x09;
 
-	g_set_device_colour_value[0]=get_custom_bin_config(0);
+	g_set_device_colour_value[0]=app_color_value_get();
 	head[7] = g_set_device_colour_value[0];
 	TRACE(2,"***%s: colour_value=%d",__func__,head[7]);
 	//Do checksum
@@ -1685,7 +1685,7 @@ void Set_Device_Colour(uint8_t set_device_colour_value[1])
 		return;
 	
 	TRACE(2,"***%s: colour_value=%d",__func__,g_set_device_colour_value[0]);
-	set_custom_bin_config(0, g_set_device_colour_value[0]);
+	app_nvrecord_color_value_set(g_set_device_colour_value[0]);
 }
 
 void Get_Key_Define_Support_List(void)
