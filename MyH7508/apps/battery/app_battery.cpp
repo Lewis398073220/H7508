@@ -994,6 +994,8 @@ int8_t app_battery_current_level(void)
 
 int8_t app_battery_is_charging(void)
 {
+	TRACE(2,"***%s %d",__func__, app_battery_measure.status);
+
     return (APP_BATTERY_STATUS_CHARGING == app_battery_measure.status);
 }
 

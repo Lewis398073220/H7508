@@ -2454,7 +2454,7 @@ void app_bt_profile_connect_manager_opening_reconnect(void)
     DUMP8("%02x ", &record2.bdAddr, 6);
     TRACE(0,"!!!last record addr:\n");
     DUMP8("%02x ", &last_active_recored.bdAddr, 6);
-    record1 = last_active_recored;
+    //record1 = last_active_recored;//close by pang for reconnect the last two devices
 
 
     if(ret > 0){
@@ -3462,12 +3462,22 @@ void app_bt_profile_connect_manager_a2dp(enum BT_DEVICE_ID_T id, a2dp_stream_t *
     bt_profile_manager[id].connect_timer_cb = NULL;
     bool profile_reconnect_enable = false;
 
-    remDev = btif_a2dp_get_stream_conn_remDev(Stream);
-    if (remDev){
-        btdevice_plf_p = (btdevice_profile *)app_bt_profile_active_store_ptr_get(btif_me_get_remote_device_bdaddr(remDev)->address);
-    }else{
-        btdevice_plf_p = (btdevice_profile *)app_bt_profile_active_store_ptr_get(NULL);
-    }
+#if 0	
+	remDev = btif_a2dp_get_stream_conn_remDev(Stream);	
+	if (remDev){
+		btdevice_plf_p = (btdevice_profile *)app_bt_profile_active_store_ptr_get(btif_me_get_remote_device_bdaddr(remDev)->address);
+	}else{
+		btdevice_plf_p = (btdevice_profile *)app_bt_profile_active_store_ptr_get(NULL);
+	}
+#else //modify by pang
+	remDev = btif_a2dp_get_stream_conn_remDev(Stream);	
+	if (remDev){
+		btdevice_plf_p = (btdevice_profile *)app_bt_profile_active_store_ptr_get(btif_me_get_remote_device_bdaddr(remDev)->address);
+	}else{
+		btdevice_plf_p = (btdevice_profile *)app_bt_profile_active_store_ptr_get(bt_profile_manager[id].rmt_addr.address);
+	}	 
+#endif 
+
     
 #ifdef __BT_ONE_BRING_TWO__
     //if(remDev){

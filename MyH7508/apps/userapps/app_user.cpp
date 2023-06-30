@@ -724,6 +724,8 @@ void app_nvrecord_demo_mode_set(uint8_t mod)
 
 uint8_t app_nvrecord_demo_mode_get(void)
 {
+	TRACE(2,"***%s: demo_mode_on=%d",__func__,demo_mode_on);
+
 	return (demo_mode_on);
 }
 
