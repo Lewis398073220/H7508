@@ -23,6 +23,8 @@ extern "C" {
 
 bool a2dp_is_music_ongoing(void);
 int a2dp_volume_set(enum BT_DEVICE_ID_T id, uint8_t vol);
+int dongle_a2dp_volume_set(enum BT_DEVICE_ID_T id, uint8_t vol);//add by pang
+
 #if defined(A2DP_LDAC_ON)
 void app_ibrt_restore_ldac_info(uint8_t sample_freq);
 #endif

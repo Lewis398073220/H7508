@@ -1371,6 +1371,20 @@ extern "C" void avrcp_callback_CT(btif_avrcp_chnl_handle_t chnl, const avrcp_cal
                         TRACE(1,"AVRCP_CtInvalidVolume_Rsp,status%d",status);
                 }
 //#endif
+			/** add by pang for dongle volume sys**/
+				else if ((btif_get_avrcp_cmd_frame(parms)->operands[3] == BTIF_AVRCP_OP_SET_ABSOLUTE_VOLUME)&&(btif_get_avrcp_cmd_frame(parms)->operandLen ==8)){
+                    TRACE(1,"***::avrcp_callback_CT AVRCP_EID_VOLUME_CHANGED transId:%d\n", btif_get_avrcp_cmd_frame(parms)->transId);
+                        dongle_a2dp_volume_set(device_id,btif_get_avrcp_cmd_frame(parms)->operands[7]);
+
+                    if (app_bt_device.avrcp_notify_rsp[device_id] == NULL)
+                        btif_app_a2dp_avrcpadvancedpdu_mempool_calloc(&app_bt_device.avrcp_notify_rsp[device_id]);
+
+					btif_avrcp_set_notify_rsp_cmd(app_bt_device.avrcp_notify_rsp[device_id],btif_get_avrcp_cmd_frame(parms)->transId,  BTIF_AVCTP_RESPONSE_ACCEPTED) ;
+
+                    DUMP8("%02x ", btif_get_avrcp_cmd_frame(parms)->operands, btif_get_avrcp_cmd_frame(parms)->operandLen);
+                    btif_avrcp_ct_accept_absolute_volume_rsp(channel, app_bt_device.avrcp_notify_rsp[device_id], btif_get_avrcp_cmd_frame(parms)->operands[7]);
+				}
+    		/** end add **/
             }
 //#endif
             break;
@@ -4133,6 +4147,42 @@ int a2dp_volume_set(enum BT_DEVICE_ID_T id, uint8_t vol)
 
     return (vol);
 }
+
+/** add by pang for dongle volume set **/
+int dongle_a2dp_volume_set(enum BT_DEVICE_ID_T id, uint8_t vol)
+{
+    int dest_vol;
+
+    if (!vol){
+        dest_vol = TGT_VOLUME_LEVEL_MUTE;
+    }else{
+        if (0x78 == vol)
+        {
+            dest_vol = TGT_VOLUME_LEVEL_15;
+        }
+        else
+        {
+            dest_vol = (((int)vol&0x7f)<<4)/128 + 1;
+        }
+        if (dest_vol > TGT_VOLUME_LEVEL_15){
+            dest_vol = TGT_VOLUME_LEVEL_15;
+        }else if (dest_vol < TGT_VOLUME_LEVEL_0){
+            dest_vol = TGT_VOLUME_LEVEL_0;
+        }
+    }
+
+    a2dp_volume_local_set(id, dest_vol);
+    if (app_audio_manager_a2dp_is_active(id)){
+        app_audio_manager_ctrl_volume(APP_AUDIO_MANAGER_VOLUME_CTRL_SET, dest_vol+17);//m by pang for volume independent
+    }
+
+    TRACE(2,"***put vol raw:%d/127 %d", vol, dest_vol);
+
+    return (vol);
+}
+/** end add **/
+
+
 
 bool a2dp_is_music_ongoing(void)
 {
