@@ -3462,7 +3462,7 @@ void app_bt_profile_connect_manager_a2dp(enum BT_DEVICE_ID_T id, a2dp_stream_t *
     bt_profile_manager[id].connect_timer_cb = NULL;
     bool profile_reconnect_enable = false;
 
-#if 0	
+#if 0//m by pang for reconnect the last two devices
 	remDev = btif_a2dp_get_stream_conn_remDev(Stream);	
 	if (remDev){
 		btdevice_plf_p = (btdevice_profile *)app_bt_profile_active_store_ptr_get(btif_me_get_remote_device_bdaddr(remDev)->address);

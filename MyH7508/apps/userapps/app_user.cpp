@@ -25,6 +25,9 @@
 #include "pmu.h"
 #include "hal_bootmode.h"
 #include "analog.h"
+#ifdef BT_USB_AUDIO_DUAL_MODE
+#include "btusb_audio.h"
+#endif
 
 enum
 {
