@@ -545,13 +545,12 @@ const app_comm_uart_handle_t app_comm_uart_test_handle[]=
     {"20", btif_pts_reject_NOT_SUPPORTED_CODEC_TYPE},
 };
 
-app_comm_uart_test_function_handle app_comm_find_uart_handle(unsigned char* buf)
+app_comm_uart_test_function_handle app_comm_find_uart_handle(unsigned char* buf, uint8_t len)
 {
     app_comm_uart_test_function_handle p = NULL;
     for(uint8_t i = 0; i<sizeof(app_comm_uart_test_handle)/sizeof(app_comm_uart_handle_t); i++)
     {
-        if(strncmp((char*)buf, app_comm_uart_test_handle[i].string, strlen(app_comm_uart_test_handle[i].string))==0 ||
-           strstr(app_comm_uart_test_handle[i].string, (char*)buf))
+        if(strncmp((char*)buf, app_comm_uart_test_handle[i].string, len)==0)
         {
             p = app_comm_uart_test_handle[i].function;
 			TRACE(3,"%s %d %s",__func__, i, comm_status2str((uint16_t)i));
@@ -563,7 +562,7 @@ app_comm_uart_test_function_handle app_comm_find_uart_handle(unsigned char* buf)
 
 void communication_receive_pro(uint8_t *buf, uint8_t len)
 {
-	app_comm_uart_test_function_handle handl_function = app_comm_find_uart_handle(buf);
+	app_comm_uart_test_function_handle handl_function = app_comm_find_uart_handle(buf, len);
 	
 	if(handl_function)
     {
