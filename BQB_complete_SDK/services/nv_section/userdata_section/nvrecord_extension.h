@@ -143,6 +143,29 @@ struct nvrecord_env_t {
     uint8_t flag_value[8];
 
     AI_MANAGER_INFO_T aiManagerInfo;
+
+	/** add by pang **/
+	uint8_t demo_mode;
+	uint8_t sleep_time;
+	uint8_t vibrate_mode;
+	uint8_t eq_mode;
+	uint8_t anc_mode;
+	uint8_t monitor_level;
+	uint8_t focus_on;
+	uint8_t sensor_enable;
+	uint8_t iir_gain[6];
+	uint8_t touch_lock;
+	uint8_t sidetone;
+	uint8_t anc_table_value;
+	uint8_t fota_flag;
+	uint8_t multipoint;
+	uint8_t talkmic_led;
+	uint16_t auto_pwoff_time;//add by cai
+	uint8_t anc_toggle_mode;//add by cai
+	uint8_t reserved1;
+	uint8_t reserved2;
+	uint8_t reserved3;
+	/** end add **/
 };
 
 typedef struct btdevice_volume {
