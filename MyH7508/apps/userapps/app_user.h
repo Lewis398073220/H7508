@@ -31,6 +31,9 @@ extern "C" {
 int app_user_event_open_module(void);
 void app_user_event_close_module(void);
 
+void app_usb_plugout_start_timer(void);
+void app_usb_plugout_stop_timer(void);
+void apps_usb_plugout_event_process(void);
 #if defined(__USE_3_5JACK_CTR__)
 bool apps_3p5_jack_get_val(void);
 bool  apps_3p5jack_plugin_check(void);	

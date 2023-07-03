@@ -38,8 +38,14 @@ enum
     USER_EVENT_MOTOR=4,
 	USER_EVENT_AMPCTR=5,
 	USER_EVENT_AUDIO_FADEIN=6,
+	USER_EVENT_USB_PLUGOUT=7,
     USER_EVENT_NONE
 };
+
+extern uint8_t  app_poweroff_flag;
+#ifdef BT_USB_AUDIO_DUAL_MODE
+extern "C" int hal_usb_configured(void);
+#endif
 
 #if defined(__EVRCORD_USER_DEFINE__)
 static uint8_t sleep_time = DEFAULT_SLEEP_TIME;
@@ -87,12 +93,59 @@ static int app_user_event_handle_process(APP_MESSAGE_BODY *msg_body)
 		   	apps_jack_event_process();
 		break;
 #endif
+		case USER_EVENT_USB_PLUGOUT:
+			apps_usb_plugout_event_process();
+		break;
 
 		default:
 		break;
     }
 	
 	return 0;
+}
+
+osTimerId usb_plugout_timer = NULL;
+static void app_usb_plugout_timehandler(void const *param);
+osTimerDef(USB_PLUGOUT_SW_TIMER, app_usb_plugout_timehandler);// define timers
+#define USB_PLUGOUT_TIMER_MS (1000)
+
+static void app_usb_plugout_timehandler(void const *param)
+{
+	user_event_post(USER_EVENT_USB_PLUGOUT);
+}
+
+void app_usb_plugout_start_timer(void)
+{
+	if(usb_plugout_timer == NULL)
+			usb_plugout_timer = osTimerCreate(osTimer(USB_PLUGOUT_SW_TIMER), osTimerPeriodic, NULL);
+	
+	osTimerStart(usb_plugout_timer,USB_PLUGOUT_TIMER_MS);
+}
+
+void app_usb_plugout_stop_timer(void)
+{	
+	osTimerStop(usb_plugout_timer);
+}
+
+void apps_usb_plugout_event_process(void)
+{
+	if(app_battery_is_charging())
+	{
+		if(usb_plugout_status_get())
+		{
+			if(app_poweroff_flag == 0)
+			{
+				if(get_usb_configured_status() || hal_usb_configured()) {
+					;
+				} else{
+					TRACE(0,"CHARGING-->RESET");
+	                app_shutdown();
+				}
+			
+			}
+		}
+	}
+
 }
 
 #if defined(__USE_3_5JACK_CTR__)
@@ -216,7 +269,7 @@ void apps_jack_event_process(void)
 	}
 #else
 	static int8_t in_val = 0, out_val = 0 ;
-	
+
 	if(apps_3p5_jack_get_val()){
 		in_val++;
 		out_val=0;		
@@ -299,8 +352,9 @@ int app_user_event_open_module(void)
 	
 #if defined(__USE_3_5JACK_CTR__)    
 	app_jack_start_timer();
-#endif
+#endif  
 
+	app_usb_plugout_start_timer();
     return 0;
 }
 
@@ -312,6 +366,7 @@ void app_user_event_close_module(void)
 	app_jack_stop_timer();
 #endif
 
+	app_usb_plugout_stop_timer();
 }
 
 #if defined(__EVRCORD_USER_DEFINE__)

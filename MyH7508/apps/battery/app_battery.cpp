@@ -41,7 +41,21 @@
 #include "hal_bootmode.h"
 #include "analog.h"//add by cai
 #include "hal_usb.h"//add by cai
+
 bool battery_pd_poweroff=0;
+uint8_t usb_plugout_flag = 0;
+
+uint8_t usb_plugout_status_get(void)
+{
+	return usb_plugout_flag;
+}
+
+void usb_plugout_status_set(uint8_t flag)
+{
+	TRACE(2, "***%s: plugout_status=%d", __func__,flag);
+
+	usb_plugout_flag = flag;
+}
 /** end add **/
 
 #if (defined(BTUSB_AUDIO_MODE) || defined(BTUSB_AUDIO_MODE))
@@ -483,6 +497,7 @@ int app_battery_handle_process_charging(uint32_t status,  union APP_BATTERY_MSG_
             {
 #ifdef BT_USB_AUDIO_DUAL_MODE
                 TRACE(1,"%s:PlUGOUT.", __func__);
+				usb_plugout_status_set(true);
 #if 0 //m by cai
                 btusb_switch(BTUSB_MODE_BT);
 #else

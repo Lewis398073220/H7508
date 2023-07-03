@@ -115,6 +115,8 @@ int ntc_capture_start(void);
 
 /** add by pang **/
 bool app_battery_is_pdvolt(void);
+uint8_t usb_plugout_status_get(void);
+void usb_plugout_status_set(uint8_t flag);
 /** end add **/
 
 #ifdef __cplusplus
