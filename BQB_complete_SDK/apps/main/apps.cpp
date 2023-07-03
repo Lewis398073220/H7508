@@ -54,6 +54,7 @@
 #include "app_ai_if.h"
 #include "app_ai_manager_api.h"
 #include "audio_process.h"
+#include "communication_svr.h"//add by cai
 
 #ifdef __PC_CMD_UART__
 #include "app_cmd.h"
@@ -1514,6 +1515,8 @@ int app_init(void)
     TRACE(2,"__factory_start: %p length: 0x%x", __factory_start, FACTORY_SECTION_SIZE);
 
     TRACE(0,"app_init\n");
+
+	communication_init();//add by cai
 
 #ifdef __RPC_ENABLE__
 extern int rpc_service_setup(void);

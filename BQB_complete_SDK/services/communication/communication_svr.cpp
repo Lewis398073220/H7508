@@ -84,7 +84,7 @@ static bool uart_opened = false;
 static int uart_error_detected = 0;
 
 #ifdef CHIP_BEST2300P
-static const enum HAL_UART_ID_T comm_uart = HAL_UART_ID_2;
+static const enum HAL_UART_ID_T comm_uart = HAL_UART_ID_0;//HAL_UART_ID_2;  m by cai
 #else
 static const enum HAL_UART_ID_T comm_uart = HAL_UART_ID_1;
 #endif
@@ -97,7 +97,7 @@ static const struct HAL_UART_CFG_T uart_cfg = {
     HAL_UART_FIFO_LEVEL_1_2,
     HAL_UART_FIFO_LEVEL_1_2,
 #ifdef CHIP_BEST2300P
-    1152000,
+    921600,//1152000,  //m by cai
 #else
     921600,
 #endif
@@ -439,6 +439,11 @@ void communication_send_command(COMMAND_BLOCK *cmd_blk)
     communication_mailbox_put(&mail);
 }
 
+void communication_receive_pro(uint8_t *buf, uint8_t len)
+{
+
+}
+
 static void communication_process(COMMUNICATION_MAIL* mail_p)
 {
     osEvent evt;
@@ -469,7 +474,7 @@ static void communication_process(COMMUNICATION_MAIL* mail_p)
             communication_io_mode_switch(COMMUNICATION_MODE_RX);
             if (!uart_error_detected){
                 uart_rx_dma_start();
-                uart_rx_idle_timer_start();
+                //uart_rx_idle_timer_start();//m by cai
             }
             break;
         case COMMUNICATION_MSG_TX_DONE:
@@ -478,7 +483,7 @@ static void communication_process(COMMUNICATION_MAIL* mail_p)
             communication_io_mode_init();
             uart_init();
             uart_rx_dma_start();
-            uart_rx_idle_timer_start();
+            //uart_rx_idle_timer_start();//m by cai
             break;
         case COMMUNICATION_MSG_RX_DONE:
             TRACE(2,"UART RX status:%d len:%d", mail_p->parms1, mail_p->parms2);
@@ -492,7 +497,7 @@ static void communication_process(COMMUNICATION_MAIL* mail_p)
 
             if (!uart_error_detected){
                 uart_rx_dma_start();
-                uart_rx_idle_timer_start();
+                //uart_rx_idle_timer_start();//m by cai
             }
             break;
         case COMMUNICATION_MSG_REINIT:
@@ -501,9 +506,10 @@ static void communication_process(COMMUNICATION_MAIL* mail_p)
             uart_error_detected = 0;
             communication_io_mode_init();
             uart_init();
+			communication_receive_register_callback(communication_receive_pro);//add by cai
             uart_rx_dma_start();
             uart_rx_idle_timer_id = osTimerCreate(osTimer(uart_rx_idle_timer), osTimerPeriodic, NULL);
-            uart_rx_idle_timer_start();
+            //uart_rx_idle_timer_start();//m by cai
             break;
         case COMMUNICATION_MSG_RESET:
         case COMMUNICATION_MSG_BREAK:
