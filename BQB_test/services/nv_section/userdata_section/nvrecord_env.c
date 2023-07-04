@@ -69,8 +69,7 @@ void nvrecord_rebuild_system_env(struct nvrecord_env_t* pSystemEnv)
 	pSystemEnv->reserved1=0;
 	pSystemEnv->reserved2=0;
 	pSystemEnv->reserved3=0;
-	
-/** end add **/
+	/** end add **/
 
     localSystemInfo = *pSystemEnv;
 }

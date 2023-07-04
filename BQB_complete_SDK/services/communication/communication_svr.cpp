@@ -16,6 +16,7 @@
 #include "communication_svr.h"
 #include "communication_sysapi.h"
 #include "bt_if.h"//add by cai
+#include "apps.h"
 
 
 //======================================================================================================
@@ -503,6 +504,12 @@ const char *comm_status2str(uint16_t status)
     }
 
     return str;
+}
+
+extern "C" int app_shutdown(void);
+void test(void)
+{
+	app_shutdown();
 }
 
 const app_comm_uart_handle_t app_comm_uart_test_handle[]=

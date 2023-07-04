@@ -573,6 +573,40 @@ static void app_poweron_factorymode(APP_KEY_STATUS *status, void *param)
 }
 #endif
 #endif
+/** add by pang **/
+extern bt_status_t LinkDisconnectDirectly(bool PowerOffFlag);
+void app_factory_reset(void)
+{
+	app_audio_sendrequest(APP_BT_STREAM_INVALID, (uint8_t)APP_BT_SETTING_CLOSEALL, 0);
+	osDelay(500);
+
+	LinkDisconnectDirectly(false);
+	osDelay(500);
+
+#ifdef  __IAG_BLE_INCLUDE__
+	app_ble_force_switch_adv(BLE_SWITCH_USER_BT_CONNECT, false);
+#endif
+
+#if 0
+	struct nvrecord_env_t *nvrecord_env;
+	nv_record_sector_clear();
+	nv_record_env_init();
+	nv_record_env_get(&nvrecord_env);
+	if(nvrecord_env) {
+		nvrecord_env->media_language.language = NVRAM_ENV_MEDIA_LANGUAGE_DEFAULT;        
+        nvrecord_env->factory_tester_status.status = NVRAM_ENV_FACTORY_TESTER_STATUS_DEFAULT;
+    }	
+    nv_record_env_set(nvrecord_env);
+#if FPGA==0	
+    nv_record_flash_flush();
+#endif
+#else
+	nv_record_rebuild();
+#endif
+
+	app_bt_accessmode_set_req(BTIF_BT_DEFAULT_ACCESS_MODE_PAIR);
+}
+/**  end add **/
 
 
 static bool g_pwron_finished = false;
@@ -852,28 +886,7 @@ extern "C" void app_bt_key(APP_KEY_STATUS *status, void *param)
 #endif
 			break;
         case APP_KEY_EVENT_TRIPLECLICK:
-            TRACE(0,"triple kill");
-            if (status->code == APP_KEY_CODE_PWR)
-            {
-            
-#ifndef __BT_ONE_BRING_TWO__ 
-				if(btif_me_get_activeCons() < 1){
-#else
-	            if(btif_me_get_activeCons() < 2){
-#endif
-	                app_bt_accessmode_set(BTIF_BT_DEFAULT_ACCESS_MODE_PAIR);
-#ifdef __INTERCONNECTION__
-	                app_interceonnection_start_discoverable_adv(INTERCONNECTION_BLE_FAST_ADVERTISING_INTERVAL,
-	                                                            APP_INTERCONNECTION_FAST_ADV_TIMEOUT_IN_MS);
-	                return;
-#endif
-#ifdef GFPS_ENABLED
-	                app_enter_fastpairing_mode();
-#endif
-					app_voice_report(APP_STATUS_INDICATION_BOTHSCAN,0);
-            	}
-                return;
-            }
+            TRACE(0,"triple kill"); 
             break;
         case APP_KEY_EVENT_ULTRACLICK:
             TRACE(0,"ultra kill");
@@ -886,7 +899,7 @@ extern "C" void app_bt_key(APP_KEY_STATUS *status, void *param)
             break;
     }
 #ifdef __FACTORY_MODE_SUPPORT__
-    if (app_status_indication_get() == APP_STATUS_INDICATION_BOTHSCAN && (status->event == APP_KEY_EVENT_DOUBLECLICK)){
+    if (0){
         app_factorymode_languageswitch_proc();
     }else
 #endif
@@ -1069,64 +1082,72 @@ const APP_KEY_HANDLE  app_key_handle_cfg[] = {
     {{APP_KEY_CODE_PWR,APP_KEY_EVENT_LONGLONGPRESS},"bt function key",app_bt_key_shutdown, NULL},
     {{APP_KEY_CODE_PWR,APP_KEY_EVENT_LONGPRESS},"bt function key",app_bt_key, NULL},
 #if defined(BT_USB_AUDIO_DUAL_MODE_TEST) && defined(BT_USB_AUDIO_DUAL_MODE)
-    {{APP_KEY_CODE_PWR,APP_KEY_EVENT_CLICK},"bt function key",app_bt_key, NULL},
+    //{{APP_KEY_CODE_PWR,APP_KEY_EVENT_CLICK},"bt function key",app_bt_key, NULL},
 #ifdef RB_CODEC
-    {{APP_KEY_CODE_PWR,APP_KEY_EVENT_CLICK},"bt function key",app_switch_player_key, NULL},
+    //{{APP_KEY_CODE_PWR,APP_KEY_EVENT_CLICK},"bt function key",app_switch_player_key, NULL},
 #else
     //{{APP_KEY_CODE_PWR,APP_KEY_EVENT_CLICK},"btusb mode switch key.",app_btusb_audio_dual_mode_test, NULL},
 #endif
 #endif
-    {{APP_KEY_CODE_PWR,APP_KEY_EVENT_DOUBLECLICK},"bt function key",app_bt_key, NULL},
-    {{APP_KEY_CODE_PWR,APP_KEY_EVENT_TRIPLECLICK},"bt function key",app_bt_key, NULL},
+	{{APP_KEY_CODE_PWR,APP_KEY_EVENT_CLICK},"bt function key",app_bt_key, NULL},
+    {{APP_KEY_CODE_PWR,APP_KEY_EVENT_DOUBLECLICK},"play forward",app_bt_key, NULL},
+    {{APP_KEY_CODE_PWR,APP_KEY_EVENT_TRIPLECLICK},"play backward",app_bt_key, NULL},
 #if RAMPAGECLICK_TEST_MODE
-    {{APP_KEY_CODE_PWR,APP_KEY_EVENT_ULTRACLICK},"bt function key",app_bt_key_enter_nosignal_mode, NULL},
-    {{APP_KEY_CODE_PWR,APP_KEY_EVENT_RAMPAGECLICK},"bt function key",app_bt_key_enter_testmode, NULL},
+    //{{APP_KEY_CODE_PWR,APP_KEY_EVENT_ULTRACLICK},"bt function key",app_bt_key_enter_nosignal_mode, NULL},
+    //{{APP_KEY_CODE_PWR,APP_KEY_EVENT_RAMPAGECLICK},"bt function key",app_bt_key_enter_testmode, NULL},
 #endif
 #ifdef POWERKEY_I2C_SWITCH
-    {{APP_KEY_CODE_PWR,APP_KEY_EVENT_RAMPAGECLICK},"bt i2c key",app_factorymode_i2c_switch, NULL},
+    //{{APP_KEY_CODE_PWR,APP_KEY_EVENT_RAMPAGECLICK},"bt i2c key",app_factorymode_i2c_switch, NULL},
 #endif
     //{{APP_KEY_CODE_FN1,APP_KEY_EVENT_UP},"bt volume up key",app_bt_key, NULL},
+    {{APP_KEY_CODE_FN1,APP_KEY_EVENT_CLICK},"bt volume up key",app_bt_key, NULL},
     //{{APP_KEY_CODE_FN1,APP_KEY_EVENT_LONGPRESS},"bt play backward key",app_bt_key, NULL},
 #if defined(APP_LINEIN_A2DP_SOURCE)||defined(APP_I2S_A2DP_SOURCE)
-    {{APP_KEY_CODE_FN1,APP_KEY_EVENT_DOUBLECLICK},"bt mode src snk key",app_bt_key, NULL},
+    //{{APP_KEY_CODE_FN1,APP_KEY_EVENT_DOUBLECLICK},"bt mode src snk key",app_bt_key, NULL},
 #endif
     //{{APP_KEY_CODE_FN2,APP_KEY_EVENT_UP},"bt volume down key",app_bt_key, NULL},
+    {{APP_KEY_CODE_FN1,APP_KEY_EVENT_REPEAT},"bt volume down key",app_bt_key, NULL},
     //{{APP_KEY_CODE_FN2,APP_KEY_EVENT_LONGPRESS},"bt play forward key",app_bt_key, NULL},
     //{{APP_KEY_CODE_FN15,APP_KEY_EVENT_UP},"bt volume down key",app_bt_key, NULL},
-    {{APP_KEY_CODE_PWR,APP_KEY_EVENT_CLICK},"bt function key",app_bt_key, NULL},
+	{{HAL_KEY_CODE_FN5,APP_KEY_EVENT_CLICK},"bt anc key",app_bt_key, NULL},//m by cai
+	{{HAL_KEY_CODE_FN5,APP_KEY_EVENT_DOUBLECLICK},"bt anc key",app_bt_key, NULL},//add by cai
+	{{HAL_KEY_CODE_FN6,APP_KEY_EVENT_LONGPRESS},"bt quick monitor",app_bt_key, NULL},
+	{{HAL_KEY_CODE_FN6,APP_KEY_EVENT_DOUBLECLICK},"cover key double click",app_bt_key, NULL},
+	{{HAL_KEY_CODE_FN5,APP_KEY_EVENT_TRIPLECLICK},"siri",app_bt_key, NULL},//m by cai
 
+	{{HAL_KEY_CODE_FN5|APP_KEY_CODE_PWR,APP_KEY_EVENT_LONGLONGPRESS},"factory reset",app_bt_key, NULL},
 #ifdef SUPPORT_SIRI
     {{APP_KEY_CODE_NONE ,APP_KEY_EVENT_NONE},"none function key",app_bt_key, NULL},
 #endif
 #if defined( __BT_ANC_KEY__)&&defined(ANC_APP)
 #if defined(IBRT)|| defined(__POWERKEY_CTRL_BT_ANC__)
-     {{APP_KEY_CODE_PWR,APP_KEY_EVENT_CLICK},"bt anc key",app_anc_key, NULL},
+     //{{APP_KEY_CODE_PWR,APP_KEY_EVENT_CLICK},"bt anc key",app_anc_key, NULL},
 #else
-	 {{APP_KEY_CODE_FN2,APP_KEY_EVENT_CLICK},"bt anc key",app_anc_key, NULL},
+	 //{{APP_KEY_CODE_FN2,APP_KEY_EVENT_CLICK},"bt anc key",app_anc_key, NULL},
 #endif
 #endif
 #if defined(VOICE_DATAPATH) || defined(__AI_VOICE__)
-    {{APP_KEY_CODE_AI, APP_KEY_EVENT_FIRST_DOWN}, "AI key", app_voice_assistant_key, NULL},
+    //{{APP_KEY_CODE_AI, APP_KEY_EVENT_FIRST_DOWN}, "AI key", app_voice_assistant_key, NULL},
 #if defined(IS_GSOUND_BUTTION_HANDLER_WORKAROUND_ENABLED) || defined(PUSH_AND_HOLD_ENABLED) || defined(__TENCENT_VOICE__)
-    {{APP_KEY_CODE_AI, APP_KEY_EVENT_UP}, "AI key", app_voice_assistant_key, NULL},
+    //{{APP_KEY_CODE_AI, APP_KEY_EVENT_UP}, "AI key", app_voice_assistant_key, NULL},
 #endif
-    {{APP_KEY_CODE_AI, APP_KEY_EVENT_UP_AFTER_LONGPRESS}, "AI key", app_voice_assistant_key, NULL},
-    {{APP_KEY_CODE_AI, APP_KEY_EVENT_LONGPRESS}, "AI key", app_voice_assistant_key, NULL},
-    {{APP_KEY_CODE_AI, APP_KEY_EVENT_CLICK}, "AI key", app_voice_assistant_key, NULL},
-    {{APP_KEY_CODE_AI, APP_KEY_EVENT_DOUBLECLICK}, "AI key", app_voice_assistant_key, NULL},
+    //{{APP_KEY_CODE_AI, APP_KEY_EVENT_UP_AFTER_LONGPRESS}, "AI key", app_voice_assistant_key, NULL},
+    //{{APP_KEY_CODE_AI, APP_KEY_EVENT_LONGPRESS}, "AI key", app_voice_assistant_key, NULL},
+    //{{APP_KEY_CODE_AI, APP_KEY_EVENT_CLICK}, "AI key", app_voice_assistant_key, NULL},
+    //{{APP_KEY_CODE_AI, APP_KEY_EVENT_DOUBLECLICK}, "AI key", app_voice_assistant_key, NULL},
 #endif
 #ifdef IS_MULTI_AI_ENABLED
-    {{APP_KEY_CODE_FN13, APP_KEY_EVENT_CLICK}, "gva on-off key", app_voice_gva_onoff_key, NULL},
-    {{APP_KEY_CODE_FN14, APP_KEY_EVENT_CLICK}, "ama on-off key", app_voice_ama_onoff_key, NULL},
+    //{{APP_KEY_CODE_FN13, APP_KEY_EVENT_CLICK}, "gva on-off key", app_voice_gva_onoff_key, NULL},
+    //{{APP_KEY_CODE_FN14, APP_KEY_EVENT_CLICK}, "ama on-off key", app_voice_ama_onoff_key, NULL},
 #endif
 #if defined(TILE_DATAPATH)
-    {{APP_KEY_CODE_PWR,APP_KEY_EVENT_TRIPLECLICK},"bt function key",app_tile_key_handler, NULL},
-    {{APP_KEY_CODE_TILE, APP_KEY_EVENT_DOWN}, "tile function key", app_tile_key_handler, NULL},
-    {{APP_KEY_CODE_TILE, APP_KEY_EVENT_UP}, "tile function key", app_tile_key_handler, NULL},
+    //{{APP_KEY_CODE_PWR,APP_KEY_EVENT_TRIPLECLICK},"bt function key",app_tile_key_handler, NULL},
+    //{{APP_KEY_CODE_TILE, APP_KEY_EVENT_DOWN}, "tile function key", app_tile_key_handler, NULL},
+    //{{APP_KEY_CODE_TILE, APP_KEY_EVENT_UP}, "tile function key", app_tile_key_handler, NULL},
 #endif
 
 #if defined(BT_USB_AUDIO_DUAL_MODE_TEST) && defined(BT_USB_AUDIO_DUAL_MODE)
-    {{APP_KEY_CODE_FN15, APP_KEY_EVENT_CLICK}, "btusb mode switch key.", app_btusb_audio_dual_mode_test, NULL},
+    //{{APP_KEY_CODE_FN15, APP_KEY_EVENT_CLICK}, "btusb mode switch key.", app_btusb_audio_dual_mode_test, NULL},
 #endif
 };
 #else //#elif defined(__APP_KEY_FN_STYLE_B__)

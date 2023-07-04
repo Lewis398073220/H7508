@@ -5675,7 +5675,7 @@ int bt_sco_player(bool on, enum APP_SYSFREQ_FREQ_T freq)
 #if defined(SCO_CP_ACCEL)
         freq = APP_SYSFREQ_52M;
 #endif
-
+		freq = APP_SYSFREQ_208M;//add by pang for calling voice distortion
         app_sysfreq_req(APP_SYSFREQ_USER_BT_SCO, freq);
         TRACE(1,"bt_sco_player: app_sysfreq_req %d", freq);
         TRACE(1,"sys freq calc : %d\n", hal_sys_timer_calc_cpu_freq(5, 0));

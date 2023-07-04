@@ -20,6 +20,8 @@
 #include "btif_sys_config.h"
 #include "me_api.h"
 
+#include "../../../apps/key/app_key.h"
+
 //Application ID,indentify profle app context
 #define    BTIF_APP_INVALID_ID              (0x00000000)
 #define    BTIF_APP_HFP_PROFILE_ID          (0x00000001)
@@ -183,6 +185,10 @@ void btif_pts_reject_INVALID_BLOCK_LENGTH(void);
 void btif_pts_reject_INVALID_CP_TYPE(void);
 void btif_pts_reject_INVALID_CP_FORMAT(void);
 void btif_pts_reject_NOT_SUPPORTED_CODEC_TYPE(void);
+
+void Hfp_pts_enable_voice_recognition(APP_KEY_STATUS *status, void *param);
+void Hfp_pts_disable_voice_recognition(APP_KEY_STATUS *status, void *param);
+
 
 #ifdef __cplusplus
 }

@@ -370,6 +370,9 @@ void btapp_a2dp_report_speak_gain(void);
 #define   BTAPP_RELEASE_KEY			APP_KEY_CODE_NONE
 #endif
 #endif
+#define   BTAPP_ANC_KEY             APP_KEY_CODE_FN5
+#define   BTAPP_QUICK_MONIORT_KEY	APP_KEY_CODE_FN6
+
 void bt_key_init(void);
 void bt_key_send(APP_KEY_STATUS *status);
 void bt_key_handle(void);

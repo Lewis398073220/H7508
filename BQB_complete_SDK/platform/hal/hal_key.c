@@ -59,10 +59,10 @@ typedef uint32_t                            GPIO_MAP_T;
 #endif
 
 #ifndef CFG_SW_KEY_LLPRESS_THRESH_MS
-#define CFG_SW_KEY_LLPRESS_THRESH_MS        5000
+#define CFG_SW_KEY_LLPRESS_THRESH_MS        4000
 #endif
 #ifndef CFG_SW_KEY_LPRESS_THRESH_MS
-#define CFG_SW_KEY_LPRESS_THRESH_MS         1500
+#define CFG_SW_KEY_LPRESS_THRESH_MS         1000
 #endif
 #ifndef CFG_SW_KEY_REPEAT_THRESH_MS
 #define CFG_SW_KEY_REPEAT_THRESH_MS         500
