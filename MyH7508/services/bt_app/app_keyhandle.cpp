@@ -1493,7 +1493,7 @@ void bt_key_handle_cover_key(enum APP_KEY_EVENT_T event)
   		case  APP_KEY_EVENT_DOUBLECLICK:
 			//bt_key_handle_game_key();
 			//bt_key_handle_cover_doubleclick();
-			bt_key_handle_siri_key(APP_KEY_EVENT_CLICK);
+			//bt_key_handle_siri_key(APP_KEY_EVENT_CLICK);
 			break;
 		
 		case  APP_KEY_EVENT_LONGLONGPRESS:
@@ -1527,7 +1527,7 @@ void bt_key_handle_ANC_key(APP_KEY_STATUS *status, void *param)
 
 		case APP_KEY_EVENT_DOUBLECLICK:
 #ifdef MEDIA_PLAYER_SUPPORT
-			if(!app_bt_is_connected())
+			if(!app_bt_is_connected() || btif_me_get_activeCons()==0)
 			{
 				if(app_play_audio_get_lang() == MEDIA_DEFAULT_LANGUAGE){
 					app_voice_report(APP_STATUS_INDICATION_BEEP_22, 0);
@@ -1536,6 +1536,8 @@ void bt_key_handle_ANC_key(APP_KEY_STATUS *status, void *param)
 					app_voice_report(APP_STATUS_INDICATION_BEEP_22, 0);
 					app_nvrecord_language_set(MEDIA_DEFAULT_LANGUAGE);
 				}
+			} else{
+				bt_key_handle_siri_key(APP_KEY_EVENT_CLICK);
 			}	
 #endif
 			break;
