@@ -1104,6 +1104,10 @@ void bt_key_handle_func_longlongpress(void)
     open_siri_flag=0;
 #endif
 
+	/** add by cai for not to power off when call is active **/
+	if(btapp_hfp_get_call_setup() || btapp_hfp_is_call_active()) app_call_status_set(true);
+	/** end add **/
+
     switch(hfcall_machine)
     {
         case HFCALL_MACHINE_CURRENT_IDLE:

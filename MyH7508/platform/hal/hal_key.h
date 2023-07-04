@@ -95,6 +95,11 @@ enum HAL_KEY_EVENT_T hal_key_read_status(enum HAL_KEY_CODE_T code);
 
 int hal_key_close(void);
 
+/** add by cai **/
+uint8_t app_call_status_get(void);
+void app_call_status_set(uint8_t status);
+/** end add **/
+
 #ifdef __cplusplus
     }
 #endif

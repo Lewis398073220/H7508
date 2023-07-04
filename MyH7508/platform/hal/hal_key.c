@@ -670,6 +670,24 @@ static void hal_key_enable_allint(void)
 #endif
 }
 
+/** add by cai **/
+uint8_t call_status = 0;
+
+uint8_t app_call_status_get(void)
+{
+	TRACE(2, "***%s: call_status=%d", __func__, call_status);
+
+	return call_status;
+}
+
+void app_call_status_set(uint8_t status)
+{
+	TRACE(2, "***%s: call_status=%d", __func__, status);
+
+	call_status = status;
+}
+/** end add **/
+
 static void hal_key_debounce_handler(void *param)
 {
     uint32_t time;
@@ -938,11 +956,13 @@ static void hal_key_debounce_handler(void *param)
     if (up_new) {
 		if (key_status.event == HAL_KEY_EVENT_LONGPRESS || key_status.event == HAL_KEY_EVENT_LONGLONGPRESS || key_status.event == HAL_KEY_EVENT_LONGLONGLONGPRESS || key_status.event ==HAL_KEY_EVENT_LONGLONGLONGLONGPRESS || key_status.event == HAL_KEY_EVENT_LONGLONGLONGLONGLONGPRESS) {//m by cai
             // LongPress is finished when all of the LongPress keys are released
+            app_call_status_set(false);//add by cai for not to power off when call is active
             if ((code_down & key_status.code_ready) == 0) {
                 key_status.event = HAL_KEY_EVENT_NONE;
             }
         } else if (key_status.event == HAL_KEY_EVENT_DOWN) {
             // Enter click handling if not in LongPress
+            app_call_status_set(false);//add by cai for not to power off when call is active
             key_status.event = HAL_KEY_EVENT_UP;
         }
     }
@@ -1023,7 +1043,7 @@ static void hal_key_debounce_handler(void *param)
 			if (key_status.event == HAL_KEY_EVENT_LONGLONGPRESS) {//add by pang
                 if (time - key_status.time_updown >= KEY_LONGLONGLONGPRESS_THRESHOLD) {
                     key_status.event = HAL_KEY_EVENT_LONGLONGLONGPRESS;
-                    send_key_event(key_status.code_ready, key_status.event);
+                    if(!app_call_status_get()) send_key_event(key_status.code_ready, key_status.event);//m by cai for not to power off when call is active
                 }
             }
 			if (key_status.event == HAL_KEY_EVENT_LONGLONGLONGPRESS) {//add by cai

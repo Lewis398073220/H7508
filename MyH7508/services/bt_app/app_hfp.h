@@ -74,6 +74,8 @@ bool app_hfp_curr_audio_up(hf_chan_handle_t hfp_chnl);
 int hfp_volume_set(enum BT_DEVICE_ID_T id, int vol);
 bool hfp_is_any_service_connected();
 
+uint8_t btapp_hfp_get_call_setup(void);//add by cai
+
 #ifdef __cplusplus
 }
 #endif                          /*  */
