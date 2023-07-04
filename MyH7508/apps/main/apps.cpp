@@ -1320,7 +1320,7 @@ const APP_KEY_HANDLE  app_key_handle_cfg[] = {
 //--
 const APP_KEY_HANDLE  app_key_handle_cfg[] = {
     {{APP_KEY_CODE_PWR,APP_KEY_EVENT_LONGLONGLONGPRESS},"bt function key",app_bt_key_shutdown, NULL},
-	//{{APP_KEY_CODE_PWR,APP_KEY_EVENT_LONGLONGLONGPRESS},"bt function key",app_bt_key, NULL},
+	{{APP_KEY_CODE_PWR,APP_KEY_EVENT_LONGLONGPRESS},"bt function key",app_bt_key, NULL},
     {{APP_KEY_CODE_PWR,APP_KEY_EVENT_DOUBLECLICK},"play forward",app_bt_key, NULL},
     {{APP_KEY_CODE_PWR,APP_KEY_EVENT_TRIPLECLICK},"play backward",app_bt_key, NULL},
     {{APP_KEY_CODE_PWR,APP_KEY_EVENT_CLICK},"play backward",app_bt_key, NULL},
