@@ -62,7 +62,7 @@ typedef struct
     uint8_t softwareRevByte3;
 } FIRMWARE_REV_INFO_T;
 
-static FIRMWARE_REV_INFO_T fwRevInfoInFlash __attribute((section(".fw_rev"))) = {0, 0, 1, 0};
+static FIRMWARE_REV_INFO_T fwRevInfoInFlash __attribute((section(".fw_rev"))) = {0, 2, 3, 0};
 FIRMWARE_REV_INFO_T fwRevInfoInRam;
 
 extern "C" void system_get_info(uint8_t *fw_rev_0, uint8_t *fw_rev_1,
@@ -140,6 +140,10 @@ int tgt_hardware_setup(void)
         hal_iomux_init((struct HAL_IOMUX_PIN_FUNCTION_MAP *)&app_battery_ext_charger_indicator_cfg, 1);
         hal_gpio_pin_set_dir((enum HAL_GPIO_PIN_T)app_battery_ext_charger_indicator_cfg.pin, HAL_GPIO_DIR_IN, 1);
     }
+		if (cfg_hw_pio_3_3v_control.pin != HAL_IOMUX_PIN_NUM){
+			hal_iomux_init((struct HAL_IOMUX_PIN_FUNCTION_MAP *)&cfg_hw_pio_3_3v_control, 1);
+			hal_gpio_pin_set_dir((enum HAL_GPIO_PIN_T)cfg_hw_pio_3_3v_control.pin, HAL_GPIO_DIR_OUT, 1);//m by cai
+		}
     return 0;
 }
 

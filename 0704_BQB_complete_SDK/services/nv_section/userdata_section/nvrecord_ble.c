@@ -25,7 +25,7 @@
 #include "hal_timer.h"
 
 #include "besbt.h"
-#include "cmac.h"
+//#include "cmac.h"
 #include "ddbif.h"
 #include "nvrecord_bt.h"
 

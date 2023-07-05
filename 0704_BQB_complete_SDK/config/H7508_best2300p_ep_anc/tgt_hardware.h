@@ -25,6 +25,8 @@ extern "C" {
 #include "hal_key.h"
 #include "hal_aud.h"
 
+extern const struct HAL_IOMUX_PIN_FUNCTION_MAP cfg_hw_pio_3_3v_control;
+
 //config hwardware codec iir.
 #define EQ_HW_DAC_IIR_LIST_NUM              1
 #define EQ_HW_ADC_IIR_LIST_NUM              1
