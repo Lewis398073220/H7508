@@ -743,7 +743,7 @@ int app_battery_open(void)
     }
 
 #if defined(__NTC_DETECT__)
-	//ntc_capture_open();//add by pang
+	ntc_capture_open();//add by pang
 #endif
 
 #if defined(__DEFINE_DEMO_MODE__)
@@ -1039,7 +1039,7 @@ static void app_ntc_timer_handler(void const *param)
 #define CHARGE_LOW_TEMPERATURE_RECOVER  1270    // 2C
 
 #define DISCHARGE_HIGH_TEMPERATURE 		400//380   	//55C// 60C
-#define DISCHARGE_LOW_TEMPERATURE  		1525//1730 	//-15C//-25C
+#define DISCHARGE_LOW_TEMPERATURE  		1587//1525//1730 	//-15C//-25C
 #else //ntc 30k ok
 //#define CHARGE_HIGH_TEMPERATURE         380     // 45C
 //#define CHARGE_LOW_TEMPERATURE     		1150    // 0C 
