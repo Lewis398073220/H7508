@@ -64,7 +64,7 @@ extern "C" bool app_usbaudio_mode_on(void);
 
 #define APP_BATTERY_TRACE(s,...) TRACE(s, ##__VA_ARGS__)
 
-static APP_BATTERY_MV_T batterylevel[]={4030, 3920, 3820, 3740, 3670, 3620, 3570, 3510, 3480};//add by pang
+static APP_BATTERY_MV_T batterylevel[]={4050, 4030, 4010, 3930, 3880, 3840, 3790, 3680, 3570};//add by pang
 static bool charge_full_flag = 0;//add by pang
 
 #ifndef APP_BATTERY_MIN_MV
