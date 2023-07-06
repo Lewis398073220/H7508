@@ -22,6 +22,7 @@
 #define DEFAULT_AUTO_PWOFF_TIME AUTO_PWOFF_TIME_PERM
 
 extern IIR_CFG_T eq_custom_para;
+extern IIR_CFG_T eq_custom_para_anc_off;
 #endif
 
 #ifdef __cplusplus

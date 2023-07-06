@@ -371,9 +371,9 @@ void app_user_event_close_module(void)
 
 #if defined(__EVRCORD_USER_DEFINE__)
 IIR_CFG_T eq_custom_para={
-    .gain0 = -6,
-    .gain1 = -6,
-    .num = 6,
+    .gain0 = -5,
+    .gain1 = -5,
+    .num = 16,
     .param = {
         {IIR_TYPE_PEAK, .0,   100, 0.7},
         {IIR_TYPE_PEAK, .0,   400, 0.7},
@@ -381,6 +381,37 @@ IIR_CFG_T eq_custom_para={
         {IIR_TYPE_PEAK, .0,  2500, 0.7},
         {IIR_TYPE_PEAK, .0,  6300, 0.7},
 		{IIR_TYPE_PEAK, .0, 12000, 0.7},
+		{IIR_TYPE_PEAK, -9,    18, 0.8},
+		{IIR_TYPE_PEAK, -3,    80, 1.3},
+		{IIR_TYPE_PEAK,-14,   200, 0.6},
+		{IIR_TYPE_PEAK,-3.5,  450, 1.0},
+		{IIR_TYPE_PEAK,-14,   700, 1.3},
+		{IIR_TYPE_PEAK, -5,  1400, 2.0},
+		{IIR_TYPE_PEAK, -3,  2200, 1.0},
+		{IIR_TYPE_PEAK,-15,  7500, 4.0},
+		{IIR_TYPE_PEAK, -6, 15000, 1.0},
+		{IIR_TYPE_PEAK, -6, 20000, 1.0},
+	}
+};
+
+IIR_CFG_T eq_custom_para_anc_off={
+    .gain0 = -5,
+    .gain1 = -5,
+    .num = 13,
+    .param = {
+        {IIR_TYPE_PEAK, .0,   100, 0.7},
+        {IIR_TYPE_PEAK, .0,   400, 0.7},
+        {IIR_TYPE_PEAK, .0,  1000, 0.7},
+        {IIR_TYPE_PEAK, .0,  2500, 0.7},
+        {IIR_TYPE_PEAK, .0,  6300, 0.7},
+		{IIR_TYPE_PEAK, .0, 12000, 0.7},
+		{IIR_TYPE_PEAK,-13.5,  16, 0.8},
+		{IIR_TYPE_PEAK,-5.5,   80, 0.8},
+		{IIR_TYPE_PEAK,-14,   200,0.75},
+		{IIR_TYPE_PEAK,-13.5, 620,0.75},
+		{IIR_TYPE_PEAK,-12,  7500, 4.0},
+		{IIR_TYPE_PEAK, -4, 15000, 1.0},
+		{IIR_TYPE_PEAK, -4, 20000, 1.0},
 	}
 };
 
@@ -531,12 +562,11 @@ void app_nvrecord_eq_param_set(uint8_t customization_eq_value[6])
 			eq_custom_para.param[i].gain=(eq_custom_para.param[i].gain)/2;
 			if(eq_custom_para.param[i].gain<-5)
 				eq_custom_para.param[i].gain=-5;
-			/*
-			eq_custom_para_ancoff.param[i].gain=(float)temp;
-			eq_custom_para_ancoff.param[i].gain=(eq_custom_para_ancoff.param[i].gain)/2;
-			if(eq_custom_para_ancoff.param[i].gain<-5)
-				eq_custom_para_ancoff.param[i].gain=-5;
-			*/
+
+			eq_custom_para_anc_off.param[i].gain=(float)temp;
+			eq_custom_para_anc_off.param[i].gain=(eq_custom_para_anc_off.param[i].gain)/2;
+			if(eq_custom_para_anc_off.param[i].gain<-5)
+				eq_custom_para_anc_off.param[i].gain=-5;
 		}
 		else{
 			temp=(int8_t)customization_eq_value[i];
@@ -544,12 +574,11 @@ void app_nvrecord_eq_param_set(uint8_t customization_eq_value[6])
 			eq_custom_para.param[i].gain=(eq_custom_para.param[i].gain)/2;
 			if(eq_custom_para.param[i].gain>5)
 				eq_custom_para.param[i].gain=5;
-			/*
-			eq_custom_para_ancoff.param[i].gain=(float)temp;
-			eq_custom_para_ancoff.param[i].gain=(eq_custom_para_ancoff.param[i].gain)/2;
-			if(eq_custom_para_ancoff.param[i].gain>5)
-				eq_custom_para_ancoff.param[i].gain=5;
-			*/
+
+			eq_custom_para_anc_off.param[i].gain=(float)temp;
+			eq_custom_para_anc_off.param[i].gain=(eq_custom_para_anc_off.param[i].gain)/2;
+			if(eq_custom_para_anc_off.param[i].gain>5)
+				eq_custom_para_anc_off.param[i].gain=5;
 		}
 		//TRACE(1,"***set customization_eq_value [%d]=%x",i,customization_eq_value[i]);
 	}
@@ -889,7 +918,12 @@ void app_nvrecord_para_get(void)
 			eq_custom_para.param[i].gain = (float)temp;		
 			eq_custom_para.param[i].gain = (eq_custom_para.param[i].gain)/2;
 			if(eq_custom_para.param[i].gain < -5)
-				eq_custom_para.param[i].gain = -5;		
+				eq_custom_para.param[i].gain = -5;
+
+			eq_custom_para_anc_off.param[i].gain = (float)temp;		
+			eq_custom_para_anc_off.param[i].gain = (eq_custom_para_anc_off.param[i].gain)/2;
+			if(eq_custom_para_anc_off.param[i].gain < -5)
+				eq_custom_para_anc_off.param[i].gain = -5;
 		}
 		else{
 			temp = (int8_t)igain;
@@ -897,6 +931,11 @@ void app_nvrecord_para_get(void)
 			eq_custom_para.param[i].gain = (eq_custom_para.param[i].gain)/2;
 			if(eq_custom_para.param[i].gain > 5)
 				eq_custom_para.param[i].gain = 5;
+
+			eq_custom_para_anc_off.param[i].gain = (float)temp;
+			eq_custom_para_anc_off.param[i].gain = (eq_custom_para_anc_off.param[i].gain)/2;
+			if(eq_custom_para_anc_off.param[i].gain > 5)
+				eq_custom_para_anc_off.param[i].gain = 5;
 		}
 		TRACE(3,"***%s: customization_eq_gain[%d]=%x",__func__,i,nvrecord_env->iir_gain[i]);		
 	}
