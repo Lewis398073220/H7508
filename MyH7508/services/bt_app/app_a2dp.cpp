@@ -3613,8 +3613,19 @@ extern "C" void a2dp_callback(a2dp_stream_t *Stream, const a2dp_callback_parms_t
         if((app_bt_device.a2dp_connected_stream[anotherDevice]) &&
             (btif_a2dp_get_stream_state(app_bt_device.a2dp_connected_stream[anotherDevice])  != BTIF_AVDTP_STRM_STATE_STREAMING))
         {
+		    a2dp_set_cur_stream(anotherDevice);
             app_bt_device.a2dp_play_pause_flag = 0;
                 app_a2dp_hold_mute();
+					
+                   /* 
+                     * Update the volume pointer to the connected device which helps to sync volume
+                     * between headset and mobile.
+                     */
+                    bt_bdaddr_t bd_addr={0};
+                    if(a2dp_bdaddr_from_id(anotherDevice,&bd_addr)){
+                        app_bt_stream_volume_ptr_update(bd_addr.address);
+                    }
+
         }
 #endif
         }
