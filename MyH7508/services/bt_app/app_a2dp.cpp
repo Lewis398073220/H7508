@@ -1199,7 +1199,7 @@ extern "C" void avrcp_callback_CT(btif_avrcp_chnl_handle_t chnl, const avrcp_cal
                 {
                     if(btif_get_avrcp_adv_rsp(parms)->element.txt[i].length>0)
                     {
-                        TRACE(2,"***Id=%d,%s\n",i,btif_get_avrcp_adv_rsp(parms)->element.txt[i].string);
+                        //TRACE(2,"***Id=%d,%s\n",i,btif_get_avrcp_adv_rsp(parms)->element.txt[i].string);//m by cai
 /** add by pang  for Philips BLE - start  **/
 #if defined(BLE_ENABLE)
 						 if (i == 0){  //Title

@@ -288,6 +288,7 @@ void btusb_switch(enum BTUSB_MODE mode)
             TRACE(1,"%s: switch to BT mode.",__func__);
             btusb_mode = BTUSB_MODE_BT;
 			usb_configured_flag = 0;//add by cai
+			app_key_init();//add by cai
         }
         else {
             TRACE(1,"%s: switch to USB mode.",__func__);

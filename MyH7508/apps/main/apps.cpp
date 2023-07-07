@@ -1676,13 +1676,13 @@ bool app_usbaudio_mode_on(void)
 void app_usb_key(APP_KEY_STATUS *status, void *param)
 {
     TRACE(3,"%s %d,%d",__func__, status->code, status->event);
-	if(hal_usb_configured()) usb_audio_app_key((HAL_KEY_CODE_T)status->code, (HAL_KEY_EVENT_T)status->event);//add by cai
+	if(hal_usb_configured() || get_usb_configured_status()) usb_audio_app_key((HAL_KEY_CODE_T)status->code, (HAL_KEY_EVENT_T)status->event);//add by cai
 }
 
 /** add by cai **/
 void app_usb_ANC_key(APP_KEY_STATUS *status, void *param)
 {
-	if(hal_usb_configured())
+	if(hal_usb_configured() || get_usb_configured_status())
 	{
 		app_anc_Key_Pro();
 		usb_audio_eq_loop();//add by cai
@@ -1718,7 +1718,7 @@ void usb_app_quick_awareness_swtimer_stop(void)
 
 void app_usb_Cover_key(APP_KEY_STATUS *status, void *param)
 {
-	if(hal_usb_configured())
+	if(hal_usb_configured() || get_usb_configured_status())
 	{
 		switch(status->event)
 		{
