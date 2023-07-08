@@ -3689,8 +3689,9 @@ int bt_sbc_player(enum PLAYER_OPER_T on, enum APP_SYSFREQ_FREQ_T freq)
         stream_cfg.device = AUD_STREAM_USE_INT_CODEC;
 #endif
         stream_cfg.io_path = AUD_OUTPUT_PATH_SPEAKER;
-        stream_cfg.vol = stream_local_volume;
-        stream_cfg.handler = bt_sbc_player_more_data;
+        stream_cfg.vol = stream_local_volume+17;   //m by cai for volume independent
+		TRACE(2,"***%s: stream_cfg.vol=%d",__func__, stream_cfg.vol);
+		stream_cfg.handler = bt_sbc_player_more_data;
 
 #if defined(A2DP_SCALABLE_ON)
         if (codec_type == BTIF_AVDTP_CODEC_TYPE_NON_A2DP){
