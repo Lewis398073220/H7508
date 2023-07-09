@@ -36,6 +36,9 @@ extern "C" {
 extern const char *BT_FIRMWARE_VERSION;
 #endif
 #define ANC_KEY_DETECTE HAL_IOMUX_PIN_P1_0
+#if defined(__CHARGE_CURRRENT__)
+extern const struct HAL_IOMUX_PIN_FUNCTION_MAP cfg_charge_current_control;
+#endif
 
 #if defined(__LDO_3V3_CTR__)
 extern const struct HAL_IOMUX_PIN_FUNCTION_MAP cfg_hw_pio_3_3v_control;
@@ -103,7 +106,7 @@ extern const struct HAL_KEY_GPIOKEY_CFG_T cfg_hw_gpio_key_cfg[CFG_HW_GPIOKEY_NUM
 #define ANC_TALK_THROUGH
 
 #ifdef ANC_TALK_THROUGH
-#define ANC_COEF_LIST_NUM                   (ANC_COEF_NUM + 1)
+#define ANC_COEF_LIST_NUM                   (ANC_COEF_NUM + 12)
 #else
 #define ANC_COEF_LIST_NUM                   (ANC_COEF_NUM)
 #endif
@@ -116,13 +119,13 @@ extern const struct HAL_KEY_GPIOKEY_CFG_T cfg_hw_gpio_key_cfg[CFG_HW_GPIOKEY_NUM
 #define ANC_VMIC_CFG                        (AUD_VMIC_MAP_VMIC1)
 
 // audio codec
-#define CFG_HW_AUD_INPUT_PATH_NUM           4
+#define CFG_HW_AUD_INPUT_PATH_NUM           9//4 //m by cai
 extern const struct AUD_IO_PATH_CFG_T cfg_audio_input_path_cfg[CFG_HW_AUD_INPUT_PATH_NUM];
 
 #define CFG_HW_AUD_OUTPUT_PATH_SPEAKER_DEV  (AUD_CHANNEL_MAP_CH0 | AUD_CHANNEL_MAP_CH1)
 
-#define CFG_HW_AUD_SIDETONE_MIC_DEV         (AUD_CHANNEL_MAP_CH0)
-#define CFG_HW_AUD_SIDETONE_GAIN_DBVAL      (-20)
+#define CFG_HW_AUD_SIDETONE_MIC_DEV         (AUD_CHANNEL_MAP_CH4)//m by cai for use call mic as sidetone mic
+#define CFG_HW_AUD_SIDETONE_GAIN_DBVAL      (-30)//m by cai
 
 //bt config
 extern const char *BT_LOCAL_NAME;
@@ -142,7 +145,7 @@ extern const int8_t cfg_aud_eq_sbc_band_settings[CFG_HW_AUD_EQ_NUM_BANDS];
 #define CFG_AUD_EQ_IIR_NUM_BANDS (4)
 
 //battery info
-#define APP_BATTERY_MIN_MV (3430)//3480
+#define APP_BATTERY_MIN_MV  (3462)
 #define APP_BATTERY_PD_MV   (3400)
 
 #define APP_BATTERY_MAX_MV (4200)
