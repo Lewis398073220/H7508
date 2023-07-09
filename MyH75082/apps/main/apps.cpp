@@ -2113,7 +2113,7 @@ extern int rpc_service_setup(void);
 #endif
 		app_user_event_open_module();
 #ifdef ANC_APP
-		power_on_set_anc();
+		poweron_set_anc();
 		//app_anc_Key_Pro(NULL, NULL);
 		//app_anc_switch_turnled(true);
 		//app_monitor_switch_turnled(false);
@@ -2300,7 +2300,7 @@ extern int rpc_service_setup(void);
 #endif
 		
 #ifdef ANC_APP
-		power_on_set_anc();
+		poweron_set_anc();
 		//app_anc_Key_Pro(NULL, NULL);
 		//app_anc_switch_turnled(true);
 		//app_monitor_switch_turnled(false);

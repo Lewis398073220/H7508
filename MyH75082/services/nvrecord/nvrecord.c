@@ -1718,7 +1718,7 @@ bool nvrec_dev_localname_addr_init(dev_addr_name *dev)
         {
             memcpy((void *) dev->btd_addr,(void *)&p_devdata_cache[rev2_dev_bt_addr],BTIF_BD_ADDR_SIZE);
             memcpy((void *) dev->ble_addr,(void *)&p_devdata_cache[rev2_dev_ble_addr],BTIF_BD_ADDR_SIZE);
-			#if 0
+			#if 1
             dev->localname = (char *)&p_devdata_cache[rev2_dev_name];
 			#else //m by pang
 			if(bt_name_len){

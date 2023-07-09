@@ -48,7 +48,7 @@
 #if defined(__HAYLOU_APP__)
 #include "../../../services/ble_app/app_datapath/haylou_ble_hop.h"
 #endif
-
+#include "../../../services/ble_app/app_datapath/philips_ble_api.h"
 /** end add **/
 
 
@@ -189,19 +189,115 @@ extern void analog_aud_enable_dac_pa(uint8_t dac);
 /** add by pang **/
 #include "app_bt_stream.h"
 
-uint8_t anc_current_mode=anc_on2;
+static enum ANC_STATUS anc_current_status = anc_on;
+static enum ANC_ON_MODE anc_on_mode = anc_high;//add by pang
+static enum MONITOR_ON_MODE monitor_mode = monitor1;//add by pang
+static enum ANC_TOGGLE_MODE anc_toggle_method = AncOn_AncOff_Awareness;
 
-uint8_t app_get_anc_mode(void)
+enum ANC_STATUS app_get_anc_status(void)
 {
-	return (anc_current_mode);
+	return (anc_current_status);
 }
 
-void power_on_set_anc(void)
+enum ANC_ON_MODE app_get_anc_on_mode(void)
 {
-    uint8_t anc_pre_mode=0;
-	anc_pre_mode=app_nvrecord_anc_get();
+	return (anc_on_mode);
+}
 
-	set_anc_mode(anc_pre_mode,0);
+void app_set_anc_on_mode(enum APP_ANC_MODE_STATUS anc_on_new_mode)
+{
+    if(anc_on_new_mode == ANC_HIGH)
+	   anc_on_mode = anc_high;
+	else if(anc_on_new_mode == ANC_LOW)
+	   anc_on_mode = anc_low;
+	else //if(anc_on_new_mode==3)
+	   anc_on_mode = anc_wind;
+}
+
+enum MONITOR_ON_MODE app_get_monitor_mode(void)
+{
+	return (monitor_mode);
+}
+
+void app_set_monitor_mode(uint8_t monitor_new_level)
+{
+   if(monitor_new_level <= 4)
+		monitor_mode = monitor1;
+	else if(monitor_new_level <= 8)
+		monitor_mode = monitor2;
+	else if(monitor_new_level <= 12)
+		monitor_mode = monitor3;
+	else if(monitor_new_level <= 16)
+		monitor_mode = monitor4;
+	else
+		monitor_mode = monitor5;
+
+    if(app_get_focus()){
+		monitor_mode += 5;
+    }
+}
+
+enum APP_ANC_MODE_STATUS app_get_anc_mode_status(void)
+{
+    enum APP_ANC_MODE_STATUS anc_status = NC_INVALID;
+	
+	if(anc_current_status==anc_off){
+		anc_status = NC_OFF;
+	}
+	else if(anc_current_status==anc_on){
+		if(anc_on_mode==anc_high)
+			anc_status=ANC_HIGH;
+		else if(anc_on_mode==anc_low)
+			anc_status=ANC_LOW;
+		else //(anc_on_mode==anc_wind)
+			anc_status=ANC_WIND;
+	}
+	else{
+		anc_status=MONITOR_ON;
+	}
+	return (anc_status);
+}
+
+void poweron_set_anc(void)
+{
+	enum APP_ANC_MODE_STATUS anc_mode_poweron;
+	anc_mode_poweron = app_nvrecord_anc_status_get();
+	
+	if(anc_mode_poweron == ANC_HIGH){
+		anc_current_status = anc_on;
+		anc_on_mode = anc_high;
+	}
+	else if(anc_mode_poweron == ANC_LOW){
+		anc_current_status = anc_on;
+		anc_on_mode = anc_low;
+	}
+	else if(anc_mode_poweron == ANC_WIND){
+		anc_current_status = anc_on;
+		anc_on_mode = anc_wind;
+	}
+	else {
+		anc_current_status = anc_on;
+		if(app_nvrecord_anc_table_get() == ANC_HIGH)
+			anc_on_mode = anc_high;
+		else if(app_nvrecord_anc_table_get() == ANC_LOW)
+			anc_on_mode = anc_low;
+		else anc_on_mode = anc_wind;
+	}
+
+	app_set_monitor_mode(app_get_monitor_level());
+	set_anc_mode(anc_current_status, 0);	
+}
+
+enum ANC_TOGGLE_MODE app_get_anc_toggle_mode(void)
+{
+	anc_toggle_method = app_nvrecord_anc_toggle_mode_get();
+
+	return (anc_toggle_method);
+}
+
+void app_set_anc_toggle_mode(enum ANC_TOGGLE_MODE anc_new_toggle_mode)
+{
+	anc_toggle_method = anc_new_toggle_mode;
 }
 /** end add **/
 
@@ -1742,48 +1838,185 @@ void app_anc_Key_Pro(APP_KEY_STATUS *status, void *param)
 {
     static bool power_anc_init=0;
 	bool anc_open_flag=0;
-	
-	if(anc_current_mode == anc_on2)
-	{	
-		anc_current_mode = anc_on1; 
-		anc_coef_idx = 0;
-	    anc_open_flag=1;
+	//TRACE(2," %s anc_current_status: %d", __func__, anc_current_status);
 
-		if(power_anc_init){
-			//power_anc_init=0;
-		}
-		else{
+	if(app_get_anc_toggle_mode()==AncOn_AncOff_Awareness) {//m by cai for ANC toggle method define function
+		if(anc_current_status == monitor)
+		{	
+			anc_current_status = anc_on; 
+			anc_coef_idx = anc_on_mode;
+			
+			anc_open_flag=1;
+
+			if(power_anc_init){
+				//power_anc_init=0;
+			}
+			else{
 #ifdef ANC_LED_PIN
-		app_anc_switch_turnled(true);
-		app_monitor_switch_turnled(false);
+			app_anc_switch_turnled(true);
+			app_monitor_switch_turnled(false);
 #endif
 #ifdef MEDIA_PLAYER_SUPPORT		
-		app_voice_report(APP_STATUS_INDICATION_ANC_ON, 0);
+			app_voice_report(APP_STATUS_INDICATION_ANC_ON, 0);
+#endif
+			}
+		}
+		else if(anc_current_status == anc_off)
+		{
+			anc_current_status = monitor;
+			anc_coef_idx = monitor_mode;
+			anc_open_flag=1;
+#ifdef ANC_LED_PIN
+			app_monitor_switch_turnled(true);
+			app_anc_switch_turnled(false);
+#endif
+#ifdef MEDIA_PLAYER_SUPPORT
+			app_voice_report(APP_STATUS_INDICATION_MONITOR_ON, 0);
 #endif
 		}
-	}
-	else if(anc_current_mode == anc_off)
-	{
-		anc_current_mode = anc_on2;
-		anc_coef_idx = 1;
-		anc_open_flag=1;
+		else
+		{
+			anc_current_status = anc_off;
 #ifdef ANC_LED_PIN
-		app_monitor_switch_turnled(true);
-		app_anc_switch_turnled(false);
-#endif
-#ifdef MEDIA_PLAYER_SUPPORT
-		app_voice_report(APP_STATUS_INDICATION_MONITOR_ON, 0);
-#endif		
-	}
-	else
-	{
-		anc_current_mode = anc_off;
-#ifdef ANC_LED_PIN
-		app_anc_switch_turnled(false);
+			app_anc_switch_turnled(false);
 #endif		
 #ifdef MEDIA_PLAYER_SUPPORT
-		app_voice_report(APP_STATUS_INDICATION_ANC_OFF, 0);
+			app_voice_report(APP_STATUS_INDICATION_ANC_OFF, 0);
 #endif
+		}
+	}else if(app_get_anc_toggle_mode()==AncOn_Awareness) {
+		if(anc_current_status == monitor)
+		{	
+			anc_current_status = anc_on; 
+			anc_coef_idx = anc_on_mode;
+			
+			anc_open_flag=1;
+
+			if(power_anc_init){
+				//power_anc_init=0;
+			}
+			else{
+#ifdef ANC_LED_PIN
+			app_anc_switch_turnled(true);
+			app_monitor_switch_turnled(false);
+#endif
+#ifdef MEDIA_PLAYER_SUPPORT		
+			app_voice_report(APP_STATUS_INDICATION_ANC_ON, 0);
+#endif
+			}
+		}
+		else if(anc_current_status == anc_off)
+		{
+			anc_current_status = monitor;
+			anc_coef_idx = monitor_mode;
+			anc_open_flag=1;
+#ifdef ANC_LED_PIN
+			app_monitor_switch_turnled(true);
+			app_anc_switch_turnled(false);
+#endif
+#ifdef MEDIA_PLAYER_SUPPORT
+			app_voice_report(APP_STATUS_INDICATION_MONITOR_ON, 0);
+#endif
+		}
+		else
+		{
+			anc_current_status = monitor;
+			anc_coef_idx = monitor_mode;
+			anc_open_flag=1;
+#ifdef ANC_LED_PIN
+			app_monitor_switch_turnled(true);
+			app_anc_switch_turnled(false);
+#endif
+#ifdef MEDIA_PLAYER_SUPPORT
+			app_voice_report(APP_STATUS_INDICATION_MONITOR_ON, 0);
+#endif
+		}
+	}else if(app_get_anc_toggle_mode()==AncOn_AncOff) {
+		if(anc_current_status == monitor)
+		{	
+			anc_current_status = anc_on; 
+			anc_coef_idx = anc_on_mode;
+			
+			anc_open_flag=1;
+
+			if(power_anc_init){
+				//power_anc_init=0;
+			}
+			else{
+#ifdef ANC_LED_PIN
+			app_anc_switch_turnled(true);
+			app_monitor_switch_turnled(false);
+#endif
+#ifdef MEDIA_PLAYER_SUPPORT		
+			app_voice_report(APP_STATUS_INDICATION_ANC_ON, 0);
+#endif
+			}
+		}
+		else if(anc_current_status == anc_off)
+		{
+			anc_current_status = anc_on; 
+			anc_coef_idx = anc_on_mode;
+			
+			anc_open_flag=1;
+
+			if(power_anc_init){
+				//power_anc_init=0;
+			}
+			else{
+#ifdef ANC_LED_PIN
+			app_anc_switch_turnled(true);
+			app_monitor_switch_turnled(false);
+#endif
+#ifdef MEDIA_PLAYER_SUPPORT		
+			app_voice_report(APP_STATUS_INDICATION_ANC_ON, 0);
+#endif
+			}
+
+		}
+		else
+		{
+			anc_current_status = anc_off;
+#ifdef ANC_LED_PIN
+			app_anc_switch_turnled(false);
+#endif		
+#ifdef MEDIA_PLAYER_SUPPORT
+			app_voice_report(APP_STATUS_INDICATION_ANC_OFF, 0);
+#endif
+		}
+	}else if(app_get_anc_toggle_mode()==Awareness_AncOff){
+		if(anc_current_status == monitor)
+		{	
+			anc_current_status = anc_off;
+#ifdef ANC_LED_PIN
+			app_anc_switch_turnled(false);
+#endif		
+#ifdef MEDIA_PLAYER_SUPPORT
+			app_voice_report(APP_STATUS_INDICATION_ANC_OFF, 0);
+#endif
+		}
+		else if(anc_current_status == anc_off)
+		{
+			anc_current_status = monitor;
+			anc_coef_idx = monitor_mode;
+			anc_open_flag=1;
+#ifdef ANC_LED_PIN
+			app_monitor_switch_turnled(true);
+			app_anc_switch_turnled(false);
+#endif
+#ifdef MEDIA_PLAYER_SUPPORT
+			app_voice_report(APP_STATUS_INDICATION_MONITOR_ON, 0);
+#endif
+		}
+		else
+		{
+			anc_current_status = anc_off;
+#ifdef ANC_LED_PIN
+			app_anc_switch_turnled(false);
+#endif		
+#ifdef MEDIA_PLAYER_SUPPORT
+			app_voice_report(APP_STATUS_INDICATION_ANC_OFF, 0);
+#endif
+		}
 	}
 
 	switch (anc_work_status)
@@ -1846,9 +2079,9 @@ void app_anc_Key_Pro(APP_KEY_STATUS *status, void *param)
 	if(power_anc_init){
 		power_anc_init=0;
 	}
-	#if defined(__HAYLOU_APP__)
-	Set_Report_Anc_Status();
-	#endif
+	//#if defined(__TPV_APP__)
+	Notification_Nosie_Cancelling_Change();
+	//#endif
 }
 
 #if 0
@@ -2028,10 +2261,10 @@ void set_anc_mode(uint8_t anc_new_mode,uint8_t prom_on)
 	//if(anc_current_mode==anc_new_mode)
 		//return;
 
-	if(anc_new_mode == anc_on1)
+	if(anc_new_mode == anc_on)
 	{	
-		anc_current_mode = anc_on1; 
-		anc_coef_idx = 0;
+		anc_current_status = anc_on; 
+		anc_coef_idx = anc_on_mode;
 	    anc_open_flag=1;
 
 #ifdef ANC_LED_PIN
@@ -2043,11 +2276,11 @@ void set_anc_mode(uint8_t anc_new_mode,uint8_t prom_on)
 		app_voice_report(APP_STATUS_INDICATION_ANC_ON, 0);
 #endif
 	}
-	else if(anc_new_mode == anc_on2)
+	else if(anc_new_mode == monitor)
 	{
-		anc_current_mode = anc_on2;
-		anc_coef_idx = 1;
-		anc_open_flag=1;
+		anc_current_status = monitor;
+		anc_coef_idx = monitor_mode;
+		anc_open_flag=1;	
 #ifdef ANC_LED_PIN
 		//app_monitor_switch_turnled(true);
 		//app_anc_switch_turnled(false);
@@ -2059,7 +2292,7 @@ void set_anc_mode(uint8_t anc_new_mode,uint8_t prom_on)
 	}
 	else
 	{
-		anc_current_mode = anc_off;
+		anc_current_status = anc_off;
 #ifdef ANC_LED_PIN
 		//app_anc_switch_turnled(false);
 #endif		
@@ -2138,17 +2371,17 @@ void app_monitor_moment(bool on)
 	TRACE(2," %s status: %d ", __func__, anc_work_status);
 	
 	if(on){
-		anc_coef_idx=1;
+		anc_coef_idx=12;
 		anc_open_flag=1;		
 	}
 	else{
-		TRACE(1,"******%s recover", __func__);		
-		if(anc_current_mode==anc_on1){	
-			anc_coef_idx=0;
+		TRACE(1,"***%s recover", __func__);		
+		if(anc_current_status==anc_on){	
+			anc_coef_idx=anc_on_mode;
 			anc_open_flag=1;
 		}
-		else if(anc_current_mode==anc_on2){
-			anc_coef_idx=1;
+		else if(anc_current_status==monitor){
+			anc_coef_idx=monitor_mode;
 			anc_open_flag=1;
 		}			
 		else{

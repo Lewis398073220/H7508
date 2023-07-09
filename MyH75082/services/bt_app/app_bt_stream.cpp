@@ -1542,7 +1542,7 @@ uint8_t bt_audio_updata_eq_for_anc(uint8_t anc_status)
         TRACE(2,"[%s]anc_status = %d", __func__, anc_status);
 #ifdef __SW_IIR_EQ_PROCESS__
         //bt_audio_set_eq(AUDIO_EQ_TYPE_SW_IIR,bt_audio_get_eq_index(AUDIO_EQ_TYPE_SW_IIR,anc_status));
-		bt_audio_set_eq(AUDIO_EQ_TYPE_SW_IIR,bt_audio_get_eq_index(AUDIO_EQ_TYPE_SW_IIR,app_get_anc_mode()));//m by pang
+		bt_audio_set_eq(AUDIO_EQ_TYPE_SW_IIR,bt_audio_get_eq_index(AUDIO_EQ_TYPE_SW_IIR,app_get_anc_status()));//m by pang
 #endif
 
 #ifdef __HW_FIR_EQ_PROCESS__
@@ -1565,7 +1565,7 @@ uint8_t bt_audio_updata_eq_for_anc(uint8_t anc_status)
 void change_eq_from_ble_api(uint8_t index)
 {   
 #ifdef __SW_IIR_EQ_PROCESS__
- 	bt_audio_set_eq(AUDIO_EQ_TYPE_SW_IIR, app_get_anc_mode());
+ 	bt_audio_set_eq(AUDIO_EQ_TYPE_SW_IIR, app_get_anc_status());
 #endif  	
 }
 /** end add **/
@@ -3956,7 +3956,7 @@ int bt_sbc_player(enum PLAYER_OPER_T on, enum APP_SYSFREQ_FREQ_T freq)
 #ifndef __PC_CMD_UART__
 #ifdef __SW_IIR_EQ_PROCESS__
         //bt_audio_set_eq(AUDIO_EQ_TYPE_SW_IIR,bt_audio_get_eq_index(AUDIO_EQ_TYPE_SW_IIR,0));
-		bt_audio_set_eq(AUDIO_EQ_TYPE_SW_IIR,bt_audio_get_eq_index(AUDIO_EQ_TYPE_SW_IIR,app_get_anc_mode()));//m by pang
+		bt_audio_set_eq(AUDIO_EQ_TYPE_SW_IIR,bt_audio_get_eq_index(AUDIO_EQ_TYPE_SW_IIR,app_get_anc_status()));//m by pang
 #endif
 
 #ifdef __HW_FIR_EQ_PROCESS__

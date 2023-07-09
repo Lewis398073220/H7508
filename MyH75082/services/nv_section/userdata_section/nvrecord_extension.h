@@ -155,18 +155,19 @@ struct nvrecord_env_t {
 	uint8_t monitor_level;
 	uint8_t focus_on;
 	uint8_t sensor_enable;
-	uint16_t iir_gain[10];
+	uint8_t iir_gain[6];
 	uint8_t touch_lock;
 	uint8_t sidetone;
 	uint8_t anc_table_value;
 	uint8_t fota_flag;
 	uint8_t multipoint;
 	uint8_t talkmic_led;
+	uint16_t auto_pwoff_time;//add by cai
+	uint8_t anc_toggle_mode;//add by cai
 	uint8_t reserved1;
 	uint8_t reserved2;
-	uint8_t bt_name_len;
-	char bt_name[27];
-/** end add **/
+	uint8_t reserved3;
+	/** end add **/
 };
 
 /** add by pang **/

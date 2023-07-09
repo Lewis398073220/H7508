@@ -43,36 +43,34 @@ void nvrecord_rebuild_system_env(struct nvrecord_env_t* pSystemEnv)
     pSystemEnv->aiManagerInfo.amaAssistantEnableStatus = 1;
 
 	/** add by pang **/
-	pSystemEnv->demo_mode=0;
-	pSystemEnv->sleep_time=DEFAULT_SLEEP_TIME;
-	pSystemEnv->vibrate_mode=1;
-	pSystemEnv->eq_mode=0;
-	pSystemEnv->anc_mode=1;
-	pSystemEnv->monitor_level=20;//10
-	pSystemEnv->focus_on=0;
-	pSystemEnv->sensor_enable=1;
+	pSystemEnv->demo_mode = 0;
+	pSystemEnv->sleep_time = DEFAULT_SLEEP_TIME;
+	pSystemEnv->vibrate_mode = 1;
+	pSystemEnv->eq_mode = 0;
+	pSystemEnv->anc_mode = ANC_HIGH;
+	pSystemEnv->monitor_level = 20;//10
+	pSystemEnv->focus_on = 0;
+	pSystemEnv->sensor_enable = 1;
 	
-	pSystemEnv->iir_gain[0]=0;
-	pSystemEnv->iir_gain[1]=0;
-	pSystemEnv->iir_gain[2]=0;
-	pSystemEnv->iir_gain[3]=0;
-	pSystemEnv->iir_gain[4]=0;
-	pSystemEnv->iir_gain[5]=0;
-	pSystemEnv->iir_gain[6]=0;
-	pSystemEnv->iir_gain[7]=0;
-	pSystemEnv->iir_gain[8]=0;
-	pSystemEnv->iir_gain[9]=0;
+	pSystemEnv->iir_gain[0] = 0;
+	pSystemEnv->iir_gain[1] = 0;
+	pSystemEnv->iir_gain[2] = 0;
+	pSystemEnv->iir_gain[3] = 0;
+	pSystemEnv->iir_gain[4] = 0;
+	pSystemEnv->iir_gain[5] = 0;
 
-	pSystemEnv->touch_lock=0;
-	pSystemEnv->sidetone=0;
-	pSystemEnv->anc_table_value=1;
-	pSystemEnv->fota_flag=0;
-	pSystemEnv->multipoint=1;
-	pSystemEnv->talkmic_led=1;
-	pSystemEnv->reserved1=0;
-	pSystemEnv->reserved2=0;
-	pSystemEnv->bt_name_len=0;	
-/** end add **/
+	pSystemEnv->touch_lock = 0;
+	pSystemEnv->sidetone = 0;
+	pSystemEnv->anc_table_value = ANC_HIGH;
+	pSystemEnv->fota_flag = 0;
+	pSystemEnv->multipoint = 1;
+	pSystemEnv->talkmic_led = 1;
+	pSystemEnv->auto_pwoff_time = DEFAULT_AUTO_PWOFF_TIME;//add by cai
+	pSystemEnv->anc_toggle_mode = AncOn_AncOff_Awareness;//add by cai
+	pSystemEnv->reserved1 = 0;//m by cai
+	pSystemEnv->reserved2 = 0;//m by cai
+	pSystemEnv->reserved3 = 0;
+	/** end add **/
 
     localSystemInfo = *pSystemEnv;
 }
