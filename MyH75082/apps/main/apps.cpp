@@ -773,7 +773,6 @@ void app_factory_reset(void)
 
 #if defined(__EVRCORD_USER_DEFINE__)
 	app_nvrecord_para_default();
-	Set_Report_Device_Status();
 #endif
 
 	app_bt_reconnect_idle_mode();

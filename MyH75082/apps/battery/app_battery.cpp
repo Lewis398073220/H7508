@@ -36,9 +36,12 @@
 #endif
 
 #include "app_user.h"//add by pang
-#if defined(__HAYLOU_APP__)
-#include "../../services/ble_app/app_datapath/haylou_ble_hop.h"
-#endif
+#include "app_user.h"
+#include "philips_ble_api.h"
+#include "hal_bootmode.h"
+#include "analog.h"//add by cai
+#include "hal_usb.h"//add by cai
+
 
 
 #if (defined(BTUSB_AUDIO_MODE) || defined(BTUSB_AUDIO_MODE))

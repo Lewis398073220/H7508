@@ -5496,8 +5496,8 @@ static void reconnect_timeout_handler(void const *param)
 	//osTimerDelete(reconnect_timeout_timer);
 #endif
 }
-/*
-void app_get_curr_remDev(unsigned char* mobile_addr)
+
+void app_get_curr_remDev_Mac(unsigned char* mobile_addr)
 {
     uint8_t num_of_connected_dev=0;
 	num_of_connected_dev=app_bt_get_num_of_connected_dev();
@@ -5521,7 +5521,7 @@ void app_get_curr_remDev(unsigned char* mobile_addr)
 		memcpy(mobile_addr,bt_profile_manager[0].rmt_addr.address, 6);
 #endif
 }
-*/
+
 void app_multipoint_api_set_on(void)
 {
 	app_bt_update_connectable_mode_after_connection_management();

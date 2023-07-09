@@ -435,8 +435,8 @@ KBUILD_CPPFLAGS += \
     -D__NTC_DETECT__ \
     -D__USE_3_5JACK_CTR__ \
     -D__EVRCORD_USER_DEFINE__ \
-    -D__HAYLOU_APP__ \
     -DCUSTOM_BIN_CONFIG
+#    -D__HAYLOU_APP__
 #    -D__USE_AMP_MUTE_CTR__
 
 #    -DANC_LED_PIN   

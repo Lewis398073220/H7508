@@ -188,12 +188,7 @@ extern void analog_aud_enable_dac_pa(uint8_t dac);
 
 /** add by pang **/
 #include "app_bt_stream.h"
-enum
-{
-	anc_off = 0,
-	anc_on1,
-	anc_on2,
-};
+
 uint8_t anc_current_mode=anc_on2;
 
 uint8_t app_get_anc_mode(void)

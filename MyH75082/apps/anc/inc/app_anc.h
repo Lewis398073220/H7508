@@ -24,6 +24,53 @@ extern "C" {
 #endif
 
 /** add by pang **/
+enum ANC_STATUS
+{
+	anc_off = 0,
+	anc_on,
+	monitor,
+};
+
+enum ANC_ON_MODE
+{
+	anc_high = 0,
+	anc_low,
+	anc_wind,
+};
+
+enum MONITOR_ON_MODE
+{
+	monitor1 = 3,
+	monitor2,
+	monitor3,
+	monitor4,
+	monitor5,
+
+	clearvoice1,
+	clearvoice2,
+	clearvoice3,
+	clearvoice4,
+	clearvoice5,
+};
+
+enum APP_ANC_MODE_STATUS
+{
+	NC_OFF = 0,
+	ANC_HIGH,
+	ANC_LOW,
+	ANC_ADAPTIVE,
+	ANC_WIND,
+	MONITOR_ON,
+	NC_INVALID
+};
+
+enum ANC_TOGGLE_MODE//add by cai
+{
+	AncOn_AncOff_Awareness = 0x00,
+	AncOn_Awareness,
+	AncOn_AncOff,
+	Awareness_AncOff,
+};
 void app_anc_switch_turnled(bool on);
 void app_monitor_switch_turnled(bool on);
 uint8_t app_get_anc_mode(void);

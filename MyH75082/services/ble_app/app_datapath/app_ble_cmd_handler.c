@@ -24,7 +24,8 @@
 #include "app_ble_custom_cmd.h"
 #include "rwapp_config.h"
 
-#include "haylou_ble_hop.h"//add by pang
+#include "philips_ble_api.h"  //add by pang
+
 
 #ifdef BTIF_BLE_APP_DATAPATH_SERVER
 

@@ -46,6 +46,7 @@ void app_bt_reconnect_idle_mode(void);
 void app_bt_off(void);
 bool app_lacal_host_bt_off(void);
 void app_multipoint_api_set_on(void);
+void app_get_curr_remDev_Mac(unsigned char* mobile_addr);
 uint8_t app_device_EDR_connect_status(void);
 void app_enter_pairing(void);
 void app_get_remote_dev_name(uint8_t* ptrName,uint16_t nameLen);

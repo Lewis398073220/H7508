@@ -24,8 +24,8 @@
 //#include "rwapp_config.h"
 #include "app_spp_tota.h"
 #include "app_tota_ble.h"
+#include "philips_ble_api.h"//add by pang
 
-#include "haylou_ble_hop.h" //add by pang
 
 #define APP_TOTA_CMD_HANDLER_WAITING_RSP_TIMEOUT_SUPERVISOR_COUNT	8
 
