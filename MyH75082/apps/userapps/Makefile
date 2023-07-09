@@ -7,7 +7,7 @@ obj-y := $(obj-y:.cpp=.o)
 obj-y := $(obj-y:.S=.o)
 
 ccflags-y +=  \
-	-Iservices\bt_if_enhanced\inc \
+	-Iservices/bt_if_enhanced/inc \
     -Iservices/bt_app \
     -Iservices/audioflinger \
     -Iservices/norflash_api \
@@ -22,9 +22,9 @@ ccflags-y +=  \
     -Iutils/crc32 \
     -Iplatform/drivers/bt \
     -Iplatform/drivers/ana \
-	-Iplatform\hal \
+	-Iplatform/hal \
     -Iapps/audioplayers/rbplay \
-	-Iapps\audioplayers \
+	-Iapps/audioplayers \
     -Itests/anc_usb \
     -Iapps/anc/inc \
     -Iapps/ota \
@@ -35,7 +35,7 @@ ccflags-y +=  \
     -Iservices/voicepath/gsound/gsound_target \
     -Iservices/voicepath/gsound/gsound_target_api_read_only \
     -Iservices/bt_if/inc \
-	-Iservices\multimedia\audio\codec\sbc\inc \
+	-Iservices/multimedia/audio/codec/sbc/inc \
     -Iservices/communication \
     -Iutils/cqueue \
 	-Iutils/hwtimer_list \
@@ -77,10 +77,9 @@ ccflags-y +=  \
 	-Iservices/ble_stack/app/src/ \
     -Ithirdparty/tile \
     -Ithirdparty/tile/tile_target \
-	-Iservices\multimedia\audio\process\filters\include \
-	-Iservices\bt_app\a2dp_codecs\include \
-	-Iapps/userapps \
-	-Iplatform\drivers\ac107
+	-Iservices/multimedia/audio/process/filters/include \
+	-Iservices/bt_app/a2dp_codecs/include \
+	-Iapps/userapps
 	
 ifeq ($(ANC_APP),1)
 CFLAGS_app_user.o += -DANC_APP

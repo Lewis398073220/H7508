@@ -130,7 +130,7 @@ typedef enum HAYLOU_COMMAND_STATUS
 #define CONFIG_APP_NAME 						0x000E
 
 void APP_protocol_port(uint8_t port);
-bool APP_Api_Entry(uint8_t *data, uint32_t size);
+bool APP_Api_Entry(uint8_t *data, uint8_t size);
 void Set_Report_Device_Status(void);
 void Set_Report_Battery_Status(void);
 void Set_Report_Game_Status(void);

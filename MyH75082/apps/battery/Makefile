@@ -11,7 +11,7 @@ subdir-ccflags-y += -Iplatform/drivers/ana \
                     -Iservices/app_ibrt/inc \
                     -Iservices/ibrt_ui/inc \
                     -Iservices/ibrt_core/inc \
-					-Iapps\userapps
+					-Iapps/userapps
 
 ifeq ($(VOICE_PROMPT),1)
 CFLAGS_app_battery.o += -DMEDIA_PLAYER_SUPPORT

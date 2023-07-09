@@ -63,7 +63,7 @@ void APP_protocol_port(uint8_t port)
 	protocol_port=port;
 }
 
-bool APP_Api_Entry(uint8_t *data, uint32_t size)
+bool APP_Api_Entry(uint8_t *data, uint8_t size)
 {	
    //Check Start head
    if ((data[0] != (uint8_t)0xAA)&&(data[0] != (uint8_t) 0xBB)&&(data[0] != (uint8_t) 0xCC)){        

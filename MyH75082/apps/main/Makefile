@@ -79,8 +79,7 @@ ccflags-y +=  \
     -Ithirdparty/tile \
     -Iservices/app_tws/inc \
     -Ithirdparty/tile/tile_target \
-	-Iapps\userapps \
-	-Iplatform\drivers\cst816s
+	-Iapps/userapps
 
 ifeq ($(VOICE_DATAPATH_ENABLED),1)
 ccflags-y += -Iservices/voicepath/$(VOICE_DATAPATH_TYPE)
