@@ -528,7 +528,9 @@ int app_battery_handle_process_charging(uint32_t status,  union APP_BATTERY_MSG_
         if (app_status_indication_get() != APP_STATUS_INDICATION_FULLCHARGE)
         {
             TRACE(1,"FULL_CHARGING:%d", app_battery_measure.currvolt);
+#ifdef __PWM_LED_CTL__
 			app_pwm_clear();//disable pwm
+#endif
             app_status_indication_set(APP_STATUS_INDICATION_FULLCHARGE);
 #ifdef MEDIA_PLAYER_SUPPORT
 #if defined(BT_USB_AUDIO_DUAL_MODE) || defined(IBRT)
@@ -1125,7 +1127,9 @@ void ntc_capture_irqhandler(uint16_t irq_val, HAL_GPADC_MV_T volt)
 					hal_gpio_pin_set((enum HAL_GPIO_PIN_T)app_battery_ext_charger_enable_cfg.pin);
 					charge_protection_flag=0;
 					app_status_indication_set(APP_STATUS_INDICATION_CHARGING);
+#ifdef __PWM_LED_CTL__
 					apps_pwm_set(RED_PWM_LED, 1); //enable pwm	
+#endif
 			    }
 			}
 		}

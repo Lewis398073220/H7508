@@ -1952,7 +1952,9 @@ extern int rpc_service_setup(void);
                 app_key_init_on_charging();
 				/** add by pang **/
 				app_user_event_open_module_for_charge();
+#ifdef __PWM_LED_CTL__
 				apps_pwm_set(RED_PWM_LED, 1);//enable pwm
+#endif
 				/** end add **/
                 nRet = 0;
 #if defined(__USE_3_5JACK_CTR__)
@@ -2465,7 +2467,7 @@ exit:
 
 #endif // BTUSB_AUDIO_MODE
 #endif // BT_USB_AUDIO_DUAL_MODE
-    #if 0
+    #ifndef __PWM_LED_CTL__
     app_sysfreq_req(APP_SYSFREQ_USER_APP_INIT, APP_SYSFREQ_32K);
 	#else //m by pang for pwm led
     if(!app_pwm_idle())

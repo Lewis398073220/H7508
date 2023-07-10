@@ -430,7 +430,6 @@ KBUILD_CPPFLAGS += \
     -D__EARPHONE_STAY_BOTH_SCAN__ \
     -D__USER_DEFINE_CTR__ \
     -D__LDO_3V3_CTR__ \
-    -D__PWM_LED_CTL__ \
     -D__AUDIO_FADEIN__ \
     -D__NTC_DETECT__ \
     -D__USE_3_5JACK_CTR__ \
@@ -438,6 +437,7 @@ KBUILD_CPPFLAGS += \
     -DCUSTOM_BIN_CONFIG \
     -D__DEFINE_DEMO_MODE__ \
     -D__CHARGE_CURRRENT__
+# 	-D__PWM_LED_CTL__
 #    -D__HAYLOU_APP__
 #    -D__USE_AMP_MUTE_CTR__
 
