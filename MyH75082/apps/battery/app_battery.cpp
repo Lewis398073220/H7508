@@ -35,7 +35,6 @@
 #include "app_ble_mode_switch.h"
 #endif
 
-#include "app_user.h"//add by pang
 #include "app_user.h"
 #include "philips_ble_api.h"
 #include "hal_bootmode.h"
@@ -439,12 +438,12 @@ int app_battery_handle_process_normal(uint32_t status,  union APP_BATTERY_MSG_PR
 			#endif	 
             break;
         case APP_BATTERY_STATUS_PDVOLT:
-#ifndef BT_USB_AUDIO_DUAL_MODE
+//#ifndef BT_USB_AUDIO_DUAL_MODE //m by cai for open usb audio
             TRACE(1,"PDVOLT-->POWEROFF:%d", prams.volt);
 			//battery_pd_poweroff=1;//add by pang
             osTimerStop(app_battery_timer);
             app_shutdown();
-#endif
+//#endif
             break;
         case APP_BATTERY_STATUS_CHARGING:
             TRACE(1,"CHARGING-->APP_BATTERY_CHARGER :%d", prams.charger);
@@ -488,7 +487,19 @@ int app_battery_handle_process_charging(uint32_t status,  union APP_BATTERY_MSG_
             {
 #ifdef BT_USB_AUDIO_DUAL_MODE
                 TRACE(1,"%s:PlUGOUT.", __func__);
+#if 0 //m by cai
                 btusb_switch(BTUSB_MODE_BT);
+#else
+				if(get_usb_configured_status() || hal_usb_configured()) {
+					btusb_switch(BTUSB_MODE_BT);
+					app_battery_measure.status = APP_BATTERY_STATUS_NORMAL;
+				} else{
+					TRACE(0,"CHARGING-->RESET");
+	                osTimerStop(app_battery_timer);
+	                app_shutdown();
+				}
+#endif
+
 #else
 #if CHARGER_PLUGINOUT_RESET
                 TRACE(0,"CHARGING-->RESET");
@@ -503,7 +514,7 @@ int app_battery_handle_process_charging(uint32_t status,  union APP_BATTERY_MSG_
             {
 #ifdef BT_USB_AUDIO_DUAL_MODE
                 TRACE(1,"%s:PLUGIN.", __func__);
-                btusb_switch(BTUSB_MODE_USB);
+                //btusb_switch(BTUSB_MODE_USB); //m by cai for pop noise when insert usb
 #endif
             }
             break;

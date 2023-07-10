@@ -59,8 +59,13 @@ extern "C" {
 #define RAMCP_BASE                              (RAMCP_TOP - RAMCP_SIZE)
 
 #ifndef RAMCPX_SIZE
+#ifdef BT_USB_AUDIO_DUAL_MODE
+#define RAMCPX_SIZE                             (RAMXRET_BASE - RAMX6_BASE - 0x7000)
+#else
 #define RAMCPX_SIZE                             (RAMXRET_BASE - RAMX6_BASE)
 #endif
+#endif
+
 #ifndef RAMCPX_BASE
 #define RAMCPX_BASE                             (RAM_TO_RAMX(RAMCP_BASE) - RAMCPX_SIZE)
 #endif
