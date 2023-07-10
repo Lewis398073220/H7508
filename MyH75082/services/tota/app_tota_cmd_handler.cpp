@@ -316,29 +316,13 @@ APP_TOTA_CMD_RET_STATUS_E app_tota_cmd_received(uint8_t* ptrData, uint32_t dataL
 	TOTA_LOG_DUMP("0x%02x ", ptrData, dataLength);
 	APP_TOTA_CMD_PAYLOAD_T* pPayload = (APP_TOTA_CMD_PAYLOAD_T *)ptrData;
 
-	// add by pang for API spp
-#if 0	
-			uint8_t k=0;
-			if(dataLength>50){
-				while(k<dataLength){ 
-				  if((dataLength-k)>=50){
-				    DUMP8("0x%02x ", &ptrData[k], 50);
-				    k+=50;
-				  }
-				  else{
-					DUMP8("0x%02x ", &ptrData[k], dataLength-k);
-					break;
-				  }
-				}
-			}
-#endif
-#if defined(__HAYLOU_APP__)
-	if(pPayload->cmdCode==0xBBAA){
-		APP_protocol_port(1);
-		APP_Api_Entry(ptrData, dataLength);		
+    // add by pang for TPV API spp
+	if(pPayload->cmdCode==OP_TOTA_TPV_API_CMD){
+		Philips_Api_protocol_port(2);
+		Philips_Headphone_Api_Entry(ptrData, dataLength);		
 		return TOTA_NO_ERROR;
 	}
-#endif	
+	
 	// check command code
 	if (pPayload->cmdCode >= OP_TOTA_COMMAND_COUNT || pPayload->cmdCode < OP_TOTA_RESPONSE_TO_CMD)
 	{
@@ -361,6 +345,19 @@ APP_TOTA_CMD_RET_STATUS_E app_tota_cmd_received(uint8_t* ptrData, uint32_t dataL
 
 	return TOTA_NO_ERROR;
 }
+
+/** add by pang for spp test **/
+bool spp_test_cmd_received(uint8_t* ptrData, uint32_t dataLength)
+{
+	TOTA_LOG_DBG(0,"TOTA Receive data:");
+	TOTA_LOG_DUMP("0x%02x ", ptrData, dataLength);
+	APP_TOTA_CMD_PAYLOAD_T* pPayload = (APP_TOTA_CMD_PAYLOAD_T *)ptrData;
+	if ((pPayload->cmdCode ==OP_TOTA_MIC_TEST_CMD)||(pPayload->cmdCode ==OP_TOTA_TPV_API_CMD))
+		return true;
+	else 
+		return false;
+}
+/** end add **/
 
 #if defined(APP_ANC_TEST)
 extern osTimerId app_check_send_synccmd_timer;

@@ -28,13 +28,18 @@
  ****************************************************************************************
  */
 
-//#define USE_128BIT_UUID 1
+#define USE_128BIT_UUID 1
 
 #if USE_128BIT_UUID
 
+#ifndef custom_datapath
 #define datapath_service_uuid_128_content       {0x12, 0x34, 0x56, 0x78, 0x90, 0x00, 0x00, 0x80, 0x00, 0x10, 0x00, 0x00, 0x00, 0x01, 0x00, 0x01 }
 #define datapath_tx_char_val_uuid_128_content   {0x12, 0x34, 0x56, 0x78, 0x91, 0x00, 0x00, 0x80, 0x00, 0x10, 0x00, 0x00, 0x00, 0x02, 0x00, 0x02 }
 #define datapath_rx_char_val_uuid_128_content   {0x12, 0x34, 0x56, 0x78, 0x92, 0x00, 0x00, 0x80, 0x00, 0x10, 0x00, 0x00, 0x00, 0x03, 0x00, 0x03 }
+#else//by pang
+#define datapath_service_uuid_128_content       {0x69, 0x78, 0x79, 0x72, 0x80, 0x68, 0x65, 0x69, 0x72, 0x83, 0x80, 0x73, 0x76, 0x73, 0x72, 0x80 }
+#define datapath_tx_char_val_uuid_128_content   {0x73, 0x80, 0x65, 0x69, 0x76, 0x66, 0x65, 0x86, 0x65, 0x83, 0x80, 0x73, 0x76, 0x73, 0x72, 0x80 }
+#endif
 
 #define ATT_DECL_PRIMARY_SERVICE_UUID       { 0x00, 0x28 }
 #define ATT_DECL_CHARACTERISTIC_UUID        { 0x03, 0x28 }
@@ -47,6 +52,7 @@ static const uint8_t DATAPATH_SERVICE_UUID_128[ATT_UUID_128_LEN] = datapath_serv
 /// Full DATAPATH SERVER Database Description - Used to add attributes into the database
 const struct attm_desc_128 datapathps_att_db[DATAPATHPS_IDX_NB] =
 {
+#ifndef custom_datapath
     // Service Declaration
     [DATAPATHPS_IDX_SVC]        =   {ATT_DECL_PRIMARY_SERVICE_UUID, PERM(RD, ENABLE), 0, 0},
 
@@ -65,12 +71,25 @@ const struct attm_desc_128 datapathps_att_db[DATAPATHPS_IDX_NB] =
     [DATAPATHPS_IDX_RX_VAL]     =   {datapath_rx_char_val_uuid_128_content, PERM(WRITE_REQ, ENABLE) | PERM(WRITE_COMMAND, ENABLE), PERM(RI, ENABLE) | PERM_VAL(UUID_LEN, PERM_UUID_128), DATAPATHPS_MAX_LEN},
     // RX Characteristic - Characteristic User Description Descriptor
     [DATAPATHPS_IDX_RX_DESC]    =   {ATT_DESC_CHAR_USER_DESCRIPTION_UUID, PERM(RD, ENABLE), PERM(RI, ENABLE), 32},
+#else//by pang
+	 // Service Declaration
+    [DATAPATHPS_IDX_SVC]     =   {ATT_DECL_PRIMARY_SERVICE_UUID, PERM(RD, ENABLE), 0, 0},
+
+    // TX Characteristic Declaration
+    [DATAPATHPS_IDX_CHAR]    =   {ATT_DECL_CHARACTERISTIC_UUID, PERM(RD, ENABLE), 0, 0},
+    // TX Characteristic Value
+    [DATAPATHPS_IDX_VAL]     =   {datapath_tx_char_val_uuid_128_content, PERM(NTF, ENABLE) | PERM(WRITE_REQ, ENABLE) | PERM(WRITE_COMMAND, ENABLE) | PERM(RD, ENABLE),PERM(RI, ENABLE) | PERM_VAL(UUID_LEN, PERM_UUID_128), DATAPATHPS_MAX_LEN},
+    // TX Characteristic - Client Characteristic Configuration Descriptor
+    [DATAPATHPS_IDX_NTF_CFG] =   {ATT_DESC_CLIENT_CHAR_CFG_UUID, PERM(RD, ENABLE) | PERM(WRITE_REQ, ENABLE), 0, 0},
+    // TX Characteristic - Characteristic User Description Descriptor
+    [DATAPATHPS_IDX_DESC]    =   {ATT_DESC_CHAR_USER_DESCRIPTION_UUID, PERM(RD, ENABLE), PERM(RI, ENABLE), 32},
+ #endif
 };
 #else
 
-#define DATAPATHPS_SERVICE_UUID_16BIT      0xCF00          //0xFEF8 //by pang for Haylou ble
-#define DATAPATHPS_TX_CHAR_VAL_UUID_16BIT  0xCF06 //0xCT06 //0xFEF9
-#define DATAPATHPS_RX_CHAR_VAL_UUID_16BIT  0xCF05 //0xCF05 //0xFEFA
+#define DATAPATHPS_SERVICE_UUID_16BIT       0xFEF8
+#define DATAPATHPS_TX_CHAR_VAL_UUID_16BIT   0xFEF9
+#define DATAPATHPS_RX_CHAR_VAL_UUID_16BIT   0xFEFA
 
 const struct attm_desc datapathps_att_db[DATAPATHPS_IDX_NB] =
 {

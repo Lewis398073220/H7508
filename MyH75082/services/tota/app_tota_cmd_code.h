@@ -74,6 +74,8 @@ typedef enum
  */
 typedef enum
 {
+	OP_TOTA_TPV_API_CMD=0x01FF,//add by pang for spp test
+
     /* 0 */ OP_TOTA_RESPONSE_TO_CMD = 0x8000, /**< the payload is: OP_TOTA_RESPONSE_TO_CMD + paramLen + BLE_TOTA_CMD_RSP_T */
     /* 1 */ OP_TOTA_START_DATA_XFER = 0x8001,
     /* 2 */ OP_TOTA_VERIFY_DATA_SEGMENT = 0x8002,

@@ -39,6 +39,9 @@ uint16_t app_spp_tota_tx_buf_size(void);
 void app_spp_tota_init_tx_buf(uint8_t* ptr);
 uint8_t* app_spp_tota_fill_data_into_tx_buf(uint8_t* ptrData, uint32_t dataLen);
 
+void app_anc_test_enable(void);//add by pang for spp test
+void app_anc_test_disable(void);//add by pang for spp test
+
 #ifdef __cplusplus
 	}//extern "C" { //add by pang
 #endif

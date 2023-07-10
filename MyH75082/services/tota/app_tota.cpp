@@ -46,6 +46,8 @@
 #include "crc32.h"
 #include "factory_section.h"
 #include "bt_sco_chain.h"//add by pang for spp test
+#include "app_anc.h"//add by cai
+#include "app_user.h"//add by cai
 
 typedef struct
 {
@@ -140,7 +142,7 @@ static void app_tota_vendor_cmd_handler(APP_TOTA_CMD_CODE_E funcCode, uint8_t* p
     TOTA_LOG_DBG(2,"Func code 0x%x, param len %d", funcCode, paramLen);
     TOTA_LOG_DBG(0,"Param content:");
     DUMP8("%02x ", ptrParam, paramLen);
-    uint8_t resData[20]={0};
+    uint8_t resData[51]={0};//m by cai
     uint32_t resLen=1;
     switch (funcCode)
     {
@@ -279,17 +281,77 @@ static void app_tota_vendor_cmd_handler(APP_TOTA_CMD_CODE_E funcCode, uint8_t* p
 		/**add by pang for spp test **/
 		case OP_TOTA_MIC_TEST_CMD:
 			resData[0] = ptrParam[0];
-			if(resData[0]==0x01){
-				TRACE(1,"OP_TOTA_MAIN_MIC_ONLY_CMD");		
-				spp_mic_test(0x01);
+			resData[1] = ptrParam[1];
+			resLen = 2;
+			TRACE(2,"********OP_TOTA_MIC_TEST_CMD:0x%x,0x%x",resData[0],resData[1]);//add by cai
+			if(resData[0]==0x50){
+				if(resData[1]==0x01){
+					TRACE(1,"OP_TOTA_MAIN_MIC_ONLY_CMD");
+					spp_test_mic_set(1);
+				}
+				else if(resData[1]==0x02){
+					TRACE(1,"OP_TOTA_LFF_MIC_ONLY_CMD");
+					spp_test_mic_set(2);
+				}
+				else if(resData[1]==0x03){
+					TRACE(1,"OP_TOTA_RFF_MIC_ONLY_CMD");
+					spp_test_mic_set(3);
+				}
+				else if(resData[1]==0x04){
+					TRACE(1,"OP_TOTA_LFB_MIC_ONLY_CMD");
+					spp_test_mic_set(4);
+				}
+				else if(resData[1]==0x05){
+					TRACE(1,"OP_TOTA_RFB_MIC_ONLY_CMD");
+					spp_test_mic_set(5);
+				}
+				else{
+					TRACE(1,"OP_TOTA_RESET_MIC_ONLY_CMD");
+					spp_test_mic_set(0);
+				}
 			}
-			else if(resData[0]==0x02){
-				TRACE(1,"OP_TOTA_SECOND_MIC_ONLY_CMD");
-			    spp_mic_test(0x02);
+			if(resData[0]==0x51){
+				if(resData[1]==0x01){
+					TRACE(1,"OP_TOTA_ANCMODE1_ONLY_CMD");
+					app_set_anc_on_mode(ANC_HIGH);
+					set_anc_mode(anc_on, 0);
+				}
+				else if(resData[1]==0x02){
+					TRACE(1,"OP_TOTA_ANCMODE2_ONLY_CMD");
+					app_set_anc_on_mode(ANC_LOW);
+					set_anc_mode(anc_on, 0);
+				}
+				else if(resData[1]==0x03){
+					TRACE(1,"OP_TOTA_ANCMODE3_ONLY_CMD");
+					app_set_anc_on_mode(ANC_WIND);
+					set_anc_mode(anc_on, 0);
+				}
+				else if(resData[1]==0x05){
+					TRACE(1,"OP_TOTA_MONITOR_ONLY_CMD");
+					app_focus_set_no_save(false);
+					app_set_monitor_mode(20);
+					set_anc_mode(monitor, 0);
+				}
+				else if(resData[1]==0x00){
+					TRACE(1,"OP_TOTA_ANCOFF_ONLY_CMD");
+					set_anc_mode(anc_off, 0);
+				}
 			}
-			else if(resData[0]==0x00){
-				TRACE(1,"OP_TOTA_BOTH_MIC_CMD");
-			    spp_mic_test(0x00);
+			if(resData[0]==0x52){
+				if(resData[1]==0x01){
+					app_shutdown();	
+				}
+				if(resData[1]==0x02){
+					app_disconnect_all_bt_connections();	
+				}
+				if(resData[1]==0x03){
+					TRACE(1,"OP_TOTA_ANC_TEST_ENABLE_CMD");
+					app_anc_test_enable();
+				}
+				if(resData[1]==0x04){
+					TRACE(1,"OP_TOTA_ANC_TEST_DISENABLE_CMD");
+					app_anc_test_disable();
+				}
 			}
 		break;
 /** end add **/

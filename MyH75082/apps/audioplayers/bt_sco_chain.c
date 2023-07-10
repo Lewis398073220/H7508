@@ -69,6 +69,18 @@
 #include "hal_location.h"
 #include "bt_sco_chain_cp.h"
 
+/** add by pang for spp test **/
+uint8_t spp_mic_test=0;
+void spp_test_mic_set(uint8_t set_mic)
+{
+	spp_mic_test=set_mic;
+}
+
+uint8_t spp_test_mic_get(void)
+{
+	return(spp_mic_test);
+}
+/** end add **/
 #define SCO_CP_ACCEL_ALGO_START()                                              \
     *_pcm_len = pcm_len;                                                       \
     }                                                                          \
@@ -309,15 +321,6 @@ SpeechGainState *speech_rx_post_gain_st = NULL;
 #endif
 
 static bool dualmic_enable = true;
-
-/** add by pang for spp test **/
-static uint8_t mic_test=0;
-void spp_mic_test(uint8_t cmd_mic)
-{
-	mic_test=cmd_mic;
-}
-/** end add **/
-
 
 void switch_dualmic_status(void)
 {
@@ -1320,11 +1323,7 @@ void _speech_tx_process_pre(short *pcm_buf, short *ref_buf, int *_pcm_len)
 #endif
 
 #if defined(SPEECH_TX_NS3)
-	//ns3_process(speech_tx_ns3_st, pcm_buf, pcm_len);
-    /** m by pang for spp test **/ 
-    if(mic_test==0)
-    	ns3_process(speech_tx_ns3_st, pcm_buf, pcm_len);
-    /** end add **/
+    ns3_process(speech_tx_ns3_st, pcm_buf, pcm_len);
 #endif
 
 #if defined(SPEECH_TX_WNR)

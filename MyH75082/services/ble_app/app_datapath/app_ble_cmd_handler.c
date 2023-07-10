@@ -357,16 +357,14 @@ BLE_CUSTOM_CMD_RET_STATUS_E BLE_custom_command_receive_data(uint8_t* ptrData, ui
 	DUMP8("0x%02x ", ptrData, dataLength);
 
 /** add by pang **/
-	//BLE API -start
-#if defined(__HAYLOU_APP__)
-    if ((ptrData[0] == (uint8_t) 0xAA) &&(ptrData[1] ==  (uint8_t)0xBB))
-		APP_protocol_port(0);
+	//Philips BLE API -start
+    if ((ptrData[0] == (uint8_t) 0xff) &&(ptrData[1] ==  (uint8_t)0x01))
+		Philips_Api_protocol_port(1);
 
-	if (APP_Api_Entry(ptrData, dataLength)){		
-		return NO_ERROR;	
+	if (Philips_Headphone_Api_Entry(ptrData, dataLength)){		
+	   return NO_ERROR;	
 	}
-#endif
-	//BLE API -end
+	//Philips BLE API -end
 /** end add **/
 	
 	BLE_CUSTOM_CMD_PAYLOAD_T* pPayload = (BLE_CUSTOM_CMD_PAYLOAD_T *)ptrData;
