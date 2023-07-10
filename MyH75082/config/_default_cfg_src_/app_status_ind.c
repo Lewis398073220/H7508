@@ -71,6 +71,14 @@ const char *app_status_indication_str[] =
 	"[BAT_VERYLOW]",
 	"[GAMING_ON]",
 	"[GAMING_OFF]",
+	
+	"[BEEP_21]",
+	"[BEEP_22]",
+	"[POWEROFF_LOWBATTERY]",
+	"[DEMO_MODE]",
+	"[A2DP]",
+	"[CALLING_MUTE]",
+	"[CALLING_UNMUTE]",
 /** end add **/
 };
 

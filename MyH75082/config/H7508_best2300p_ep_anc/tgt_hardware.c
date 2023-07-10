@@ -164,7 +164,7 @@ const struct CODEC_DAC_VOL_T codec_dac_vol[TGT_VOLUME_LEVEL_QTY] = {
 */
 //const struct CODEC_DAC_VOL_T codec_dac_vol[TGT_VOLUME_LEVEL_QTY] = {
 const struct CODEC_DAC_VOL_T codec_dac_vol[] = {
-    {TX_PA_GAIN,0x03,-13},
+    {TX_PA_GAIN,0x03,-27},
 /* hfp volume */
     {TX_PA_GAIN,0x03,-99},
     {TX_PA_GAIN,0x03,-51},

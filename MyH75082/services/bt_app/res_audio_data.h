@@ -18,12 +18,12 @@
 
 const uint8_t EN_POWER_ON [] = {
 //#include "res/en/SOUND_POWER_ON.txt"
-#include "res/en/Power_On_16000.txt"
+#include "res/en/EN_PowerOn_16000.txt"
 };
 
 const uint8_t EN_POWER_OFF [] = {
 //#include "res/en/SOUND_POWER_OFF.txt"
-#include "res/en/Power_Off_16000.txt"
+#include "res/en/EN_PowerOFF_16000.txt"
 };
 
 const uint8_t EN_SOUND_ZERO[] = {
@@ -68,7 +68,7 @@ const uint8_t EN_SOUND_NINE [] = {
 
 const uint8_t EN_BT_PAIR_ENABLE[] = {
 //#include "res/en/SOUND_PAIR_ENABLE.txt"
-//#include "res/en/Pairing_16000.txt"
+#include "res/en/EN_Pairing_16000.txt"
 };
 
 const uint8_t EN_BT_PAIRING[] = {
@@ -101,22 +101,22 @@ const uint8_t EN_BT_HUNG_UP[] = {
 
 const uint8_t EN_BT_CONNECTED [] = {
 //#include "res/en/SOUND_CONNECTED.txt"
-//#include "res/en/Connected_16000.txt"
+#include "res/en/EN_Connected_16000.txt"
 };
 
 const uint8_t EN_BT_DIS_CONNECT [] = {
 //#include "res/en/SOUND_DIS_CONNECT.txt"
-//#include "res/en/Disconnected_16000.txt"
+#include "res/en/EN_Disconnected_16000.txt"
 };
 
 const uint8_t EN_BT_INCOMING_CALL [] = {
 //#include "res/en/SOUND_INCOMING_CALL.txt"
-#include "res/en/Ring_CommingCall_16000.txt"
+#include "res/en/EN_Ring_Digital_16000.txt"
 };
 
 const uint8_t EN_CHARGE_PLEASE[] = {
 //#include "res/en/SOUND_CHARGE_PLEASE.txt"
-#include "res/en/Low_Battery_16000.txt"
+#include "res/en/EN_Battery_low_16000.txt"
 };
 
 const uint8_t EN_CHARGE_FINISH[] = {
@@ -129,7 +129,7 @@ const uint8_t EN_LANGUAGE_SWITCH[] = {
 
 const uint8_t EN_BT_WARNING[] = {
 //#include "res/en/SOUND_WARNING.txt"
-#include "res/en/Tone_16000.txt"
+#include "res/en/EN_Min_max3_16000.txt"
 };
 
 const uint8_t EN_BT_ALEXA_START[] = {
@@ -161,6 +161,32 @@ const uint8_t EN_BT_FINDME[] = {
 #include "res/en/SOUND_FINDME.txt"
 };
 
+const uint8_t EN_BT_BEEP_21[] = {
+#include "res/en/EN_beep21_16000.txt"
+};
+
+const uint8_t EN_BT_BEEP_22[] = {
+#include "res/en/EN_beep22_16000.txt"
+};
+
+const uint8_t EN_POWEROFF_LOWBATTERY[] = {
+#include "res/en/EN_PowerOFF_16000.txt"
+};
+
+const uint8_t EN_DEMO_MODE[] = {
+#if defined(__DEFINE_DEMO_MODE__)
+#include "res/en/EN_DEMO_MODE_ENABLED_16000.txt"
+#endif
+};
+
+const uint8_t EN_CALLING_MUTE[] = {
+#include "res/en/EN_Mute_16000.txt"
+};
+
+const uint8_t EN_CALLING_UNMUTE[] = {
+#include "res/en/EN_Unmute_16000.txt"
+};
+
 const uint8_t EN_BT_SHORT_1[] = {
 //#include "res/en/Short_1_8k.txt"
 };
@@ -174,15 +200,15 @@ const uint8_t EN_BT_FACTORY_RESET[] = {
 };
 
 const uint8_t EN_BT_ANC_ON[] = {
-#include "res/en/ANC_ON_16000.txt"
+#include "res/en/EN_ANC_ON_16000.txt"
 };
 
 const uint8_t EN_BT_MONITOR_ON[] = {
-#include "res/en/ANC_Passthrough_16000.txt"
+#include "res/en/EN_Awareness_16000.txt"
 };
 
 const uint8_t EN_BT_ANC_OFF[] = {
-#include "res/en/ANC_OFF_16000.txt"
+#include "res/en/EN_ANC_OFF_16000.txt"
 };
 
 const uint8_t EN_BT_GAMING_ON[] = {
