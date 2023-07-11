@@ -68,6 +68,11 @@ extern "C" {
 #define HAL_SW_BOOTMODE_LOCAL_PLAYER            (1 << 31)
 #endif
 
+#if defined(__DEFINE_DEMO_MODE__)
+#define HAL_SW_BOOTMODE_CHARGING_POWERON        (1 << 28)//add by pang
+#define HAL_SW_BOOTMODE_CHARGING_POWEROFF       (1 << 31)//add by pang
+#endif
+
 // APP_BOOTMODE_END                             (1 << 31)
 // SW_BOOTMODE_END                              (1 << 31)
 

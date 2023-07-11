@@ -1541,7 +1541,14 @@ int app_deinit(int deinit_case)
 		
 		if((!app_battery_is_charging())&&(!app_apps_3p5jack_plugin_flag(0))){
 #ifdef MEDIA_PLAYER_SUPPORT
-        	app_voice_report(APP_STATUS_INDICATION_POWEROFF, 0);
+	        if(app_battery_is_pdvolt()){
+				app_voice_report(APP_STATUS_INDICATION_POWEROFF_LOWBATTERY, 0);//add by pang
+				osDelay(2000);//m by cai
+			}
+			else{
+	        	app_voice_report(APP_STATUS_INDICATION_POWEROFF, 0);
+				osDelay(2000);//m by cai
+			}
 #endif
 		}
 		

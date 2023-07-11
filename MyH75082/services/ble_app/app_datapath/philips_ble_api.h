@@ -417,6 +417,10 @@ typedef enum PHILIPS_KEY_DEFINE_CHANGE_COMMAND
 #define LDAC_CONTROL_SUPPORT 				0x01
 #define TALK_MIC_LED_CONTROL_SUPPORT 		0x02
 
+extern uint8_t title[150], title_len;
+extern uint8_t artist[150], artist_len;
+extern uint8_t album[150], album_len;
+
 void Philips_Api_protocol_port(uint8_t port);
 bool Philips_Headphone_Api_Entry(uint8_t *data, uint32_t size);
 bool CheckCommandID(uint8_t *data);

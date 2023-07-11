@@ -60,6 +60,12 @@
 #include "hal_bootmode.h"
 #include "bt_drv_reg_op.h"
 
+/** add by pang **/
+#include "philips_ble_api.h"
+u8 title_change_flag = 0;//add by cai
+u8 time_buf[10] = {0};
+/** end add **/
+
 #ifdef BT_USB_AUDIO_DUAL_MODE
 #include "btusb_audio.h"
 #endif
@@ -1095,9 +1101,12 @@ extern "C" void avrcp_callback_CT(btif_avrcp_chnl_handle_t chnl, const avrcp_cal
                     if((avrcp_palyback_status[BT_DEVICE_ID_1] == 0) &&
                        (avrcp_palyback_status[BT_DEVICE_ID_2] == 0)){
                         app_bt_device.a2dp_play_pause_flag = 0;
+						Notification_Playback_Status_Change(0);//add by cai
                     }
                     else{
                         app_bt_device.a2dp_play_pause_flag = 1;
+						Notification_Playback_Status_Change(1);//add by cai
+						app_status_indication_set_next(APP_STATUS_INDICATION_A2DP,APP_STATUS_INDICATION_CONNECTED);//m by cai
                     }
                     if(is_a2dp_streaming !=0){
                         if(avrcp_palyback_status[device_id] == 1) /*&&
@@ -1137,8 +1146,11 @@ extern "C" void avrcp_callback_CT(btif_avrcp_chnl_handle_t chnl, const avrcp_cal
                     avrcp_set_media_status(btif_get_avrcp_adv_notify(parms)->p.mediaStatus);
                     if(btif_get_avrcp_adv_notify(parms)->p.mediaStatus == 0x1) {
                         app_bt_device.a2dp_play_pause_flag = 1;
+						Notification_Playback_Status_Change(1);//add by cai
+						app_status_indication_set_next(APP_STATUS_INDICATION_A2DP,APP_STATUS_INDICATION_CONNECTED);//m by cai
                     } else if(btif_get_avrcp_adv_notify(parms)->p.mediaStatus == 0x0||btif_get_avrcp_adv_notify(parms)->p.mediaStatus == 0x2){
                         app_bt_device.a2dp_play_pause_flag = 0;
+						Notification_Playback_Status_Change(0);//add by cai
                     }
 #endif
                 }
@@ -1181,7 +1193,55 @@ extern "C" void avrcp_callback_CT(btif_avrcp_chnl_handle_t chnl, const avrcp_cal
                 {
                     if(btif_get_avrcp_adv_rsp(parms)->element.txt[i].length>0)
                     {
-                        TRACE(2,"Id=%d,%s\n",i,btif_get_avrcp_adv_rsp(parms)->element.txt[i].string);
+                        //TRACE(2,"***Id=%d,%s\n",i,btif_get_avrcp_adv_rsp(parms)->element.txt[i].string);
+/** add by pang  for Philips BLE - start  **/
+#if defined(BLE_ENABLE)
+						 if (i == 0){  //Title
+						    if ((btif_get_avrcp_adv_rsp(parms)->element.txt[i].length > 0) && (btif_get_avrcp_adv_rsp(parms)->element.txt[i].length < sizeof(title))){
+								if(memcmp(title, btif_get_avrcp_adv_rsp(parms)->element.txt[i].string, btif_get_avrcp_adv_rsp(parms)->element.txt[i].length) != 0){
+									title_len = btif_get_avrcp_adv_rsp(parms)->element.txt[i].length;
+									memcpy(title, btif_get_avrcp_adv_rsp(parms)->element.txt[i].string, title_len);
+									/** add by cai **/
+									title_change_flag = 1;
+									Notification_Media_Info_Change(0x01);
+									/** end add **/
+									//osDelay(20);//50 m by pang
+								}	 	
+						    }	 				 
+						 }else if(i == 1){  //artist
+						    if ((btif_get_avrcp_adv_rsp(parms)->element.txt[i].length > 0) && (btif_get_avrcp_adv_rsp(parms)->element.txt[i].length < sizeof(artist))){
+								if(memcmp(artist, btif_get_avrcp_adv_rsp(parms)->element.txt[i].string, btif_get_avrcp_adv_rsp(parms)->element.txt[i].length) != 0){			     
+									artist_len = btif_get_avrcp_adv_rsp(parms)->element.txt[i].length;
+									memcpy(artist, btif_get_avrcp_adv_rsp(parms)->element.txt[i].string, artist_len);			
+									title_change_flag = 2;//add by cai
+									//osDelay(20);//50 m by pang	
+								}	 	
+						    }					  
+						 }else if(i == 2){  //album
+						    if ((btif_get_avrcp_adv_rsp(parms)->element.txt[i].length > 0) && (btif_get_avrcp_adv_rsp(parms)->element.txt[i].length < sizeof(album))){
+								if(memcmp(album, btif_get_avrcp_adv_rsp(parms)->element.txt[i].string, btif_get_avrcp_adv_rsp(parms)->element.txt[i].length) != 0){		
+									album_len = btif_get_avrcp_adv_rsp(parms)->element.txt[i].length;
+									memcpy(album, btif_get_avrcp_adv_rsp(parms)->element.txt[i].string, album_len);
+									title_change_flag = 3;//add by cai
+									//osDelay(20);//50 m by pang
+								}	 	
+						    }	
+						 }else if (i == 6){  //notify
+							u8 len = (btif_get_avrcp_adv_rsp(parms)->element.txt[i].length > 10)? 10: btif_get_avrcp_adv_rsp(parms)->element.txt[i].length;
+							if(memcmp(time_buf, btif_get_avrcp_adv_rsp(parms)->element.txt[i].string, len) != 0)
+							{
+							    memset(time_buf,0,10);
+							    memcpy(time_buf, btif_get_avrcp_adv_rsp(parms)->element.txt[i].string , len);
+								//Send notify to update UI 
+								//Notification_Media_Change();//m by cai
+							}
+							if(title_change_flag == 2 || title_change_flag == 3) {
+								Notification_Media_Info_Change(0x00);//add by cai
+								title_change_flag = 0;
+							}
+						 }
+#endif
+/** end add   Philips BLE - end  **/
                     }
                 }
 
