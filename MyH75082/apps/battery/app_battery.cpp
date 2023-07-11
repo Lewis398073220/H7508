@@ -469,6 +469,63 @@ int app_battery_handle_process_normal(uint32_t status,  union APP_BATTERY_MSG_PR
     return 0;
 }
 
+/** add by cai **/
+uint8_t usb_plugout_to_proff_flag = 0;
+
+uint8_t usb_plugout_to_proff_status_get(void)
+{
+	TRACE(2, "***%s: usb_plugout_to_proff_flag=%d", __func__,usb_plugout_to_proff_flag);
+
+	return usb_plugout_to_proff_flag;
+}
+
+void usb_plugout_to_proff_status_set(uint8_t flag)
+{
+	TRACE(2, "***%s: usb_plugout_to_proff_flag=%d", __func__,flag);
+
+	usb_plugout_to_proff_flag = flag;
+}
+
+osTimerId usb_plugout_timer = NULL;
+static void app_usb_plugout_timehandler(void const *param);
+osTimerDef(USB_PLUGOUT_SW_TIMER, app_usb_plugout_timehandler);// define timers
+#define USB_PLUGOUT_TIMER_MS (1000)
+
+void app_usb_plugout_start_timer(void)
+{
+	if(usb_plugout_timer == NULL)
+			usb_plugout_timer = osTimerCreate(osTimer(USB_PLUGOUT_SW_TIMER), osTimerOnce, NULL);
+	
+	osTimerStart(usb_plugout_timer,USB_PLUGOUT_TIMER_MS);
+}
+
+void app_usb_plugout_stop_timer(void)
+{	
+	osTimerStop(usb_plugout_timer);
+}
+
+static void app_usb_plugout_timehandler(void const *param)
+{
+	if(app_battery_is_charging())
+	{
+		if(usb_plugout_to_proff_status_get())
+		{
+			if(app_poweroff_flag == 0)
+			{
+				if(get_usb_configured_status() || hal_usb_configured()) ;
+				else {
+					TRACE(0,"CHARGING-->RESET");
+	                app_shutdown();
+				}
+				app_usb_plugout_start_timer();
+			} else{
+				app_usb_plugout_stop_timer();
+			}
+		}
+	}
+}
+/** end add **/
+
 int app_battery_handle_process_charging(uint32_t status,  union APP_BATTERY_MSG_PRAMS prams)
 {
     static uint16_t full_charge_time=0;//add by pang
@@ -495,8 +552,10 @@ int app_battery_handle_process_charging(uint32_t status,  union APP_BATTERY_MSG_
 					app_battery_measure.status = APP_BATTERY_STATUS_NORMAL;
 				} else{
 					TRACE(0,"CHARGING-->RESET");
+					usb_plugout_to_proff_status_set(true);//add by cai
 	                osTimerStop(app_battery_timer);
 	                app_shutdown();
+					app_usb_plugout_start_timer();//add by cai
 				}
 #endif
 
