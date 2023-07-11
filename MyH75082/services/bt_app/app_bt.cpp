@@ -2505,7 +2505,7 @@ void app_bt_profile_connect_manager_opening_reconnect(void)
 #endif
 
         }
-#if 0//def __BT_ONE_BRING_TWO__
+#ifdef __BT_ONE_BRING_TWO__   //open by cai
         if(ret > 1){
             TRACE(0,"!!!need reconnect second device\n");
             bt_profile_manager[BT_DEVICE_ID_2].reconnect_mode = bt_profile_reconnect_openreconnecting;
@@ -2722,8 +2722,11 @@ static void app_bt_update_connectable_mode_after_connection_management(void)
 			app_status_indication_set(APP_STATUS_INDICATION_CONNECTED);
         }
 		else{		 	
-			#if 0
-			app_bt_accessmode_set_req(BTIF_BT_DEFAULT_ACCESS_MODE_PAIR);
+			#ifndef __EARPHONE_STAY_BOTH_SCAN__
+			if(BTIF_BAM_GENERAL_ACCESSIBLE!= app_bt_get_current_access_mode()){	
+				app_bt_accessmode_set(BTIF_BAM_CONNECTABLE_ONLY);
+				app_status_indication_set(APP_STATUS_INDICATION_PAGESCAN);
+			}
 			#else
 			if(BTIF_BAM_GENERAL_ACCESSIBLE!= app_bt_get_current_access_mode()){	
 				app_bt_accessmode_set(BTIF_BAM_GENERAL_ACCESSIBLE);
@@ -3186,6 +3189,7 @@ void app_bt_profile_connect_manager_hf(enum BT_DEVICE_ID_T id, hf_chan_handle_t 
 					}
 				   	reconnect_timeout_stop();
 				   	reconnect_timeout_set(1);
+					app_start_10_second_timer(APP_POWEROFF_TIMER_ID);//add by cai
 					/** end add **/
                 }
 #endif
@@ -3356,15 +3360,16 @@ void app_bt_profile_connect_manager_hf(enum BT_DEVICE_ID_T id, hf_chan_handle_t 
         btif_me_get_remote_device_name(&(ctx->remote_dev_bdaddr), app_bt_global_handle);
 #endif
 #if defined(MEDIA_PLAYER_SUPPORT)&& !defined(IBRT)
-        //app_voice_report(APP_STATUS_INDICATION_CONNECTED, id);
+        app_voice_report(APP_STATUS_INDICATION_CONNECTED, id);
 #endif
 
 /** add by pang **/
 		lacal_bt_off=0;
 		factory_reset_flag=0;
 		app_stop_10_second_timer(APP_POWEROFF_TIMER_ID);
-		app_status_indication_set(APP_STATUS_INDICATION_CONNECTED);
-		//app_status_indication_set_next(APP_STATUS_INDICATION_CONNECTING,APP_STATUS_INDICATION_CONNECTED);
+		app_start_10_second_timer(APP_AUTO_POWEROFF_TIMER_ID);
+		//app_status_indication_set(APP_STATUS_INDICATION_CONNECTED);
+		app_status_indication_set_next(APP_STATUS_INDICATION_CONNECTING,APP_STATUS_INDICATION_CONNECTED);
 
 		//if ((bt_profile_manager[0].reconnect_mode == bt_profile_reconnect_null)&&(bt_profile_manager[1].reconnect_mode == bt_profile_reconnect_null))
 		{
@@ -3407,15 +3412,17 @@ void app_bt_profile_connect_manager_hf(enum BT_DEVICE_ID_T id, hf_chan_handle_t 
 #endif
 
 #if defined(MEDIA_PLAYER_SUPPORT)&& !defined(IBRT)
-        //app_voice_report(APP_STATUS_INDICATION_DISCONNECTED, id);
+		if((factory_reset_flag==0) && (app_poweroff_flag==0))
+			app_voice_report(APP_STATUS_INDICATION_DISCONNECTED, id);
 #endif
 /** add by pang **/
 		if((false==bt_profile_manager[0].has_connected)&&(false==bt_profile_manager[1].has_connected)&&
 			(false==lacal_bt_off)&&(false==factory_reset_flag)&&(app_poweroff_flag==0)){
 			app_status_indication_set(APP_STATUS_INDICATION_PAGESCAN);
-			//app_start_10_second_timer(APP_POWEROFF_TIMER_ID);
+			app_start_10_second_timer(APP_POWEROFF_TIMER_ID);//m by cai
+			app_stop_10_second_timer(APP_AUTO_POWEROFF_TIMER_ID);
 		}
-		app_start_10_second_timer(APP_POWEROFF_TIMER_ID);
+
 		//if ((bt_profile_manager[0].reconnect_mode != bt_profile_reconnect_null)||(bt_profile_manager[1].reconnect_mode != bt_profile_reconnect_null))
 		{
 			if(tx_pwr_for_page_flag==0){
@@ -3659,6 +3666,7 @@ void app_bt_profile_connect_manager_a2dp(enum BT_DEVICE_ID_T id, a2dp_stream_t *
 					}
 				   	reconnect_timeout_stop();
 				   	reconnect_timeout_set(1);
+				   	app_start_10_second_timer(APP_POWEROFF_TIMER_ID);//add by cai
 					/** end add **/
                 }	   
 #endif
@@ -3817,15 +3825,16 @@ void app_bt_profile_connect_manager_a2dp(enum BT_DEVICE_ID_T id, a2dp_stream_t *
         btif_me_get_remote_device_name(&(bt_profile_manager[id].rmt_addr), app_bt_global_handle);
 #endif
 #if defined(MEDIA_PLAYER_SUPPORT)&& !defined(IBRT)
-        //app_voice_report(APP_STATUS_INDICATION_CONNECTED, id);
+        app_voice_report(APP_STATUS_INDICATION_CONNECTED, id);
 #endif
 
 /** add by pang **/
 		lacal_bt_off=0;
 		factory_reset_flag=0;
 		app_stop_10_second_timer(APP_POWEROFF_TIMER_ID);
-		app_status_indication_set(APP_STATUS_INDICATION_CONNECTED);
-		//app_status_indication_set_next(APP_STATUS_INDICATION_CONNECTING,APP_STATUS_INDICATION_CONNECTED);
+		app_start_10_second_timer(APP_AUTO_POWEROFF_TIMER_ID);
+		//app_status_indication_set(APP_STATUS_INDICATION_CONNECTED);
+		app_status_indication_set_next(APP_STATUS_INDICATION_CONNECTING,APP_STATUS_INDICATION_CONNECTED);
 
 		//if ((bt_profile_manager[0].reconnect_mode == bt_profile_reconnect_null)&&(bt_profile_manager[1].reconnect_mode == bt_profile_reconnect_null))
 		{
@@ -3867,15 +3876,16 @@ void app_bt_profile_connect_manager_a2dp(enum BT_DEVICE_ID_T id, a2dp_stream_t *
 #endif
 
 #if defined(MEDIA_PLAYER_SUPPORT)&& !defined(IBRT)
-        //app_voice_report(APP_STATUS_INDICATION_DISCONNECTED, id);
+		if((factory_reset_flag==0) && (app_poweroff_flag==0))
+			app_voice_report(APP_STATUS_INDICATION_DISCONNECTED, id);
 #endif
 /** add by pang **/
 		if((false==bt_profile_manager[0].has_connected)&&(false==bt_profile_manager[1].has_connected)&&
 			(false==lacal_bt_off)&&(false==factory_reset_flag)&&(app_poweroff_flag==0)){
 			app_status_indication_set(APP_STATUS_INDICATION_PAGESCAN);
-			//app_start_10_second_timer(APP_POWEROFF_TIMER_ID);
+			app_start_10_second_timer(APP_POWEROFF_TIMER_ID);//m by cai
+			app_stop_10_second_timer(APP_AUTO_POWEROFF_TIMER_ID);
         }
-		app_start_10_second_timer(APP_POWEROFF_TIMER_ID);
 
 		//if ((bt_profile_manager[0].reconnect_mode != bt_profile_reconnect_null)||(bt_profile_manager[1].reconnect_mode != bt_profile_reconnect_null))
 		{
@@ -5398,7 +5408,7 @@ static void reconnect_timeout_handler(void const *param);
 osTimerDef(RECONNECT_TIMEOUT_TIMER, reconnect_timeout_handler);// define timers
 uint8_t reconnect_type=0;
 uint8_t reconnect_detect_num=0;
-#define OPENRECONNECT_TIMEOUT_IN_MS	(13000)//10s
+#define OPENRECONNECT_TIMEOUT_IN_MS	(60000)//(13000)//10s   m by cai
 #define RECONNECT_TIMEOUT_IN_MS	(12000)//10000*15=120s
 
 static void reconnect_timeout_set(uint8_t rect)
