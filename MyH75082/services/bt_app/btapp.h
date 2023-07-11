@@ -399,6 +399,7 @@ bool monitor_moment_is_on(void);
 void bt_key_init(void);
 void bt_key_send(APP_KEY_STATUS *status);
 void bt_key_handle(void);
+void bt_key_handle_ANC_key(APP_KEY_STATUS *status, void *param);//add by cai
 
 void a2dp_callback(a2dp_stream_t *Stream, const a2dp_callback_parms_t *Info);
 void avrcp_init(void);

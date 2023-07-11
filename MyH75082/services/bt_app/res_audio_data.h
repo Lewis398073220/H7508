@@ -196,7 +196,8 @@ const uint8_t EN_BT_VOL_MAX[] = {
 };
 
 const uint8_t EN_BT_FACTORY_RESET[] = {
-#include "res/en/Tone_16000.txt"
+//#include "res/en/Tone_16000.txt"
+#include "res/en/EN_beep22_16000.txt"
 };
 
 const uint8_t EN_BT_ANC_ON[] = {

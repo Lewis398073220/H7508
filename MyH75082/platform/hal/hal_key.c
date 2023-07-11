@@ -58,8 +58,11 @@ typedef uint32_t                            GPIO_MAP_T;
 #define CFG_HW_ADCKEY_NUMBER                0
 #endif
 
+#ifndef CFG_SW_KEY_LLLLPRESS_THRESH_MS   //add by cai
+#define CFG_SW_KEY_LLLLPRESS_THRESH_MS      3000//8000
+#endif
 #ifndef CFG_SW_KEY_LLLPRESS_THRESH_MS
-#define CFG_SW_KEY_LLLPRESS_THRESH_MS       3000//8000
+#define CFG_SW_KEY_LLLPRESS_THRESH_MS       2000//8000
 #endif
 #ifndef CFG_SW_KEY_LLPRESS_THRESH_MS
 #define CFG_SW_KEY_LLPRESS_THRESH_MS        1000//3000
@@ -90,6 +93,7 @@ typedef uint32_t                            GPIO_MAP_T;
 #endif
 
 //common key define
+#define KEY_LONGLONGLONGLONGPRESS_THRESHOLD     MS_TO_TICKS(CFG_SW_KEY_LLLLPRESS_THRESH_MS)//add by cai
 #define KEY_LONGLONGLONGPRESS_THRESHOLD     MS_TO_TICKS(CFG_SW_KEY_LLLPRESS_THRESH_MS)//add by pang
 #define KEY_LONGLONGPRESS_THRESHOLD         MS_TO_TICKS(CFG_SW_KEY_LLPRESS_THRESH_MS)
 #define KEY_LONGPRESS_THRESHOLD             MS_TO_TICKS(CFG_SW_KEY_LPRESS_THRESH_MS)
@@ -691,6 +695,24 @@ static void hal_key_enable_allint(void)
 #endif
 }
 
+/** add by cai **/
+uint8_t call_status = 0;
+
+uint8_t app_call_status_get(void)
+{
+	TRACE(2, "***%s: call_status=%d", __func__, call_status);
+
+	return call_status;
+}
+
+void app_call_status_set(uint8_t status)
+{
+	TRACE(2, "***%s: call_status=%d", __func__, status);
+
+	call_status = status;
+}
+/** end add **/
+
 static void hal_key_debounce_handler(void *param)
 {
     uint32_t time;
@@ -702,6 +724,7 @@ static void hal_key_debounce_handler(void *param)
 
 	/** add by pang for S35 long press <touch & pwn key> to power off **/
 	static uint32_t codedown41_time=0XFFFFFFFF;
+	static enum HAL_KEY_EVENT_T codedown41_status = HAL_KEY_EVENT_NONE;
 	/** end add **/
 
     time = hal_sys_timer_get();
@@ -953,10 +976,13 @@ static void hal_key_debounce_handler(void *param)
     while (map) {
         if (map & (1 << index)) {
             map &= ~(1 << index);
-            send_key_event((1 << index), HAL_KEY_EVENT_UP);
+            //send_key_event((1 << index), HAL_KEY_EVENT_UP);//m by cai
             //if (key_status.event == HAL_KEY_EVENT_LONGPRESS || key_status.event == HAL_KEY_EVENT_LONGLONGPRESS) {
-			if (key_status.event == HAL_KEY_EVENT_LONGPRESS || key_status.event == HAL_KEY_EVENT_LONGLONGPRESS || key_status.event == HAL_KEY_EVENT_LONGLONGLONGPRESS) {//m by pang
+			if (key_status.event == HAL_KEY_EVENT_LONGPRESS || key_status.event == HAL_KEY_EVENT_LONGLONGPRESS || key_status.event == HAL_KEY_EVENT_LONGLONGLONGPRESS || key_status.event == HAL_KEY_EVENT_LONGLONGLONGLONGPRESS) {//m by pang
                 send_key_event((1 << index), HAL_KEY_EVENT_UP_AFTER_LONGPRESS);
+            } else if(key_status.event == HAL_KEY_EVENT_DOWN){//add by cai
+				TRACE(0,"***release after click\n");
+				send_key_event((1 << index), HAL_KEY_EVENT_UP);//add by cai
             }
             key_status.time_updown = time;
         }
@@ -965,13 +991,15 @@ static void hal_key_debounce_handler(void *param)
 
     if (up_new) {
         //if (key_status.event == HAL_KEY_EVENT_LONGPRESS || key_status.event == HAL_KEY_EVENT_LONGLONGPRESS) {
-		if (key_status.event == HAL_KEY_EVENT_LONGPRESS || key_status.event == HAL_KEY_EVENT_LONGLONGPRESS || key_status.event == HAL_KEY_EVENT_LONGLONGLONGPRESS) {//m by pang
+		if (key_status.event == HAL_KEY_EVENT_LONGPRESS || key_status.event == HAL_KEY_EVENT_LONGLONGPRESS || key_status.event == HAL_KEY_EVENT_LONGLONGLONGPRESS || key_status.event == HAL_KEY_EVENT_LONGLONGLONGLONGPRESS) {//m by pang
             // LongPress is finished when all of the LongPress keys are released
+            app_call_status_set(false);//add by cai for not to power off when call is active
             if ((code_down & key_status.code_ready) == 0) {
                 key_status.event = HAL_KEY_EVENT_NONE;
             }
         } else if (key_status.event == HAL_KEY_EVENT_DOWN) {
             // Enter click handling if not in LongPress
+            //app_call_status_set(false);//add by cai for not to power off when call is active
             key_status.event = HAL_KEY_EVENT_UP;
         }
     }
@@ -1041,7 +1069,7 @@ static void hal_key_debounce_handler(void *param)
                 send_key_event(key_status.code_ready, key_status.event);
             }
         //} else if (key_status.event == HAL_KEY_EVENT_LONGPRESS || key_status.event == HAL_KEY_EVENT_LONGLONGPRESS) {
-        } else if (key_status.event == HAL_KEY_EVENT_LONGPRESS || key_status.event == HAL_KEY_EVENT_LONGLONGPRESS || key_status.event == HAL_KEY_EVENT_LONGLONGLONGPRESS) {//m by pang
+        } else if (key_status.event == HAL_KEY_EVENT_LONGPRESS || key_status.event == HAL_KEY_EVENT_LONGLONGPRESS || key_status.event == HAL_KEY_EVENT_LONGLONGLONGPRESS || key_status.event == HAL_KEY_EVENT_LONGLONGLONGLONGPRESS) {//m by pang
             key_status.cnt_repeat++;
             //if (key_status.cnt_repeat == KEY_LONGPRESS_REPEAT_THRESHOLD / KEY_CHECKER_INTERVAL) { //m by pang
 			if (key_status.cnt_repeat == KEY_LONGPRESS_REPEAT_THRESHOLD / KEY_CHECKER_INTERVAL_PANG) {
@@ -1060,18 +1088,33 @@ static void hal_key_debounce_handler(void *param)
                     send_key_event(key_status.code_ready, key_status.event);
                 }
             }
+			if (key_status.event == HAL_KEY_EVENT_LONGLONGLONGPRESS) {//add by cai
+                if (time - key_status.time_updown >= KEY_LONGLONGLONGLONGPRESS_THRESHOLD) {
+                    key_status.event = HAL_KEY_EVENT_LONGLONGLONGLONGPRESS;
+                    send_key_event(key_status.code_ready, key_status.event);
+                }
+            }
         }
     }
 
 	/** add by pang for S35 long press <touch and pwr key> to power off **/
 	if ((key_status.code_ready == 0x40)&&(code_down==0x41)){
-		if (time - codedown41_time >= KEY_LONGLONGLONGPRESS_THRESHOLD){
-			key_status.event = HAL_KEY_EVENT_LONGLONGLONGPRESS;
-            send_key_event(code_down, key_status.event);
-		}		
+		if(codedown41_status == HAL_KEY_EVENT_NONE) {
+			if (time - codedown41_time >= KEY_LONGLONGPRESS_THRESHOLD){   //add by cai
+				codedown41_status = HAL_KEY_EVENT_LONGLONGPRESS;
+	            send_key_event(HAL_KEY_CODE_PWR, codedown41_status);
+			}
+		}
+		if(codedown41_status == HAL_KEY_EVENT_LONGLONGPRESS) {
+			if (time - codedown41_time >= KEY_LONGLONGLONGPRESS_THRESHOLD){
+				codedown41_status = HAL_KEY_EVENT_LONGLONGLONGPRESS;
+	            send_key_event(HAL_KEY_CODE_PWR, codedown41_status);
+			}	
+		}
 	}
 	else{
 		codedown41_time=0xFFFFFFFF;
+		codedown41_status = HAL_KEY_EVENT_NONE;
 	}
 	/** end add **/
 

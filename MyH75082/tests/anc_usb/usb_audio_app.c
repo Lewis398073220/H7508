@@ -223,6 +223,7 @@ extern const IIR_CFG_T * const audio_eq_hw_iir_cfg_list[];
     { USB_AUDIO_HID_SCAN_NEXT,      HAL_KEY_CODE_PWR,   KEY_EVENT_SET(DOUBLECLICK), }, \
     { USB_AUDIO_HID_SCAN_PREV,      HAL_KEY_CODE_PWR,   KEY_EVENT_SET(TRIPLECLICK), }, \
     { USB_AUDIO_HID_VOL_UP,         HAL_KEY_CODE_FN1,   KEY_EVENT_SET(UP), }, \
+    { USB_AUDIO_HID_VOL_DOWN,       HAL_KEY_CODE_FN1,   KEY_EVENT_SET(LONGLONGPRESS), }, \
     { USB_AUDIO_HID_VOL_DOWN,       HAL_KEY_CODE_FN1,   KEY_EVENT_SET(REPEAT), }, \
 }
 #else //for demo board debug

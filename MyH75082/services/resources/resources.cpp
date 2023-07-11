@@ -377,6 +377,13 @@ const char *aud_id_str[] =
 	"[AUD_ID_BT_BAT_VERYLOW]",
 	"[AUD_ID_BT_GAME_ON]",
 	"[AUD_ID_BT_GAME_OFF]",
+
+	"[BEEP_21]",
+	"[BEEP_22]",
+	"[POWEROFF_LOWBATTERY]",
+	"[DEMO_MODE]",
+	"[CALLING_MUTE]",
+	"[CALLING_UNMUTE]",
 /** end add **/
 };
 

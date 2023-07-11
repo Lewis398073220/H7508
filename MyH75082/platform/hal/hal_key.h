@@ -53,6 +53,7 @@ enum HAL_KEY_EVENT_T {
     HAL_KEY_EVENT_LONGPRESS,
     HAL_KEY_EVENT_LONGLONGPRESS,
     HAL_KEY_EVENT_LONGLONGLONGPRESS,//add by pang
+    HAL_KEY_EVENT_LONGLONGLONGLONGPRESS,//add by cai
     HAL_KEY_EVENT_CLICK,
     HAL_KEY_EVENT_DOUBLECLICK,
     HAL_KEY_EVENT_TRIPLECLICK,
@@ -92,6 +93,11 @@ int hal_key_open(int checkPwrKey, int (* cb)(uint32_t, uint8_t));
 enum HAL_KEY_EVENT_T hal_key_read_status(enum HAL_KEY_CODE_T code);
 
 int hal_key_close(void);
+
+/** add by cai **/
+uint8_t app_call_status_get(void);
+void app_call_status_set(uint8_t status);
+/** end add **/
 
 #ifdef __cplusplus
     }

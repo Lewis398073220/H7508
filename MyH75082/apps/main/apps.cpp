@@ -958,7 +958,7 @@ void app_bt_key_shutdown(APP_KEY_STATUS *status, void *param)
     hal_sw_bootmode_clear(HAL_SW_BOOTMODE_REBOOT);
     app_reset();
 #else
-    app_shutdown();
+    if(!app_call_status_get()) app_shutdown();//m by cai for not to power off when call is active
 #endif
 }
 
@@ -1331,8 +1331,10 @@ const APP_KEY_HANDLE  app_key_handle_cfg[] = {
 //--
 const APP_KEY_HANDLE  app_key_handle_cfg[] = {
     {{APP_KEY_CODE_PWR,APP_KEY_EVENT_LONGLONGLONGPRESS},"bt function key",app_bt_key_shutdown, NULL},
-    {{HAL_KEY_CODE_FN6|APP_KEY_CODE_PWR,APP_KEY_EVENT_LONGLONGLONGPRESS},"factory reset",app_bt_key_shutdown, NULL},
     {{APP_KEY_CODE_PWR,APP_KEY_EVENT_LONGLONGPRESS},"bt function key",app_bt_key, NULL},
+	{{APP_KEY_CODE_PWR,APP_KEY_EVENT_CLICK},"bt function key",app_bt_key, NULL},
+    {{APP_KEY_CODE_PWR,APP_KEY_EVENT_DOUBLECLICK},"play forward",app_bt_key, NULL},
+    {{APP_KEY_CODE_PWR,APP_KEY_EVENT_TRIPLECLICK},"play backward",app_bt_key, NULL},
 #if defined(BT_USB_AUDIO_DUAL_MODE_TEST) && defined(BT_USB_AUDIO_DUAL_MODE)
     //{{APP_KEY_CODE_PWR,APP_KEY_EVENT_CLICK},"bt function key",app_bt_key, NULL},
 #ifdef RB_CODEC
@@ -1341,9 +1343,7 @@ const APP_KEY_HANDLE  app_key_handle_cfg[] = {
     //{{APP_KEY_CODE_PWR,APP_KEY_EVENT_CLICK},"btusb mode switch key.",app_btusb_audio_dual_mode_test, NULL},
 #endif
 #endif
-	{{APP_KEY_CODE_PWR,APP_KEY_EVENT_CLICK},"bt function key",app_bt_key, NULL},
-    {{APP_KEY_CODE_PWR,APP_KEY_EVENT_DOUBLECLICK},"play forward",app_bt_key, NULL},
-    {{APP_KEY_CODE_PWR,APP_KEY_EVENT_TRIPLECLICK},"play backward",app_bt_key, NULL},
+
 #if RAMPAGECLICK_TEST_MODE
     //{{APP_KEY_CODE_PWR,APP_KEY_EVENT_ULTRACLICK},"bt function key",app_bt_key_enter_nosignal_mode, NULL},
     //{{APP_KEY_CODE_PWR,APP_KEY_EVENT_RAMPAGECLICK},"bt function key",app_bt_key_enter_testmode, NULL},
@@ -1351,11 +1351,7 @@ const APP_KEY_HANDLE  app_key_handle_cfg[] = {
 #ifdef POWERKEY_I2C_SWITCH
     //{{APP_KEY_CODE_PWR,APP_KEY_EVENT_RAMPAGECLICK},"bt i2c key",app_factorymode_i2c_switch, NULL},
 #endif
-    {{APP_KEY_CODE_FN1,APP_KEY_EVENT_CLICK},"bt volume up key",app_bt_key, NULL},
-    {{APP_KEY_CODE_FN1,APP_KEY_EVENT_DOUBLECLICK},"bt volume up key",app_bt_key, NULL},
-    {{APP_KEY_CODE_FN1,APP_KEY_EVENT_TRIPLECLICK},"bt volume up key",app_bt_key, NULL},
-    {{APP_KEY_CODE_FN1,APP_KEY_EVENT_ULTRACLICK},"bt volume up key",app_bt_key, NULL},
-    {{APP_KEY_CODE_FN1,APP_KEY_EVENT_RAMPAGECLICK},"bt volume up key",app_bt_key, NULL},
+    {{APP_KEY_CODE_FN1,APP_KEY_EVENT_UP},"bt volume up key",app_bt_key, NULL},
     //{{APP_KEY_CODE_FN1,APP_KEY_EVENT_LONGPRESS},"bt play backward key",app_bt_key, NULL},
 #if defined(APP_LINEIN_A2DP_SOURCE)||defined(APP_I2S_A2DP_SOURCE)
     //{{APP_KEY_CODE_FN1,APP_KEY_EVENT_DOUBLECLICK},"bt mode src snk key",app_bt_key, NULL},
@@ -1365,16 +1361,16 @@ const APP_KEY_HANDLE  app_key_handle_cfg[] = {
     //{{APP_KEY_CODE_FN2,APP_KEY_EVENT_LONGPRESS},"bt play forward key",app_bt_key, NULL},
     //{{APP_KEY_CODE_FN15,APP_KEY_EVENT_UP},"bt volume down key",app_bt_key, NULL},
     
-	{{HAL_KEY_CODE_FN5,APP_KEY_EVENT_CLICK},"bt anc key",app_anc_Key_Pro, NULL},
-	
+	{{HAL_KEY_CODE_FN5,APP_KEY_EVENT_CLICK},"bt anc key",bt_key_handle_ANC_key, NULL},
+	{{HAL_KEY_CODE_FN5,APP_KEY_EVENT_DOUBLECLICK},"bt anc key",bt_key_handle_ANC_key, NULL},
 	{{HAL_KEY_CODE_FN6,APP_KEY_EVENT_LONGPRESS},"bt quick monitor",app_bt_key, NULL},
 	{{HAL_KEY_CODE_FN6,APP_KEY_EVENT_UP_AFTER_LONGPRESS},"bt quick monitor",app_bt_key, NULL},
-	{{HAL_KEY_CODE_FN6,APP_KEY_EVENT_DOUBLECLICK},"game mode",app_bt_key, NULL},
-	{{HAL_KEY_CODE_FN6,APP_KEY_EVENT_TRIPLECLICK},"siri",app_bt_key, NULL},
+	//{{HAL_KEY_CODE_FN6,APP_KEY_EVENT_DOUBLECLICK},"game mode",app_bt_key, NULL},
+	//{{HAL_KEY_CODE_FN6,APP_KEY_EVENT_TRIPLECLICK},"siri",app_bt_key, NULL},
 	//{{HAL_KEY_CODE_FN6,APP_KEY_EVENT_ULTRACLICK},"siri",app_bt_key, NULL},
 
-	{{HAL_KEY_CODE_FN5|APP_KEY_CODE_PWR,APP_KEY_EVENT_LONGLONGLONGPRESS},"factory reset",app_bt_key, NULL},
-
+	{{HAL_KEY_CODE_FN5|APP_KEY_CODE_PWR,APP_KEY_EVENT_LONGLONGLONGLONGPRESS},"factory reset",app_bt_key, NULL},
+	//{{APP_KEY_CODE_FN1|APP_KEY_CODE_PWR,APP_KEY_EVENT_LONGLONGLONGLONGPRESS},"demo mode",app_bt_key, NULL},
 #ifdef SUPPORT_SIRI
     //{{APP_KEY_CODE_NONE ,APP_KEY_EVENT_NONE},"none function key",app_bt_key, NULL},
 #endif
@@ -1681,14 +1677,91 @@ bool app_usbaudio_mode_on(void)
 void app_usb_key(APP_KEY_STATUS *status, void *param)
 {
     TRACE(3,"%s %d,%d",__func__, status->code, status->event);
-
+	if(get_usb_configured_status() || hal_usb_configured()) usb_audio_app_key((HAL_KEY_CODE_T)status->code, (HAL_KEY_EVENT_T)status->event);//add by cai
 }
 
+/** add by cai **/
+void app_usb_ANC_key(APP_KEY_STATUS *status, void *param)
+{
+	if(get_usb_configured_status() || hal_usb_configured()) 
+	{
+		app_anc_Key_Pro(NULL, NULL);
+		usb_audio_eq_loop();//add by cai
+	}	
+}
+
+osTimerId usb_quick_awareness_sw_timer = NULL;
+static void usb_quick_awareness_swtimer_handler(void const *param);
+osTimerDef(USB_QUICK_AWARENESS_TIMER, usb_quick_awareness_swtimer_handler);// define timers
+#define USB_QUICK_AWARENESS_SWTIMER_IN_MS	(17000)
+
+void usb_app_quick_awareness_swtimer_start(void)
+{
+	if(usb_quick_awareness_sw_timer == NULL)
+		usb_quick_awareness_sw_timer = osTimerCreate(osTimer(USB_QUICK_AWARENESS_TIMER), osTimerOnce, NULL);
+	
+	osTimerStart(usb_quick_awareness_sw_timer,USB_QUICK_AWARENESS_SWTIMER_IN_MS);
+}
+
+void usb_app_quick_awareness_swtimer_stop(void)
+{
+	if(usb_quick_awareness_sw_timer == NULL)
+		return;
+	
+	osTimerStop(usb_quick_awareness_sw_timer);
+}
+
+static void usb_quick_awareness_swtimer_handler(void const *param)
+{
+	usb_audio_set_volume_for_quick_awareness(false, 3 + 17);//m by cai for volume indepent
+	app_monitor_moment(false);
+}
+
+void app_usb_Cover_key(APP_KEY_STATUS *status, void *param)
+{
+	if(get_usb_configured_status() || hal_usb_configured())
+	{
+		switch(status->event)
+		{
+			case APP_KEY_EVENT_LONGPRESS:
+				usb_audio_set_volume_for_quick_awareness(true, 3 + 17);//m by cai for volume indepent
+				app_monitor_moment(true);
+				usb_app_quick_awareness_swtimer_start();//add by cai for exit quick Awareness after 15s	
+			break;
+
+			case  APP_KEY_EVENT_UP_AFTER_LONGPRESS:
+				usb_app_quick_awareness_swtimer_stop();//add by cai for exit quick Awareness after 15s
+				app_monitor_moment(false);
+				usb_audio_set_volume_for_quick_awareness(false, 3 + 17);//m by cai for volume indepent
+			break;
+			
+			default:
+				TRACE(2,"%s: unregister down key event=%x",__func__,status->event);
+			break;
+		}
+	}
+}
+/** end add **/
+
+#if 1
+const APP_KEY_HANDLE  app_usb_handle_cfg[] = {//m by cai
+    {{APP_KEY_CODE_FN1,APP_KEY_EVENT_UP},"USB HID VOLUMEUP key",app_usb_key, NULL},
+    {{APP_KEY_CODE_FN1,APP_KEY_EVENT_LONGLONGPRESS},"USB HID VOLUMEDOWN key",app_usb_key, NULL},
+	{{APP_KEY_CODE_FN1,APP_KEY_EVENT_REPEAT},"USB HID VOLUMEDOWN key",app_usb_key, NULL},
+	{{APP_KEY_CODE_PWR,APP_KEY_EVENT_CLICK},"USB HID PWR CLICK key",app_usb_key, NULL},
+	{{APP_KEY_CODE_PWR,APP_KEY_EVENT_DOUBLECLICK},"USB HID PWR DOUBLECLICK key",app_usb_key, NULL},
+	{{APP_KEY_CODE_PWR,APP_KEY_EVENT_TRIPLECLICK},"USB HID PWR TRIPLECLICK key",app_usb_key, NULL},
+	{{HAL_KEY_CODE_FN5,APP_KEY_EVENT_CLICK},"bt anc key",app_usb_ANC_key, NULL},
+	{{HAL_KEY_CODE_FN6,APP_KEY_EVENT_LONGPRESS},"bt quick monitor",app_usb_Cover_key, NULL},
+	{{HAL_KEY_CODE_FN6,APP_KEY_EVENT_UP_AFTER_LONGPRESS},"bt quick monitor",app_usb_Cover_key, NULL},
+};
+#else//for debug
 const APP_KEY_HANDLE  app_usb_handle_cfg[] = {
     {{APP_KEY_CODE_FN1,APP_KEY_EVENT_UP},"USB HID FN1 UP key",app_usb_key, NULL},
     {{APP_KEY_CODE_FN2,APP_KEY_EVENT_UP},"USB HID FN2 UP key",app_usb_key, NULL},
     {{APP_KEY_CODE_PWR,APP_KEY_EVENT_UP},"USB HID PWR UP key",app_usb_key, NULL},
 };
+#endif
 
 void app_usb_key_init(void)
 {
@@ -1960,6 +2033,10 @@ extern int rpc_service_setup(void);
 #if defined(__USE_3_5JACK_CTR__)
 				if(hal_gpio_pin_get_val((enum HAL_GPIO_PIN_T)cfg_hw_pio_3p5_jack_detecter.pin) || app_nvrecord_demo_mode_get()) 
 				{
+#if defined(__LDO_3V3_CTR__) 
+					hal_gpio_pin_set((enum HAL_GPIO_PIN_T)cfg_hw_pio_3_3v_control.pin);//add by cai for usb audio
+#endif
+
 #if defined(__CHARGE_CURRRENT__)
 					hal_gpio_pin_set((enum HAL_GPIO_PIN_T)cfg_charge_current_control.pin);//add by cai for enter nomal charging mode when usb is not configed.
 #endif				
