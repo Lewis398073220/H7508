@@ -57,10 +57,10 @@ static float audio_prompt_sbc_eq_band_gain[8] = {1, 1, 1, 1, 1, 1, 1, 1};
 // from TGT_VOLUME_LEVEL_T or KEEP_CURRENT_VOLUME_FOR_MIX_PROMPT
 #define DEFAULT_VOLUME_FOR_MIX_PROMPT               KEEP_CURRENT_VOLUME_FOR_MIX_PROMPT
 
-#define DEFAULT_COEFF_FOR_MIX_PROMPT_FOR_MUSIC      0.4//DB2LIN(codec_dac_vol[TGT_VOLUME_LEVEL_WARNINGTONE].sdac_volume)//m by pang//0.1//1.0 //m by pang
+#define DEFAULT_COEFF_FOR_MIX_PROMPT_FOR_MUSIC      0.05//DB2LIN(codec_dac_vol[TGT_VOLUME_LEVEL_WARNINGTONE].sdac_volume)//m by pang//0.1//1.0 //m by pang
 #define DEFAULT_COEFF_FOR_MIX_MUSIC_FOR_MUSIC       0.4//0.4
 //#define DEFAULT_COEFF_FOR_MIX_PROMPT_FOR_CALL     0.4//1.0 //m by pang
-#define DEFAULT_COEFF_FOR_MIX_PROMPT_FOR_CALL       0.4//DB2LIN(codec_dac_vol[TGT_VOLUME_LEVEL_WARNINGTONE].sdac_volume)//m by pang
+#define DEFAULT_COEFF_FOR_MIX_PROMPT_FOR_CALL       0.05//DB2LIN(codec_dac_vol[TGT_VOLUME_LEVEL_WARNINGTONE].sdac_volume)//m by pang
 #define DEFAULT_COEFF_FOR_MIX_CALL_FOR_CALL         0.4//0.4
 
 #define DEFAULT_OVERLAP_LENGTH 128

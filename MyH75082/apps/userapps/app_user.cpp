@@ -24,6 +24,7 @@
 #include "pmu.h"
 #include "hal_bootmode.h"
 #include "analog.h"
+#include "app_media_player.h"
 
 #ifdef BT_USB_AUDIO_DUAL_MODE
 #include "btusb_audio.h"
@@ -1943,7 +1944,7 @@ void app_nvrecord_para_get(void)
 	eq_custom_para_ancon=p_nvrecord_env->custom_eq_ancon;
 	eq_custom_para_ancoff=p_nvrecord_env->custom_eq_ancoff;
 
-#if 1  
+#if 0  
 	for(uint8_t i=0;i<10;i++){
 		TRACE(1,"***EQ anc on %d %d %d",(int16_t)(eq_custom_para_ancon.param[i].gain*10),(int16_t)eq_custom_para_ancon.param[i].fc,(int16_t)(eq_custom_para_ancon.param[i].Q*10));
 	}	
@@ -1983,27 +1984,53 @@ void app_nvrecord_para_get(void)
 void app_nvrecord_para_default(void)
 {
 	struct nvrecord_env_t *nvrecord_env;
-	//uint8_t i=0;
+	uint8_t i=0;
 	
 	nv_record_env_get(&nvrecord_env);
 
+	sleep_time=DEFAULT_SLEEP_TIME;
 	eq_set_index=0;
 	anc_set_index=ANC_HIGH;
 	monitor_level=20;
 	app_set_anc_on_mode(ANC_HIGH);
-	
+	focus_on=0;
+	touch_lock=0;
+	sidetone=0;
+	anc_table_value = ANC_HIGH;
+	multipoint=1;
+	auto_poweroff_time=DEFAULT_AUTO_PWOFF_TIME;
+	anc_toggle_mode=AncOn_AncOff_Awareness;
+	low_latency_on=0;
+	demo_mode_on=0;
+
+	nvrecord_env->media_language.language=NVRAM_ENV_MEDIA_LANGUAGE_DEFAULT;
+	app_play_audio_set_lang(NVRAM_ENV_MEDIA_LANGUAGE_DEFAULT);
+	nvrecord_env->sleep_time=sleep_time;
 	nvrecord_env->eq_mode=eq_set_index;
 	nvrecord_env->anc_mode=anc_set_index;
 	nvrecord_env->monitor_level=monitor_level;
+	nvrecord_env->focus_on=focus_on;
+	nvrecord_env->touch_lock=touch_lock;
+	nvrecord_env->sidetone=sidetone;
+	nvrecord_env->anc_table_value=anc_table_value;
+	nvrecord_env->fota_flag=fota_flag;
+	nvrecord_env->multipoint=multipoint;
+	new_multipoint = multipoint;
+	nvrecord_env->anc_toggle_mode=anc_toggle_mode;
+	nvrecord_env->demo_mode=demo_mode_on;
+	nvrecord_env->reserved1=app_color_change_flag;
+	nvrecord_env->reserved2=app_color_value;
 
-	//for(i=0;i<10;i++){
-		//nvrecord_env->iir_gain[i] = 0;
-	//}
+	for(i = 0; i < 6; i++){
+		eq_custom_para.param[i].gain=0;
+		eq_custom_para_anc_off.param[i].gain=0;
+		nvrecord_env->iir_gain[i] = 0;
+	}
 
 	nv_record_env_set(nvrecord_env);
 
 #if FPGA==0
-    //nv_record_flash_flush();
+    nv_record_flash_flush();
 #endif
 
 	set_anc_mode(anc_on,0);
@@ -2058,14 +2085,10 @@ void app_get_custom_bin_config(void)
 {		
 	//memcpy(binconfig2,__custom_bin2_start,1);
 	//memcpy(binconfig1,__custom_bin1_start,1);
-	memcpy(binconfig1,(const void *)0x383e8000,1);//color
-	memcpy(binconfig2,(const void *)0x383e9000,1);//area
+	memcpy(binconfig1,(const void *)0x383e9000,1);//color
+	//memcpy(binconfig2,(const void *)0x383e9000,1);//area
 	
-	TRACE(1,"***app_get_custom_bin_config %d %d",binconfig1[0],binconfig2[0]);
-	if((binconfig1[0]==0x00)&&(binconfig2[0]==0x00)){
-		binconfig1[0]=0x01;
-	    binconfig2[0]=0x01;
-	}
+	TRACE(1,"***app_get_custom_bin_config %d",binconfig1[0]);
 }
 
 uint8_t get_custom_bin_config(uint8_t config_num)

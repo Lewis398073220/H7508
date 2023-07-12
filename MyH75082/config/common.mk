@@ -115,8 +115,8 @@ export OTA_ENABLE := 1
 endif # ifeq ($(BISTO_ENABLE),1)
 
 ifeq ($(MIX_AUDIO_PROMPT_WITH_A2DP_MEDIA_ENABLED),1)
-#m by pang AUDIO_OUTPUT_SW_GAIN ?= 1
-AUDIO_OUTPUT_SW_GAIN ?= 0
+#m by cai AUDIO_OUTPUT_SW_GAIN ?= 0
+AUDIO_OUTPUT_SW_GAIN ?= 1
 endif # ifeq ($(MIX_AUDIO_PROMPT_WITH_A2DP_MEDIA_ENABLED),1)
 
 # NOTE: variable value in BLE_SWITCH must already confirmed above here

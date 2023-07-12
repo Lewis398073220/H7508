@@ -249,6 +249,8 @@ typedef void (*APP_10_SECOND_TIMER_CB_T)(void);
 void app_pair_timerout(void);
 void app_poweroff_timerout(void);
 void CloseEarphone(void);
+void Earphone_auto_poweroff(void);//add by cai
+
 
 typedef struct
 {
@@ -274,7 +276,7 @@ APP_10_SECOND_TIMER_STRUCT app_10_second_array[] =
 {
     INIT_APP_TIMER(APP_PAIR_TIMER_ID, 0, 0, 6, PairingTransferToConnectable),
     INIT_APP_TIMER(APP_POWEROFF_TIMER_ID, 0, 0, 45, CloseEarphone),//modify by pang
-    INIT_APP_TIMER(APP_AUTO_POWEROFF_TIMER_ID, 0, 0, 45, NULL),//add by pang
+    INIT_APP_TIMER(APP_AUTO_POWEROFF_TIMER_ID, 0, 0, 45, Earphone_auto_poweroff),//add by pang
 #ifdef GFPS_ENABLED
     INIT_APP_TIMER(APP_FASTPAIR_LASTING_TIMER_ID, 0, 0, APP_FAST_PAIRING_TIMEOUT_IN_SECOND/10,
         app_fast_pairing_timeout_timehandler),
@@ -331,12 +333,27 @@ void app_10_second_timer_check(void)
 {
     APP_10_SECOND_TIMER_STRUCT *timer = app_10_second_array;
 	unsigned int i;
-    static uint8_t auto_power_off_type=0;
-    static uint16_t auto_power_off_count=0;
-	bool auto_power_off_flag=0;
 	
     for(i = 0; i < ARRAY_SIZE(app_10_second_array); i++) {
-		if(i != 2){
+        if(i == APP_POWEROFF_TIMER_ID){
+			if ((timer->timer_en) && (get_sleep_time()!=SLEEP_TIME_PERM)) {
+            	timer->timer_count++;
+            	if (timer->timer_count >= get_sleep_time()) {
+                	timer->timer_en = 0;
+                	if (timer->cb)
+                    	timer->cb();
+           	 	}
+   			}
+        } else if(i == APP_AUTO_POWEROFF_TIMER_ID){
+			if ((timer->timer_en) && (get_auto_pwoff_time()!=AUTO_PWOFF_TIME_PERM)) {
+				timer->timer_count++;
+				if (timer->timer_count >= get_auto_pwoff_time()) {
+					timer->timer_en = 0;
+					if (timer->cb)
+						timer->cb();
+				}
+			}
+		} else{
 			if (timer->timer_en) {
 				timer->timer_count++;
 					if (timer->timer_count >= timer->timer_period) {
@@ -346,35 +363,9 @@ void app_10_second_timer_check(void)
 				}
 			}
 		}
-        else{
-			if(auto_power_off_type!=0xFF){
-				auto_power_off_count++;
-
-				if((auto_power_off_type==1)&&(auto_power_off_count>=225)){//0:30:05
-					auto_power_off_flag=1;
-				}
-				else if((auto_power_off_type==2)&&(auto_power_off_count>=450)){//1:00
-					auto_power_off_flag=1;
-				}
-				else if((auto_power_off_type==6)&&(auto_power_off_count>=1350)){//3:00
-					auto_power_off_flag=1;
-				}
-				else if((auto_power_off_type==10)&&(auto_power_off_count>=2200)){//5:00
-					auto_power_off_flag=1;
-				}
-				if(auto_power_off_flag)
-					app_shutdown();
-			}
-			else{
-				auto_power_off_count=0;
-			}
-
-			auto_power_off_type=app_get_auto_poweroff();
-        }
 		timer++;		
     }
 }
-
 #endif
 
 void CloseEarphone(void)
@@ -410,6 +401,33 @@ void CloseEarphone(void)
 	
 #endif
 }
+
+void Earphone_auto_poweroff(void)
+{
+    int activeCons;
+    osapi_lock_stack();
+    activeCons = btif_me_get_activeCons();
+    osapi_unlock_stack();
+#if 0
+#ifdef ANC_APP
+    if(app_anc_work_status()) {
+        app_set_10_second_timer(APP_POWEROFF_TIMER_ID, 1, 30);
+        return;
+    }
+#endif /* ANC_APP */
+    if(activeCons == 0) {
+        TRACE(0,"!!!CloseEarphone\n");
+        app_shutdown();
+    }
+#else //m b pang	
+	if((activeCons > 0) || (0 < app_bt_is_connected())) {
+		TRACE(0,"!!!CloseEarphone\n");
+		app_shutdown();
+	}
+	
+#endif
+}
+
 #endif /* #if defined(__BTIF_EARPHONE__) && defined(__BTIF_AUTOPOWEROFF__) */
 
 int signal_send_to_main_thread(uint32_t signals);
@@ -673,6 +691,7 @@ int app_voice_report_handler(APP_STATUS_INDICATION_T status, uint8_t device_id, 
 #ifdef BT_USB_AUDIO_DUAL_MODE
     if(btusb_is_usb_mode()) {
         if(hal_usb_configured()){
+			audio_prompt_stop_playing();//add by cai for prompt cutdown to play
             usb_audio_start_audio_prompt(id);
         }
     }
