@@ -1203,7 +1203,7 @@ void app_nvrecord_anc_set(enum APP_ANC_MODE_STATUS nc)
 	nv_record_env_set(nvrecord_env);
 
 #if FPGA==0
-    nv_record_flash_flush();
+    //nv_record_flash_flush();
 #endif
 }
 
@@ -1222,7 +1222,7 @@ void app_nvrecord_monitor_level_set(uint8_t level)
 	nv_record_env_set(nvrecord_env);
 	
 #if FPGA==0
-    nv_record_flash_flush();
+    //nv_record_flash_flush();
 #endif
 }
 
@@ -1246,7 +1246,7 @@ void app_nvrecord_focus_set(uint8_t focus)
 	nv_record_env_set(nvrecord_env);
 	
 #if FPGA==0
-    nv_record_flash_flush();
+    //nv_record_flash_flush();
 #endif
 }
 uint8_t app_eq_index_get(void)
@@ -1270,7 +1270,7 @@ void app_nvrecord_eq_set(uint8_t eq_index)
 	nv_record_env_set(nvrecord_env);
 
 #if FPGA==0
-    nv_record_flash_flush();
+    //nv_record_flash_flush();
 #endif
 }
 
@@ -1334,7 +1334,7 @@ void app_nvrecord_eq_param_set(uint8_t customization_eq_value[6])
 	nv_record_env_set(nvrecord_env);
 	
 #if FPGA==0
-    nv_record_flash_flush();
+    //nv_record_flash_flush();
 #endif
 }
 
@@ -1469,7 +1469,7 @@ void app_nvrecord_sidetone_set(uint8_t on)
 	nv_record_env_set(nvrecord_env);
 	
 #if FPGA==0
-    nv_record_flash_flush();
+    //nv_record_flash_flush();
 #endif
 }
 
