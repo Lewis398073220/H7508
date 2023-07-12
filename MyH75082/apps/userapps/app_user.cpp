@@ -197,6 +197,11 @@ int app_user_event_open_module_for_charge(void)
 #if defined(__PWM_LED_CTL__)
 	app_pwm_start_timer();
 #endif
+
+#if defined(__USE_3_5JACK_CTR__)    
+	app_jack_start_timer();
+#endif
+
     return 0;
 }
 
@@ -369,7 +374,31 @@ void apps_jack_event_process(void)
 		jack_count=0;
 	
 		//app_poweroff_flag = 1;
+#ifdef BT_USB_AUDIO_DUAL_MODE
+		if(app_battery_is_charging()) app_reset();
+		else app_shutdown();
+#else
 		app_shutdown();//shutdown
+#endif
+	} else if((out_val>CHECK_3_5JACK_MAX_NUM)&&(jack_3p5_plug_in_flag==1)){
+		TRACE(0,"***detected 3_5jack out!");
+		out_val=CHECK_3_5JACK_MAX_NUM;
+		reconncect_null_by_user=false;
+		lostconncection_to_pairing=0;		
+		jack_3p5_plug_in_flag=0;
+#if defined(AUDIO_LINEIN)
+		app_play_linein_onoff(0);
+		app_bt_profile_connect_manager_opening_reconnect();
+#endif
+		
+#if defined(__AC107_ADC__)
+		ac107_hw_close();
+#endif
+
+#ifdef BT_USB_AUDIO_DUAL_MODE
+		if(app_battery_is_charging()) app_reset();
+		else ;
+#endif
 	}
 	/*
     if(in_val>(CHECK_3_5JACK_MAX_NUM+1) && (jack_3p5_plug_in_flag==0)){		
