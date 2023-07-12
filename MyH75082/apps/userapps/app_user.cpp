@@ -1338,8 +1338,6 @@ void app_nvrecord_eq_param_set(uint8_t customization_eq_value[6])
 #endif
 }
 
-
-
 void app_eq_custom_para_get(IIR_CFG_T custom_eq_get)
 {
 	custom_eq_get=eq_custom_para_ancon;

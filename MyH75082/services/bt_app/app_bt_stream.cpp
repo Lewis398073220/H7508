@@ -1564,6 +1564,7 @@ uint8_t bt_audio_updata_eq_for_anc(uint8_t anc_status)
 /** add by pang **/
 void change_eq_from_ble_api(uint8_t index)
 {   
+	app_eq_index_set_nosave(index);//add by cai
 #ifdef __SW_IIR_EQ_PROCESS__
  	bt_audio_set_eq(AUDIO_EQ_TYPE_SW_IIR, app_get_anc_status());
 #endif  	
@@ -1671,31 +1672,31 @@ uint32_t bt_audio_set_eq(AUDIO_EQ_TYPE_T audio_eq_type, uint8_t index)
 #if defined(__SW_IIR_EQ_PROCESS__)
         case AUDIO_EQ_TYPE_SW_IIR:
         {
-         #if defined(__HAYLOU_APP__)//m by pang
-            uint8_t eq_index=0;
-		    eq_index=app_eq_index_get();	
-			if(eq_index < 5){
-				iir_cfg=audio_eq_sw_iir_cfg_list[index+eq_index*3];	
+#if 0
+			if(index >= EQ_SW_IIR_LIST_NUM)
+			{
+				TRACE(2,"[%s] index %u > EQ_SW_IIR_LIST_NUM", __func__, index);
+				return 1;
 			}
-			else if(eq_index == 0xf0){
-				if(index==1)
-				  	iir_cfg= &eq_custom_para_ancon;
-				else
-					iir_cfg= &eq_custom_para_ancoff;
+
+			iir_cfg=audio_eq_sw_iir_cfg_list[index];
+#else //m by pang
+			uint8_t eq_index=0;
+			eq_index=app_eq_index_get();
+			TRACE(2,"***%s: eq_index=%d", __func__, eq_index);
+			
+			if(eq_index < 5){
+				iir_cfg = audio_eq_sw_iir_cfg_list[index + eq_index*3]; 
+			}
+			else if(eq_index == 0x3f){//m by cai to 0x3f
+				if(index == anc_on)
+					iir_cfg= &eq_custom_para;
+				else 
+					iir_cfg= &eq_custom_para_anc_off;
 			}
 			else
-				return 1;
-				
-			TRACE(2,"[%s] ,eq index=%d", __func__, eq_index);
-		 #else 
-			if(index >= EQ_SW_IIR_LIST_NUM)
-            {
-                TRACE(2,"[%s] index %u > EQ_SW_IIR_LIST_NUM", __func__, index);
-                return 1;
-            }
-
-            iir_cfg=audio_eq_sw_iir_cfg_list[index];
-		 #endif
+				return 1;	
+#endif
         }
         break;
 #endif
