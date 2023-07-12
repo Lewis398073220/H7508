@@ -3557,22 +3557,27 @@ const IIR_CFG_T * const audio_eq_sw_iir_cfg_list[EQ_SW_IIR_LIST_NUM]={
 	&audio_eq_sw_iir_cfg_anc_off,
     &audio_eq_sw_iir_cfg_anc_on,    
     &audio_eq_sw_iir_cfg_anc_off,
+	&audio_eq_sw_iir_cfg_anc_off,//low anc EQ
 
 	&audio_eq_sw_iir_cfg_anc_off_bass,
     &audio_eq_sw_iir_cfg_anc_on_bass,    
     &audio_eq_sw_iir_cfg_anc_off_bass,	
+	&audio_eq_sw_iir_cfg_anc_off_bass,//low anc EQ
 
 	&audio_eq_sw_iir_cfg_anc_off_class,
     &audio_eq_sw_iir_cfg_anc_on_class,    
     &audio_eq_sw_iir_cfg_anc_off_class,
+    &audio_eq_sw_iir_cfg_anc_off_class,//low anc EQ
     
 	&audio_eq_sw_iir_cfg_anc_off_jazz,
     &audio_eq_sw_iir_cfg_anc_on_jazz,    
     &audio_eq_sw_iir_cfg_anc_off_jazz,
+	&audio_eq_sw_iir_cfg_anc_off_jazz,//low anc EQ
 
 	&audio_eq_sw_iir_cfg_anc_off_hip,
     &audio_eq_sw_iir_cfg_anc_on_hip,    
     &audio_eq_sw_iir_cfg_anc_off_hip,
+    &audio_eq_sw_iir_cfg_anc_off_hip,//low anc EQ	
 };
 
 const FIR_CFG_T audio_eq_hw_fir_cfg_44p1k = {

@@ -29,7 +29,7 @@ extern "C" {
 #define EQ_HW_DAC_IIR_LIST_NUM              1
 #define EQ_HW_ADC_IIR_LIST_NUM              1
 #define EQ_HW_IIR_LIST_NUM                  1
-#define EQ_SW_IIR_LIST_NUM                  15
+#define EQ_SW_IIR_LIST_NUM                  20
 #define EQ_HW_FIR_LIST_NUM                  3
 
 #ifdef __TENCENT_VOICE__

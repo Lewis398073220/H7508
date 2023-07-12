@@ -227,6 +227,7 @@ static int32_t delay_buf_bt[DELAY_SAMPLE_MC];
 
 #ifdef ANC_APP
 static uint8_t anc_status_record = 0xff;
+static uint8_t anc_mode_record = 0xff;//add by cai
 #endif
 
 #if defined(SCO_DMA_SNAPSHOT)
@@ -1535,10 +1536,14 @@ void bt_audio_updata_eq(uint8_t index)
 #ifdef ANC_APP
 uint8_t bt_audio_updata_eq_for_anc(uint8_t anc_status)
 {
-    anc_status = app_anc_work_status();
-    if(anc_status_record != anc_status)
+    //anc_status = app_anc_work_status();
+	anc_status = app_get_anc_status();//m by cai
+	enum ANC_ON_MODE anc_on_mode = app_get_anc_on_mode();
+		
+    if(anc_status_record != anc_status || (anc_mode_record != anc_on_mode))//m by cai
     {
         anc_status_record = anc_status;
+		anc_mode_record = anc_on_mode;//add by cai
         TRACE(2,"[%s]anc_status = %d", __func__, anc_status);
 #ifdef __SW_IIR_EQ_PROCESS__
         //bt_audio_set_eq(AUDIO_EQ_TYPE_SW_IIR,bt_audio_get_eq_index(AUDIO_EQ_TYPE_SW_IIR,anc_status));
@@ -1681,16 +1686,20 @@ uint32_t bt_audio_set_eq(AUDIO_EQ_TYPE_T audio_eq_type, uint8_t index)
 
 			iir_cfg=audio_eq_sw_iir_cfg_list[index];
 #else //m by pang
-			uint8_t eq_index=0;
-			eq_index=app_eq_index_get();
-			TRACE(2,"***%s: eq_index=%d", __func__, eq_index);
+			uint8_t eq_index=app_eq_index_get();
+			enum ANC_ON_MODE anc_on_mode = app_get_anc_on_mode();
+
+			TRACE(3,"***%s: eq_index=%d, anc_on_mode=%d", __func__, eq_index, anc_on_mode);
 			
 			if(eq_index < 5){
-				iir_cfg = audio_eq_sw_iir_cfg_list[index + eq_index*3]; 
+				if(anc_on_mode == anc_low) iir_cfg = audio_eq_sw_iir_cfg_list[3 + eq_index*4]; 
+				else iir_cfg = audio_eq_sw_iir_cfg_list[index + eq_index*4]; 
 			}
 			else if(eq_index == 0x3f){//m by cai to 0x3f
-				if(index == anc_on)
-					iir_cfg= &eq_custom_para;
+				if(index == anc_on) {
+					if(anc_on_mode == anc_low) iir_cfg= &eq_custom_para_anc_off;
+					else iir_cfg= &eq_custom_para;
+				}	
 				else 
 					iir_cfg= &eq_custom_para_anc_off;
 			}
