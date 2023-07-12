@@ -977,7 +977,19 @@ void app_bt_key_shutdown(APP_KEY_STATUS *status, void *param)
     hal_sw_bootmode_clear(HAL_SW_BOOTMODE_REBOOT);
     app_reset();
 #else
-    if(!app_call_status_get()) app_shutdown();//m by cai for not to power off when call is active
+    
+#if defined(__DEFINE_DEMO_MODE__)//add by pang
+	if(app_battery_is_charging() && app_nvrecord_demo_mode_get()){
+		TRACE(0,"power off->charging!!!");
+		hal_sw_bootmode_set(HAL_SW_BOOTMODE_CHARGING_POWEROFF);
+		app_reset();
+	}
+	else{
+		if(!app_call_status_get()) app_shutdown();//m by cai for not to power off when call is active
+	}
+#else
+	if(!app_call_status_get()) app_shutdown();//m by cai for not to power off when call is active
+#endif
 #endif
 }
 
@@ -1169,8 +1181,9 @@ extern "C" void app_bt_key(APP_KEY_STATUS *status, void *param)
             break;
     }
 #ifdef __FACTORY_MODE_SUPPORT__
-    if (app_status_indication_get() == APP_STATUS_INDICATION_BOTHSCAN && (status->event == APP_KEY_EVENT_DOUBLECLICK)){
-        //app_factorymode_languageswitch_proc();//c by pang
+	if(0){//m by cai
+    //if (app_status_indication_get() == APP_STATUS_INDICATION_BOTHSCAN && (status->event == APP_KEY_EVENT_DOUBLECLICK)){
+        app_factorymode_languageswitch_proc();
     }else
 #endif
     {
@@ -1467,6 +1480,21 @@ void app_key_init(void)
     }
 #endif
 }
+/** add by pang **/
+#if defined(__DEFINE_DEMO_MODE__)
+void app_charging_poweron_key_handler(APP_KEY_STATUS *status, void *param)
+{
+	TRACE(0,"%s ",__func__);
+	if(app_nvrecord_demo_mode_get() && !hal_gpio_pin_get_val((enum HAL_GPIO_PIN_T)cfg_hw_pio_3p5_jack_detecter.pin))//m by cai
+	{
+		//hal_sw_bootmode_clear(HAL_SW_BOOTMODE_REBOOT);//add by cai
+		hal_sw_bootmode_set(HAL_SW_BOOTMODE_CHARGING_POWERON);
+		hal_cmu_sys_reboot();
+	}
+}
+#endif
+/** end add **/
+
 void app_key_init_on_charging(void)
 {
     uint8_t i = 0;
@@ -1475,6 +1503,9 @@ void app_key_init_on_charging(void)
         //{{APP_KEY_CODE_PWR,APP_KEY_EVENT_CLICK},"bt function key",app_dfu_key_handler, NULL},
 #ifdef __USB_COMM__
         //{{APP_KEY_CODE_PWR,APP_KEY_EVENT_LONGPRESS},"usb cdc key",app_usb_cdc_comm_key_handler, NULL},
+#endif
+#if defined(__DEFINE_DEMO_MODE__)
+		{{APP_KEY_CODE_PWR,APP_KEY_EVENT_LONGLONGLONGPRESS},"power on key",app_charging_poweron_key_handler, NULL},//m by cai
 #endif
     };
 
@@ -2035,10 +2066,13 @@ extern int rpc_service_setup(void);
             case APP_BATTERY_OPEN_MODE_NORMAL:
                 nRet = 0;
 #if defined(__DEFINE_DEMO_MODE__)
-				if(app_nvrecord_demo_mode_get()) app_demo_mode_poweron_flag_set(true);//add by cai
+				if(app_nvrecord_demo_mode_get()) 
+				{
+					app_demo_mode_poweron_flag_set(true);//add by cai
 #if defined(__CHARGE_CURRRENT__)
-				hal_gpio_pin_set((enum HAL_GPIO_PIN_T)cfg_charge_current_control.pin);//add by cai
+					hal_gpio_pin_set((enum HAL_GPIO_PIN_T)cfg_charge_current_control.pin);//add by cai
 #endif
+				}
 #endif
                 break;
             case APP_BATTERY_OPEN_MODE_CHARGING:
