@@ -4183,7 +4183,7 @@ int dongle_a2dp_volume_set(enum BT_DEVICE_ID_T id, uint8_t vol)
 
     a2dp_volume_local_set(id, dest_vol);
     if (app_audio_manager_a2dp_is_active(id)){
-        app_audio_manager_ctrl_volume(APP_AUDIO_MANAGER_VOLUME_CTRL_SET, dest_vol);
+        app_audio_manager_ctrl_volume(APP_AUDIO_MANAGER_VOLUME_CTRL_SET, dest_vol+17);//m by pang for volume independent
     }
 
     TRACE(2,"put vol raw:%d/127 %d", vol, dest_vol);

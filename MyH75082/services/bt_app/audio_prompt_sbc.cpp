@@ -19,6 +19,16 @@
 #include "app_audio.h"
 #include "apps.h"
 #include "app_bt.h"
+
+/** add by cai **/
+#include "btusb_audio.h"
+#include "usb_audio_app.h"
+
+#ifdef BT_USB_AUDIO_DUAL_MODE
+extern "C" int hal_usb_configured(void);
+#endif
+/** end add **/
+
 #ifdef MIX_AUDIO_PROMPT_WITH_A2DP_MEDIA_ENABLED
 #include "../multimedia/speech/inc/ae_math.h" //add by pang
 
@@ -541,7 +551,8 @@ bool audio_prompt_start_playing(uint16_t promptId, uint32_t targetSampleRate)
 
     TRACE(1,"start audio prompt. target sample rate %d", targetSampleRate);
 
-    app_sysfreq_req(APP_SYSFREQ_USER_PROMPT_MIXER, APP_SYSFREQ_104M);
+    //app_sysfreq_req(APP_SYSFREQ_USER_PROMPT_MIXER, APP_SYSFREQ_104M);
+	app_sysfreq_req(APP_SYSFREQ_USER_PROMPT_MIXER, APP_SYSFREQ_208M);//m by cai for 96000k sample prompt play
 
 #ifdef TWS_PROMPT_SYNC
     if (!isPlayingLocally)
@@ -699,9 +710,21 @@ void audio_prompt_stop_playing(void)
     if (app_audio_list_rmv_callback(&aud_status, &status_next,APP_BT_SETTING_Q_POS_HEAD, true))
     {
         TRACE(4,"%s next id: 0x%x%s, aud_id %d", __func__, status_next.id, player2str(status_next.id), status_next.aud_id);
-#if defined(IBRT)
-        app_ibrt_if_voice_report_handler(status_next.aud_id, true);
+#ifdef BT_USB_AUDIO_DUAL_MODE
+		if(btusb_is_usb_mode()) {//add by cai for play prompt by mix
+			if(hal_usb_configured()){
+				usb_audio_start_audio_prompt(status_next.aud_id);
+			}
+		}
+		else
 #endif
+		{
+#if defined(IBRT)
+		    app_ibrt_if_voice_report_handler(status_next.aud_id, true);
+#else //add by cai for play prompt by mix
+			trigger_media_play((AUD_ID_ENUM)status_next.aud_id, 0, true);
+#endif
+		}
     }
 
 }

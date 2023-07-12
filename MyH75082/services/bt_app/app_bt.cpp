@@ -121,7 +121,32 @@ extern uint8_t app_poweroff_flag;
 extern bool factory_reset_flag;
 
 uint8_t remote_dev_name[10]={0};
+uint8_t dev_name_user[BT_DEVICE_NUM][100] = {0};
+uint8_t cur_device_id=BT_DEVICE_ID_1;
 
+void app_cur_connect_devid_set(uint8_t id, uint8_t connect)
+{
+	if(connect == true) {
+		cur_device_id = id;
+	} else{
+		memset(dev_name_user[id], 0, sizeof(dev_name_user[id]));
+		cur_device_id = (id==BT_DEVICE_ID_1? BT_DEVICE_ID_2 : BT_DEVICE_ID_1);
+	}
+}
+
+uint8_t app_cur_connect_devid_get(void)
+{
+	TRACE(2,"***%s: cur_device_id=%d",__func__,cur_device_id);
+	return cur_device_id;
+}
+
+void app_dev_name_get(uint8_t dev_na[100])
+{
+	if(strlen((const char *)dev_name_user[app_cur_connect_devid_get()]) != 0)
+	{
+		memcpy(dev_na, dev_name_user[app_cur_connect_devid_get()], sizeof(dev_name_user[app_cur_connect_devid_get()]));
+	}
+}
 
 static void reconnect_timeout_set(uint8_t rect);
 static void reconnect_timeout_stop(void);
@@ -1808,18 +1833,18 @@ void app_bt_global_handle(const btif_event_t *Event)
         {
             uint8_t* ptrName;
             uint8_t nameLen;
+			uint8_t cur_devid = app_cur_connect_devid_get();//add by cai
             nameLen = btif_me_get_callback_event_remote_dev_name(Event, &ptrName);
             TRACE(1,"[BTEVENT] NAME_RESULT name len %d", nameLen);
             if (nameLen > 0)
             {
-                TRACE(1,"remote dev name: %s", ptrName);
+                TRACE(2,"***remote dev name: %s, namelen: %d", ptrName, nameLen);
 				//memcpy(remote_dev_name, ptrName, nameLen);////by pang  very important:open it will cause reconnect fail 
-				//add by pang
-				if(nameLen>5)
-				   	nameLen=5;
-				for(uint8_t i=0;i<nameLen;i++){
-					remote_dev_name[i]=*ptrName++;
-				}
+				//add by cai
+				nameLen = nameLen > sizeof(dev_name_user[cur_devid])? sizeof(dev_name_user[cur_devid]) : nameLen;
+				memset(dev_name_user[cur_devid], 0, sizeof(dev_name_user[cur_devid]));
+				memcpy(dev_name_user[cur_devid], ptrName, nameLen);
+				TRACE(2,"***dev_name_user: %s, nameLen: %d", dev_name_user[cur_devid], nameLen);
             }
             //return;
         }
@@ -1984,7 +2009,7 @@ static int app_bt_handle_process(APP_MESSAGE_BODY *msg_body)
 #ifdef MEDIA_PLAYER_SUPPORT
 					app_voice_report(APP_STATUS_INDICATION_BOTHSCAN, 0);
 #endif
-					//app_start_10_second_timer(APP_POWEROFF_TIMER_ID);
+					app_start_10_second_timer(APP_POWEROFF_TIMER_ID);
 #endif
 				}
 #endif				
@@ -3348,7 +3373,8 @@ void app_bt_profile_connect_manager_hf(enum BT_DEVICE_ID_T id, hf_chan_handle_t 
 
         nv_record_btdevicerecord_set_last_active(btdevice_plf_p);
 		
-        TRACE(0,"BT connected!!!");
+		TRACE(1,"BT connected!!!: %d",id);//m by cai
+		app_cur_connect_devid_set(id, true);//add by cai
 		
 		if((bt_profile_manager[id].reconnect_mode == bt_profile_reconnect_null))//回连的时候不保存配对记录 
 		{																		//按键切换回连成功保存配对记录 ZCL @ 2020/07/24		
@@ -3402,7 +3428,8 @@ void app_bt_profile_connect_manager_hf(enum BT_DEVICE_ID_T id, hf_chan_handle_t 
          bt_profile_manager[id].a2dp_connect != bt_profile_connect_status_success)){
 
         bt_profile_manager[id].has_connected = false;
-        TRACE(0,"BT disconnected!!!");
+        TRACE(1,"BT disconnected!!!: %d",id);//m by cai
+		app_cur_connect_devid_set(id, false);//add by cai
 
 #ifdef GFPS_ENABLED
         if (app_gfps_is_last_response_pending())
@@ -3813,7 +3840,8 @@ void app_bt_profile_connect_manager_a2dp(enum BT_DEVICE_ID_T id, a2dp_stream_t *
         bt_profile_manager[id].has_connected = true;
 
         nv_record_btdevicerecord_set_last_active(btdevice_plf_p);
-        TRACE(0,"BT connected!!!");
+        TRACE(1,"BT connected!!!: %d",id);//m by cai
+		app_cur_connect_devid_set(id, true);//add by cai
 		
 		if((bt_profile_manager[id].reconnect_mode == bt_profile_reconnect_null))//回连的时候不保存配对记录 
 		{																	     //按键切换回连成功保存配对记录 ZCL @ 2020/07/24		
@@ -3866,7 +3894,8 @@ void app_bt_profile_connect_manager_a2dp(enum BT_DEVICE_ID_T id, a2dp_stream_t *
          bt_profile_manager[id].a2dp_connect != bt_profile_connect_status_success)){
 
         bt_profile_manager[id].has_connected = false;
-        TRACE(0,"BT disconnected!!!");
+		TRACE(1,"BT disconnected!!!: %d",id);
+		app_cur_connect_devid_set(id, false);//add by cai
 
 #ifdef GFPS_ENABLED
         if (app_gfps_is_last_response_pending())

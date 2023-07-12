@@ -1685,7 +1685,7 @@ uint32_t bt_audio_set_eq(AUDIO_EQ_TYPE_T audio_eq_type, uint8_t index)
 			}
 
 			iir_cfg=audio_eq_sw_iir_cfg_list[index];
-#else //m by pang
+#else //m by cai
 			uint8_t eq_index=app_eq_index_get();
 			enum ANC_ON_MODE anc_on_mode = app_get_anc_on_mode();
 
@@ -3984,6 +3984,7 @@ int bt_sbc_player(enum PLAYER_OPER_T on, enum APP_SYSFREQ_FREQ_T freq)
 
 #ifdef ANC_APP
         anc_status_record = 0xff;
+		anc_mode_record = 0xff;//add by cai
 #endif
 
 #if defined(IBRT)
@@ -6209,7 +6210,7 @@ int bt_sco_player(bool on, enum APP_SYSFREQ_FREQ_T freq)
         */
 
 #ifdef SPEECH_SIDETONE
-#if 1
+#if 0
 		hal_codec_sidetone_enable();
 #else //m by pang
 		if(app_get_sidetone()){
@@ -7092,8 +7093,9 @@ void app_bt_stream_volumeup(void)
             if (btdevice_volume_p->hfp_vol == TGT_VOLUME_LEVEL_15)
             {
 #ifdef MEDIA_PLAYER_SUPPORT
-                media_PlayAudio(AUD_ID_BT_WARNING,0);               
-				app_ring_merge_set(APP_STATUS_INDICATION_WARNING);
+                //media_PlayAudio(AUD_ID_BT_WARNING,0);               
+				//app_ring_merge_set(APP_STATUS_INDICATION_WARNING);
+				app_voice_report(APP_STATUS_INDICATION_WARNING,0);//m by cai
 #if defined(__USE_AMP_MUTE_CTR__)
 				 if(!hal_gpio_pin_get_val((enum HAL_GPIO_PIN_T)cfg_hw_pio_AMP_mute_control.pin))
 			   		hal_gpio_pin_set((enum HAL_GPIO_PIN_T)cfg_hw_pio_AMP_mute_control.pin);
@@ -7123,8 +7125,9 @@ void app_bt_stream_volumeup(void)
             if (btdevice_volume_p->a2dp_vol == TGT_VOLUME_LEVEL_15)
             {
 #ifdef MEDIA_PLAYER_SUPPORT
-                media_PlayAudio(AUD_ID_BT_WARNING,0);   
-				app_ring_merge_set(APP_STATUS_INDICATION_WARNING);
+                //media_PlayAudio(AUD_ID_BT_WARNING,0);   
+				//app_ring_merge_set(APP_STATUS_INDICATION_WARNING);
+				app_voice_report(APP_STATUS_INDICATION_WARNING,0);//m by cai
 #if defined(__USE_AMP_MUTE_CTR__)
 			   if(!hal_gpio_pin_get_val((enum HAL_GPIO_PIN_T)cfg_hw_pio_AMP_mute_control.pin))
 			   		hal_gpio_pin_set((enum HAL_GPIO_PIN_T)cfg_hw_pio_AMP_mute_control.pin);
@@ -7218,8 +7221,8 @@ void app_bt_stream_volumedown(void)
             if (btdevice_volume_p->hfp_vol == TGT_VOLUME_LEVEL_0)
             {
 #ifdef MEDIA_PLAYER_SUPPORT
-                media_PlayAudio(AUD_ID_BT_WARNING,0); 
-				app_ring_merge_set(APP_STATUS_INDICATION_WARNING);
+                //media_PlayAudio(AUD_ID_BT_WARNING,0); 
+				//app_ring_merge_set(APP_STATUS_INDICATION_WARNING);
 #if defined(__USE_AMP_MUTE_CTR__)
 				 if(!hal_gpio_pin_get_val((enum HAL_GPIO_PIN_T)cfg_hw_pio_AMP_mute_control.pin))
 			   		hal_gpio_pin_set((enum HAL_GPIO_PIN_T)cfg_hw_pio_AMP_mute_control.pin);
@@ -7245,8 +7248,8 @@ void app_bt_stream_volumedown(void)
             if (btdevice_volume_p->a2dp_vol == TGT_VOLUME_LEVEL_MUTE)
             {
 #ifdef MEDIA_PLAYER_SUPPORT
-                media_PlayAudio(AUD_ID_BT_WARNING,0);
-				app_ring_merge_set(APP_STATUS_INDICATION_WARNING);
+                //media_PlayAudio(AUD_ID_BT_WARNING,0);
+				//app_ring_merge_set(APP_STATUS_INDICATION_WARNING);
 #if defined(__USE_AMP_MUTE_CTR__)
 				 if(!hal_gpio_pin_get_val((enum HAL_GPIO_PIN_T)cfg_hw_pio_AMP_mute_control.pin))
 			   		hal_gpio_pin_set((enum HAL_GPIO_PIN_T)cfg_hw_pio_AMP_mute_control.pin);

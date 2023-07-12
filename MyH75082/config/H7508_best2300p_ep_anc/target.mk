@@ -12,6 +12,8 @@ RTOS        ?= 1
 KERNEL      ?= RTX
 #KERNEL      ?= FREERTOS
 
+export SPEECH_SIDETONE ?= 1
+
 #add by pang
 CALIB_SLOW_TIMER ?= 0
 

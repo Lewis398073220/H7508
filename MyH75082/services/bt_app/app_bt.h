@@ -50,6 +50,8 @@ void app_get_curr_remDev_Mac(unsigned char* mobile_addr);
 uint8_t app_device_EDR_connect_status(void);
 void app_enter_pairing(void);
 void app_get_remote_dev_name(uint8_t* ptrName,uint16_t nameLen);
+void app_cur_connect_devid_set(uint8_t id, uint8_t connect);
+void app_dev_name_get(uint8_t dev_na[100]);
 /** end add **/
 
 typedef void (*APP_BT_REQ_CONNECT_PROFILE_FN_T)(void *, void *);

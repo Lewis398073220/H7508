@@ -619,6 +619,7 @@ void appm_start_advertising(void *param)
                                                         gapm_start_advertise_cmd);
 
     BLE_ADV_PARAM_T* advParam = (BLE_ADV_PARAM_T*)param;
+	advParam->withFlag = FALSE;//add by cai for not to adv BLE to iphone's BT search.
 
 #ifdef BLE_USE_RPA
     cmd->op.addr_src    = GAPM_GEN_RSLV_ADDR;
