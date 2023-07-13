@@ -863,7 +863,7 @@ void app_bt_accessible_manager_process(const btif_event_t *Event)
 			#if 0            
             app_bt_accessmode_set_req(BTIF_BAM_CONNECTABLE_ONLY);
 			#else //m by pang
-			if(factory_reset_flag&&(btif_me_get_activeCons() == 0)){
+			if((factory_reset_flag&&(btif_me_get_activeCons() == 0)) || BTIF_BAM_GENERAL_ACCESSIBLE == app_bt_get_current_access_mode()){
 				app_bt_accessmode_set_req(BTIF_BT_DEFAULT_ACCESS_MODE_PAIR);
 			}
 			else
