@@ -994,7 +994,7 @@ static const struct_anc_cfg POSSIBLY_UNUSED AncFirCoef_48k_Anc_Wind = {
 
 static const struct_anc_cfg POSSIBLY_UNUSED AncFirCoef_48k_Monitor1 = {
     .anc_cfg_ff_l = {
-		.total_gain =256,
+		.total_gain =203,
 
 		.iir_bypass_flag=0,
 		.iir_counter=7, 
@@ -1011,7 +1011,7 @@ static const struct_anc_cfg POSSIBLY_UNUSED AncFirCoef_48k_Monitor1 = {
 		.adc_gain_offset=(-6)*4,
     },
     .anc_cfg_ff_r = {
-		.total_gain =256,
+		.total_gain =203,
 
 		.iir_bypass_flag=0,
 		.iir_counter=7, 
@@ -1081,7 +1081,7 @@ static const struct_anc_cfg POSSIBLY_UNUSED AncFirCoef_48k_Monitor1 = {
 
 static const struct_anc_cfg POSSIBLY_UNUSED AncFirCoef_48k_Monitor2 = {
     .anc_cfg_ff_l = {
-		.total_gain =323,
+		.total_gain =256,
 
 		.iir_bypass_flag=0,
 		.iir_counter=7, 
@@ -1098,7 +1098,7 @@ static const struct_anc_cfg POSSIBLY_UNUSED AncFirCoef_48k_Monitor2 = {
 		.adc_gain_offset=(-6)*4,
     },
     .anc_cfg_ff_r = {
-		.total_gain =323,
+		.total_gain =256,
 
 		.iir_bypass_flag=0,
 		.iir_counter=7, 
@@ -1167,7 +1167,7 @@ static const struct_anc_cfg POSSIBLY_UNUSED AncFirCoef_48k_Monitor2 = {
 
 static const struct_anc_cfg POSSIBLY_UNUSED AncFirCoef_48k_Monitor3 = {
     .anc_cfg_ff_l = {
-		.total_gain =404,
+		.total_gain =323,
 
 		.iir_bypass_flag=0,
 		.iir_counter=7, 
@@ -1184,7 +1184,7 @@ static const struct_anc_cfg POSSIBLY_UNUSED AncFirCoef_48k_Monitor3 = {
 		.adc_gain_offset=(-6)*4,
     },
     .anc_cfg_ff_r = {
-		.total_gain =404,
+		.total_gain =323,
 
 		.iir_bypass_flag=0,
 		.iir_counter=7, 
@@ -1253,7 +1253,7 @@ static const struct_anc_cfg POSSIBLY_UNUSED AncFirCoef_48k_Monitor3 = {
 
 static const struct_anc_cfg POSSIBLY_UNUSED AncFirCoef_48k_Monitor4 = {
     .anc_cfg_ff_l = {
-		.total_gain =512,
+		.total_gain =404,
 
 		.iir_bypass_flag=0,
 		.iir_counter=7, 
@@ -1270,7 +1270,7 @@ static const struct_anc_cfg POSSIBLY_UNUSED AncFirCoef_48k_Monitor4 = {
 		.adc_gain_offset=(-6)*4,
     },
     .anc_cfg_ff_r = {
-		.total_gain =512,
+		.total_gain =404,
 
 		.iir_bypass_flag=0,
 		.iir_counter=7, 
@@ -1339,7 +1339,7 @@ static const struct_anc_cfg POSSIBLY_UNUSED AncFirCoef_48k_Monitor4 = {
 
 static const struct_anc_cfg POSSIBLY_UNUSED AncFirCoef_48k_Monitor5 = {
     .anc_cfg_ff_l = {
-		.total_gain =645,
+		.total_gain =512,
 
 		.iir_bypass_flag=0,
 		.iir_counter=7, 
@@ -1356,7 +1356,7 @@ static const struct_anc_cfg POSSIBLY_UNUSED AncFirCoef_48k_Monitor5 = {
 		.adc_gain_offset=(-6)*4,
     },
     .anc_cfg_ff_r = {
-		.total_gain =645,
+		.total_gain =512,
 
 		.iir_bypass_flag=0,
 		.iir_counter=7, 
@@ -1425,7 +1425,7 @@ static const struct_anc_cfg POSSIBLY_UNUSED AncFirCoef_48k_Monitor5 = {
 
 static const struct_anc_cfg POSSIBLY_UNUSED AncFirCoef_48k_Clear_Voice1 ={
     .anc_cfg_ff_l = {
-		.total_gain =256,
+		.total_gain =203,
 
 		.iir_bypass_flag=0,
 		.iir_counter=7, 
@@ -1442,7 +1442,7 @@ static const struct_anc_cfg POSSIBLY_UNUSED AncFirCoef_48k_Clear_Voice1 ={
 		.adc_gain_offset=(-6)*4,
     },
     .anc_cfg_ff_r = {
-		.total_gain =256,
+		.total_gain =203,
 
 		.iir_bypass_flag=0,
 		.iir_counter=7, 
@@ -1459,7 +1459,7 @@ static const struct_anc_cfg POSSIBLY_UNUSED AncFirCoef_48k_Clear_Voice1 ={
 		.adc_gain_offset=(-6)*4,
     },
     .anc_cfg_fb_l = {
-        .total_gain = 323,
+        .total_gain = 203,
 
 		.iir_bypass_flag=0,
 		.iir_counter=2, 
@@ -1470,7 +1470,7 @@ static const struct_anc_cfg POSSIBLY_UNUSED AncFirCoef_48k_Clear_Voice1 ={
 		.adc_gain_offset=(-6)*4,
     },
     .anc_cfg_fb_r = {
-        .total_gain = 323,
+        .total_gain = 203,
 
 		.iir_bypass_flag=0,
 		.iir_counter=2, 
@@ -1507,7 +1507,7 @@ static const struct_anc_cfg POSSIBLY_UNUSED AncFirCoef_48k_Clear_Voice1 ={
 
 static const struct_anc_cfg POSSIBLY_UNUSED AncFirCoef_48k_Clear_Voice2 ={
     .anc_cfg_ff_l = {
-		.total_gain =323,
+		.total_gain =256,
 
 		.iir_bypass_flag=0,
 		.iir_counter=7, 
@@ -1524,7 +1524,7 @@ static const struct_anc_cfg POSSIBLY_UNUSED AncFirCoef_48k_Clear_Voice2 ={
 		.adc_gain_offset=(-6)*4,
     },
     .anc_cfg_ff_r = {
-		.total_gain =323,
+		.total_gain =256,
 
 		.iir_bypass_flag=0,
 		.iir_counter=7, 
@@ -1541,7 +1541,7 @@ static const struct_anc_cfg POSSIBLY_UNUSED AncFirCoef_48k_Clear_Voice2 ={
 		.adc_gain_offset=(-6)*4,
     },
     .anc_cfg_fb_l = {
-        .total_gain = 364,
+        .total_gain = 256,
 
 		.iir_bypass_flag=0,
 		.iir_counter=2, 
@@ -1552,7 +1552,7 @@ static const struct_anc_cfg POSSIBLY_UNUSED AncFirCoef_48k_Clear_Voice2 ={
 		.adc_gain_offset=(-6)*4,
     },
     .anc_cfg_fb_r = {
-        .total_gain = 364,
+        .total_gain = 256,
 
 		.iir_bypass_flag=0,
 		.iir_counter=2, 
@@ -1589,7 +1589,7 @@ static const struct_anc_cfg POSSIBLY_UNUSED AncFirCoef_48k_Clear_Voice2 ={
 
 static const struct_anc_cfg POSSIBLY_UNUSED AncFirCoef_48k_Clear_Voice3 ={
     .anc_cfg_ff_l = {
-		.total_gain =404,
+		.total_gain =323,
 
 		.iir_bypass_flag=0,
 		.iir_counter=7, 
@@ -1606,7 +1606,7 @@ static const struct_anc_cfg POSSIBLY_UNUSED AncFirCoef_48k_Clear_Voice3 ={
 		.adc_gain_offset=(-6)*4,
     },
     .anc_cfg_ff_r = {
-		.total_gain =404,
+		.total_gain =323,
 
 		.iir_bypass_flag=0,
 		.iir_counter=7, 
@@ -1623,7 +1623,7 @@ static const struct_anc_cfg POSSIBLY_UNUSED AncFirCoef_48k_Clear_Voice3 ={
 		.adc_gain_offset=(-6)*4,
     },
     .anc_cfg_fb_l = {
-        .total_gain = 404,
+        .total_gain = 323,
 
 		.iir_bypass_flag=0,
 		.iir_counter=2, 
@@ -1634,7 +1634,7 @@ static const struct_anc_cfg POSSIBLY_UNUSED AncFirCoef_48k_Clear_Voice3 ={
 		.adc_gain_offset=(-6)*4,
     },
     .anc_cfg_fb_r = {
-        .total_gain = 404,
+        .total_gain = 323,
 
 		.iir_bypass_flag=0,
 		.iir_counter=2, 
@@ -1672,7 +1672,7 @@ static const struct_anc_cfg POSSIBLY_UNUSED AncFirCoef_48k_Clear_Voice3 ={
 
 static const struct_anc_cfg POSSIBLY_UNUSED AncFirCoef_48k_Clear_Voice4 ={
     .anc_cfg_ff_l = {
-		.total_gain =512,
+		.total_gain =404,
 
 		.iir_bypass_flag=0,
 		.iir_counter=7, 
@@ -1689,7 +1689,7 @@ static const struct_anc_cfg POSSIBLY_UNUSED AncFirCoef_48k_Clear_Voice4 ={
 		.adc_gain_offset=(-6)*4,
     },
     .anc_cfg_ff_r = {
-		.total_gain =512,
+		.total_gain =404,
 
 		.iir_bypass_flag=0,
 		.iir_counter=7, 
@@ -1706,7 +1706,7 @@ static const struct_anc_cfg POSSIBLY_UNUSED AncFirCoef_48k_Clear_Voice4 ={
 		.adc_gain_offset=(-6)*4,
     },
     .anc_cfg_fb_l = {
-        .total_gain = 456,
+        .total_gain = 404,
 
 		.iir_bypass_flag=0,
 		.iir_counter=2, 
@@ -1717,7 +1717,7 @@ static const struct_anc_cfg POSSIBLY_UNUSED AncFirCoef_48k_Clear_Voice4 ={
 		.adc_gain_offset=(-6)*4,
     },
     .anc_cfg_fb_r = {
-        .total_gain = 456,
+        .total_gain = 404,
 
 		.iir_bypass_flag=0,
 		.iir_counter=2, 
@@ -1755,7 +1755,7 @@ static const struct_anc_cfg POSSIBLY_UNUSED AncFirCoef_48k_Clear_Voice4 ={
 
 static const struct_anc_cfg POSSIBLY_UNUSED AncFirCoef_48k_Clear_Voice5 ={
     .anc_cfg_ff_l = {
-		.total_gain =645,
+		.total_gain =512,
 
 		.iir_bypass_flag=0,
 		.iir_counter=7, 
@@ -1772,7 +1772,7 @@ static const struct_anc_cfg POSSIBLY_UNUSED AncFirCoef_48k_Clear_Voice5 ={
 		.adc_gain_offset=(-6)*4,
     },
     .anc_cfg_ff_r = {
-		.total_gain =645,
+		.total_gain =512,
 
 		.iir_bypass_flag=0,
 		.iir_counter=7, 
@@ -2228,7 +2228,7 @@ static const struct_anc_cfg POSSIBLY_UNUSED AncFirCoef_44p1k_Anc_Wind = {
 
 static const struct_anc_cfg POSSIBLY_UNUSED AncFirCoef_44p1k_Monitor1 = {
     .anc_cfg_ff_l = {
-		.total_gain =323,
+		.total_gain =203,
 
 		.iir_bypass_flag=0,
 		.iir_counter=7, 
@@ -2245,7 +2245,7 @@ static const struct_anc_cfg POSSIBLY_UNUSED AncFirCoef_44p1k_Monitor1 = {
 		.adc_gain_offset=(-6)*4,
     },
     .anc_cfg_ff_r = {
-		.total_gain =323,
+		.total_gain =203,
 
 		.iir_bypass_flag=0,
 		.iir_counter=7, 
@@ -2313,7 +2313,7 @@ static const struct_anc_cfg POSSIBLY_UNUSED AncFirCoef_44p1k_Monitor1 = {
 
 static const struct_anc_cfg POSSIBLY_UNUSED AncFirCoef_44p1k_Monitor2 = {
     .anc_cfg_ff_l = {
-		.total_gain =364,
+		.total_gain =256,
 
 		.iir_bypass_flag=0,
 		.iir_counter=7, 
@@ -2330,7 +2330,7 @@ static const struct_anc_cfg POSSIBLY_UNUSED AncFirCoef_44p1k_Monitor2 = {
 		.adc_gain_offset=(-6)*4,
     },
     .anc_cfg_ff_r = {
-		.total_gain =364,
+		.total_gain =256,
 
 		.iir_bypass_flag=0,
 		.iir_counter=7, 
@@ -2397,7 +2397,7 @@ static const struct_anc_cfg POSSIBLY_UNUSED AncFirCoef_44p1k_Monitor2 = {
 };
 static const struct_anc_cfg POSSIBLY_UNUSED AncFirCoef_44p1k_Monitor3 = {
     .anc_cfg_ff_l = {
-		.total_gain =404,
+		.total_gain =323,
 
 		.iir_bypass_flag=0,
 		.iir_counter=7, 
@@ -2414,7 +2414,7 @@ static const struct_anc_cfg POSSIBLY_UNUSED AncFirCoef_44p1k_Monitor3 = {
 		.adc_gain_offset=(-6)*4,
     },
     .anc_cfg_ff_r = {
-		.total_gain =404,
+		.total_gain =323,
 
 		.iir_bypass_flag=0,
 		.iir_counter=7, 
@@ -2482,7 +2482,7 @@ static const struct_anc_cfg POSSIBLY_UNUSED AncFirCoef_44p1k_Monitor3 = {
 
 static const struct_anc_cfg POSSIBLY_UNUSED AncFirCoef_44p1k_Monitor4 = {
     .anc_cfg_ff_l = {
-		.total_gain =456,
+		.total_gain =404,
 
 		.iir_bypass_flag=0,
 		.iir_counter=7, 
@@ -2499,7 +2499,7 @@ static const struct_anc_cfg POSSIBLY_UNUSED AncFirCoef_44p1k_Monitor4 = {
 		.adc_gain_offset=(-6)*4,
     },
     .anc_cfg_ff_r = {
-		.total_gain =456,
+		.total_gain =404,
 
 		.iir_bypass_flag=0,
 		.iir_counter=7, 
@@ -2651,7 +2651,7 @@ static const struct_anc_cfg POSSIBLY_UNUSED AncFirCoef_44p1k_Monitor5 = {
 };
 static const struct_anc_cfg POSSIBLY_UNUSED AncFirCoef_44p1k_Clear_Voice1 = {
     .anc_cfg_ff_l = {
-		.total_gain =323,
+		.total_gain =203,
 
 		.iir_bypass_flag=0,
 		.iir_counter=7, 
@@ -2668,7 +2668,7 @@ static const struct_anc_cfg POSSIBLY_UNUSED AncFirCoef_44p1k_Clear_Voice1 = {
 		.adc_gain_offset=(-6)*4,
     },
     .anc_cfg_ff_r = {
-		.total_gain =323,
+		.total_gain =203,
 
 		.iir_bypass_flag=0,
 		.iir_counter=7, 
@@ -2685,7 +2685,7 @@ static const struct_anc_cfg POSSIBLY_UNUSED AncFirCoef_44p1k_Clear_Voice1 = {
 		.adc_gain_offset=(-6)*4,
     },
     .anc_cfg_fb_l = {
-        .total_gain = 323,
+        .total_gain = 203,
 
 		.iir_bypass_flag=0,
 		.iir_counter=2, 
@@ -2696,7 +2696,7 @@ static const struct_anc_cfg POSSIBLY_UNUSED AncFirCoef_44p1k_Clear_Voice1 = {
 		.adc_gain_offset=(-6)*4,
     },
     .anc_cfg_fb_r = {
-        .total_gain = 323,
+        .total_gain = 203,
 
 		.iir_bypass_flag=0,
 		.iir_counter=2, 
@@ -2732,7 +2732,7 @@ static const struct_anc_cfg POSSIBLY_UNUSED AncFirCoef_44p1k_Clear_Voice1 = {
 
 static const struct_anc_cfg POSSIBLY_UNUSED AncFirCoef_44p1k_Clear_Voice2 = {
     .anc_cfg_ff_l = {
-		.total_gain =364,
+		.total_gain =256,
 
 		.iir_bypass_flag=0,
 		.iir_counter=7, 
@@ -2749,7 +2749,7 @@ static const struct_anc_cfg POSSIBLY_UNUSED AncFirCoef_44p1k_Clear_Voice2 = {
 		.adc_gain_offset=(-6)*4,
     },
     .anc_cfg_ff_r = {
-		.total_gain =364,
+		.total_gain =256,
 
 		.iir_bypass_flag=0,
 		.iir_counter=7, 
@@ -2766,7 +2766,7 @@ static const struct_anc_cfg POSSIBLY_UNUSED AncFirCoef_44p1k_Clear_Voice2 = {
 		.adc_gain_offset=(-6)*4,
     },
     .anc_cfg_fb_l = {
-        .total_gain = 364,
+        .total_gain = 256,
 
 		.iir_bypass_flag=0,
 		.iir_counter=2, 
@@ -2777,7 +2777,7 @@ static const struct_anc_cfg POSSIBLY_UNUSED AncFirCoef_44p1k_Clear_Voice2 = {
 		.adc_gain_offset=(-6)*4,
     },
     .anc_cfg_fb_r = {
-        .total_gain = 364,
+        .total_gain = 256,
 
 		.iir_bypass_flag=0,
 		.iir_counter=2, 
@@ -2813,7 +2813,7 @@ static const struct_anc_cfg POSSIBLY_UNUSED AncFirCoef_44p1k_Clear_Voice2 = {
 
 static const struct_anc_cfg POSSIBLY_UNUSED AncFirCoef_44p1k_Clear_Voice3 = {
     .anc_cfg_ff_l = {
-		.total_gain =404,
+		.total_gain =323,
 
 		.iir_bypass_flag=0,
 		.iir_counter=7, 
@@ -2830,7 +2830,7 @@ static const struct_anc_cfg POSSIBLY_UNUSED AncFirCoef_44p1k_Clear_Voice3 = {
 		.adc_gain_offset=(-6)*4,
     },
     .anc_cfg_ff_r = {
-		.total_gain =404,
+		.total_gain =323,
 
 		.iir_bypass_flag=0,
 		.iir_counter=7, 
@@ -2847,7 +2847,7 @@ static const struct_anc_cfg POSSIBLY_UNUSED AncFirCoef_44p1k_Clear_Voice3 = {
 		.adc_gain_offset=(-6)*4,
     },
     .anc_cfg_fb_l = {
-        .total_gain = 404,
+        .total_gain = 323,
 
 		.iir_bypass_flag=0,
 		.iir_counter=2, 
@@ -2858,7 +2858,7 @@ static const struct_anc_cfg POSSIBLY_UNUSED AncFirCoef_44p1k_Clear_Voice3 = {
 		.adc_gain_offset=(-6)*4,
     },
     .anc_cfg_fb_r = {
-        .total_gain = 404,
+        .total_gain = 323,
 
 		.iir_bypass_flag=0,
 		.iir_counter=2, 
@@ -2893,7 +2893,7 @@ static const struct_anc_cfg POSSIBLY_UNUSED AncFirCoef_44p1k_Clear_Voice3 = {
 };
 static const struct_anc_cfg POSSIBLY_UNUSED AncFirCoef_44p1k_Clear_Voice4 = {
     .anc_cfg_ff_l = {
-		.total_gain =456,
+		.total_gain =404,
 
 		.iir_bypass_flag=0,
 		.iir_counter=7, 
@@ -2910,7 +2910,7 @@ static const struct_anc_cfg POSSIBLY_UNUSED AncFirCoef_44p1k_Clear_Voice4 = {
 		.adc_gain_offset=(-6)*4,
     },
     .anc_cfg_ff_r = {
-		.total_gain =456,
+		.total_gain =404,
 
 		.iir_bypass_flag=0,
 		.iir_counter=7, 
@@ -2927,7 +2927,7 @@ static const struct_anc_cfg POSSIBLY_UNUSED AncFirCoef_44p1k_Clear_Voice4 = {
 		.adc_gain_offset=(-6)*4,
     },
     .anc_cfg_fb_l = {
-        .total_gain = 456,
+        .total_gain = 404,
 
 		.iir_bypass_flag=0,
 		.iir_counter=2, 
@@ -2938,7 +2938,7 @@ static const struct_anc_cfg POSSIBLY_UNUSED AncFirCoef_44p1k_Clear_Voice4 = {
 		.adc_gain_offset=(-6)*4,
     },
     .anc_cfg_fb_r = {
-        .total_gain = 456,
+        .total_gain = 404,
 
 		.iir_bypass_flag=0,
 		.iir_counter=2, 
