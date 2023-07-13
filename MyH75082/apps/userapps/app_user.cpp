@@ -42,6 +42,10 @@
 #include "../../services/ble_app/app_datapath/haylou_ble_hop.h"
 #endif
 
+#ifdef BT_USB_AUDIO_DUAL_MODE
+extern "C" int hal_usb_configured(void);
+#endif
+
 #if defined(__USE_AMP_MUTE_CTR__)
 
 #define DEFINE_PLAY_REBOOT
@@ -375,8 +379,9 @@ void apps_jack_event_process(void)
 	
 		//app_poweroff_flag = 1;
 #ifdef BT_USB_AUDIO_DUAL_MODE
-		if(app_battery_is_charging()) app_reset();
-		else app_shutdown();
+		if(app_battery_is_charging() && (get_usb_configured_status() || hal_usb_configured())) app_reset();
+		else if(!app_battery_is_charging()) app_shutdown();
+		else ;
 #else
 		app_shutdown();//shutdown
 #endif
