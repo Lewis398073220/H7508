@@ -162,7 +162,7 @@ static HWTIMER_ID anc_timerid = NULL;
 
 #define anc_init_switch_off_time (MS_TO_TICKS(1000 * 60 * 2))
 #define anc_auto_power_off_time (MS_TO_TICKS(1000 * 60 * 60))
-#define anc_switch_on_time (MS_TO_TICKS(600))
+#define anc_switch_on_time (MS_TO_TICKS(2000)) //(600)  m by cai
 #define anc_close_delay_time (MS_TO_TICKS(1000 * 1)) //(1000 * 20)  m by pang
 #define anc_pwr_key_monitor_time (MS_TO_TICKS(1500))
 #define anc_switch_key_debonce_time (MS_TO_TICKS(40))
