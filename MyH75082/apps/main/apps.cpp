@@ -1388,7 +1388,7 @@ const APP_KEY_HANDLE  app_key_handle_cfg[] = {
 #if defined(APP_LINEIN_A2DP_SOURCE)||defined(APP_I2S_A2DP_SOURCE)
     //{{APP_KEY_CODE_FN1,APP_KEY_EVENT_DOUBLECLICK},"bt mode src snk key",app_bt_key, NULL},
 #endif
-    {{APP_KEY_CODE_FN1,APP_KEY_EVENT_LONGLONGPRESS},"bt volume down key",app_bt_key, NULL},
+    {{APP_KEY_CODE_FN1,APP_KEY_EVENT_LONGPRESS},"bt volume down key",app_bt_key, NULL},
     {{APP_KEY_CODE_FN1,APP_KEY_EVENT_REPEAT},"bt volume down key",app_bt_key, NULL},
     //{{APP_KEY_CODE_FN2,APP_KEY_EVENT_LONGPRESS},"bt play forward key",app_bt_key, NULL},
     //{{APP_KEY_CODE_FN15,APP_KEY_EVENT_UP},"bt volume down key",app_bt_key, NULL},
@@ -1803,7 +1803,7 @@ void app_usb_Cover_key(APP_KEY_STATUS *status, void *param)
 #if 1
 const APP_KEY_HANDLE  app_usb_handle_cfg[] = {//m by cai
     {{APP_KEY_CODE_FN1,APP_KEY_EVENT_UP},"USB HID VOLUMEUP key",app_usb_key, NULL},
-    {{APP_KEY_CODE_FN1,APP_KEY_EVENT_LONGLONGPRESS},"USB HID VOLUMEDOWN key",app_usb_key, NULL},
+    {{APP_KEY_CODE_FN1,APP_KEY_EVENT_LONGPRESS},"USB HID VOLUMEDOWN key",app_usb_key, NULL},
 	{{APP_KEY_CODE_FN1,APP_KEY_EVENT_REPEAT},"USB HID VOLUMEDOWN key",app_usb_key, NULL},
 	{{APP_KEY_CODE_PWR,APP_KEY_EVENT_CLICK},"USB HID PWR CLICK key",app_usb_key, NULL},
 	{{APP_KEY_CODE_PWR,APP_KEY_EVENT_DOUBLECLICK},"USB HID PWR DOUBLECLICK key",app_usb_key, NULL},
