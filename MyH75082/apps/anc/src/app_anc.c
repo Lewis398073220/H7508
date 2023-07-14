@@ -162,7 +162,7 @@ static HWTIMER_ID anc_timerid = NULL;
 
 #define anc_init_switch_off_time (MS_TO_TICKS(1000 * 60 * 2))
 #define anc_auto_power_off_time (MS_TO_TICKS(1000 * 60 * 60))
-#define anc_switch_on_time (MS_TO_TICKS(2000)) //(600)  m by cai
+#define anc_switch_on_time (MS_TO_TICKS(600)) //(600)  m by cai
 #define anc_close_delay_time (MS_TO_TICKS(1000 * 1)) //(1000 * 20)  m by pang
 #define anc_pwr_key_monitor_time (MS_TO_TICKS(1500))
 #define anc_switch_key_debonce_time (MS_TO_TICKS(40))
@@ -2314,7 +2314,7 @@ void set_anc_mode(uint8_t anc_new_mode,uint8_t prom_on)
 				}
 				else{
 					anc_work_status = ANC_STATUS_WAITING_ON;
-            	    app_anc_timer_set(ANC_EVENT_OPEN, anc_switch_on_time);
+            	    app_anc_timer_set(ANC_EVENT_OPEN, MS_TO_TICKS(2000));
 				}
             	app_anc_open_anc();
 			}
