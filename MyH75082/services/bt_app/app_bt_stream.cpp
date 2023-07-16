@@ -1818,7 +1818,7 @@ uint32_t bt_audio_set_eq(AUDIO_EQ_TYPE_T audio_eq_type, uint8_t index)
 *********************************/
 #define A2DP_PLAYER_PLAYBACK_DELAY_SBC_FRAME_MTU (5)
 #ifndef A2DP_PLAYER_PLAYBACK_DELAY_SBC_MTU
-#define A2DP_PLAYER_PLAYBACK_DELAY_SBC_MTU (50)
+#define A2DP_PLAYER_PLAYBACK_DELAY_SBC_MTU (70) //m by cai
 #endif
 #define A2DP_PLAYER_PLAYBACK_DELAY_SBC_BASE (2800)
 //#define A2DP_PLAYER_PLAYBACK_DELAY_SBC_US (A2DP_PLAYER_PLAYBACK_DELAY_SBC_BASE*A2DP_PLAYER_PLAYBACK_DELAY_SBC_MTU)//c by pang
@@ -3637,7 +3637,7 @@ int bt_sbc_player(enum PLAYER_OPER_T on, enum APP_SYSFREQ_FREQ_T freq)
 		
 
 
-		freq = APP_SYSFREQ_104M;//add by pang
+		freq = APP_SYSFREQ_208M;//add by pang
         app_sysfreq_req(APP_SYSFREQ_USER_BT_A2DP, freq);
         TRACE(1,"bt_sbc_player: app_sysfreq_req %d", freq);
         TRACE(1,"sys freq calc : %d\n", hal_sys_timer_calc_cpu_freq(5, 0));
