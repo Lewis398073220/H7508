@@ -3637,7 +3637,7 @@ int bt_sbc_player(enum PLAYER_OPER_T on, enum APP_SYSFREQ_FREQ_T freq)
 		
 
 
-		freq = APP_SYSFREQ_208M;//add by pang
+		freq = APP_SYSFREQ_104M;//add by pang
         app_sysfreq_req(APP_SYSFREQ_USER_BT_A2DP, freq);
         TRACE(1,"bt_sbc_player: app_sysfreq_req %d", freq);
         TRACE(1,"sys freq calc : %d\n", hal_sys_timer_calc_cpu_freq(5, 0));

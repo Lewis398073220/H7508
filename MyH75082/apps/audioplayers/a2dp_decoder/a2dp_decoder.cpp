@@ -1168,7 +1168,7 @@ int a2dp_audio_sysfreq_boost_start(uint32_t boost_cnt)
     }else{
         sysfreq = APP_SYSFREQ_52M;
     }
-	sysfreq = APP_SYSFREQ_208M;//add by cai for music play's pop noise
+	//sysfreq = APP_SYSFREQ_208M;//add by cai for music play's pop noise
     TRACE(3,"%s freq:%d cnt:%d", __func__, sysfreq, boost_cnt);
     app_sysfreq_req(APP_SYSFREQ_USER_BT_A2DP, sysfreq);
     return 0;
