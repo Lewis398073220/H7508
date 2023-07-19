@@ -548,6 +548,9 @@ int app_battery_handle_process_charging(uint32_t status,  union APP_BATTERY_MSG_
 				} else{
 					TRACE(0,"CHARGING-->RESET");
 					usb_plugout_to_proff_status_set(true);//add by cai
+#if defined(__LDO_3V3_CTR__) 
+					if(hal_gpio_pin_get_val((enum HAL_GPIO_PIN_T)cfg_hw_pio_3p5_jack_detecter.pin)) hal_gpio_pin_clr((enum HAL_GPIO_PIN_T)cfg_hw_pio_3_3v_control.pin);//add by cai for 3.5 line in pop noise
+#endif
 	                osTimerStop(app_battery_timer);
 	                app_shutdown();
 					app_usb_plugout_start_timer();//add by cai
