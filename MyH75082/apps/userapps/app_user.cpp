@@ -373,16 +373,18 @@ void apps_jack_event_process(void)
 		ac107_hw_open();
 		ac107_i2c_init();
 #endif
-	   hal_codec_dac_mute(1);
 		jack_3p5_plug_in_flag=1;
 		jack_count=0;
 	
 		//app_poweroff_flag = 1;
 #ifdef BT_USB_AUDIO_DUAL_MODE
-		if(app_battery_is_charging() && (get_usb_configured_status() || hal_usb_configured())) app_reset();
-		else if(!app_battery_is_charging()) app_shutdown();
-		else ;
+		if(!app_battery_is_charging()) 
+		{
+			hal_codec_dac_mute(1);
+			app_shutdown();
+		}
 #else
+		hal_codec_dac_mute(1);
 		app_shutdown();//shutdown
 #endif
 	} else if((out_val>CHECK_3_5JACK_MAX_NUM)&&(jack_3p5_plug_in_flag==1)){
@@ -398,11 +400,6 @@ void apps_jack_event_process(void)
 		
 #if defined(__AC107_ADC__)
 		ac107_hw_close();
-#endif
-
-#ifdef BT_USB_AUDIO_DUAL_MODE
-		if(app_battery_is_charging()) app_reset();
-		else ;
 #endif
 	}
 	/*

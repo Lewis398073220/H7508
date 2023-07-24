@@ -542,14 +542,14 @@ int app_battery_handle_process_charging(uint32_t status,  union APP_BATTERY_MSG_
 #if 0 //m by cai
                 btusb_switch(BTUSB_MODE_BT);
 #else
-				if(get_usb_configured_status() || hal_usb_configured()) {
+				if((get_usb_configured_status() || hal_usb_configured()) && !apps_3p5_jack_get_val()) {
 					btusb_switch(BTUSB_MODE_BT);
 					app_battery_measure.status = APP_BATTERY_STATUS_NORMAL;
 				} else{
 					TRACE(0,"CHARGING-->RESET");
 					usb_plugout_to_proff_status_set(true);//add by cai
 #if defined(__LDO_3V3_CTR__) 
-					if(hal_gpio_pin_get_val((enum HAL_GPIO_PIN_T)cfg_hw_pio_3p5_jack_detecter.pin)) hal_gpio_pin_clr((enum HAL_GPIO_PIN_T)cfg_hw_pio_3_3v_control.pin);//add by cai for 3.5 line in pop noise
+					if(apps_3p5_jack_get_val()) hal_gpio_pin_clr((enum HAL_GPIO_PIN_T)cfg_hw_pio_3_3v_control.pin);//add by cai for 3.5 line in pop noise
 #endif
 	                osTimerStop(app_battery_timer);
 	                app_shutdown();
@@ -773,21 +773,7 @@ int app_battery_open(void)
 #if (CHARGER_PLUGINOUT_RESET == 0)
         nRet = APP_BATTERY_OPEN_MODE_CHARGING_PWRON;
 #else
-	#if defined(__DEFINE_DEMO_MODE__)
-		if(app_nvrecord_demo_mode_get()){ //add by pang
-			if (hal_sw_bootmode_get() & HAL_SW_BOOTMODE_CHARGING_POWEROFF || hal_gpio_pin_get_val((enum HAL_GPIO_PIN_T)cfg_hw_pio_3p5_jack_detecter.pin)){//m by cai
-				nRet = APP_BATTERY_OPEN_MODE_CHARGING;
-			}
-			else if (hal_sw_bootmode_get() & HAL_SW_BOOTMODE_CHARGING_POWERON){
-				nRet = APP_BATTERY_OPEN_MODE_NORMAL;
-			}
-			else {
-				nRet = APP_BATTERY_OPEN_MODE_CHARGING_PWRON;
-			}
-		}
-		else
-	#endif
-           nRet = APP_BATTERY_OPEN_MODE_CHARGING;
+        nRet = APP_BATTERY_OPEN_MODE_CHARGING;
 #endif
     }
     else
@@ -801,10 +787,6 @@ int app_battery_open(void)
 	ntc_capture_open();//add by pang
 #endif
 
-#if defined(__DEFINE_DEMO_MODE__)
-	hal_sw_bootmode_clear(HAL_SW_BOOTMODE_CHARGING_POWEROFF);//add by pang
-	hal_sw_bootmode_clear(HAL_SW_BOOTMODE_CHARGING_POWERON);
-#endif
     return nRet;
 }
 

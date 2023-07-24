@@ -978,18 +978,7 @@ void app_bt_key_shutdown(APP_KEY_STATUS *status, void *param)
     app_reset();
 #else
     
-#if defined(__DEFINE_DEMO_MODE__)//add by pang
-	if(app_battery_is_charging() && app_nvrecord_demo_mode_get()){
-		TRACE(0,"power off->charging!!!");
-		hal_sw_bootmode_set(HAL_SW_BOOTMODE_CHARGING_POWEROFF);
-		app_reset();
-	}
-	else{
-		if(!app_call_status_get()) app_shutdown();//m by cai for not to power off when call is active
-	}
-#else
 	if(!app_call_status_get()) app_shutdown();//m by cai for not to power off when call is active
-#endif
 #endif
 }
 
@@ -2065,22 +2054,12 @@ extern int rpc_service_setup(void);
         switch (nRet) {
             case APP_BATTERY_OPEN_MODE_NORMAL:
                 nRet = 0;
-#if defined(__DEFINE_DEMO_MODE__)
-				if(app_nvrecord_demo_mode_get()) 
-				{
-					app_demo_mode_poweron_flag_set(true);//add by cai
-#if defined(__CHARGE_CURRRENT__)
-					hal_gpio_pin_set((enum HAL_GPIO_PIN_T)cfg_charge_current_control.pin);//add by cai
-#endif
-				}
-#endif
                 break;
             case APP_BATTERY_OPEN_MODE_CHARGING:
                 app_status_indication_set(APP_STATUS_INDICATION_CHARGING);
                 TRACE(0,"CHARGING!");
                 app_battery_start();
 
-				while(app_nvrecord_demo_mode_get() && hal_pwrkey_startup_pressed());//add by cai for demo mode
                 app_key_open(false);
                 app_key_init_on_charging();
 				/** add by pang **/
@@ -2090,19 +2069,6 @@ extern int rpc_service_setup(void);
 #endif
 				/** end add **/
                 nRet = 0;
-#if defined(__USE_3_5JACK_CTR__)
-				if(hal_gpio_pin_get_val((enum HAL_GPIO_PIN_T)cfg_hw_pio_3p5_jack_detecter.pin) || app_nvrecord_demo_mode_get()) 
-				{
-#if defined(__LDO_3V3_CTR__) 
-					hal_gpio_pin_set((enum HAL_GPIO_PIN_T)cfg_hw_pio_3_3v_control.pin);//add by cai for usb audio
-#endif
-
-#if defined(__CHARGE_CURRRENT__)
-					hal_gpio_pin_set((enum HAL_GPIO_PIN_T)cfg_charge_current_control.pin);//add by cai for enter nomal charging mode when usb is not configed.
-#endif				
-					goto exit;//add by cai
-				}	
-#endif
 			
 #if defined(__LDO_3V3_CTR__) 
 				hal_gpio_pin_set((enum HAL_GPIO_PIN_T)cfg_hw_pio_3_3v_control.pin);//add by cai for usb audio
@@ -2123,15 +2089,6 @@ extern int rpc_service_setup(void);
 #endif
                 need_check_key = false;
                 nRet = 0;
-#if defined(__DEFINE_DEMO_MODE__)
-				app_demo_mode_poweron_flag_set(true);//add by pang
-#if defined(__CHARGE_CURRRENT__)
-				hal_gpio_pin_set((enum HAL_GPIO_PIN_T)cfg_charge_current_control.pin);//add by cai
-#endif
-#endif
-#if defined(BT_USB_AUDIO_DUAL_MODE)
-				usb_plugin = 1;//add by cai
-#endif
                 break;
             case APP_BATTERY_OPEN_MODE_INVALID:
             default:
@@ -2242,14 +2199,14 @@ extern int rpc_service_setup(void);
 /** end add **/
 
     if (pwron_case == APP_POWERON_CASE_REBOOT){
-#if !defined(__DEFINE_DEMO_MODE__)//m by cai
+#if 0//m by cai
         app_status_indication_set(APP_STATUS_INDICATION_POWERON);
 #ifdef MEDIA_PLAYER_SUPPORT
         app_voice_report(APP_STATUS_INDICATION_POWERON, 0);
 #endif
 #else
 /** add by pang **/
-		if(app_demo_mode_poweron_flag_get() || !app_battery_is_charging()){
+		if(!app_battery_is_charging()){
 			app_status_indication_recover_set(APP_STATUS_INDICATION_POWERON);//m by cai
 #ifdef ANC_APP
 			//poweron_set_anc();//add by cai for Pairing tone distortion
@@ -2298,7 +2255,7 @@ extern int rpc_service_setup(void);
         app_key_init();
         app_battery_start();
 #if defined(__BTIF_EARPHONE__) && defined(__BTIF_AUTOPOWEROFF__)
-        if(app_demo_mode_poweron_flag_get() || !app_battery_is_charging()) app_start_10_second_timer(APP_POWEROFF_TIMER_ID);//m by cai for usb audio
+        if(!app_battery_is_charging()) app_start_10_second_timer(APP_POWEROFF_TIMER_ID);//m by cai for usb audio
 #endif
 
 #if defined(__IAG_BLE_INCLUDE__) && defined(BTIF_BLE_APP_DATAPATH_SERVER)
@@ -2312,13 +2269,13 @@ extern int rpc_service_setup(void);
 #endif
 #if defined( __BTIF_EARPHONE__) && defined(__BTIF_BT_RECONNECT__)
 #if !defined(IBRT)
-#if !defined(__DEFINE_DEMO_MODE__)//m by cai
+#if 0//m by cai
 		power_on_open_reconnect_flag=1;//add by pang
         app_bt_profile_connect_manager_opening_reconnect();
 #else
-		if(app_demo_mode_poweron_flag_get() || !app_battery_is_charging()) {
-		power_on_open_reconnect_flag=1;//add by pang
-        app_bt_profile_connect_manager_opening_reconnect();
+		if(!app_battery_is_charging()) {
+			power_on_open_reconnect_flag=1;//add by pang
+	        app_bt_profile_connect_manager_opening_reconnect();
 		}
 #endif
 #endif
@@ -2375,27 +2332,13 @@ extern int rpc_service_setup(void);
         }
         else
         {
-#if !defined(__DEFINE_DEMO_MODE__)//m by cai
+#if 0//m by cai
             pwron_case = APP_POWERON_CASE_NORMAL;
 #else
-        	if(app_battery_is_charging() && !app_demo_mode_poweron_flag_get()) {
+        	if(app_battery_is_charging()) {
 				pwron_case = APP_POWERON_CASE_USB_AUDIO;
 			} else{
 				pwron_case = APP_POWERON_CASE_NORMAL;
-/** add by pang **/
-#if defined(__DEFINE_DEMO_MODE__)
-				if(app_demo_mode_poweron_flag_get()){
-					app_status_indication_recover_set(APP_STATUS_INDICATION_POWERON);//m by cai
-#ifdef ANC_APP
-					//poweron_set_anc();//add by cai for Pairing tone distortion
-#endif
-
-#ifdef MEDIA_PLAYER_SUPPORT
-					app_voice_report(APP_STATUS_INDICATION_POWERON, 0);
-#endif
-				}
-#endif
-/** end add **/
 			} 
 #endif
         }
@@ -2573,14 +2516,8 @@ exit:
     app_anc_set_init_done();
 #endif
 #ifdef BT_USB_AUDIO_DUAL_MODE
-#if 0 //m by cai
     if(usb_plugin)
-#else
-	if((!app_demo_mode_poweron_flag_get() && app_nvrecord_demo_mode_get()) || hal_gpio_pin_get_val((enum HAL_GPIO_PIN_T)cfg_hw_pio_3p5_jack_detecter.pin))  ;
-    else if(app_battery_is_charging() && !app_demo_mode_poweron_flag_get())//m by cai
-#endif
 	{
-    	if(usb_plugin) usb_plugin = 1;
         btusb_switch(BTUSB_MODE_USB);
 #ifdef ANC_APP
 		//poweron_set_anc();//add by cai for Pairing tone distortion
