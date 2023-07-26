@@ -847,6 +847,7 @@ static int app_battery_charger_handle_process(void)
     uint32_t charging_min;
     static uint8_t overvolt_full_charge_cnt = 0;
     static uint8_t ext_pin_full_charge_cnt = 0;
+	static uint8_t usb_audio_full_charge_cnt = 0;//add by cai
 
     charging_min = hal_sys_timer_get() - app_battery_measure.start_time;
     charging_min = TICKS_TO_MS(charging_min)/1000/60;
@@ -874,6 +875,27 @@ static int app_battery_charger_handle_process(void)
             goto exit;
         }
     }
+	/** add by cai **/
+#if defined(BT_USB_AUDIO_DUAL_MODE) || defined(BTUSB_AUDIO_MODE)
+	if(get_usb_configured_status() || hal_usb_configured()) 
+	{
+		if(app_battery_measure.currvolt>=4190)
+		{
+			usb_audio_full_charge_cnt++;		
+		}
+		else
+		{
+			usb_audio_full_charge_cnt=0;
+		}
+		if(usb_audio_full_charge_cnt>=6)
+		{
+			TRACE(0,"USB AUDIO-->FULL_CHARGING");
+			nRet = -1;
+			goto exit;
+		}
+	}
+#endif
+	/** end add **/
 
     if ((app_battery_measure.charger_status.cnt%APP_BATTERY_CHARGING_EXTPIN_MEASURE_CNT) == 0)
     {
