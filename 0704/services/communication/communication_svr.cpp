@@ -15,6 +15,8 @@
 #include "app_ai_if_config.h"
 #include "communication_svr.h"
 #include "communication_sysapi.h"
+#include "bt_if.h"//add by cai
+#include "apps.h"
 
 
 //======================================================================================================
@@ -84,7 +86,7 @@ static bool uart_opened = false;
 static int uart_error_detected = 0;
 
 #ifdef CHIP_BEST2300P
-static const enum HAL_UART_ID_T comm_uart = HAL_UART_ID_2;
+static const enum HAL_UART_ID_T comm_uart = HAL_UART_ID_0;//HAL_UART_ID_2;  m by cai
 #else
 static const enum HAL_UART_ID_T comm_uart = HAL_UART_ID_1;
 #endif
@@ -97,7 +99,7 @@ static const struct HAL_UART_CFG_T uart_cfg = {
     HAL_UART_FIFO_LEVEL_1_2,
     HAL_UART_FIFO_LEVEL_1_2,
 #ifdef CHIP_BEST2300P
-    1152000,
+    921600,//1152000,  //m by cai
 #else
     921600,
 #endif
@@ -439,6 +441,148 @@ void communication_send_command(COMMAND_BLOCK *cmd_blk)
     communication_mailbox_put(&mail);
 }
 
+/** add by cai **/
+typedef void (*app_comm_uart_test_function_handle)(void);
+
+typedef struct
+{
+    const char* string;
+    app_comm_uart_test_function_handle function;
+} app_comm_uart_handle_t;
+
+const char *app_comm_status_indication_str[] =
+{
+	//A2DP/SNK/AVP/BI-01-C
+    "[AVDTP_reject_INVALID_OBJECT_TYPE]",
+    //A2DP/SNK/AVP/BI-02-C
+    "[AVDTP_reject_INVALID_CHANNELS]",
+    //A2DP/SNK/AVP/BI-03-C
+    "[AVDTP_reject_INVALID_SAMPLING_FREQUENCY]",
+    //A2DP/SNK/AVP/BI-04-C
+    "[AVDTP_reject_INVALID_DRC]",
+    //A2DP/SNK/AVP/BI-06-C
+    "[AVDTP_reject_NOT_SUPPORTED_OBJECT_TYPE]",
+    //A2DP/SNK/AVP/BI-07-C
+    "[AVDTP_reject_NOT_SUPPORTED_CHANNELS]",
+    //A2DP/SNK/AVP/BI-08-C
+    "[AVDTP_reject_NOT_SUPPORTED_SAMPLING_FREQUENCY]",
+    //A2DP/SNK/AVP/BI-09-C
+    "[AVDTP_reject_NOT_SUPPORTED_DRC]",
+    //A2DP/SNK/AVP/BI-10-C
+    "[AVDTP_reject_INVALID_CODEC_TYPE]",
+    //A2DP/SNK/AVP/BI-11-C
+    "[AVDTP_reject_INVALID_CHANNEL_MODE]",
+    //A2DP/SNK/AVP/BI-12-C
+    "[AVDTP_reject_INVALID_SUBBANDS]",
+    //A2DP/SNK/AVP/BI-13-C
+    "[AVDTP_reject_INVALID_ALLOCATION_METHOD]",
+    //A2DP/SNK/AVP/BI-14-C
+    "[AVDTP_reject_INVALID_MINIMUM_BITPOOL_VALUE]",
+    //A2DP/SNK/AVP/BI-15-C
+    "[AVDTP_reject_INVALID_MAXIMUM_BITPOOL_VALUE]",
+    //A2DP/SNK/AVP/BI-16-C
+    "[AVDTP_reject_INVALID_BLOCK_LENGTH]",
+    //A2DP/SNK/AVP/BI-17-C
+    "[AVDTP_reject_INVALID_CP_TYPE]",
+    //A2DP/SNK/AVP/BI-18-C
+    "[AVDTP_reject_INVALID_CP_FORMAT]",
+    //A2DP/SNK/AVP/BI-20-C
+    "[AVDTP_reject_NOT_SUPPORTED_CODEC_TYPE]",
+};
+
+const char *comm_status2str(uint16_t status)
+{
+    const char *str = NULL;
+
+    if (status >= 0 && status < sizeof(app_comm_status_indication_str))
+    {
+        str = app_comm_status_indication_str[status];
+    }
+    else
+    {
+        str = "[UNKNOWN]";
+    }
+
+    return str;
+}
+
+extern "C" int app_shutdown(void);
+void test(void)
+{
+	app_shutdown();
+}
+
+const app_comm_uart_handle_t app_comm_uart_test_handle[]=
+{
+	//A2DP/SNK/AVP/BI-01-C
+    {"1", btif_pts_reject_INVALID_OBJECT_TYPE},
+    //A2DP/SNK/AVP/BI-02-C
+    {"2", btif_pts_reject_INVALID_CHANNELS},
+    //A2DP/SNK/AVP/BI-03-C
+    {"3", btif_pts_reject_INVALID_SAMPLING_FREQUENCY},
+    //A2DP/SNK/AVP/BI-04-C
+    {"4", btif_pts_reject_INVALID_DRC},
+    //A2DP/SNK/AVP/BI-06-C
+    {"6", btif_pts_reject_NOT_SUPPORTED_OBJECT_TYPE},
+    //A2DP/SNK/AVP/BI-07-C
+    {"7", btif_pts_reject_NOT_SUPPORTED_CHANNELS},
+    //A2DP/SNK/AVP/BI-08-C
+    {"8", btif_pts_reject_NOT_SUPPORTED_SAMPLING_FREQUENCY},
+    //A2DP/SNK/AVP/BI-09-C
+    {"9", btif_pts_reject_NOT_SUPPORTED_DRC},
+    //A2DP/SNK/AVP/BI-10-C
+    {"10", btif_pts_reject_INVALID_CODEC_TYPE},
+    //A2DP/SNK/AVP/BI-11-C
+    {"11", btif_pts_reject_INVALID_CHANNEL_MODE},
+    //A2DP/SNK/AVP/BI-12-C
+    {"12", btif_pts_reject_INVALID_SUBBANDS},
+    //A2DP/SNK/AVP/BI-13-C
+    {"13", btif_pts_reject_INVALID_ALLOCATION_METHOD},
+    //A2DP/SNK/AVP/BI-14-C
+    {"14", btif_pts_reject_INVALID_MINIMUM_BITPOOL_VALUE},
+    //A2DP/SNK/AVP/BI-15-C
+    {"15", btif_pts_reject_INVALID_MAXIMUM_BITPOOL_VALUE},
+    //A2DP/SNK/AVP/BI-16-C
+    {"16", btif_pts_reject_INVALID_BLOCK_LENGTH},
+    //A2DP/SNK/AVP/BI-17-C
+    {"17", btif_pts_reject_INVALID_CP_TYPE},
+    //A2DP/SNK/AVP/BI-18-C
+    {"18", btif_pts_reject_INVALID_CP_FORMAT},
+    //A2DP/SNK/AVP/BI-20-C
+    {"20", btif_pts_reject_NOT_SUPPORTED_CODEC_TYPE},
+};
+
+app_comm_uart_test_function_handle app_comm_find_uart_handle(unsigned char* buf, uint8_t len)
+{
+    app_comm_uart_test_function_handle p = NULL;
+    for(uint8_t i = 0; i<sizeof(app_comm_uart_test_handle)/sizeof(app_comm_uart_handle_t); i++)
+    {
+        if(strncmp((char*)buf, app_comm_uart_test_handle[i].string, len)==0)
+        {
+            p = app_comm_uart_test_handle[i].function;
+			TRACE(3,"%s %d %s",__func__, i, comm_status2str((uint16_t)i));
+            break;
+        }
+    }
+    return p;
+}
+
+void communication_receive_pro(uint8_t *buf, uint8_t len)
+{
+	app_comm_uart_test_function_handle handl_function = app_comm_find_uart_handle(buf, len);
+	
+	if(handl_function)
+    {
+        handl_function();
+    }
+    else
+    {
+        TRACE(0,"can not find handle function");
+		return;
+    }
+}
+/** end add **/
+
 static void communication_process(COMMUNICATION_MAIL* mail_p)
 {
     osEvent evt;
@@ -469,7 +613,7 @@ static void communication_process(COMMUNICATION_MAIL* mail_p)
             communication_io_mode_switch(COMMUNICATION_MODE_RX);
             if (!uart_error_detected){
                 uart_rx_dma_start();
-                uart_rx_idle_timer_start();
+                //uart_rx_idle_timer_start();//m by cai
             }
             break;
         case COMMUNICATION_MSG_TX_DONE:
@@ -478,7 +622,7 @@ static void communication_process(COMMUNICATION_MAIL* mail_p)
             communication_io_mode_init();
             uart_init();
             uart_rx_dma_start();
-            uart_rx_idle_timer_start();
+            //uart_rx_idle_timer_start();//m by cai
             break;
         case COMMUNICATION_MSG_RX_DONE:
             TRACE(2,"UART RX status:%d len:%d", mail_p->parms1, mail_p->parms2);
@@ -492,7 +636,7 @@ static void communication_process(COMMUNICATION_MAIL* mail_p)
 
             if (!uart_error_detected){
                 uart_rx_dma_start();
-                uart_rx_idle_timer_start();
+                //uart_rx_idle_timer_start();//m by cai
             }
             break;
         case COMMUNICATION_MSG_REINIT:
@@ -501,9 +645,10 @@ static void communication_process(COMMUNICATION_MAIL* mail_p)
             uart_error_detected = 0;
             communication_io_mode_init();
             uart_init();
+			communication_receive_register_callback(communication_receive_pro);//add by cai
             uart_rx_dma_start();
             uart_rx_idle_timer_id = osTimerCreate(osTimer(uart_rx_idle_timer), osTimerPeriodic, NULL);
-            uart_rx_idle_timer_start();
+            //uart_rx_idle_timer_start();//m by cai
             break;
         case COMMUNICATION_MSG_RESET:
         case COMMUNICATION_MSG_BREAK:

@@ -17,5 +17,6 @@ ccflags-y += \
 	-Iservices/communication/comminication_knowles \
 	-Ithirdparty/knowles_uart_lib \
 	-Iutils/crc32 \
-	-Iservices/app_ai/inc
+	-Iservices/app_ai/inc \
+	-Iapps/main
 
