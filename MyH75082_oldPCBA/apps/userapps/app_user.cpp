@@ -294,7 +294,7 @@ bool app_apps_3p5jack_plugin_flag(bool clearcount)
 osTimerId jack_3p5_timer = NULL;
 static void app_jack_open_timehandler(void const *param);
 osTimerDef(JACK_SW_TIMER, app_jack_open_timehandler);// define timers
-#define JACK_TIMER_IN_MS (400)
+#define JACK_TIMER_IN_MS (200)
 #define CHECK_3_5JACK_MAX_NUM (3)
 
 static void app_jack_open_timehandler(void const *param)
@@ -373,13 +373,16 @@ void apps_jack_event_process(void)
 		ac107_hw_open();
 		ac107_i2c_init();
 #endif
-	   hal_codec_dac_mute(1);
 		jack_3p5_plug_in_flag=1;
 		jack_count=0;
 	
 		//app_poweroff_flag = 1;
 #ifdef BT_USB_AUDIO_DUAL_MODE
-		if(app_battery_is_charging() && (get_usb_configured_status() || hal_usb_configured())) app_reset();
+		hal_codec_dac_mute(1);
+#if defined(__CHARGE_CURRRENT__)
+		hal_gpio_pin_set((enum HAL_GPIO_PIN_T)cfg_charge_current_control.pin);//add by cai for enter nomal charging mode when usb is not configed.
+#endif
+		if(app_battery_is_charging() && (get_usb_configured_status() || hal_usb_configured())) pmu_reboot();
 		else if(!app_battery_is_charging()) app_shutdown();
 		else ;
 #else
