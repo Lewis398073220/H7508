@@ -1025,7 +1025,7 @@ static void app_battery_pluginout_debounce_handler(void const *param)
         {
             if (app_battery_ext_charger_enable_cfg.pin != HAL_IOMUX_PIN_NUM)
             {
-                hal_gpio_pin_set_dir((enum HAL_GPIO_PIN_T)app_battery_ext_charger_enable_cfg.pin, HAL_GPIO_DIR_OUT, 1);//m by pang
+                hal_gpio_pin_set_dir((enum HAL_GPIO_PIN_T)app_battery_ext_charger_enable_cfg.pin, HAL_GPIO_DIR_OUT, 0);//m by pang
             }
             app_battery_measure.start_time = hal_sys_timer_get();
         }
