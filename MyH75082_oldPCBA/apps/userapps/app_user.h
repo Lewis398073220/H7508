@@ -44,18 +44,18 @@
 #include "../../../services/multimedia/audio/process/filters/include/iir_process.h"
 #define DEMO_MODE 0xEE
 
-#define SLEEP_TIME_3MIN  24
-#define SLEEP_TIME_5MIN  39//39
-#define SLEEP_TIME_10MIN 77
+#define SLEEP_TIME_3MIN  18//24
+#define SLEEP_TIME_5MIN  30//39
+#define SLEEP_TIME_10MIN 60//77
 #define SLEEP_TIME_PERM  255
 
 #define DEFAULT_SLEEP_TIME SLEEP_TIME_5MIN
 
-#define AUTO_PWOFF_TIME_30MIN  212
-#define AUTO_PWOFF_TIME_1HOUR  431
-#define AUTO_PWOFF_TIME_2HOUR  862
-#define AUTO_PWOFF_TIME_4HOUR  1724
-#define AUTO_PWOFF_TIME_6HOUR  2586
+#define AUTO_PWOFF_TIME_30MIN  180//212
+#define AUTO_PWOFF_TIME_1HOUR  360//431
+#define AUTO_PWOFF_TIME_2HOUR  720//862
+#define AUTO_PWOFF_TIME_4HOUR  1440//1724
+#define AUTO_PWOFF_TIME_6HOUR  2160//2586
 #define AUTO_PWOFF_TIME_PERM   4095
 #define DEFAULT_AUTO_PWOFF_TIME AUTO_PWOFF_TIME_PERM
 extern IIR_CFG_T eq_custom_para_ancon;

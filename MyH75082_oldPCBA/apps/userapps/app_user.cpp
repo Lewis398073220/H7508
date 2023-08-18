@@ -1925,7 +1925,8 @@ void app_nvrecord_para_get(void)
 	
 	nv_record_env_get(&nvrecord_env);
 
-	sleep_time = nvrecord_env->sleep_time;
+	if(nvrecord_env->sleep_time==39) sleep_time = DEFAULT_SLEEP_TIME;
+	else sleep_time = nvrecord_env->sleep_time;
 	vibrate_mode = nvrecord_env->vibrate_mode;
 	eq_set_index=nvrecord_env->eq_mode;
 	anc_set_index = (enum APP_ANC_MODE_STATUS)nvrecord_env->anc_mode;
