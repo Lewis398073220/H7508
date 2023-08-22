@@ -1750,7 +1750,7 @@ void app_usb_ANC_key(APP_KEY_STATUS *status, void *param)
 osTimerId usb_quick_awareness_sw_timer = NULL;
 static void usb_quick_awareness_swtimer_handler(void const *param);
 osTimerDef(USB_QUICK_AWARENESS_TIMER, usb_quick_awareness_swtimer_handler);// define timers
-#define USB_QUICK_AWARENESS_SWTIMER_IN_MS	(17000)
+#define USB_QUICK_AWARENESS_SWTIMER_IN_MS	(15000)
 
 void usb_app_quick_awareness_swtimer_start(void)
 {

@@ -191,7 +191,7 @@ int app_status_indication_set(APP_STATUS_INDICATION_T status)
             break;
         case APP_STATUS_INDICATION_PAGESCAN:
             cfg0.part[0].level = 0;
-            cfg0.part[0].time = (8000);
+            cfg0.part[0].time = (7000);
             cfg0.part[1].level = 1;
             cfg0.part[1].time = (300);
             cfg0.parttotal = 2;

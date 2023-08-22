@@ -1242,7 +1242,7 @@ bool monitor_moment_is_on(void)
 osTimerId quick_awareness_sw_timer = NULL;
 static void quick_awareness_swtimer_handler(void const *param);
 osTimerDef(QUICK_AWARENESS_TIMER, quick_awareness_swtimer_handler);// define timers
-#define QUICK_AWARENESS_SWTIMER_IN_MS	(17000)
+#define QUICK_AWARENESS_SWTIMER_IN_MS	(15000)
 
 void app_quick_awareness_swtimer_start(void)
 {

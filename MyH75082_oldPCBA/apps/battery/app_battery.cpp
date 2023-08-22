@@ -68,7 +68,7 @@ static bool charge_full_flag=0;//add by pang
 #endif
 
 #ifndef APP_BATTERY_CHARGE_TIMEOUT_MIN
-#define APP_BATTERY_CHARGE_TIMEOUT_MIN (210)
+#define APP_BATTERY_CHARGE_TIMEOUT_MIN (125)//(210)  m by cai
 #endif
 
 #ifndef APP_BATTERY_CHARGE_OFFSET_MV
