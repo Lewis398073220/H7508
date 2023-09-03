@@ -35,6 +35,8 @@
 #include "btapp.h"
 #include "app_bt_media_manager.h"
 
+#include "hal_codec.h"//add by cai
+
 extern uint8_t __StackLimit[];
 extern uint8_t __HeapLimit[];
 
@@ -413,6 +415,8 @@ static int app_audio_handle_process(APP_MESSAGE_BODY *msg_body)
 
         break;
     case APP_BT_SETTING_CLOSE:
+		hal_codec_dac_mute(1);//add by cai for pop noise when switch ANC mode
+		osDelay(100);
         app_audio_switch_flash_proc();
 #ifdef __AUDIO_QUEUE_SUPPORT__
         APP_AUDIO_STATUS next_status;
@@ -447,6 +451,8 @@ static int app_audio_handle_process(APP_MESSAGE_BODY *msg_body)
         app_bt_stream_close(aud_status.id);
         app_audio_switch_flash_proc();
 #endif
+		osDelay(100);
+		hal_codec_dac_mute(0);//add by cai for pop noise when switch ANC mode
         break;
     case APP_BT_SETTING_SETUP:
         app_bt_stream_setup(aud_status.id, msg_body->message_ptr);

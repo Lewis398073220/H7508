@@ -1635,11 +1635,11 @@ void Set_Low_Latency_Status(uint8_t set_low_latency_value[1])
     g_set_low_latency_value[0] =  set_low_latency_value[0]; 
    	app_low_latency_set(g_set_low_latency_value[0]);
 	TRACE(2,"***%s: low_latency_status=%d",__func__,app_get_low_latency_status());
-	hal_codec_dac_mute(1);
-	osDelay(60);
+	//hal_codec_dac_mute(1);
+	//osDelay(60);
 	app_gaming_mode(app_get_low_latency_status());
-	osDelay(60);
-	hal_codec_dac_mute(0);
+	//osDelay(60);
+	//hal_codec_dac_mute(0);
 }
 
 static uint8_t g_set_multipoint_status_value[]= {0x00};
