@@ -907,7 +907,7 @@ void Get_Chipset_Solution(void)
 	Philips_Send_Notify(solution, (uint32_t)valueLen);
 }
 
-unsigned char Chipset_Version[] = "V2.1.3.5";
+unsigned char Chipset_Version[] = "V2.1.3.6";
 void Get_Chipset_Version(void)
 {	
 	uint8_t i =0;

@@ -736,6 +736,10 @@ static void app_poweron_normal(APP_KEY_STATUS *status, void *param)
 {
     TRACE(3,"%s %d,%d",__func__, status->code, status->event);
     g_pwron_case = APP_POWERON_CASE_NORMAL;
+	
+#ifdef ANC_APP
+	poweron_set_anc();//add by cai for Pairing tone distortion
+#endif
 
 #if 1 //by pang
 	app_status_indication_recover_set(APP_STATUS_INDICATION_POWERON);
@@ -2546,7 +2550,7 @@ extern int rpc_service_setup(void);
 #endif
 		
 #ifdef ANC_APP
-		poweron_set_anc();
+		//poweron_set_anc();
 		//app_anc_Key_Pro(NULL, NULL);
 		//app_anc_switch_turnled(true);
 		//app_monitor_switch_turnled(false);
@@ -2583,7 +2587,7 @@ exit:
     	if(usb_plugin) usb_plugin = 1;
         btusb_switch(BTUSB_MODE_USB);
 #ifdef ANC_APP
-		//poweron_set_anc();//add by cai for Pairing tone distortion
+		poweron_set_anc();//add by cai for Pairing tone distortion
 #endif
     }
     else

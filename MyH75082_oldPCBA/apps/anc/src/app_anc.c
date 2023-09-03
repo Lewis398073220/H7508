@@ -1901,7 +1901,7 @@ void app_anc_Key_Pro(APP_KEY_STATUS *status, void *param)
 			app_monitor_switch_turnled(false);
 #endif
 #ifdef MEDIA_PLAYER_SUPPORT		
-			app_voice_report(APP_STATUS_INDICATION_ANC_ON, 0);
+			//app_voice_report(APP_STATUS_INDICATION_ANC_ON, 0);
 #endif
 			}
 		}
@@ -1915,7 +1915,7 @@ void app_anc_Key_Pro(APP_KEY_STATUS *status, void *param)
 			app_anc_switch_turnled(false);
 #endif
 #ifdef MEDIA_PLAYER_SUPPORT
-			app_voice_report(APP_STATUS_INDICATION_MONITOR_ON, 0);
+			//app_voice_report(APP_STATUS_INDICATION_MONITOR_ON, 0);
 #endif
 		}
 		else
@@ -1925,7 +1925,7 @@ void app_anc_Key_Pro(APP_KEY_STATUS *status, void *param)
 			app_anc_switch_turnled(false);
 #endif		
 #ifdef MEDIA_PLAYER_SUPPORT
-			app_voice_report(APP_STATUS_INDICATION_ANC_OFF, 0);
+			//app_voice_report(APP_STATUS_INDICATION_ANC_OFF, 0);
 #endif
 		}
 	}else if(app_get_anc_toggle_mode()==AncOn_Awareness) {
@@ -1945,7 +1945,7 @@ void app_anc_Key_Pro(APP_KEY_STATUS *status, void *param)
 			app_monitor_switch_turnled(false);
 #endif
 #ifdef MEDIA_PLAYER_SUPPORT		
-			app_voice_report(APP_STATUS_INDICATION_ANC_ON, 0);
+			//app_voice_report(APP_STATUS_INDICATION_ANC_ON, 0);
 #endif
 			}
 		}
@@ -1959,7 +1959,7 @@ void app_anc_Key_Pro(APP_KEY_STATUS *status, void *param)
 			app_anc_switch_turnled(false);
 #endif
 #ifdef MEDIA_PLAYER_SUPPORT
-			app_voice_report(APP_STATUS_INDICATION_MONITOR_ON, 0);
+			//app_voice_report(APP_STATUS_INDICATION_MONITOR_ON, 0);
 #endif
 		}
 		else
@@ -1972,7 +1972,7 @@ void app_anc_Key_Pro(APP_KEY_STATUS *status, void *param)
 			app_anc_switch_turnled(false);
 #endif
 #ifdef MEDIA_PLAYER_SUPPORT
-			app_voice_report(APP_STATUS_INDICATION_MONITOR_ON, 0);
+			//app_voice_report(APP_STATUS_INDICATION_MONITOR_ON, 0);
 #endif
 		}
 	}else if(app_get_anc_toggle_mode()==AncOn_AncOff) {
@@ -1992,7 +1992,7 @@ void app_anc_Key_Pro(APP_KEY_STATUS *status, void *param)
 			app_monitor_switch_turnled(false);
 #endif
 #ifdef MEDIA_PLAYER_SUPPORT		
-			app_voice_report(APP_STATUS_INDICATION_ANC_ON, 0);
+			//app_voice_report(APP_STATUS_INDICATION_ANC_ON, 0);
 #endif
 			}
 		}
@@ -2012,7 +2012,7 @@ void app_anc_Key_Pro(APP_KEY_STATUS *status, void *param)
 			app_monitor_switch_turnled(false);
 #endif
 #ifdef MEDIA_PLAYER_SUPPORT		
-			app_voice_report(APP_STATUS_INDICATION_ANC_ON, 0);
+			//app_voice_report(APP_STATUS_INDICATION_ANC_ON, 0);
 #endif
 			}
 
@@ -2024,7 +2024,7 @@ void app_anc_Key_Pro(APP_KEY_STATUS *status, void *param)
 			app_anc_switch_turnled(false);
 #endif		
 #ifdef MEDIA_PLAYER_SUPPORT
-			app_voice_report(APP_STATUS_INDICATION_ANC_OFF, 0);
+			//app_voice_report(APP_STATUS_INDICATION_ANC_OFF, 0);
 #endif
 		}
 	}else if(app_get_anc_toggle_mode()==Awareness_AncOff){
@@ -2035,7 +2035,7 @@ void app_anc_Key_Pro(APP_KEY_STATUS *status, void *param)
 			app_anc_switch_turnled(false);
 #endif		
 #ifdef MEDIA_PLAYER_SUPPORT
-			app_voice_report(APP_STATUS_INDICATION_ANC_OFF, 0);
+			//app_voice_report(APP_STATUS_INDICATION_ANC_OFF, 0);
 #endif
 		}
 		else if(anc_current_status == anc_off)
@@ -2048,7 +2048,7 @@ void app_anc_Key_Pro(APP_KEY_STATUS *status, void *param)
 			app_anc_switch_turnled(false);
 #endif
 #ifdef MEDIA_PLAYER_SUPPORT
-			app_voice_report(APP_STATUS_INDICATION_MONITOR_ON, 0);
+			//app_voice_report(APP_STATUS_INDICATION_MONITOR_ON, 0);
 #endif
 		}
 		else
@@ -2058,7 +2058,7 @@ void app_anc_Key_Pro(APP_KEY_STATUS *status, void *param)
 			app_anc_switch_turnled(false);
 #endif		
 #ifdef MEDIA_PLAYER_SUPPORT
-			app_voice_report(APP_STATUS_INDICATION_ANC_OFF, 0);
+			//app_voice_report(APP_STATUS_INDICATION_ANC_OFF, 0);
 #endif
 		}
 	}
@@ -2123,6 +2123,12 @@ void app_anc_Key_Pro(APP_KEY_STATUS *status, void *param)
 	if(power_anc_init){
 		power_anc_init=0;
 	}
+	
+#ifdef MEDIA_PLAYER_SUPPORT
+	if(anc_current_status == anc_on) app_voice_report(APP_STATUS_INDICATION_ANC_ON, 0);
+	else if(anc_current_status == monitor) app_voice_report(APP_STATUS_INDICATION_MONITOR_ON, 0);
+	else if(anc_current_status == anc_off) app_voice_report(APP_STATUS_INDICATION_ANC_OFF, 0);
+#endif	
 	//#if defined(__TPV_APP__)
 	Notification_Nosie_Cancelling_Change();
 	//#endif
@@ -2354,7 +2360,7 @@ void set_anc_mode(uint8_t anc_new_mode,uint8_t prom_on)
 				
 				if(power_anc_init){
             		anc_work_status = ANC_STATUS_WAITING_ON;
-            		app_anc_timer_set(ANC_EVENT_OPEN, MS_TO_TICKS(4000));
+            		app_anc_timer_set(ANC_EVENT_OPEN, MS_TO_TICKS(1000));
 				}
 				else{
 					anc_work_status = ANC_STATUS_WAITING_ON;
